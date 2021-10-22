@@ -32,3 +32,9 @@ async def call_func(name):
 def dispatch_inputs(name, inputs):
     if name == "balance_of":
         return str(inputs["owner"])
+    if name == "token_at_index":
+        return str(inputs["owner"] + " " + inputs["index"])
+    if name == "owner_of":
+        return str(inputs["token_id"])
+    if name == "mint":
+        return str(inputs["owner"]) + " " + str(inputs["token_id"]) + str(inputs["material"])

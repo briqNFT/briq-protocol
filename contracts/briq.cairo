@@ -22,6 +22,13 @@ end
 func initialized() -> (res: felt):
 end
 
+#### Specific bit
+
+# Material encodes the rarity. Values range 1-16
+@storage_var
+func material(token_id: felt) -> (res: felt):
+end
+
 @external
 func initialize{
         storage_ptr: Storage*,
@@ -72,13 +79,14 @@ func _mint{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (recipient: felt, token_id: felt):
+    } (recipient: felt, token_id: felt, mat: felt):
     let (curr_owner) = owner.read(token_id)
     assert curr_owner = 0
     let (res) = balances.read(owner=recipient)
     balances.write(recipient, res + 1)
     balance_details.write(recipient, res, token_id)
     owner.write(token_id, recipient)
+    material.write(token_id, mat)
     return ()
 end
 
@@ -88,8 +96,9 @@ func mint{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (owner: felt, token_id: felt):
-    _mint(owner, token_id)
+    } (owner: felt, token_id: felt, material: felt):
+    assert material = 1
+    _mint(owner, token_id, material)
     return ()
 end
 
@@ -101,7 +110,7 @@ func _transfer{
     } (sender: felt, recipient: felt, token_id: felt):
     let (curr_owner) = owner.read(token_id=token_id)
     assert curr_owner = sender
-    owner.write(token_id=token_id, recipient)
+    owner.write(token_id, recipient)
     return ()
 end
 

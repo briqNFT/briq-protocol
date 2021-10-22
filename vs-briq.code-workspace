@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
-		"cairols.venvCommand": ". venv/bin/activate"
+		"cairols.venvCommand": ". venv/bin/activate",
+		"python.defaultInterpreterPath": "./venv/bin/python"
 	}
 }
