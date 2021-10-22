@@ -2,3 +2,8 @@
 *.pyc
 __pycache__
 venv/
+
+briq.json
+briq_abi.json
+
+.env

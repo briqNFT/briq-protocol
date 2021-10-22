@@ -5,23 +5,32 @@ from starkware.starknet.testing.starknet import Starknet
 
 # The path to the contract source code.
 CONTRACT_FILE = os.path.join(
-    os.path.dirname(__file__), "contract.cairo")
+    os.path.dirname(__file__), "../contracts/briq.cairo")
 
-
-# The testing library uses python's asyncio. So the following
-# decorator and the ``async`` keyword are needed.
 @pytest.mark.asyncio
 async def test_increase_balance():
     # Create a new Starknet class that simulates the StarkNet
-    # system.
     starknet = await Starknet.empty()
 
     # Deploy the contract.
     contract = await starknet.deploy(CONTRACT_FILE)
 
-    # Invoke increase_balance() twice.
-    await contract.increase_balance(amount=10).invoke()
-    await contract.increase_balance(amount=20).invoke()
+    await contract.mint(owner=0x11, token_id=0x123).invoke()
 
     # Check the result of get_balance().
-    assert await contract.get_balance().call() == (30,)
+    assert await contract.owner_of(token_id=0x123).call() == (0x11,)
+
+    await contract.mint(owner=0x11, token_id=0x124).invoke()
+    assert await contract.owner_of(token_id=0x124).call() == (0x11,)
+    await contract.mint(owner=0x11, token_id=0x125).invoke()
+    assert await contract.owner_of(token_id=0x125).call() == (0x11,)
+    assert await contract.balance_of(owner=0x11).call() == (3,)
+    with pytest.raises(Exception):
+        await contract.mint(owner=0x11, token_id=0x123).invoke()
+    
+    assert await contract.get_bricks(owner=0x11, index=0).call() == (0x123,)
+    assert await contract.get_bricks(owner=0x11, index=1).call() == (0x124,)
+    assert await contract.get_bricks(owner=0x11, index=2).call() == (0x125,)
+    with pytest.raises(Exception):
+        await contract.get_bricks(owner=0x11, index=3).call() 
+
