@@ -8,7 +8,7 @@ CONTRACT_FILE = os.path.join(
     os.path.dirname(__file__), "../contracts/briq.cairo")
 
 @pytest.mark.asyncio
-async def test_increase_balance():
+async def test_tokens():
     # Create a new Starknet class that simulates the StarkNet
     starknet = await Starknet.empty()
 
@@ -27,10 +27,12 @@ async def test_increase_balance():
     assert await contract.balance_of(owner=0x11).call() == (3,)
     with pytest.raises(Exception):
         await contract.mint(owner=0x11, token_id=0x123).invoke()
-    
-    assert await contract.get_bricks(owner=0x11, index=0).call() == (0x123,)
-    assert await contract.get_bricks(owner=0x11, index=1).call() == (0x124,)
-    assert await contract.get_bricks(owner=0x11, index=2).call() == (0x125,)
+
+    assert await contract.token_at_index(owner=0x11, index=0).call() == (0x123,)
+    assert await contract.token_at_index(owner=0x11, index=1).call() == (0x124,)
+    assert await contract.token_at_index(owner=0x11, index=2).call() == (0x125,)
     with pytest.raises(Exception):
-        await contract.get_bricks(owner=0x11, index=3).call() 
+        await contract.token_at_index(owner=0x11, index=3).call() 
+    with pytest.raises(Exception):
+        await contract.token_at_index(owner=0x73, index=0).call() 
 
