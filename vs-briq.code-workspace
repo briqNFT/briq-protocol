@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cairols.venvCommand": ". venv/bin/activate"
+	}
+}
