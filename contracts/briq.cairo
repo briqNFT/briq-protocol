@@ -74,6 +74,32 @@ func token_at_index{
     return (retval)
 end
 
+@view
+func tokens_at_index{
+        storage_ptr: Storage*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, index: felt) -> (
+        res: felt,
+        res1: felt,
+        res2: felt,
+        res3: felt,
+        res4: felt):
+    alloc_locals
+    let (res) = balances.read(owner=owner)
+    assert_lt(index, res)
+    let(local retval0: felt) = balance_details.read(owner=owner, index=index)
+    let(local retval1: felt) = balance_details.read(owner=owner, index=index+1)
+    let(local retval2: felt) = balance_details.read(owner=owner, index=index+2)
+    let(local retval3: felt) = balance_details.read(owner=owner, index=index+3)
+    let(local retval4: felt) = balance_details.read(owner=owner, index=index+4)
+    return (retval0,
+        res1=retval1,
+        res2=retval2,
+        res3=retval3,
+        res4=retval4)
+end
+
 func _mint{
         storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
