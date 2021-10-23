@@ -61,9 +61,11 @@ def dispatch_inputs(name, inputs):
         return [str(inputs["token_id"])]
     if name == "mint":
         return [str(inputs["owner"]), str(inputs["token_id"]), str(inputs["material"])]
+    if name == "transfer_from":
+        return [str(inputs["sender"]), str(inputs["recipient"]), str(inputs["token_id"])]
 
 def get_call_invoke(name):
-    if name == "mint":
+    if name == "mint" or name == "transfer_from":
         return "invoke"
     return "call"
 
@@ -115,7 +117,8 @@ async def get_bricks(owner):
                 "error": "Error fetching brick data", "code": 500
             }, 500
         for j in range(0, min(balance - i*20, 20)):
-            ret.append((hex(int(bricks[j*2])), int(bricks[j*2+1])))
+            # First token ID, then material, then part-of-set.
+            ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
     return {
         "code": 200,
         "value": ret
