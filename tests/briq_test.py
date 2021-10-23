@@ -36,7 +36,7 @@ async def test_tokens():
     with pytest.raises(Exception):
         await contract.token_at_index(owner=0x73, index=0).call()
     
-    assert await contract.tokens_at_index(owner=0x11, index=0).call() == (0x123, 0x124, 0x125, 0, 0,)
+    assert await contract.tokens_at_index(owner=0x11, index=0).call() == ()
 
 
 @pytest.mark.asyncio
@@ -48,4 +48,4 @@ async def test_illegal_material():
     contract = await starknet.deploy(CONTRACT_FILE)
 
     with pytest.raises(Exception):
-        await contract.mint(owner=0x73, token_id=0x85, material=2).invoke() 
+        await contract.mint(owner=0x73, token_id=0x85, material=0).invoke() 
