@@ -26,8 +26,9 @@ flask run
 curl http://localhost:5000/init
 ```
 
-Briq: 0x01fe597234df2e00d784b9872493df0012b71256e90a3dc0276b67d1aa36dd5b
-Set: 0x07be2ddcd1bdb5f8c78203d488c231572550c180e82d6710be998dd295735222
+export ADDRESS="0x01fe597234df2e00d784b9872493df0012b71256e90a3dc0276b67d1aa36dd5b"
+export SET_ADDRESS="0x03989dafaa2d3dd2a08a56ce8f15dfc82e46fa1324e54a46940218a778567598"
+
 
 curl --header "Content-Type: application/json" \
   --request POST \

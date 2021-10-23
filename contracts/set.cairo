@@ -118,26 +118,12 @@ func mint{
 end
 
 @external
-func get_next_uid{
-        storage_ptr: Storage*,
-        pedersen_ptr: HashBuiltin*,
-        syscall_ptr: felt*,
-        range_check_ptr
-    } () -> (res: felt):
-    let (id) = uuid.read()
-    uuid.write(id + 1)
-    return (id)
-end
-
-@external
 func mint_working{
         storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
     } (owner: felt, token_id: felt):
-    let (id) = uuid.read()
-    uuid.write(id + 1)
     _mint(owner, token_id)
     return ()
 end

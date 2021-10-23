@@ -135,17 +135,20 @@ def get_bricks(owner):
     }
 
 import json
+import random
+import time
+
+random.seed()
 
 @app.route("/store_set", methods=["POST"])
 def store_set():
-    data = request.get_json()["data"]
+    req = request.get_json()
+    data = req["data"]
     bricks = ["0x123", "0x124", "0x125"]
     
-    comm = get_command(False, "get_next_uid", [], SET_ADDRESS)
-    print(" ".join(comm))
-    token_id = cli_call(comm)["value"]
-
-    comm = get_command(True, "mint_working", ["0x11", str(token_id)], SET_ADDRESS)
+    token_id = int(time.time()) + random.randint(0, 10000000)
+    
+    comm = get_command(True, "mint_working", [req["owner"], str(token_id)], SET_ADDRESS)
     #comm = get_command(True, "mint", [str(len(bricks)+1), "0x11"] + bricks, SET_ADDRESS)
     print(" ".join(comm))
     res = cli_call(comm, full_res=True)["value"].split("\n")[2]
