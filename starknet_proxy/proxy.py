@@ -28,11 +28,14 @@ def get_command(invoke, funcname, inputs, addr = ADDRESS):
             "--abi", "briq_abi.json" if addr == ADDRESS else "set_abi.json",
             "--function", funcname] + (["--inputs"] + inputs if len(inputs) else []) + default_args
 
-def cli_call(command):
+def cli_call(command, full_res=False):
     proc = subprocess.run(args=command, capture_output=True)
     val = None
     try:
-        val = proc.stdout.decode('utf-8').split("\n")[0]
+        if full_res:
+            val  = proc.stdout.decode('utf-8')
+        else:
+            val = proc.stdout.decode('utf-8').split("\n")[0]
     except Exception:
         pass
     if proc.returncode == 0:
@@ -131,11 +134,51 @@ async def get_bricks(owner):
         "value": ret
     }
 
+import json
+
 @app.route("/store_set", methods=["POST"])
 async def store_set():
     data = request.get_json()["data"]
     bricks = ["0x123", "0x124", "0x125"]
-    comm = get_command(True, "mint", ["0x11", str(len(bricks))] + bricks, SET_ADDRESS)
+    
+    comm = get_command(False, "get_next_uid", [], SET_ADDRESS)
     print(" ".join(comm))
-    print(cli_call(comm))
-    return "ok", 200
+    token_id = cli_call(comm)["value"]
+
+    comm = get_command(True, "mint_working", ["0x11", str(token_id)], SET_ADDRESS)
+    #comm = get_command(True, "mint", [str(len(bricks)+1), "0x11"] + bricks, SET_ADDRESS)
+    print(" ".join(comm))
+    res = cli_call(comm, full_res=True)["value"].split("\n")[2]
+    print(res)
+
+    open(f"temp/{token_id}.json", "w").write(json.dumps(data))
+
+    return {
+        "code": 200,
+        "value": token_id
+    }, 200
+
+
+@app.route("/store_get/<token_id>", methods=["POST"])
+async def store_get(token_id):
+    comm = get_command(False, "owner_of", [str(token_id)], SET_ADDRESS)
+    print(" ".join(comm))
+    print(f"Owner is {cli_call(comm)['value']}")
+
+
+    try:
+        data = json.loads(open(f"temp/{token_id}.json", "r").read())
+        print(data)
+    except Exception as e:
+        print(e)
+        return {
+            "code": 500,
+            "error": "File not found"
+        }, 500
+
+    return {
+        "code": 200,
+        "owner": cli_call(comm)['value'],
+        "token_id": token_id,
+        "data": data
+    }, 200

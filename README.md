@@ -10,10 +10,11 @@
 ```sh
 export STARKNET_NETWORK=alpha
 starknet-devnet --port 4999
-export GATEWAY_URL="http://localhost:4999"
-export FEEDER_GATEWAY_URL="http://localhost:4999"
 
 scripts/compile.sh
+
+export GATEWAY_URL="http://localhost:4999"
+export FEEDER_GATEWAY_URL="http://localhost:4999"
 ADD=$(starknet deploy --contract briq.json --gateway_url $GATEWAY_URL --feeder_gateway_url $FEEDER_GATEWAY_URL | grep "Contract")
 export ADDRESS=$(echo $ADD | sed "s/Contract address: //")
 ADD=$(starknet deploy --contract set.json --gateway_url $GATEWAY_URL --feeder_gateway_url $FEEDER_GATEWAY_URL | grep "Contract")

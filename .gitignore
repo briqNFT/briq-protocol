@@ -9,3 +9,5 @@ set.json
 set_abi.json
 
 .env
+
+temp/
