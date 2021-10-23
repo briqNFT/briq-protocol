@@ -1,0 +1,117 @@
+[
+    {
+        "inputs": [],
+        "name": "initialize",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "balance_of",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "owner_of",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "token_at_index",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a_len",
+                "type": "felt"
+            },
+            {
+                "name": "a",
+                "type": "felt*"
+            }
+        ],
+        "name": "mint",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "mint_working",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transfer_from",
+        "outputs": [],
+        "type": "function"
+    }
+]

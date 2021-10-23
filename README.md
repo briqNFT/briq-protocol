@@ -1,7 +1,9 @@
 
-```pip3 install```
-
 ```source venv/bin/activate```
+
+```pip3 install -r requirements```
+```pip3 install flask_async```
+
 
 
 `pytest`

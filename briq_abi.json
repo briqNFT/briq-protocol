@@ -1,0 +1,390 @@
+[
+    {
+        "inputs": [],
+        "name": "initialize",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "balance_of",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "owner_of",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "token_data",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "(felt, felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "token_at_index",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "mint",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "set",
+                "type": "felt"
+            }
+        ],
+        "name": "set_part_of_set",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transfer_from",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "tokens_at_index",
+        "outputs": [
+            {
+                "name": "ret0",
+                "type": "felt"
+            },
+            {
+                "name": "rMat0",
+                "type": "felt"
+            },
+            {
+                "name": "rSet0",
+                "type": "felt"
+            },
+            {
+                "name": "ret1",
+                "type": "felt"
+            },
+            {
+                "name": "rMat1",
+                "type": "felt"
+            },
+            {
+                "name": "rSet1",
+                "type": "felt"
+            },
+            {
+                "name": "ret2",
+                "type": "felt"
+            },
+            {
+                "name": "rMat2",
+                "type": "felt"
+            },
+            {
+                "name": "rSet2",
+                "type": "felt"
+            },
+            {
+                "name": "ret3",
+                "type": "felt"
+            },
+            {
+                "name": "rMat3",
+                "type": "felt"
+            },
+            {
+                "name": "rSet3",
+                "type": "felt"
+            },
+            {
+                "name": "ret4",
+                "type": "felt"
+            },
+            {
+                "name": "rMat4",
+                "type": "felt"
+            },
+            {
+                "name": "rSet4",
+                "type": "felt"
+            },
+            {
+                "name": "ret5",
+                "type": "felt"
+            },
+            {
+                "name": "rMat5",
+                "type": "felt"
+            },
+            {
+                "name": "rSet5",
+                "type": "felt"
+            },
+            {
+                "name": "ret6",
+                "type": "felt"
+            },
+            {
+                "name": "rMat6",
+                "type": "felt"
+            },
+            {
+                "name": "rSet6",
+                "type": "felt"
+            },
+            {
+                "name": "ret7",
+                "type": "felt"
+            },
+            {
+                "name": "rMat7",
+                "type": "felt"
+            },
+            {
+                "name": "rSet7",
+                "type": "felt"
+            },
+            {
+                "name": "ret8",
+                "type": "felt"
+            },
+            {
+                "name": "rMat8",
+                "type": "felt"
+            },
+            {
+                "name": "rSet8",
+                "type": "felt"
+            },
+            {
+                "name": "ret9",
+                "type": "felt"
+            },
+            {
+                "name": "rMat9",
+                "type": "felt"
+            },
+            {
+                "name": "rSet9",
+                "type": "felt"
+            },
+            {
+                "name": "ret10",
+                "type": "felt"
+            },
+            {
+                "name": "rMat10",
+                "type": "felt"
+            },
+            {
+                "name": "rSet10",
+                "type": "felt"
+            },
+            {
+                "name": "ret11",
+                "type": "felt"
+            },
+            {
+                "name": "rMat11",
+                "type": "felt"
+            },
+            {
+                "name": "rSet11",
+                "type": "felt"
+            },
+            {
+                "name": "ret12",
+                "type": "felt"
+            },
+            {
+                "name": "rMat12",
+                "type": "felt"
+            },
+            {
+                "name": "rSet12",
+                "type": "felt"
+            },
+            {
+                "name": "ret13",
+                "type": "felt"
+            },
+            {
+                "name": "rMat13",
+                "type": "felt"
+            },
+            {
+                "name": "rSet13",
+                "type": "felt"
+            },
+            {
+                "name": "ret14",
+                "type": "felt"
+            },
+            {
+                "name": "rMat14",
+                "type": "felt"
+            },
+            {
+                "name": "rSet14",
+                "type": "felt"
+            },
+            {
+                "name": "ret15",
+                "type": "felt"
+            },
+            {
+                "name": "rMat15",
+                "type": "felt"
+            },
+            {
+                "name": "rSet15",
+                "type": "felt"
+            },
+            {
+                "name": "ret16",
+                "type": "felt"
+            },
+            {
+                "name": "rMat16",
+                "type": "felt"
+            },
+            {
+                "name": "rSet16",
+                "type": "felt"
+            },
+            {
+                "name": "ret17",
+                "type": "felt"
+            },
+            {
+                "name": "rMat17",
+                "type": "felt"
+            },
+            {
+                "name": "rSet17",
+                "type": "felt"
+            },
+            {
+                "name": "ret18",
+                "type": "felt"
+            },
+            {
+                "name": "rMat18",
+                "type": "felt"
+            },
+            {
+                "name": "rSet18",
+                "type": "felt"
+            },
+            {
+                "name": "ret19",
+                "type": "felt"
+            },
+            {
+                "name": "rMat19",
+                "type": "felt"
+            },
+            {
+                "name": "rSet19",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

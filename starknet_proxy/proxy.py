@@ -4,7 +4,9 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__,
+    static_url_path='/',
+    static_folder='../../brq-builder/dist/',)
 CORS(app)
 
 ADDRESS = os.environ.get("ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
