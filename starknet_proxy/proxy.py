@@ -12,7 +12,7 @@ SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x032558a3801160d4fec8db90a143e2
 GATEWAY_URL = os.environ.get("GATEWAY_URL") or None
 FEEDER_GATEWAY_URL = os.environ.get("FEEDER_GATEWAY_URL") or None
 
-default_args = []
+default_args = ["--network", "alpha"]
 if (GATEWAY_URL is not None):
     default_args = [
         "--gateway_url", GATEWAY_URL,

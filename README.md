@@ -26,8 +26,8 @@ flask run
 curl http://localhost:5000/init
 ```
 
-
-First version: 0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16
+Briq: 0x01fe597234df2e00d784b9872493df0012b71256e90a3dc0276b67d1aa36dd5b
+Set: 0x07be2ddcd1bdb5f8c78203d488c231572550c180e82d6710be998dd295735222
 
 curl --header "Content-Type: application/json" \
   --request POST \
