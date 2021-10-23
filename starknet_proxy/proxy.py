@@ -50,12 +50,12 @@ def cli_call(command, full_res=False):
     }
 
 @app.route("/init")
-async def init():
+def init():
     cli_call(get_command(True, "initialize", [], SET_ADDRESS))
     return "ok"
 
 @app.route("/call_func/<name>", methods=["GET", "POST"])
-async def call_func(name):
+def call_func(name):
     try:
         inputs = dispatch_inputs(name, request.get_json()["inputs"])
     except Exception as e:
@@ -104,7 +104,7 @@ def get_call_invoke(name):
     return "call"
 
 @app.route("/get_bricks/<owner>", methods=["GET", "POST"])
-async def get_bricks(owner):
+def get_bricks(owner):
     comm = get_command(False, "balance_of", [str(owner)])
     print(" ".join(comm))
     try:
@@ -137,7 +137,7 @@ async def get_bricks(owner):
 import json
 
 @app.route("/store_set", methods=["POST"])
-async def store_set():
+def store_set():
     data = request.get_json()["data"]
     bricks = ["0x123", "0x124", "0x125"]
     
@@ -160,11 +160,15 @@ async def store_set():
 
 
 @app.route("/store_get/<token_id>", methods=["POST"])
-async def store_get(token_id):
+def store_get(token_id):
     comm = get_command(False, "owner_of", [str(token_id)], SET_ADDRESS)
     print(" ".join(comm))
-    print(f"Owner is {cli_call(comm)['value']}")
-
+    owner = cli_call(comm)['value']
+    print(f"Owner is {owner}")
+    if owner == 0:
+        return {
+            "error": "doesn't exist"
+        }, 500
 
     try:
         data = json.loads(open(f"temp/{token_id}.json", "r").read())
@@ -178,7 +182,7 @@ async def store_get(token_id):
 
     return {
         "code": 200,
-        "owner": cli_call(comm)['value'],
+        "owner": owner,
         "token_id": token_id,
         "data": data
     }, 200
