@@ -30,8 +30,7 @@ def get_command(invoke, funcname, inputs, addr = ADDRESS):
             "--abi", "briq_abi.json" if addr == ADDRESS else "set_abi.json",
             "--function", funcname] + (["--inputs"] + inputs if len(inputs) else []) + default_args
 
-def cli_call(command, full_res=False):
-    proc = subprocess.run(args=command, capture_output=True)
+def parse_cli_answer(proc, full_res=False):
     val = None
     try:
         if full_res:
@@ -50,6 +49,31 @@ def cli_call(command, full_res=False):
         "stdout": str(proc.stdout.decode('utf-8')),
         "stderr": str(proc.stderr.decode('utf-8'))
     }
+
+
+def parse_cli_answer_async(proc, full_res=False):
+    val = None
+    try:
+        if full_res:
+            val  = proc.stdout.read().decode('utf-8')
+        else:
+            val = proc.stdout.read().decode('utf-8').split("\n")[0]
+    except Exception:
+        pass
+    if proc.returncode == 0:
+        return {
+            "code": proc.returncode,
+            "value": val
+        }
+    return {
+        "code": proc.returncode,
+        "stdout": str(proc.stdout.read().decode('utf-8')),
+        "stderr": str(proc.stderr.read().decode('utf-8'))
+    }
+
+def cli_call(command, full_res=False):
+    proc = subprocess.run(args=command, capture_output=True)
+    return parse_cli_answer(proc, full_res)
 
 @app.route("/init")
 def init():
@@ -127,6 +151,8 @@ def mint_bricks(owner):
 
 @app.route("/get_bricks/<owner>", methods=["GET", "POST"])
 def get_bricks(owner):
+    comm = get_command(False, "tokens_at_index", [str(owner), "0"])
+    proc = subprocess.Popen(args=comm, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     comm = get_command(False, "balance_of", [str(owner)])
     print(" ".join(comm))
     try:
@@ -137,10 +163,9 @@ def get_bricks(owner):
             "error": "Could not get the balance", "code": 500
         }, 500
     runs = balance // 20 + 1
-    print(f"runs: {runs}")
     ret = []
-    for i in range(0, runs):
-        comm = get_command(False, "tokens_at_index", [str(owner), str(i)])
+    for i in range(1, runs):
+        comm = get_command(False, "tokens_at_index", [str(owner), str(i*20)])
         print(" ".join(comm))
         try:
             bricks = cli_call(comm)["value"].split(" ")
@@ -151,6 +176,12 @@ def get_bricks(owner):
         for j in range(0, min(balance - i*20, 20)):
             # First token ID, then material, then part-of-set.
             ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
+    proc.wait()
+    bricks = parse_cli_answer_async(proc)["value"].split(" ")
+    for j in range(0, min(balance, 20)):
+        # First token ID, then material, then part-of-set.
+        ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
+    print(ret)
     return {
         "code": 200,
         "value": ret
