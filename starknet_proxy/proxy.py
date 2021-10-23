@@ -181,7 +181,6 @@ def get_bricks(owner):
     for j in range(0, min(balance, 20)):
         # First token ID, then material, then part-of-set.
         ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
-    print(ret)
     return {
         "code": 200,
         "value": ret
@@ -224,10 +223,10 @@ def store_set():
 def store_get(token_id):
     comm = get_command(False, "owner_of", [str(token_id)], SET_ADDRESS)
     print(" ".join(comm))
-    owner = cli_call(comm)['value']
-    print(f"Owner is {owner}")
+    owner = int(cli_call(comm)['value'])
     if owner == 0:
         return {
+            "code": 500,
             "error": "doesn't exist"
         }, 500
 
