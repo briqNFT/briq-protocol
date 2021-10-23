@@ -7,6 +7,22 @@ from starkware.starknet.testing.starknet import Starknet
 CONTRACT_FILE = os.path.join(
     os.path.dirname(__file__), "../contracts/briq.cairo")
 
+SET_CONTRACT_FILE = os.path.join(
+    os.path.dirname(__file__), "../contracts/set.cairo")
+
+
+@pytest.mark.asyncio
+async def test_multi():
+    # Create a new Starknet class that simulates the StarkNet
+    starknet = await Starknet.empty()
+
+    # Deploy the contract.
+    contract = await starknet.deploy(CONTRACT_FILE)
+    set_contract = await starknet.deploy(SET_CONTRACT_FILE)
+
+    await contract.mint_multiple(owner=0x11, material=1, token_start=0x100, nb=10).invoke()
+    await set_contract.mint(owner=0x11, token_id=0x11, bricks=[1, 2]).invoke()
+
 @pytest.mark.asyncio
 async def test_transfer():
     # Create a new Starknet class that simulates the StarkNet
