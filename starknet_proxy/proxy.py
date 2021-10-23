@@ -6,8 +6,7 @@ from flask_cors import CORS
 
 app = Flask(__name__,
     static_url_path='/',
-    static_folder='../../brq-builder/dist/',
-    processes=4)
+    static_folder='../../brq-builder/dist/')
 CORS(app)
 
 ADDRESS = os.environ.get("ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
@@ -114,6 +113,18 @@ def get_call_invoke(name):
         return "invoke"
     return "call"
 
+@app.route("/mint_bricks/<owner>", methods=["GET", "POST"])
+def mint_bricks(owner):
+    req = request.get_json()
+    comm = get_command(True, "mint_multiple", [str(owner), str(req["material"]), str(req["token_start"]), str(req["nb"])])
+    print(" ".join(comm))
+    res = cli_call(comm, full_res=True)["value"].split("\n")[2]
+    print(res)
+
+    return {
+        "code": 200
+    }, 200
+
 @app.route("/get_bricks/<owner>", methods=["GET", "POST"])
 def get_bricks(owner):
     comm = get_command(False, "balance_of", [str(owner)])
@@ -156,11 +167,11 @@ random.seed()
 def store_set():
     req = request.get_json()
     data = req["data"]
-    bricks = ["0x123", "0x124", "0x125"]
+    bricks = [str(x) for x  in req["used_cells"]]
     
     token_id = int(time.time()) + random.randint(0, 10000000)
     
-    comm = get_command(True, "mint", [req["owner"], str(token_id), "2", "0x123", "0x124"], SET_ADDRESS)
+    comm = get_command(True, "mint", [req["owner"], str(token_id), str(len(bricks))] + bricks, SET_ADDRESS)
     #comm = get_command(True, "mint", [str(len(bricks)+1), "0x11"] + bricks, SET_ADDRESS)
     print(" ".join(comm))
     res = cli_call(comm, full_res=True)["value"].split("\n")[2]
@@ -206,7 +217,7 @@ def store_get(token_id):
         "data": data
     }, 200
 
-@app.route("/store_list", methods=["GET"])
+@app.route("/store_list", methods=["GET", "POST"])
 def store_list():
     return {
         "code": 200,

@@ -122,6 +122,22 @@ func mint{
 end
 
 @external
+func mint_multiple{
+        storage_ptr: Storage*,
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt, material:felt, token_start: felt, nb: felt):
+    assert_not_zero(material)
+    if nb == 0:
+        return ()
+    end
+    _mint(owner, token_start + nb, material)
+    mint_multiple(owner, material, token_start, nb - 1)
+    return ()
+end
+
+@external
 func set_part_of_set{
         storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
@@ -132,7 +148,6 @@ func set_part_of_set{
     assert curr_set = 0
     let (curr_owner) = owner.read(token_id)
     assert_not_zero(curr_owner)
-    let (caller) = get_caller_address()
     part_of_set.write(token_id, set)
     return ()
 end

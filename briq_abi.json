@@ -99,6 +99,29 @@
     {
         "inputs": [
             {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "token_start",
+                "type": "felt"
+            },
+            {
+                "name": "nb",
+                "type": "felt"
+            }
+        ],
+        "name": "mint_multiple",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "name": "token_id",
                 "type": "felt"
             },
