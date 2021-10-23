@@ -26,10 +26,11 @@ export FLASK_APP=starknet_proxy.proxy
 flask run
 
 curl http://localhost:5000/init
+curl http://localhost:5000/set_contract
 ```
 
-export ADDRESS="0x01fe597234df2e00d784b9872493df0012b71256e90a3dc0276b67d1aa36dd5b"
-export SET_ADDRESS="0x03989dafaa2d3dd2a08a56ce8f15dfc82e46fa1324e54a46940218a778567598"
+export ADDRESS="0x000a2192fdd9aac53c9bb014b17ba1db3e35a45d31edae94b36e816f80211213"
+export SET_ADDRESS="0x03f2b00bdb28a9af0c8d8ec3ed66c798327cf2d71091ed95cfadcff604f4b9a2"
 
 
 curl --header "Content-Type: application/json" \

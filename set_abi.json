@@ -63,11 +63,30 @@
     {
         "inputs": [
             {
-                "name": "a_len",
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "set_briq_contract",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
                 "type": "felt"
             },
             {
-                "name": "a",
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "bricks_len",
+                "type": "felt"
+            },
+            {
+                "name": "bricks",
                 "type": "felt*"
             }
         ],

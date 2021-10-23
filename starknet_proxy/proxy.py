@@ -6,7 +6,8 @@ from flask_cors import CORS
 
 app = Flask(__name__,
     static_url_path='/',
-    static_folder='../../brq-builder/dist/',)
+    static_folder='../../brq-builder/dist/',
+    processes=4)
 CORS(app)
 
 ADDRESS = os.environ.get("ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
@@ -54,7 +55,15 @@ def cli_call(command, full_res=False):
 @app.route("/init")
 def init():
     cli_call(get_command(True, "initialize", [], SET_ADDRESS))
+    cli_call(get_command(True, "set_briq_contract", [ADDRESS], SET_ADDRESS))
     return "ok"
+
+
+@app.route("/set_contract")
+def set_contract():
+    cli_call(get_command(True, "set_briq_contract", [ADDRESS], SET_ADDRESS))
+    return "ok"
+
 
 @app.route("/call_func/<name>", methods=["GET", "POST"])
 def call_func(name):
@@ -139,6 +148,7 @@ def get_bricks(owner):
 import json
 import random
 import time
+import os
 
 random.seed()
 
@@ -150,12 +160,16 @@ def store_set():
     
     token_id = int(time.time()) + random.randint(0, 10000000)
     
-    comm = get_command(True, "mint_working", [req["owner"], str(token_id)], SET_ADDRESS)
+    comm = get_command(True, "mint", [req["owner"], str(token_id), "2", "0x123", "0x124"], SET_ADDRESS)
     #comm = get_command(True, "mint", [str(len(bricks)+1), "0x11"] + bricks, SET_ADDRESS)
     print(" ".join(comm))
     res = cli_call(comm, full_res=True)["value"].split("\n")[2]
     print(res)
 
+    try:
+        os.mkdir("temp/")
+    except:
+        pass
     open(f"temp/{token_id}.json", "w").write(json.dumps(data))
 
     return {
@@ -190,4 +204,11 @@ def store_get(token_id):
         "owner": owner,
         "token_id": token_id,
         "data": data
+    }, 200
+
+@app.route("/store_list", methods=["GET"])
+def store_list():
+    return {
+        "code": 200,
+        "sets": [x for x in os.listdir("temp/") if x.endswith(".json")]
     }, 200

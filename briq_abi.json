@@ -114,6 +114,25 @@
     {
         "inputs": [
             {
+                "name": "set_id",
+                "type": "felt"
+            },
+            {
+                "name": "bricks_len",
+                "type": "felt"
+            },
+            {
+                "name": "bricks",
+                "type": "felt*"
+            }
+        ],
+        "name": "set_bricks_to_set",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "name": "sender",
                 "type": "felt"
             },

@@ -12,6 +12,8 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_not_zero
 namespace IBriqContract:
     func transfer_from(sender: felt, recipient: felt, token_id: felt):
     end
+    func set_bricks_to_set(set_id: felt, bricks_len: felt, bricks: felt*):
+    end
 end
 
 
@@ -38,6 +40,10 @@ end
 
 @storage_var
 func initialized() -> (res: felt):
+end
+
+@storage_var
+func briq_contract() -> (res: felt):
 end
 
 #### Specific bit
@@ -88,6 +94,17 @@ func token_at_index{
     return (retval)
 end
 
+@external
+func set_briq_contract{
+        storage_ptr: Storage*,
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (address: felt):
+    briq_contract.write(address)
+    return ()
+end
+
 func _mint{
         storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
@@ -109,11 +126,12 @@ func mint{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (a_len: felt, a: felt*) -> (res: felt):
-    #let (id) = uuid.read()
-    #uuid.write(id + 1)
-    #let (owner) = [a]
-    #_mint(owner, id)
+    } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*) -> (res: felt):
+    alloc_locals
+    _mint(owner, token_id)
+    let (addr) = briq_contract.read()
+    local pedersen_ptr: HashBuiltin* = pedersen_ptr
+    IBriqContract.set_bricks_to_set(contract_address=addr, set_id=token_id, bricks_len=bricks_len, bricks=bricks)
     return (0)
 end
 

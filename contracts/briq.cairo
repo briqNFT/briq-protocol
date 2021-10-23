@@ -130,7 +130,26 @@ func set_part_of_set{
     } (token_id: felt, set: felt):
     let (curr_set) = part_of_set.read(token_id)
     assert curr_set = 0
+    let (curr_owner) = owner.read(token_id)
+    assert_not_zero(curr_owner)
     let (caller) = get_caller_address()
+    part_of_set.write(token_id, set)
+    return ()
+end
+
+@external
+func set_bricks_to_set{
+        storage_ptr: Storage*,
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (set_id: felt, bricks_len: felt, bricks: felt*):
+    # TODO: assert reasonable range
+    if bricks_len == 0:
+        return ()
+    end
+    set_part_of_set(token_id = [bricks + bricks_len - 1], set=set_id)
+    set_bricks_to_set(set_id=set_id, bricks_len=bricks_len-1, bricks=bricks)
     return ()
 end
 
