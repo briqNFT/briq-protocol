@@ -32,6 +32,11 @@ func balance_details(owner: felt, index: felt) -> (res: felt):
 end
 
 @storage_var
+func uuid() -> (res: felt):
+end
+
+
+@storage_var
 func initialized() -> (res: felt):
 end
 
@@ -47,6 +52,7 @@ func initialize{
     let (_initialized) = initialized.read()
     assert _initialized = 0
     initialized.write(1)
+    uuid.write(1)
     return ()
 end
 
@@ -87,7 +93,7 @@ func _mint{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (recipient: felt, token_id: felt, mat: felt):
+    } (recipient: felt, token_id: felt):
     let (curr_owner) = owner.read(token_id)
     assert curr_owner = 0
     let (res) = balances.read(owner=recipient)
@@ -103,10 +109,11 @@ func mint{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (owner: felt, token_id: felt, material: felt):
-    assert_not_zero(material)
-    _mint(owner, token_id, material)
-    return ()
+    } (owner: felt, bricks_len: felt, bricks: felt*) -> (res: felt):
+    let (id) = uuid.read()
+    uuid.write(id + 1)
+    _mint(owner, id)
+    return (id)
 end
 
 func _transfer{

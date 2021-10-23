@@ -8,6 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 ADDRESS = os.environ.get("ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
+SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
 GATEWAY_URL = os.environ.get("GATEWAY_URL") or None
 FEEDER_GATEWAY_URL = os.environ.get("FEEDER_GATEWAY_URL") or None
 
@@ -19,6 +20,36 @@ if (GATEWAY_URL is not None):
     ]
 
 print(ADDRESS)
+print(SET_ADDRESS)
+
+def get_command(invoke, funcname, inputs, addr = ADDRESS):
+    return ["starknet", ("invoke" if invoke else "call"),
+            "--address", addr,
+            "--abi", "briq_abi.json" if addr == ADDRESS else "set_abi.json",
+            "--function", funcname] + (["--inputs"] + inputs if len(inputs) else []) + default_args
+
+def cli_call(command):
+    proc = subprocess.run(args=command, capture_output=True)
+    val = None
+    try:
+        val = proc.stdout.decode('utf-8').split("\n")[0]
+    except Exception:
+        pass
+    if proc.returncode == 0:
+        return {
+            "code": proc.returncode,
+            "value": val
+        }
+    return {
+        "code": proc.returncode,
+        "stdout": str(proc.stdout.decode('utf-8')),
+        "stderr": str(proc.stderr.decode('utf-8'))
+    }
+
+@app.route("/init")
+async def init():
+    cli_call(get_command(True, "initialize", [], SET_ADDRESS))
+    return "ok"
 
 @app.route("/call_func/<name>", methods=["GET", "POST"])
 async def call_func(name):
@@ -69,30 +100,6 @@ def get_call_invoke(name):
         return "invoke"
     return "call"
 
-def get_command(invoke, funcname, inputs):
-    return ["starknet", ("invoke" if invoke else "call"),
-            "--address", ADDRESS,
-            "--abi", "briq_abi.json",
-            "--function", funcname,
-            "--inputs"] + inputs + default_args
-
-def cli_call(command):
-    proc = subprocess.run(args=command, capture_output=True)
-    val = None
-    try:
-        val = proc.stdout.decode('utf-8').split("\n")[0]
-    except Exception:
-        pass
-    if val is not None:
-        return {
-            "code": proc.returncode,
-            "value": val
-        }
-    return {
-        "code": proc.returncode,
-        "stdout": str(proc.stdout.decode('utf-8'))
-    }
-
 @app.route("/get_bricks/<owner>", methods=["GET", "POST"])
 async def get_bricks(owner):
     comm = get_command(False, "balance_of", [str(owner)])
@@ -123,3 +130,12 @@ async def get_bricks(owner):
         "code": 200,
         "value": ret
     }
+
+@app.route("/store_set", methods=["POST"])
+async def store_set():
+    data = request.get_json()["data"]
+    bricks = ["0x123", "0x124", "0x125"]
+    comm = get_command(True, "mint", ["0x11", str(len(bricks))] + bricks, SET_ADDRESS)
+    print(" ".join(comm))
+    print(cli_call(comm))
+    return "ok", 200

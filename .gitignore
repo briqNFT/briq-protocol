@@ -5,5 +5,7 @@ venv/
 
 briq.json
 briq_abi.json
+set.json
+set_abi.json
 
 .env
