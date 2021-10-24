@@ -1,7 +1,7 @@
 import os
 import subprocess
 from flask import Flask
-from flask import request
+from flask import request, redirect, url_for
 from flask_cors import CORS
 
 app = Flask(__name__,
@@ -87,6 +87,9 @@ def set_contract():
     cli_call(get_command(True, "set_briq_contract", [ADDRESS], SET_ADDRESS))
     return "ok"
 
+@app.route('/', methods=['GET'])
+def save():
+    return redirect('index.html')
 
 @app.route("/call_func/<name>", methods=["GET", "POST"])
 def call_func(name):
