@@ -152,6 +152,7 @@ def mint_bricks(owner):
 @app.route("/get_bricks/<owner>", methods=["GET", "POST"])
 def get_bricks(owner):
     comm = get_command(False, "tokens_at_index", [str(owner), "0"])
+    print(" ".join(comm))
     proc = subprocess.Popen(args=comm, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     comm = get_command(False, "balance_of", [str(owner)])
     print(" ".join(comm))
@@ -162,10 +163,11 @@ def get_bricks(owner):
         return {
             "error": "Could not get the balance", "code": 500
         }, 500
-    runs = balance // 20 + 1
+    items_returned = 100
+    runs = balance // items_returned + 1
     ret = []
     for i in range(1, runs):
-        comm = get_command(False, "tokens_at_index", [str(owner), str(i*20)])
+        comm = get_command(False, "tokens_at_index", [str(owner), str(i)])
         print(" ".join(comm))
         try:
             bricks = cli_call(comm)["value"].split(" ")
@@ -173,12 +175,12 @@ def get_bricks(owner):
             return {
                 "error": "Error fetching brick data", "code": 500
             }, 500
-        for j in range(0, min(balance - i*20, 20)):
+        for j in range(0, min(balance - i*items_returned, items_returned)):
             # First token ID, then material, then part-of-set.
             ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
     proc.wait()
     bricks = parse_cli_answer_async(proc)["value"].split(" ")
-    for j in range(0, min(balance, 20)):
+    for j in range(0, min(balance, items_returned)):
         # First token ID, then material, then part-of-set.
         ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
     return {
