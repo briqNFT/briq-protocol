@@ -6,6 +6,8 @@ venv/
 briq.json
 set.json
 
+*.log
+
 .env
 
 temp/

@@ -72,7 +72,7 @@ def parse_cli_answer_async(proc, full_res=False):
     }
 
 def cli_call(command, full_res=False):
-    proc = subprocess.run(args=command, capture_output=True)
+    proc = subprocess.run(args=command, capture_output=True, timeout=30)
     return parse_cli_answer(proc, full_res)
 
 @app.route("/init")
@@ -181,7 +181,7 @@ def get_bricks(owner):
         for j in range(0, min(balance - i*items_returned, items_returned)):
             # First token ID, then material, then part-of-set.
             ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
-    proc.wait()
+    proc.wait(timeout=30)
     bricks = parse_cli_answer_async(proc)["value"].split(" ")
     for j in range(0, min(balance, items_returned)):
         # First token ID, then material, then part-of-set.
