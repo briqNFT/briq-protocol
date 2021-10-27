@@ -1,8 +1,8 @@
 bind = ['0.0.0.0:5000']
 
 # Logging
-accesslog = "access.log"
-errorlog = "error.log"
+accesslog = "/var/log/sltech/gunicorn/access.log"
+errorlog = "/var/log/sltech/gunicorn/error.log"
 loglevel = "info"  # for error log
 
 # Worker configuration
