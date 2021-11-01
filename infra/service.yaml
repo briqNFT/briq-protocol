@@ -18,7 +18,7 @@ kind: BackendConfig
 metadata:
   name: briq-protocol
 spec:
-  timeoutSec: 5
+  timeoutSec: 60
   healthCheck:
     checkIntervalSec: 10
     timeoutSec: 5

@@ -5,7 +5,7 @@ from flask import request, redirect, url_for
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://sltech.company", "https://sltech.company"])
 
 ADDRESS = os.environ.get("ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
 SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
