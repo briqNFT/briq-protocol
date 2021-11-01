@@ -1,0 +1,8 @@
+#@data/values-schema
+---
+name: briq-protocol
+image_tag: ""
+#@schema/type any=True
+defaultLabels:
+  appname: briq-protocol
+  env: test

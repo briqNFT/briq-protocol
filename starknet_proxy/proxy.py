@@ -4,9 +4,7 @@ from flask import Flask
 from flask import request, redirect, url_for
 from flask_cors import CORS
 
-app = Flask(__name__,
-    static_url_path='/',
-    static_folder='../../brq-builder/dist/')
+app = Flask(__name__)
 CORS(app)
 
 ADDRESS = os.environ.get("ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
@@ -72,7 +70,7 @@ def parse_cli_answer_async(proc, full_res=False):
     }
 
 def cli_call(command, full_res=False):
-    proc = subprocess.run(args=command, capture_output=True, timeout=30)
+    proc = subprocess.run(args=command, capture_output=True, timeout=60)
     return parse_cli_answer(proc, full_res)
 
 @app.route("/init")
@@ -81,15 +79,14 @@ def init():
     cli_call(get_command(True, "set_briq_contract", [ADDRESS], SET_ADDRESS))
     return "ok"
 
-
 @app.route("/set_contract")
 def set_contract():
     cli_call(get_command(True, "set_briq_contract", [ADDRESS], SET_ADDRESS))
     return "ok"
 
-@app.route('/', methods=['GET'])
-def save():
-    return redirect('index.html')
+@app.route("/health")
+def health():
+    return "ok"
 
 @app.route("/call_func/<name>", methods=["GET", "POST"])
 def call_func(name):
@@ -181,7 +178,7 @@ def get_bricks(owner):
         for j in range(0, min(balance - i*items_returned, items_returned)):
             # First token ID, then material, then part-of-set.
             ret.append((hex(int(bricks[j*3])), int(bricks[j*3+1]), int(bricks[j*3+2])))
-    proc.wait(timeout=30)
+    proc.wait(timeout=60)
     bricks = parse_cli_answer_async(proc)["value"].split(" ")
     for j in range(0, min(balance, items_returned)):
         # First token ID, then material, then part-of-set.

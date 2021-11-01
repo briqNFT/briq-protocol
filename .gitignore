@@ -9,5 +9,6 @@ set.json
 *.log
 
 .env
+dist/
 
 temp/

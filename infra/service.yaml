@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: briq-protocol
+  annotations:
+    cloud.google.com/backend-config: '{"default": "briq-protocol"}'
+spec:
+  selector:
+    app: briq-protocol
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: briq-protocol
+spec:
+  timeoutSec: 5
+  healthCheck:
+    checkIntervalSec: 10
+    timeoutSec: 5
+    port: 5000
+    type: HTTP
+    requestPath: /health

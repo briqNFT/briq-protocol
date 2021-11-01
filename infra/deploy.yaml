@@ -1,0 +1,35 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: briq-protocol
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: briq-protocol
+  template:
+    metadata:
+      labels:
+        app: briq-protocol
+    spec:
+      containers:
+      - name: briq-protocol
+        image: #@ "europe-west3-docker.pkg.dev/healthy-saga-329513/sltech-briq/" + data.values.name + ":" + data.values.image_tag
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 2

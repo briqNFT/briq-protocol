@@ -1,0 +1,41 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: briq-protocol
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: lb-sltech-company-ipv4-1
+    networking.gke.io/v1beta1.FrontendConfig: "briq-protocol"
+    networking.gke.io/managed-certificates: #@ data.values.name + "-managed-cert"
+spec:
+  tls:
+  - secretName: sltech-company-tls
+  rules:
+  - host: api.sltech.company
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: briq-protocol
+            port:
+              number: 80
+---
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: briq-protocol
+spec:
+  redirectToHttps:
+    enabled: true
+    responseCodeName: "PERMANENT_REDIRECT"
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: #@ data.values.name + "-managed-cert"
+spec:
+  domains:
+    - api.sltech.company

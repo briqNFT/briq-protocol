@@ -3,7 +3,6 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
-from starkware.starknet.common.storage import Storage
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_not_zero
 
 
@@ -50,7 +49,6 @@ end
 
 @external
 func initialize{
-        storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
@@ -64,7 +62,7 @@ end
 
 @view
 func balance_of{
-        storage_ptr: Storage*,
+        syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt) -> (res: felt):
@@ -74,7 +72,7 @@ end
 
 @view
 func owner_of{
-        storage_ptr: Storage*,
+        syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (token_id: felt) -> (res: felt):
@@ -84,7 +82,7 @@ end
 
 @view
 func token_at_index{
-        storage_ptr: Storage*,
+        syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, index: felt) -> (res: felt):
@@ -96,7 +94,6 @@ end
 
 @external
 func set_briq_contract{
-        storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
@@ -106,7 +103,6 @@ func set_briq_contract{
 end
 
 func _mint{
-        storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
@@ -122,7 +118,6 @@ end
 
 @external
 func mint{
-        storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
@@ -137,7 +132,6 @@ end
 
 @external
 func mint_working{
-        storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
@@ -148,7 +142,7 @@ end
 
 
 func _transfer{
-        storage_ptr: Storage*,
+        syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
@@ -162,7 +156,6 @@ end
 
 @external
 func transfer_from{
-        storage_ptr: Storage*,
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
