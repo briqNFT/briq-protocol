@@ -20,6 +20,9 @@ spec:
         image: #@ "europe-west3-docker.pkg.dev/healthy-saga-329513/sltech-briq/" + data.values.name + ":" + data.values.image_tag
         ports:
         - containerPort: 5000
+        env:
+        - name: CLOUD_STORAGE_BUCKET
+          value: "briq-bucket-prod-1"
         resources:
           requests:
             cpu: "200m"

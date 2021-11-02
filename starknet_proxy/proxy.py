@@ -4,8 +4,12 @@ from flask import Flask
 from flask import request, redirect, url_for
 from flask_cors import CORS
 
+from starknet_proxy.storage import storage
+
 app = Flask(__name__)
-CORS(app, origins=["https://sltech.company", "https://www.sltech.company"])
+CORS(app, origins=["https://sltech.company", "https://www.sltech.company", "http://localhost:3000"])
+
+from .storage.storage import get_storage
 
 ADDRESS = os.environ.get("ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
 SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x032558a3801160d4fec8db90a143e225534a3a0de2fb791b370527b76bf18d16"
@@ -21,6 +25,9 @@ if (GATEWAY_URL is not None):
 
 print(ADDRESS)
 print(SET_ADDRESS)
+
+storage_client = get_storage()
+print(storage_client)
 
 def get_command(invoke, funcname, inputs, addr = ADDRESS):
     return ["starknet", ("invoke" if invoke else "call"),
@@ -209,11 +216,8 @@ def store_set():
     res = cli_call(comm, full_res=True)["value"].split("\n")[2]
     print(res)
 
-    try:
-        os.mkdir("temp/")
-    except:
-        pass
-    open(f"temp/{token_id}.json", "w").write(json.dumps(data))
+    storage_client.store_json(path=str(token_id), data=data)
+    #open(f"temp/{token_id}.json", "w").write(json.dumps(data))
 
     return {
         "code": 200,
@@ -233,8 +237,8 @@ def store_get(token_id):
         }, 500
 
     try:
-        data = json.loads(open(f"temp/{token_id}.json", "r").read())
-        print(data)
+        data = storage_client.load_json(path=str(token_id))
+        #data = json.loads(open(f"temp/{token_id}.json", "r").read())
     except Exception as e:
         print(e)
         return {
@@ -253,5 +257,5 @@ def store_get(token_id):
 def store_list():
     return {
         "code": 200,
-        "sets": [x for x in os.listdir("temp/") if x.endswith(".json")]
+        "sets": storage_client.list_json()
     }, 200
