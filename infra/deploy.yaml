@@ -14,6 +14,7 @@ spec:
       labels:
         app: briq-protocol
     spec:
+      serviceAccountName: cloud-storage-access
       containers:
       - name: briq-protocol
         image: #@ "europe-west3-docker.pkg.dev/healthy-saga-329513/sltech-briq/" + data.values.name + ":" + data.values.image_tag
@@ -21,11 +22,8 @@ spec:
         - containerPort: 5000
         resources:
           requests:
-            cpu: "250m"
-            memory: "512Mi"
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
+            cpu: "200m"
+            memory: "256Mi"
         livenessProbe:
           httpGet:
             path: /health
