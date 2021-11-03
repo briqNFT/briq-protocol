@@ -7,3 +7,4 @@ flask_cors>=0.0
 gunicorn>=20.0
 lark>=0
 google-cloud-storage>=1.4
+fastapi[all]>=0
