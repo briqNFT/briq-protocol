@@ -36,6 +36,23 @@ from .storage.storage import get_storage
 storage_client = get_storage()
 print(storage_client)
 
+@app.post("/init")
+@app.get("/init")
+def init():
+    set_contract.initialize().invoke()
+    set_contract.set_briq_contract(ADDRESS).invoke()
+    return "ok"
+
+@app.post("/set_contract")
+@app.get("/set_contract")
+def set_contract():
+    set_contract.set_briq_contract(ADDRESS).invoke()
+    return "ok"
+
+@app.get("/health")
+def health():
+    return "ok"
+
 @app.post("/get_bricks/{owner}")
 @app.get("/get_bricks/{owner}")
 async def get_bricks(owner: int):
@@ -57,7 +74,6 @@ async def get_bricks(owner: int):
         "code": 200,
         "value": parsed_ret
     }
-
 
 @app.post("/store_get/{token_id}")
 @app.get("/store_get/{token_id}")
@@ -86,7 +102,6 @@ def store_list():
         "code": 200,
         "sets": storage_client.list_json()
     }
-
 
 # Proxy other get/post requests
 @app.post("/{path_name:path}")
