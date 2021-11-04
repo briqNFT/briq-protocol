@@ -22,6 +22,9 @@ export ADDRESS=$(echo $ADD | sed "s/Contract address: //")
 ADD=$(starknet deploy --contract set.json --gateway_url $GATEWAY_URL --feeder_gateway_url $FEEDER_GATEWAY_URL | grep "Contract")
 export SET_ADDRESS=$(echo $ADD | sed "s/Contract address: //")
 
+starknet deploy --contract briq.json --network alpha
+starknet deploy --contract set.json --network alpha
+
 export FLASK_APP=starknet_proxy.proxy
 flask run
 
@@ -29,8 +32,8 @@ curl http://localhost:5000/init
 curl http://localhost:5000/set_contract
 ```
 
-export ADDRESS="0x075157ee904c59f9b4f5a2f284284fed3c05e0cc6446fd6578e753554a7a638f"
-export SET_ADDRESS="0x002f988869e8e5466cea7cbb52dd3b9e45137eb762afa4f5ae69de1fb55679f7"
+export ADDRESS="0x04f7c942cae0223aafbc7758c5a2209cfed61dfb5775bba9cdc89fd11b7503b1"
+export SET_ADDRESS="0x04401243fc0f24e616b2fd798fb3c7be5dd4d6accf72d50a00c9fb5149560016"
 
 curl --header "Content-Type: application/json" \
   --request POST \

@@ -91,26 +91,29 @@
             }
         ],
         "name": "mint",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
+        "outputs": [],
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "user",
                 "type": "felt"
             },
             {
                 "name": "token_id",
                 "type": "felt"
+            },
+            {
+                "name": "bricks_len",
+                "type": "felt"
+            },
+            {
+                "name": "bricks",
+                "type": "felt*"
             }
         ],
-        "name": "mint_working",
+        "name": "disassemble",
         "outputs": [],
         "type": "function"
     },

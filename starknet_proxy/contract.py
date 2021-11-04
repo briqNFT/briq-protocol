@@ -15,6 +15,13 @@ retry_config = RetryConfig(n_retries=1)
 client = GatewayClient(url="https://alpha3.starknet.io/gateway/", retry_config=retry_config)
 feeder_client = FeederGatewayClient(url="https://alpha3.starknet.io/feeder_gateway/", retry_config=retry_config)
 
+def set_gateway(url: str):
+    global client
+    global feeder_client
+    print(f"setting gateway to {url}")
+    client = GatewayClient(url=url + "gateway/", retry_config=retry_config)
+    feeder_client = FeederGatewayClient(url=url + "feeder_gateway/", retry_config=retry_config)
+
 def felt_formatter(hex_felt: str) -> Union[str, int]:
     #return field_element_repr(val=int(hex_felt, 16), prime=fields.FeltField.upper_bound)
     try:
@@ -34,6 +41,7 @@ class FuncInvocation:
         return res
 
     async def invoke(self):
+        print(f"invoking with {self.tx}")
         return await client.add_transaction(self.tx)
 
 class ContractWrapper:

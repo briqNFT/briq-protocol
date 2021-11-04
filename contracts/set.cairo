@@ -13,6 +13,8 @@ namespace IBriqContract:
     end
     func set_bricks_to_set(set_id: felt, bricks_len: felt, bricks: felt*):
     end
+    func unset_bricks_from_set(set_id: felt, bricks_len: felt, bricks: felt*):
+    end
 end
 
 
@@ -22,6 +24,11 @@ end
 
 @storage_var
 func owner(token_id: felt) -> (res: felt):
+end
+
+
+@storage_var
+func nb_briqs(token_id: felt) -> (res: felt):
 end
 
 @storage_var
@@ -121,25 +128,36 @@ func mint{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*) -> (res: felt):
+    } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*):
     alloc_locals
     _mint(owner, token_id)
     let (addr) = briq_contract.read()
     local pedersen_ptr: HashBuiltin* = pedersen_ptr
     IBriqContract.set_bricks_to_set(contract_address=addr, set_id=token_id, bricks_len=bricks_len, bricks=bricks)
-    return (0)
-end
-
-@external
-func mint_working{
-        pedersen_ptr: HashBuiltin*,
-        syscall_ptr: felt*,
-        range_check_ptr
-    } (owner: felt, token_id: felt):
-    _mint(owner, token_id)
+    nb_briqs.write(token_id, bricks_len)
     return ()
 end
 
+@external
+func disassemble{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (user: felt, token_id: felt, bricks_len: felt, bricks: felt*):
+    alloc_locals
+    let (addr) = briq_contract.read()
+    local pedersen_ptr: HashBuiltin* = pedersen_ptr
+    IBriqContract.unset_bricks_from_set(contract_address=addr, set_id=token_id, bricks_len=bricks_len, bricks=bricks)
+
+    let (res) = balances.read(owner=user)
+    balances.write(user, res - 1)
+    # TODO: find balance_details
+    #balance_details.write(recipient, res, token_id)
+    nb_briqs.write(token_id, 0)
+    owner.write(token_id, 0)
+
+    return ()
+end
 
 func _transfer{
         syscall_ptr: felt*,
