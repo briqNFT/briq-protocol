@@ -33,7 +33,7 @@ from unittest.mock import patch
 @patch('starknet_proxy.contract.feeder_client.call_contract', autospec=True)
 @pytest.mark.asyncio
 async def test_wrapper(MockFuncInvocation):
-    MockFuncInvocation.return_value = 5
+    MockFuncInvocation.return_value = { "result": ["0x5"] }
     contract = ContractWrapper(abi_json=abi, address="0x075157ee904c59f9b4f5a2f284284fed3c05e0cc6446fd6578e753554a7a638f")
     assert await contract.balance_of(owner=5).call() == 5
 

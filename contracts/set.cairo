@@ -67,6 +67,16 @@ func initialize{
     return ()
 end
 
+@external
+func set_briq_contract{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (address: felt):
+    briq_contract.write(address)
+    return ()
+end
+
 @view
 func balance_of{
         syscall_ptr: felt*,
@@ -97,16 +107,6 @@ func token_at_index{
     assert_lt(index, res)
     let (retval) = balance_details.read(owner=owner, index=index)
     return (retval)
-end
-
-@external
-func set_briq_contract{
-        pedersen_ptr: HashBuiltin*,
-        syscall_ptr: felt*,
-        range_check_ptr
-    } (address: felt):
-    briq_contract.write(address)
-    return ()
 end
 
 func _mint{

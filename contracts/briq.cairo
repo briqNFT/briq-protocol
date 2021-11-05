@@ -127,7 +127,7 @@ func mint_multiple{
     if nb == 0:
         return ()
     end
-    _mint(owner, token_start + nb, material)
+    _mint(owner, token_start + nb - 1, material)
     mint_multiple(owner, material, token_start, nb - 1)
     return ()
 end
