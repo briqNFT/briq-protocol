@@ -1,6 +1,83 @@
 [
     {
         "inputs": [],
+        "name": "assert_only_self",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "assert_initialized",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_public_key",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_address",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_nonce",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_public_key",
+                "type": "felt"
+            }
+        ],
+        "name": "set_public_key",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_public_key",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_address",
+                "type": "felt"
+            }
+        ],
         "name": "initialize",
         "outputs": [],
         "type": "function"
@@ -8,132 +85,53 @@
     {
         "inputs": [
             {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "set_briq_contract",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            }
-        ],
-        "name": "balance_of",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "owner_of",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
+                "name": "hash",
                 "type": "felt"
             },
             {
-                "name": "index",
-                "type": "felt"
-            }
-        ],
-        "name": "token_at_index",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
+                "name": "signature_len",
                 "type": "felt"
             },
             {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "bricks_len",
-                "type": "felt"
-            },
-            {
-                "name": "bricks",
+                "name": "signature",
                 "type": "felt*"
             }
         ],
-        "name": "mint",
+        "name": "is_valid_signature",
         "outputs": [],
+        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "user",
+                "name": "to",
                 "type": "felt"
             },
             {
-                "name": "token_id",
+                "name": "selector",
                 "type": "felt"
             },
             {
-                "name": "bricks_len",
+                "name": "calldata_len",
                 "type": "felt"
             },
             {
-                "name": "bricks",
+                "name": "calldata",
                 "type": "felt*"
             }
         ],
-        "name": "disassemble",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
+        "name": "execute",
+        "outputs": [
             {
-                "name": "sender",
+                "name": "response_len",
                 "type": "felt"
             },
             {
-                "name": "recipient",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
+                "name": "response",
+                "type": "felt*"
             }
         ],
-        "name": "transfer_from",
-        "outputs": [],
         "type": "function"
     }
 ]

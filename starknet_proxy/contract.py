@@ -1,5 +1,6 @@
 import json
 from typing import Any, Union
+import pytest
 
 from starkware.starknet.testing.contract import StarknetContract
 from starkware.starknet.compiler.compile import get_selector_from_name
@@ -65,4 +66,64 @@ class ContractWrapper:
                 signature=[],
             )
             return FuncInvocation(tx)
+        return method
+
+from starkware.crypto.signature.signature import (
+    pedersen_hash, sign
+)
+
+class ProxyFuncInvocation:
+    def __init__(self, contract: Any, sender: int, to: int, selector: int, calldata: list[int]) -> None:
+        self.contract = contract
+        self.sender = sender
+        self.to = to
+        self.selector = selector
+        self.cd = calldata
+
+    async def call(self) -> Union[Union[str, int], list[Union[str, int]]]:
+        hash = pedersen_hash(self.sender, self.to)
+        hash = pedersen_hash(hash, self.selector)
+        cd_hash = 0
+        if len(self.cd) == 1:
+            cd_hash = self.cd[0]
+        else:
+            cd_hash = pedersen_hash(self.cd[len(self.cd)-1], self.cd[len(self.cd)-2])
+            for i in range(len(self.cd)-2, 0, -1):
+                cd_hash = pedersen_hash(cd_hash, self.cd[i])
+        hash = pedersen_hash(hash, cd_hash)
+        nonce = await self.contract.contract.get_nonce().call()
+        hash = pedersen_hash(hash, int(nonce))
+        # print(f"Nonce: {nonce}, Hash: {hash}")
+        signature = sign(msg_hash=hash, priv_key=self.contract.private_key)
+        tx = InvokeFunction(
+            contract_address=self.contract.address,
+            entry_point_selector=get_selector_from_name("execute"),
+            calldata=[self.to, self.selector, len(self.cd)] + self.cd,
+            signature=list(signature),
+        )
+        return await FuncInvocation(tx).call()
+
+    #async def invoke(self):
+    #    return await FuncInvocation.invoke(self)
+
+class AccountProxy:
+    def __init__(self, abi_json: list[Any], address: str, proxy_abi: list[Any], proxy_address: str, private_key: int):
+        self.private_key = private_key
+
+        self.contract = ContractWrapper(abi_json, address)
+        self.address = int(address, 16)
+        
+        self.target = StarknetContract(state=None,
+            abi=proxy_abi,
+            contract_address=proxy_address)
+
+    def __getattr__(self, name):
+        try:
+            getattr(self.target, name)
+        except:
+            raise
+        def method(*args, **kwargs):
+            cd = getattr(self.target, name)(*args, **kwargs).calldata
+            selector = get_selector_from_name(name)
+            return ProxyFuncInvocation(self, self.address, self.target.contract_address, selector, cd)
         return method
