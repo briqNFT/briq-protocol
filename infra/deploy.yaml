@@ -27,32 +27,12 @@ spec:
           requests:
             cpu: "100m"
             memory: "256Mi"
-        # command: ["gunicorn"]
-        # args: ["starknet_proxy.proxy_fapi:app", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:5000"]
+        #@ #command: ["gunicorn"]
+        #@ #args: ["starknet_proxy.proxy_fapi:app", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:5000"]
         livenessProbe:
           httpGet:
             path: /health
             port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          failureThreshold: 2
-      - name: briq-protocol-flask
-        image: #@ "europe-west3-docker.pkg.dev/healthy-saga-329513/sltech-briq/" + data.values.name + ":" + data.values.image_tag
-        ports:
-        - containerPort: 5001
-        env:
-        - name: CLOUD_STORAGE_BUCKET
-          value: "briq-bucket-prod-1"
-        resources:
-          requests:
-            cpu: "200m"
-            memory: "256Mi"
-        command: ["gunicorn"]
-        args: ["starknet_proxy.proxy:app", "-b", "0.0.0.0:5001"]
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5001
           initialDelaySeconds: 5
           periodSeconds: 10
           failureThreshold: 2
