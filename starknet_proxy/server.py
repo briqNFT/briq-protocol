@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 
 from marshmallow.fields import Str
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import Response, RedirectResponse
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 import requests
@@ -58,6 +57,14 @@ async def init_set_contract():
 @app.get("/health")
 def health():
     return "ok"
+
+@app.get("/balance_of/{owner}")
+async def get_briq_balance_of(owner: int):
+    return await briq_contract.balance_of(owner).call()
+
+@app.get("/owner_of/{token_id}")
+async def get_briq_owner_of(token_id: int):
+    return await briq_contract.owner_of(token_id).call()
 
 @app.post("/get_bricks/{owner}")
 @app.get("/get_bricks/{owner}")
@@ -148,17 +155,3 @@ async def mint_bricks(owner, mr: MintRequest):
     return {
         "code": 200
     }
-
-# Proxy other get/post requests
-@app.post("/{path_name:path}")
-async def catch_all_post(request: Request, path_name: str):
-    data = await request.json()
-    t_resp = requests.post(
-        url=f'http://localhost:5001/{path_name}',
-        data=data)
-    return Response(content=t_resp.text, status_code=t_resp.status_code, media_type=t_resp.headers['content-type'])
-
-@app.get("/{path_name:path}")
-async def catch_all_get(request: Request, path_name: str):
-    t_resp = requests.get(url=f'http://localhost:5001/{path_name}')
-    return Response(content=t_resp.text, status_code=t_resp.status_code, media_type=t_resp.headers['content-type'])

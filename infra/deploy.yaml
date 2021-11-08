@@ -27,8 +27,8 @@ spec:
           requests:
             cpu: "100m"
             memory: "256Mi"
-        command: ["gunicorn"]
-        args: ["starknet_proxy.proxy_fapi:app", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:5000"]
+        # command: ["gunicorn"]
+        # args: ["starknet_proxy.proxy_fapi:app", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:5000"]
         livenessProbe:
           httpGet:
             path: /health

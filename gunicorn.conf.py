@@ -7,7 +7,7 @@ errorlog = "-"
 loglevel = "info"  # for error log
 
 # Worker configuration
-workers = 3
-worker_class = 'sync'  # TODO: I'd like it to be gevent but something is not working right.
+workers = 2
+worker_class = 'uvicorn.workers.UvicornWorker'
 timeout = 60
 keepalive = 5  # behind load balancer

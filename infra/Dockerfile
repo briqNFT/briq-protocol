@@ -13,4 +13,4 @@ COPY gunicorn.conf.py gunicorn.conf.py
 ENV ADDRESS="0x04f7c942cae0223aafbc7758c5a2209cfed61dfb5775bba9cdc89fd11b7503b1"
 ENV SET_ADDRESS="0x04401243fc0f24e616b2fd798fb3c7be5dd4d6accf72d50a00c9fb5149560016"
 
-CMD [ "gunicorn", "starknet_proxy.proxy:app" ]
+CMD [ "gunicorn", "starknet_proxy.server:app" ]
