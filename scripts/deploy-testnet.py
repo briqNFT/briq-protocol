@@ -19,11 +19,12 @@ import re
 print("Devnet is running, proceeding to deploy")
 contract = subprocess.run(["starknet", "deploy", "--contract", "briq.json", "--gateway_url", "http://localhost:4999"], capture_output=True, encoding="utf-8")
 briq_address = re.search("Contract address: ([0-9a-z]+)", contract.stdout).group(1)
-print(f"Briq address: {briq_address}")
+print(f'export ADDRESS="{briq_address}"')
 
 contract = subprocess.run(["starknet", "deploy", "--contract", "set.json", "--gateway_url", "http://localhost:4999"], capture_output=True, encoding="utf-8")
 set_address = re.search("Contract address: ([0-9a-z]+)", contract.stdout).group(1)
-print(f"Set address: {set_address}")
+print(f'export SET_ADDRESS="{set_address}"')
+print('export GATEWAY_URL="http://localhost:4999/"')
 
 # Call init on set
 subprocess.run(["starknet", "invoke",
@@ -32,6 +33,8 @@ subprocess.run(["starknet", "invoke",
 subprocess.run(["starknet", "invoke",
     "--function", "set_briq_contract", "--abi", "set_abi.json", "--address", set_address, "--inputs", briq_address,
     "--gateway_url", "http://localhost:4999"])
+
+
 
 import select
     
