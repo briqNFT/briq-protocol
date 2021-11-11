@@ -137,11 +137,11 @@ async def store_set(set: Set):
 
 class DeletionRequest(BaseModel):
     token_id: int
-    bricks: list[str]
+    bricks: list[int]
 
 @app.post("/store_delete")
 async def store_delete(dr: DeletionRequest):
-    print(await set_contract.disassemble(user=17, token_id=dr.token_id, bricks=[int(x, 16) for x in dr.bricks]).invoke())
+    print(await set_contract.disassemble(user=17, token_id=dr.token_id, bricks=[x for x in dr.bricks]).invoke())
     return {
         "code": 200
     }
