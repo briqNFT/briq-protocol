@@ -9,10 +9,11 @@ metadata:
     networking.gke.io/v1beta1.FrontendConfig: "briq-protocol"
     networking.gke.io/managed-certificates: #@ data.values.name + "-managed-cert"
 spec:
-  tls:
-  - secretName: sltech-company-tls
   rules:
-  - host: api.sltech.company
+#@ arr = ["api.sltech.company", "api.briq.construction"]
+#@ for i in arr:
+  - host: #@ i
+  - host: 
     http:
       paths:
       - path: /*
@@ -22,6 +23,7 @@ spec:
             name: briq-protocol
             port:
               number: 80
+#@ end
 ---
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
@@ -39,3 +41,4 @@ metadata:
 spec:
   domains:
     - api.sltech.company
+    - api.briq.construction

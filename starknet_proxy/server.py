@@ -13,7 +13,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://sltech.company",
-        "http://www.sltech.company",
+        "https://www.sltech.company",
+        "https://briq.construction",
+        "https://www.briq.construction",
     ],
     allow_credentials=True,
     allow_methods=["*"],
