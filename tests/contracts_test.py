@@ -56,9 +56,14 @@ async def test_micro(briq_contract, set_contract):
     ]
 
     with pytest.raises(StarkException):
+        await set_contract.mint(owner=0x11, token_id=0x102, bricks=[]).invoke()
+
+    with pytest.raises(StarkException):
         await set_contract.disassemble(user=0x11, token_id=0xDeaD, bricks=[0x123, 0x201]).invoke()
     with pytest.raises(StarkException):
         await set_contract.disassemble(user=0x11, token_id=0x100, bricks=[0x123, 0x201]).invoke()
+    with pytest.raises(StarkException):
+        await set_contract.disassemble(user=0x11, token_id=0x100, bricks=[]).invoke()
     await set_contract.disassemble(user=0x11, token_id=0x100, bricks=[0x123, 0x124, 0x200, 0x202]).invoke()
     assert (await briq_contract.get_all_tokens_for_owner(owner=0x11).call()).result[0] == [
         0x123, 1, 0,

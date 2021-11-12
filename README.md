@@ -32,8 +32,8 @@ curl http://localhost:5000/init
 curl http://localhost:5000/set_contract
 ```
 
-export ADDRESS="0x003673b845ed7583de3f2cc8cc3bc281c807808ca46e694d385eeb623f2a6cd4"
-export SET_ADDRESS="0x0410361304c4a754e9dc87b43a816c731624eb1409d90e72e93ab798b2d4e164"
+export ADDRESS="0x04a0ed17b7453e304261df18633bdb7fd8c8275f42f254e9f4674e85736c65ae"
+export SET_ADDRESS="0x01a7c1ddc1597b41479fbf24ee93dab0d850db0dfa41012cab267d2be6b809cf"
 
 curl --header "Content-Type: application/json" \
   --request POST \

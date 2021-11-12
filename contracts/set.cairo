@@ -130,6 +130,7 @@ func mint{
         range_check_ptr
     } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*):
     alloc_locals
+    assert_not_zero(bricks_len)
     _mint(owner, token_id)
     let (addr) = briq_contract.read()
     local pedersen_ptr: HashBuiltin* = pedersen_ptr
@@ -146,6 +147,8 @@ func disassemble{
     } (user: felt, token_id: felt, bricks_len: felt, bricks: felt*):
     alloc_locals
     let (addr) = briq_contract.read()
+    let (nbbr) = nb_briqs.read(token_id)
+    assert bricks_len = nbbr
     local pedersen_ptr: HashBuiltin* = pedersen_ptr
     IBriqContract.unset_bricks_from_set(contract_address=addr, set_id=token_id, bricks_len=bricks_len, bricks=bricks)
 
