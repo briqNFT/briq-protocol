@@ -6,6 +6,7 @@ venv/
 
 briq.json
 set.json
+account.json
 
 *.log
 
