@@ -27,8 +27,8 @@ from .contract import set_gateway, ContractWrapper
 
 import os
 
-ADDRESS = os.environ.get("ADDRESS") or "0x04f7c942cae0223aafbc7758c5a2209cfed61dfb5775bba9cdc89fd11b7503b1"
-SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x04401243fc0f24e616b2fd798fb3c7be5dd4d6accf72d50a00c9fb5149560016"
+ADDRESS = os.environ.get("ADDRESS") or "0x003673b845ed7583de3f2cc8cc3bc281c807808ca46e694d385eeb623f2a6cd4"
+SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x0410361304c4a754e9dc87b43a816c731624eb1409d90e72e93ab798b2d4e164"
 GATEWAY_URL = os.environ.get("GATEWAY_URL") or "https://alpha3.starknet.io/"
 set_gateway(GATEWAY_URL)
 

@@ -10,7 +10,7 @@ COPY briq_abi.json briq_abi.json
 COPY set_abi.json set_abi.json
 COPY gunicorn.conf.py gunicorn.conf.py
 
-ENV ADDRESS="0x04f7c942cae0223aafbc7758c5a2209cfed61dfb5775bba9cdc89fd11b7503b1"
-ENV SET_ADDRESS="0x04401243fc0f24e616b2fd798fb3c7be5dd4d6accf72d50a00c9fb5149560016"
+ENV ADDRESS="0x003673b845ed7583de3f2cc8cc3bc281c807808ca46e694d385eeb623f2a6cd4"
+ENV SET_ADDRESS="0x0410361304c4a754e9dc87b43a816c731624eb1409d90e72e93ab798b2d4e164"
 
 CMD [ "gunicorn", "starknet_proxy.server:app" ]
