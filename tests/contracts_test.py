@@ -67,3 +67,7 @@ async def test_micro(briq_contract, set_contract):
         0x201, 2, 0,
         0x200, 2, 0
     ]
+
+    with pytest.raises(StarkException):
+        await set_contract.mint(owner=0x11, token_id=0x100, bricks=[0x123, 0x124, 0x123, 0x124]).invoke()
+

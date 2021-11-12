@@ -115,9 +115,9 @@ from pydantic import BaseModel
 
 from typing import Dict, Any
 class Set(BaseModel):
-    owner: str
+    owner: int
     data: Dict[str, Any]
-    used_cells: list[str]
+    used_cells: list[int]
 
 import time
 import random
@@ -125,7 +125,7 @@ import random
 @app.post("/store_set")
 async def store_set(set: Set):
     token_id = int(time.time()) + random.randint(0, 10000000)
-    transaction = await set_contract.mint(owner=int(set.owner, 16), token_id=token_id, bricks=[int(x, 16) for x in set.used_cells]).invoke()
+    transaction = await set_contract.mint(owner=set.owner, token_id=token_id, bricks=set.used_cells).invoke()
     print(transaction)
     storage_client.store_json(path=str(token_id), data=set.data)
     #open(f"temp/{token_id}.json", "w").write(json.dumps(data))
@@ -137,11 +137,11 @@ async def store_set(set: Set):
 
 class DeletionRequest(BaseModel):
     token_id: int
-    bricks: list[str]
+    bricks: list[int]
 
 @app.post("/store_delete")
 async def store_delete(dr: DeletionRequest):
-    print(await set_contract.disassemble(user=17, token_id=dr.token_id, bricks=[int(x, 16) for x in dr.bricks]).invoke())
+    print(await set_contract.disassemble(user=17, token_id=dr.token_id, bricks=[x for x in dr.bricks]).invoke())
     return {
         "code": 200
     }
