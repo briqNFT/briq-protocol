@@ -1,18 +1,12 @@
 [
     {
-        "inputs": [],
-        "name": "initialize",
-        "outputs": [],
-        "type": "function"
-    },
-    {
         "inputs": [
             {
-                "name": "address",
+                "name": "briq_contract_address",
                 "type": "felt"
             }
         ],
-        "name": "set_briq_contract",
+        "name": "initialize",
         "outputs": [],
         "type": "function"
     },
@@ -97,7 +91,7 @@
     {
         "inputs": [
             {
-                "name": "user",
+                "name": "owner",
                 "type": "felt"
             },
             {
@@ -134,6 +128,27 @@
         ],
         "name": "transfer_from",
         "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "get_all_tokens_for_owner",
+        "outputs": [
+            {
+                "name": "tokens_len",
+                "type": "felt"
+            },
+            {
+                "name": "tokens",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     }
 ]

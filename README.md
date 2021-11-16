@@ -25,15 +25,11 @@ export SET_ADDRESS=$(echo $ADD | sed "s/Contract address: //")
 starknet deploy --contract briq.json --network alpha
 starknet deploy --contract set.json --network alpha
 
-export FLASK_APP=starknet_proxy.proxy
-flask run
+export ADDRESS="0x0260f002c898119b104c190bf0c1367fbb20ee007b7abb850cf0f2a098666e49"
+export SET_ADDRESS="0x06e8dd268c2c1306a40eb212244112c7d2792c39382058db21e2267ce71a3fd9"
 
-curl http://localhost:5000/init
-curl http://localhost:5000/set_contract
-```
-
-export ADDRESS="0x04a0ed17b7453e304261df18633bdb7fd8c8275f42f254e9f4674e85736c65ae"
-export SET_ADDRESS="0x01a7c1ddc1597b41479fbf24ee93dab0d850db0dfa41012cab267d2be6b809cf"
+starknet invoke --function initialize --network alpha --abi briq_abi.json --address $ADDRESS --inputs $SET_ADDRESS
+starknet invoke --function initialize --network alpha --abi set_abi.json --address $SET_ADDRESS --inputs $ADDRESS
 
 curl --header "Content-Type: application/json" \
   --request POST \

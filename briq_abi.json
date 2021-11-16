@@ -1,6 +1,11 @@
 [
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "name": "set_contract_address",
+                "type": "felt"
+            }
+        ],
         "name": "initialize",
         "outputs": [],
         "type": "function"
@@ -122,21 +127,6 @@
     {
         "inputs": [
             {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "set",
-                "type": "felt"
-            }
-        ],
-        "name": "set_part_of_set",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "name": "set_id",
                 "type": "felt"
             },
@@ -150,21 +140,6 @@
             }
         ],
         "name": "set_bricks_to_set",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "set",
-                "type": "felt"
-            }
-        ],
-        "name": "unset_part_of_set",
         "outputs": [],
         "type": "function"
     },

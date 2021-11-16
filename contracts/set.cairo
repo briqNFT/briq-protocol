@@ -5,7 +5,10 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_not_zero
 
-
+from contracts.ownership_utils import (
+    assert_allowed_to_mint,
+    assert_allowed_to_admin_contract
+)
 
 @contract_interface
 namespace IBriqContract:
@@ -20,15 +23,8 @@ end
 
 
 
-
-
 @storage_var
-func owner(token_id: felt) -> (res: felt):
-end
-
-
-@storage_var
-func nb_briqs(token_id: felt) -> (res: felt):
+func token_owner(token_id: felt) -> (res: felt):
 end
 
 @storage_var
@@ -39,41 +35,29 @@ end
 func balance_details(owner: felt, index: felt) -> (res: felt):
 end
 
-@storage_var
-func uuid() -> (res: felt):
-end
-
+#### Specific bit
 
 @storage_var
-func initialized() -> (res: felt):
+func nb_briqs(token_id: felt) -> (res: felt):
 end
 
 @storage_var
 func briq_contract() -> (res: felt):
 end
 
-#### Specific bit
-
 @external
 func initialize{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } ():
-    let (_initialized) = initialized.read()
-    assert _initialized = 0
-    initialized.write(1)
-    uuid.write(1)
-    return ()
-end
+    } (briq_contract_address: felt):
 
-@external
-func set_briq_contract{
-        pedersen_ptr: HashBuiltin*,
-        syscall_ptr: felt*,
-        range_check_ptr
-    } (address: felt):
-    briq_contract.write(address)
+    let (caller) = get_caller_address()
+    assert_allowed_to_admin_contract(caller)
+
+    let (addr) = briq_contract.read()
+    assert addr = 0
+    briq_contract.write(briq_contract_address)
     return ()
 end
 
@@ -93,7 +77,7 @@ func owner_of{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (token_id: felt) -> (res: felt):
-    let (res) = owner.read(token_id=token_id)
+    let (res) = token_owner.read(token_id=token_id)
     return (res)
 end
 
@@ -114,12 +98,12 @@ func _mint{
         syscall_ptr: felt*,
         range_check_ptr
     } (recipient: felt, token_id: felt):
-    let (curr_owner) = owner.read(token_id)
+    let (curr_owner) = token_owner.read(token_id)
     assert curr_owner = 0
     let (res) = balances.read(owner=recipient)
     balances.write(recipient, res + 1)
     balance_details.write(recipient, res, token_id)
-    owner.write(token_id, recipient)
+    token_owner.write(token_id, recipient)
     return ()
 end
 
@@ -130,6 +114,10 @@ func mint{
         range_check_ptr
     } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*):
     alloc_locals
+
+    let (caller) = get_caller_address()
+    assert_allowed_to_mint(caller, owner)
+
     assert_not_zero(bricks_len)
     _mint(owner, token_id)
     let (addr) = briq_contract.read()
@@ -139,25 +127,50 @@ func mint{
     return ()
 end
 
+func erase_balance_details{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt, token_id: felt, index: felt):
+    let (token_at_index) = balance_details.read(owner, index)
+    if token_at_index == token_id:
+        let (res) = balances.read(owner=owner)
+        if res == 0:
+            return ()
+        else:
+            # swap and erase. Note that the old end is at 'res + 1' at this point, so we need index 'res'.
+            let (last_tok) = balance_details.read(owner, res)
+            balance_details.write(owner, index, last_tok)
+            return ()
+        end
+    end
+    # If index is 0 here, we haven't found the token, which should be impossible.
+    assert_not_zero(index)
+    return erase_balance_details(owner, token_id, index - 1)
+end
+
 @external
 func disassemble{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (user: felt, token_id: felt, bricks_len: felt, bricks: felt*):
+    } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*):
     alloc_locals
+
+    let (caller) = get_caller_address()
+    assert_allowed_to_mint(caller, owner)
+
     let (addr) = briq_contract.read()
     let (nbbr) = nb_briqs.read(token_id)
     assert bricks_len = nbbr
     local pedersen_ptr: HashBuiltin* = pedersen_ptr
     IBriqContract.unset_bricks_from_set(contract_address=addr, set_id=token_id, bricks_len=bricks_len, bricks=bricks)
 
-    let (res) = balances.read(owner=user)
-    balances.write(user, res - 1)
-    # TODO: find balance_details
-    #balance_details.write(recipient, res, token_id)
+    let (res) = balances.read(owner=owner)
+    balances.write(owner, res - 1)
+    erase_balance_details(owner, token_id, res - 1)
     nb_briqs.write(token_id, 0)
-    owner.write(token_id, 0)
+    token_owner.write(token_id, 0)
 
     return ()
 end
@@ -167,9 +180,9 @@ func _transfer{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
-    let (curr_owner) = owner.read(token_id=token_id)
+    let (curr_owner) = token_owner.read(token_id=token_id)
     assert curr_owner = sender
-    owner.write(token_id, recipient)
+    token_owner.write(token_id, recipient)
     # TODO: transfer all individual bricks as well.
     # let (res) = IBalanceContract.get_balance(contract_address=contract_address)
     return ()
@@ -183,5 +196,36 @@ func transfer_from{
     } (sender: felt, recipient: felt, token_id: felt):
     _transfer(sender, recipient, token_id)
     return ()
+end
+
+
+func populate_tokens{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt, rett: felt*, ret_index: felt, max: felt):
+    alloc_locals
+    if ret_index == max:
+        return ()
+    end
+    let (token_id) = balance_details.read(owner=owner, index=ret_index)
+    [rett] = token_id
+    return populate_tokens(owner, rett + 1, ret_index + 1, max)
+end
+
+from starkware.cairo.common.alloc import alloc
+
+@view
+func get_all_tokens_for_owner{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt) -> (tokens_len: felt, tokens: felt*):
+    alloc_locals
+    let (local res: felt) = balances.read(owner=owner)
+    let (local ret_array : felt*) = alloc()
+    local ret_index = 0
+    populate_tokens(owner, ret_array, ret_index, res)
+    return (res, ret_array)
 end
 

@@ -27,8 +27,8 @@ from .contract import set_gateway, ContractWrapper
 
 import os
 
-ADDRESS = os.environ.get("ADDRESS") or "0x04a0ed17b7453e304261df18633bdb7fd8c8275f42f254e9f4674e85736c65ae"
-SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x01a7c1ddc1597b41479fbf24ee93dab0d850db0dfa41012cab267d2be6b809cf"
+ADDRESS = os.environ.get("ADDRESS") or "0x0260f002c898119b104c190bf0c1367fbb20ee007b7abb850cf0f2a098666e49"
+SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x06e8dd268c2c1306a40eb212244112c7d2792c39382058db21e2267ce71a3fd9"
 GATEWAY_URL = os.environ.get("GATEWAY_URL") or "https://alpha3.starknet.io/"
 set_gateway(GATEWAY_URL)
 
@@ -43,6 +43,7 @@ from .storage.storage import get_storage
 storage_client = get_storage()
 print(storage_client)
 
+
 @app.post("/init")
 @app.get("/init")
 async def init():
@@ -50,15 +51,26 @@ async def init():
     await set_contract.set_briq_contract(int(ADDRESS, 16)).invoke()
     return "ok"
 
+
 @app.post("/set_contract")
 @app.get("/set_contract")
 async def init_set_contract():
     await set_contract.set_briq_contract(int(ADDRESS, 16)).invoke()
     return "ok"
 
+
 @app.get("/health")
 def health():
     return "ok"
+
+
+@app.get("/contract_addresses")
+async def contract_addresses():
+    return {
+        "briq": ADDRESS,
+        "set": SET_ADDRESS,
+    }
+
 
 @app.get("/balance_of/{owner}")
 async def get_briq_balance_of(owner: int):

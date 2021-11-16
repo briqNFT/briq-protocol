@@ -5,6 +5,11 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_not_zero
 
+from contracts.ownership_utils import (
+    assert_allowed_to_mint,
+    assert_allowed_to_admin_contract
+)
+
 @storage_var
 func owner(token_id: felt) -> (res: felt):
 end
@@ -17,11 +22,13 @@ end
 func balance_details(owner: felt, index: felt) -> (res: felt):
 end
 
+#### Specific bit
+
+# Address of the set contract.
 @storage_var
-func initialized() -> (res: felt):
+func set_contract() -> (res: felt):
 end
 
-#### Specific bit
 
 # Material encodes the rarity. Values range 1-16
 @storage_var
@@ -33,18 +40,32 @@ end
 func part_of_set(token_id: felt) -> (res: felt):
 end
 
+############
+############
+############
 
 @external
 func initialize{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } ():
-    let (_initialized) = initialized.read()
-    assert _initialized = 0
-    initialized.write(1)
+    } (set_contract_address: felt):
+
+    let (caller) = get_caller_address()
+    assert_allowed_to_admin_contract(caller)
+
+    let (addr) = set_contract.read()
+    assert addr = 0
+    set_contract.write(set_contract_address)
     return ()
 end
+
+############
+############
+############
+#
+# Getters
+#
 
 @view
 func balance_of{
@@ -95,8 +116,11 @@ func _mint{
         syscall_ptr: felt*,
         range_check_ptr
     } (recipient: felt, token_id: felt, mat: felt):
+    assert_not_zero(mat)
+
     let (curr_owner) = owner.read(token_id)
     assert curr_owner = 0
+    
     let (res) = balances.read(owner=recipient)
     balances.write(recipient, res + 1)
     balance_details.write(recipient, res, token_id)
@@ -112,7 +136,10 @@ func mint{
         syscall_ptr: felt*,
         range_check_ptr
     } (owner: felt, token_id: felt, material: felt):
-    assert_not_zero(material)
+    
+    let (caller) = get_caller_address()
+    assert_allowed_to_mint(caller, owner)
+    
     _mint(owner, token_id, material)
     return ()
 end
@@ -123,7 +150,10 @@ func mint_multiple{
         syscall_ptr: felt*,
         range_check_ptr
     } (owner: felt, material:felt, token_start: felt, nb: felt):
-    assert_not_zero(material)
+
+    let (caller) = get_caller_address()
+    assert_allowed_to_mint(caller, owner)
+
     if nb == 0:
         return ()
     end
@@ -132,16 +162,14 @@ func mint_multiple{
     return ()
 end
 
-@external
-func set_part_of_set{
+func _set_part_of_set{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
     } (token_id: felt, set: felt):
     let (curr_set) = part_of_set.read(token_id)
     assert curr_set = 0
-    let (curr_owner) = owner.read(token_id)
-    assert_not_zero(curr_owner)
+
     part_of_set.write(token_id, set)
     return ()
 end
@@ -152,26 +180,30 @@ func set_bricks_to_set{
         syscall_ptr: felt*,
         range_check_ptr
     } (set_id: felt, bricks_len: felt, bricks: felt*):
+
+    # Only let the set contract handle sets
+    let (caller) = get_caller_address()
+    let (set_contract_address) = set_contract.read()
+    assert caller = set_contract_address
+
     # TODO: assert reasonable range
     if bricks_len == 0:
         return ()
     end
-    set_part_of_set(token_id = [bricks + bricks_len - 1], set=set_id)
+    _set_part_of_set(token_id = [bricks + bricks_len - 1], set=set_id)
     set_bricks_to_set(set_id=set_id, bricks_len=bricks_len-1, bricks=bricks)
     return ()
 end
 
 
-@external
-func unset_part_of_set{
+func _unset_part_of_set{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
     } (token_id: felt, set: felt):
     let (curr_set) = part_of_set.read(token_id)
     assert curr_set = set
-    let (curr_owner) = owner.read(token_id)
-    assert_not_zero(curr_owner)
+
     part_of_set.write(token_id, 0)
     return ()
 end
@@ -182,16 +214,22 @@ func unset_bricks_from_set{
         syscall_ptr: felt*,
         range_check_ptr
     } (set_id: felt, bricks_len: felt, bricks: felt*):
+
+    # Only let the set contract handle sets
+    let (caller) = get_caller_address()
+    let (set_contract_address) = set_contract.read()
+    assert caller = set_contract_address
+
     # TODO: assert reasonable range
     if bricks_len == 0:
         return ()
     end
-    unset_part_of_set(token_id = [bricks + bricks_len - 1], set=set_id)
+
+    _unset_part_of_set(token_id = [bricks + bricks_len - 1], set=set_id)
     unset_bricks_from_set(set_id=set_id, bricks_len=bricks_len-1, bricks=bricks)
 
     return ()
 end
-
 
 func find_item_index{
         pedersen_ptr: HashBuiltin*,
@@ -264,8 +302,7 @@ func populate_tokens{
     rett[0] = retval0
     rett[1] = retMat0
     rett[2] = retSet0
-    populate_tokens(owner, rett + 3, ret_index + 1, max)
-    return ()
+    return populate_tokens(owner, rett + 3, ret_index + 1, max)
 end
 
 from starkware.cairo.common.alloc import alloc
@@ -277,8 +314,8 @@ func get_all_tokens_for_owner{
         range_check_ptr
     } (owner: felt) -> (bricks_len: felt, bricks: felt*):
     alloc_locals
+
     let (local res: felt) = balances.read(owner=owner)
-    
     let (local ret_array : felt*) = alloc()
     local ret_index = 0
     populate_tokens(owner, ret_array, ret_index, res)
