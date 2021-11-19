@@ -12,8 +12,8 @@ from starkware.cairo.lang.tracer.tracer_data import field_element_repr
 from starkware.starknet.definitions import fields
 
 retry_config = RetryConfig(n_retries=1)
-client = GatewayClient(url="https://alpha3.starknet.io/gateway/", retry_config=retry_config)
-feeder_client = FeederGatewayClient(url="https://alpha3.starknet.io/feeder_gateway/", retry_config=retry_config)
+client = GatewayClient(url="https://alpha4.starknet.io/gateway/", retry_config=retry_config)
+feeder_client = FeederGatewayClient(url="https://alpha4.starknet.io/feeder_gateway/", retry_config=retry_config)
 
 
 def set_gateway(url: str):

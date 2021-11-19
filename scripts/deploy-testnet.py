@@ -28,10 +28,10 @@ print('export GATEWAY_URL="http://localhost:4999/"')
 
 # Call init on set
 subprocess.run(["starknet", "invoke",
-    "--function", "initialize", "--abi", "set_abi.json", "--address", set_address,
+    "--function", "initialize", "--abi", "briq_abi.json", "--address", briq_address, "--inputs", set_address,
     "--gateway_url", "http://localhost:4999"])
 subprocess.run(["starknet", "invoke",
-    "--function", "set_briq_contract", "--abi", "set_abi.json", "--address", set_address, "--inputs", briq_address,
+    "--function", "initialize", "--abi", "set_abi.json", "--address", set_address, "--inputs", briq_address,
     "--gateway_url", "http://localhost:4999"])
 
 
