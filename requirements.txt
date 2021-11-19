@@ -1,9 +1,10 @@
 pytest>=6
 pytest-asyncio>=0
-cairo-lang>=0.5
+cairo-lang>=0.6
 #starknet-devnet>=0
 gunicorn>=20.0
 lark>=0
+lark-parser>=0
 google-cloud-storage>=1.4
 fastapi[all]>=0
 flake8>=0

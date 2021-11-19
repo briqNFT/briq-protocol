@@ -4,6 +4,8 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+# somehow necessary
+RUN pip uninstall -y lark-parser && pip install lark-parser
 
 COPY starknet_proxy/ starknet_proxy
 COPY briq_abi.json briq_abi.json
