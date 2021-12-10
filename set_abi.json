@@ -124,6 +124,14 @@
             {
                 "name": "token_id",
                 "type": "felt"
+            },
+            {
+                "name": "bricks_len",
+                "type": "felt"
+            },
+            {
+                "name": "bricks",
+                "type": "felt*"
             }
         ],
         "name": "transfer_from",

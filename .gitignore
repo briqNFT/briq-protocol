@@ -8,6 +8,7 @@ venv/
 briq.json
 set.json
 account.json
+mint_proxy.json
 
 *.log
 

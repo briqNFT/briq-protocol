@@ -6,10 +6,10 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_not_zero
 
 from contracts.ownership_utils import (
-    assert_allowed_to_mint,
     assert_allowed_to_admin_contract
 )
 
+## Regular ERC721
 @storage_var
 func owner(token_id: felt) -> (res: felt):
 end
@@ -29,6 +29,10 @@ end
 func set_contract() -> (res: felt):
 end
 
+# Address of the minting proxy contract.
+@storage_var
+func mint_contract() -> (res: felt):
+end
 
 # Material encodes the rarity. Values range 1-16
 @storage_var
@@ -49,7 +53,7 @@ func initialize{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (set_contract_address: felt):
+    } (set_contract_address: felt, mint_contract_address: felt):
 
     let (caller) = get_caller_address()
     assert_allowed_to_admin_contract(caller)
@@ -57,6 +61,29 @@ func initialize{
     let (addr) = set_contract.read()
     assert addr = 0
     set_contract.write(set_contract_address)
+
+    mint_contract.write(mint_contract_address)
+
+    return ()
+end
+
+
+func assert_allowed_to_mint{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    }(minter: felt, recipient: felt):
+    if minter == 0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb:
+        return ()
+    end
+    if minter == 0x6043ed114a9a1987fe65b100d0da46fe71b2470e7e5ff8bf91be5346f5e5e3:
+        return ()
+    end
+    let (mc) = mint_contract.read()
+    if minter == mc:
+        return ()
+    end
+    assert 0 = 1
     return ()
 end
 
@@ -110,6 +137,20 @@ func token_at_index{
     let (retval) = balance_details.read(owner=owner, index=index)
     return (retval)
 end
+
+@view
+func get_mint_contract{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } () -> (res: felt):
+    let (retval) = mint_contract.read()
+    return (retval)
+end
+
+############
+############
+############
 
 func _mint{
         pedersen_ptr: HashBuiltin*,
@@ -231,48 +272,47 @@ func unset_bricks_from_set{
     return ()
 end
 
-func find_item_index{
+func erase_balance_details{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (owner: felt, token_id: felt, cur_idx: felt, max: felt) -> (res: felt):
-    alloc_locals
-    local pedersen: HashBuiltin* = pedersen_ptr
-    local range_check = range_check_ptr
-    let (ct) = balance_details.read(owner, cur_idx)
-    if ct == token_id:
-        return (cur_idx)
+    } (owner: felt, token_id: felt, index: felt):
+    let (token_at_index) = balance_details.read(owner, index)
+    if token_at_index == token_id:
+        let (res) = balances.read(owner=owner)
+        if res == 0:
+            return ()
+        else:
+            # swap and erase. Note that the old end is at 'res + 1' at this point, so we need index 'res'.
+            let (last_tok) = balance_details.read(owner, res)
+            balance_details.write(owner, index, last_tok)
+            return ()
+        end
     end
-    if cur_idx == max:
-        return (0)
-    end
-    return find_item_index{pedersen_ptr=pedersen, range_check_ptr=range_check}(owner, token_id, cur_idx + 1, max)
+    # If index is 0 here, we haven't found the token, which should be impossible.
+    assert_not_zero(index)
+    return erase_balance_details(owner, token_id, index - 1)
 end
 
+
 func _transfer{
-        pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
-    alloc_locals
-    let (local curr_owner) = owner.read(token_id=token_id)
+
+    let (curr_owner) = owner.read(token_id=token_id)
     assert curr_owner = sender
-    # Cannot transfer a brick that's part of a set.
-    let (curr_set) = part_of_set.read(token_id=token_id)
-    assert curr_set = 0
+
+    let (res) = balances.read(owner=sender)
+    balances.write(sender, res - 1)
+    erase_balance_details(sender, token_id, res - 1)
+
+    let (res2) = balances.read(owner=recipient)
+    balances.write(recipient, res2 + 1)
+    balance_details.write(recipient, res2, token_id)
+
     owner.write(token_id, recipient)
-
-    # updating balances is annoying
-    let (local cur) = balances.read(curr_owner)
-    balances.write(curr_owner, cur - 1)
-
-    #let (it) = find_item_index(curr_owner, token_id, 0, cur)
-    #let (tok) = balance_details.read(curr_owner, cur - 1)
-    #balance_details.write(curr_owner, it, tok)
-
-    #let (rcur) = balances.read(recipient)
-    #balances.write(recipient, rcur + 1)
-    #balance_details.write(recipient, rcur, tok)
 
     return ()
 end
@@ -283,7 +323,35 @@ func transfer_from{
         syscall_ptr: felt*,
         range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
+
+    let (caller) = get_caller_address()
+    assert caller = sender
+
     _transfer(sender, recipient, token_id)
+    return ()
+end
+
+@external
+func transfer_briqs{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (sender: felt, recipient: felt, bricks_len: felt, bricks: felt*):
+
+    # Only let the set contract call this
+    let (caller) = get_caller_address()
+    let (set_contract_address) = set_contract.read()
+    assert caller = set_contract_address
+
+    # TODO: assert reasonable range
+    if bricks_len == 0:
+        return ()
+    end
+
+    # Recurse
+    _transfer(sender, recipient, [bricks + bricks_len - 1])
+    transfer_briqs(sender=sender, recipient=recipient, bricks_len=bricks_len-1, bricks=bricks)
+
     return ()
 end
 

@@ -27,8 +27,10 @@ from .contract import set_gateway, ContractWrapper
 
 import os
 
-ADDRESS = os.environ.get("ADDRESS") or "0x05fd6b2390ebb20145309db6e58ca4e696dfac3b3525750ad7e8f31ef125506a"
-SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x07309cc705f05e9ae6e2ab4ac447fa8a783e621d21a13793187773cd93ac9438"
+ADDRESS = os.environ.get("ADDRESS") or "0x01d6b126e22d2f805a64fa0ce53ddebcd37363d13ab89960bd2bf896dd2742d4"
+MINT_ADDRESS = os.environ.get("MINT_ADDRESS") or "0x03dbda16e85ad0d72cd54ffd2971b4e18e71a4f9d1d310cc8fd2deb564fc8a59"
+SET_ADDRESS = os.environ.get("SET_ADDRESS") or "0x01618ffcb9f43bfd894eb4a176ce265323372bb4d833a77e20363180efca3a65"
+
 GATEWAY_URL = os.environ.get("GATEWAY_URL") or "https://alpha4.starknet.io/"
 set_gateway(GATEWAY_URL)
 
@@ -69,6 +71,7 @@ async def contract_addresses():
     return {
         "briq": ADDRESS,
         "set": SET_ADDRESS,
+        "mint": MINT_ADDRESS,
     }
 
 
@@ -127,24 +130,16 @@ from pydantic import BaseModel
 
 from typing import Dict, Any
 class Set(BaseModel):
-    owner: int
+    token_id: int
     data: Dict[str, Any]
-    used_cells: list[int]
-
-import time
-import random
 
 @app.post("/store_set")
 async def store_set(set: Set):
-    token_id = int(time.time()) + random.randint(0, 10000000)
-    transaction = await set_contract.mint(owner=set.owner, token_id=token_id, bricks=set.used_cells).invoke()
-    print(transaction)
-    storage_client.store_json(path=str(token_id), data=set.data)
-    #open(f"temp/{token_id}.json", "w").write(json.dumps(data))
-
+    # TODO: should add some security here really.
+    storage_client.store_json(path=str(set.token_id), data=set.data)
     return {
         "code": 200,
-        "value": token_id
+        "value": set.token_id
     }
 
 class DeletionRequest(BaseModel):

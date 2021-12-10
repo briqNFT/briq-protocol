@@ -4,6 +4,10 @@
             {
                 "name": "set_contract_address",
                 "type": "felt"
+            },
+            {
+                "name": "mint_contract_address",
+                "type": "felt"
             }
         ],
         "name": "initialize",
@@ -73,6 +77,18 @@
             }
         ],
         "name": "token_at_index",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_mint_contract",
         "outputs": [
             {
                 "name": "res",
@@ -178,6 +194,29 @@
             }
         ],
         "name": "transfer_from",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "bricks_len",
+                "type": "felt"
+            },
+            {
+                "name": "bricks",
+                "type": "felt*"
+            }
+        ],
+        "name": "transfer_briqs",
         "outputs": [],
         "type": "function"
     },

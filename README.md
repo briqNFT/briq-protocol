@@ -25,10 +25,13 @@ export SET_ADDRESS=$(echo $ADD | sed "s/Contract address: //")
 starknet deploy --contract briq.json --network alpha
 starknet deploy --contract set.json --network alpha
 
-export ADDRESS="0x05fd6b2390ebb20145309db6e58ca4e696dfac3b3525750ad7e8f31ef125506a"
-export SET_ADDRESS="0x07309cc705f05e9ae6e2ab4ac447fa8a783e621d21a13793187773cd93ac9438"
+export ADDRESS="0x01d6b126e22d2f805a64fa0ce53ddebcd37363d13ab89960bd2bf896dd2742d4"
+export SET_ADDRESS="0x01618ffcb9f43bfd894eb4a176ce265323372bb4d833a77e20363180efca3a65"
 
-starknet invoke --function initialize --network alpha --abi briq_abi.json --address $ADDRESS --inputs $SET_ADDRESS
+starknet deploy --contract mint_proxy.json --network alpha --inputs $ADDRESS
+export MINT_ADDRESS="0x03dbda16e85ad0d72cd54ffd2971b4e18e71a4f9d1d310cc8fd2deb564fc8a59"
+
+starknet invoke --function initialize --network alpha --abi briq_abi.json --address $ADDRESS --inputs $SET_ADDRESS $MINT_ADDRESS
 starknet invoke --function initialize --network alpha --abi set_abi.json --address $SET_ADDRESS --inputs $ADDRESS
 
 curl --header "Content-Type: application/json" \

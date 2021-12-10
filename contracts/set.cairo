@@ -12,7 +12,7 @@ from contracts.ownership_utils import (
 
 @contract_interface
 namespace IBriqContract:
-    func transfer_from(sender: felt, recipient: felt, token_id: felt):
+    func transfer_briqs(sender: felt, recipient: felt, bricks_len: felt, bricks: felt*):
     end
     func set_bricks_to_set(set_id: felt, bricks_len: felt, bricks: felt*):
     end
@@ -179,12 +179,29 @@ func _transfer{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (sender: felt, recipient: felt, token_id: felt):
+    } (sender: felt, recipient: felt, token_id: felt, bricks_len: felt, bricks: felt*):
+    alloc_locals
+
     let (curr_owner) = token_owner.read(token_id=token_id)
     assert curr_owner = sender
+
+    let (addr) = briq_contract.read()
+    let (nbbr) = nb_briqs.read(token_id)
+    assert bricks_len = nbbr
+    
+    local pedersen_ptr: HashBuiltin* = pedersen_ptr
+    IBriqContract.transfer_briqs(contract_address=addr, sender=sender, recipient=recipient, bricks_len=bricks_len, bricks=bricks)
+
+    let (res) = balances.read(owner=sender)
+    balances.write(sender, res - 1)
+    erase_balance_details(sender, token_id, res - 1)
+
+    let (res2) = balances.read(owner=recipient)
+    balances.write(recipient, res2 + 1)
+    balance_details.write(recipient, res2, token_id)
+
     token_owner.write(token_id, recipient)
-    # TODO: transfer all individual bricks as well.
-    # let (res) = IBalanceContract.get_balance(contract_address=contract_address)
+
     return ()
 end
 
@@ -193,11 +210,17 @@ func transfer_from{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (sender: felt, recipient: felt, token_id: felt):
-    _transfer(sender, recipient, token_id)
+    } (sender: felt, recipient: felt, token_id: felt, bricks_len: felt, bricks: felt*):
+
+    let (caller) = get_caller_address()
+    assert caller = sender
+
+    _transfer(sender, recipient, token_id, bricks_len, bricks)
     return ()
 end
 
+
+## enumerability
 
 func populate_tokens{
         pedersen_ptr: HashBuiltin*,
