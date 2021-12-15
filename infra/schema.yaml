@@ -1,8 +1,9 @@
 #@data/values-schema
 ---
 name: briq-protocol
+env: test
+storage_bucket: briq-bucket-test-1
+static_ip: lb-sltech-company-ipv4-1
+sites: [""]
+image_name: briq-protocol
 image_tag: ""
-#@schema/type any=True
-defaultLabels:
-  appname: briq-protocol
-  env: test

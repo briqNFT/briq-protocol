@@ -1,0 +1,7 @@
+#@data/values
+---
+name: dev-briq-protocol
+env: test
+storage_bucket: briq-bucket-test-1
+static_ip: lb-sltech-company-ipv4-3
+sites: ["api.test.sltech.company"]

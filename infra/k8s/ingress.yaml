@@ -3,24 +3,23 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: briq-protocol
+  name: #@ data.values.name
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: lb-sltech-company-ipv4-1
-    networking.gke.io/v1beta1.FrontendConfig: "briq-protocol"
+    kubernetes.io/ingress.global-static-ip-name: #@ data.values.static_ip
+    networking.gke.io/v1beta1.FrontendConfig: #@ data.values.name
     networking.gke.io/managed-certificates: #@ data.values.name + "-managed-cert"
 spec:
   rules:
-#@ arr = ["api.sltech.company", "api.briq.construction"]
+#@ arr = data.values.sites
 #@ for i in arr:
   - host: #@ i
-  - host: 
     http:
       paths:
       - path: /*
         pathType: ImplementationSpecific
         backend:
           service:
-            name: briq-protocol
+            name: #@ data.values.name
             port:
               number: 80
 #@ end
@@ -28,7 +27,7 @@ spec:
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
 metadata:
-  name: briq-protocol
+  name: #@ data.values.name
 spec:
   redirectToHttps:
     enabled: true
@@ -39,6 +38,4 @@ kind: ManagedCertificate
 metadata:
   name: #@ data.values.name + "-managed-cert"
 spec:
-  domains:
-    - api.sltech.company
-    - api.briq.construction
+  domains: #@ data.values.sites

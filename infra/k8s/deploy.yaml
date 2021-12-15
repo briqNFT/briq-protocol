@@ -3,26 +3,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: briq-protocol
+  name: #@ data.values.name
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: briq-protocol
+      app: #@ data.values.name
   template:
     metadata:
       labels:
-        app: briq-protocol
+        app: #@ data.values.name
     spec:
       serviceAccountName: cloud-storage-access
       containers:
-      - name: briq-protocol
-        image: #@ "europe-west3-docker.pkg.dev/healthy-saga-329513/sltech-briq/" + data.values.name + ":" + data.values.image_tag
+      - name: #@ data.values.name
+        image: #@ "europe-west3-docker.pkg.dev/healthy-saga-329513/sltech-briq/" + data.values.image_name + ":" + data.values.image_tag
         ports:
         - containerPort: 5000
         env:
         - name: CLOUD_STORAGE_BUCKET
-          value: "briq-bucket-prod-1"
+          value: #@ data.values.storage_bucket
         resources:
           requests:
             cpu: "100m"

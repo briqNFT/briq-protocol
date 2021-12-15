@@ -1,20 +1,18 @@
-name: deploy
+name: deploy-test
 on:
   push:
-    branches: [ main ]
 env:
   GKE_CLUSTER: sltech-briq-k8s-cluster
   GKE_ZONE: europe-west3-c
 
 jobs:
   deploy:
-    name: "Deploy to production"
+    name: "Deploy to test env"
     environment: production
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
     
     # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@master
@@ -47,4 +45,4 @@ jobs:
 
     - name: Deploy
       run: |-
-        K8S_ENV=prod infra/deploy.sh
+        K8S_ENV=test infra/deploy.sh
