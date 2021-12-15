@@ -66,8 +66,10 @@ def health():
     return "ok"
 
 
+@app.post("/contract_addresses")
 @app.get("/contract_addresses")
-async def contract_addresses():
+async def contract_addresses(baseUrl: str):
+    print("baseurl " + baseUrl)
     return {
         "briq": ADDRESS,
         "set": SET_ADDRESS,
@@ -135,8 +137,9 @@ class Set(BaseModel):
 
 @app.post("/store_set")
 async def store_set(set: Set):
-    # TODO: should add some security here really.
-    storage_client.store_json(path=str(set.token_id), data=set.data)
+    # TODO: improve on this.
+    if not storage_client.has_json(path=str(set.token_id)):
+        storage_client.store_json(path=str(set.token_id), data=set.data)
     return {
         "code": 200,
         "value": set.token_id

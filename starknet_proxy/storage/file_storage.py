@@ -22,5 +22,13 @@ class FileStorage(IStorage):
         with open(self.path + path + ".json", "r") as f:
             return json.load(f)
 
+    def has_json(self, path):
+        try:
+            with open(self.path + path + ".json", "r"):
+                return True
+        except:
+            return False
+
+
     def list_json(self):
         return [x for x in os.listdir(self.path) if x.endswith(".json")]

@@ -8,6 +8,9 @@ class IStorage:
     def load_json(self, path):
         pass
 
+    def has_json(self, path):
+        pass
+
     def list_files(self, path):
         pass
 

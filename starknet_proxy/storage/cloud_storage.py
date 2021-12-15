@@ -22,5 +22,8 @@ class CloudStorage(IStorage):
         print("loading JSON")
         return json.loads(self.bucket.blob(self.path + path + ".json").download_as_text())
 
+    def has_json(self, path):
+        return self.bucket.blob(self.path + path + ".json").exists()
+
     def list_json(self):
         return [x.name.replace(self.path, "") for x in self.storage_client.list_blobs(self.bucket, prefix=self.path, timeout=5) if ".json" in x.name]
