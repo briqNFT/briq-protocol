@@ -16,6 +16,7 @@ app.add_middleware(
         "https://www.sltech.company",
         "https://briq.construction",
         "https://www.briq.construction",
+        "https://test.sltech.company",
     ],
     allow_credentials=True,
     allow_methods=["*"],
