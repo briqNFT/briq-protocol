@@ -134,8 +134,9 @@ class Set(BaseModel):
 @app.post("/store_set")
 async def store_set(set: Set):
     # TODO: improve on this.
-    if not storage_client.has_json(path=set.token_id):
-        storage_client.store_json(path=set.token_id, data=set.data)
+    if storage_client.has_json(path=set.token_id):
+        raise HTTPException(status_code=500, detail="Set already exists or existed")
+    storage_client.store_json(path=set.token_id, data=set.data)
     return {
         "code": 200,
         "value": set.token_id
