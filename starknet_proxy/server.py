@@ -101,20 +101,15 @@ async def get_bricks(owner: int):
 
 @app.post("/store_get/{token_id}")
 @app.get("/store_get/{token_id}")
-async def store_get(token_id: int):
-    owner = await set_contract.owner_of(token_id).call()
-    if owner == 0:
-        raise HTTPException(status_code=500, detail="Set does not exist")
-
+async def store_get(token_id: str):
     try:
-        data = storage_client.load_json(path=str(token_id))
+        data = storage_client.load_json(path=token_id)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="File not found")
 
     return {
         "code": 200,
-        "owner": owner,
         "token_id": token_id,
         "data": data
     }
@@ -132,14 +127,14 @@ from pydantic import BaseModel
 
 from typing import Dict, Any
 class Set(BaseModel):
-    token_id: int
+    token_id: str
     data: Dict[str, Any]
 
 @app.post("/store_set")
 async def store_set(set: Set):
     # TODO: improve on this.
-    if not storage_client.has_json(path=str(set.token_id)):
-        storage_client.store_json(path=str(set.token_id), data=set.data)
+    if not storage_client.has_json(path=set.token_id):
+        storage_client.store_json(path=set.token_id, data=set.data)
     return {
         "code": 200,
         "value": set.token_id
