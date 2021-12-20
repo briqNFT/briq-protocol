@@ -25,8 +25,8 @@ spec:
           value: #@ data.values.storage_bucket
         resources:
           requests:
-            cpu: "100m"
-            memory: "256Mi"
+            cpu: #@ data.values.resources.cpu
+            memory: #@ data.values.resources.memory 
         #@ #command: ["gunicorn"]
         #@ #args: ["starknet_proxy.proxy_fapi:app", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:5000"]
         livenessProbe:
