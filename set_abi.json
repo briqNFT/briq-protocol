@@ -97,6 +97,21 @@
             {
                 "name": "token_id",
                 "type": "felt"
+            }
+        ],
+        "name": "disassemble",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
             },
             {
                 "name": "bricks_len",
@@ -107,7 +122,26 @@
                 "type": "felt*"
             }
         ],
-        "name": "disassemble",
+        "name": "disassemble_hinted",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transfer_from",
         "outputs": [],
         "type": "function"
     },
@@ -134,7 +168,7 @@
                 "type": "felt*"
             }
         ],
-        "name": "transfer_from",
+        "name": "transfer_from_hinted",
         "outputs": [],
         "type": "function"
     },

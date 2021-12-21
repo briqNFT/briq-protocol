@@ -230,11 +230,36 @@
         "name": "get_all_tokens_for_owner",
         "outputs": [
             {
-                "name": "bricks_len",
+                "name": "tokens_len",
                 "type": "felt"
             },
             {
-                "name": "bricks",
+                "name": "tokens",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "set_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_bricks_for_set",
+        "outputs": [
+            {
+                "name": "tokens_len",
+                "type": "felt"
+            },
+            {
+                "name": "tokens",
                 "type": "felt*"
             }
         ],

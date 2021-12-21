@@ -18,6 +18,8 @@ namespace IBriqContract:
     end
     func unset_bricks_from_set(set_id: felt, bricks_len: felt, bricks: felt*):
     end
+    func get_bricks_for_set(owner: felt, set_id: felt) -> (bricks_len: felt, bricks: felt*):
+    end
 end
 
 
@@ -149,21 +151,18 @@ func erase_balance_details{
     return erase_balance_details(owner, token_id, index - 1)
 end
 
-@external
-func disassemble{
+func _disassemble{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
     } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*):
     alloc_locals
 
-    let (caller) = get_caller_address()
-    assert_allowed_to_mint(caller, owner)
-
-    let (addr) = briq_contract.read()
     let (nbbr) = nb_briqs.read(token_id)
     assert bricks_len = nbbr
+
     local pedersen_ptr: HashBuiltin* = pedersen_ptr
+    let (addr) = briq_contract.read()
     IBriqContract.unset_bricks_from_set(contract_address=addr, set_id=token_id, bricks_len=bricks_len, bricks=bricks)
 
     let (res) = balances.read(owner=owner)
@@ -171,7 +170,35 @@ func disassemble{
     erase_balance_details(owner, token_id, res - 1)
     nb_briqs.write(token_id, 0)
     token_owner.write(token_id, 0)
+    return()
+end
 
+@external
+func disassemble{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt, token_id: felt):
+    let (caller) = get_caller_address()
+    assert_allowed_to_mint(caller, owner)
+
+    let (addr) = briq_contract.read()
+    let (bricks_len, bricks) = IBriqContract.get_bricks_for_set(contract_address=addr, owner=owner, set_id=token_id)
+
+    _disassemble(owner, token_id, bricks_len, bricks)
+    return ()
+end
+
+@external
+func disassemble_hinted{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt, token_id: felt, bricks_len: felt, bricks: felt*):
+    let (caller) = get_caller_address()
+    assert_allowed_to_mint(caller, owner)
+
+    _disassemble(owner, token_id, bricks_len, bricks)
     return ()
 end
 
@@ -210,6 +237,23 @@ func transfer_from{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
+    } (sender: felt, recipient: felt, token_id: felt):
+
+    let (caller) = get_caller_address()
+    assert caller = sender
+
+    let (addr) = briq_contract.read()
+    let (bricks_len, bricks) = IBriqContract.get_bricks_for_set(contract_address=addr, owner=sender, set_id=token_id)
+
+    _transfer(sender, recipient, token_id, bricks_len, bricks)
+    return ()
+end
+
+@external
+func transfer_from_hinted{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt, bricks_len: felt, bricks: felt*):
 
     let (caller) = get_caller_address()
@@ -220,24 +264,30 @@ func transfer_from{
 end
 
 
-## enumerability
+
+############
+############
+############
+#
+# Enumerability
+#
 
 func populate_tokens{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (owner: felt, rett: felt*, ret_index: felt, max: felt):
-    alloc_locals
-    if ret_index == max:
-        return ()
+    } (owner: felt, rett: felt*, idx: felt) -> (res: felt*):
+    if idx == -1:
+        return (rett)
     end
-    let (token_id) = balance_details.read(owner=owner, index=ret_index)
-    [rett] = token_id
-    return populate_tokens(owner, rett + 1, ret_index + 1, max)
+    let (token_id) = balance_details.read(owner=owner, index=idx)
+    rett[0] = token_id
+    return populate_tokens(owner, rett + 1, idx - 1)
 end
 
 from starkware.cairo.common.alloc import alloc
 
+# Get all tokens from an address
 @view
 func get_all_tokens_for_owner{
         pedersen_ptr: HashBuiltin*,
@@ -245,10 +295,8 @@ func get_all_tokens_for_owner{
         range_check_ptr
     } (owner: felt) -> (tokens_len: felt, tokens: felt*):
     alloc_locals
-    let (local res: felt) = balances.read(owner=owner)
     let (local ret_array : felt*) = alloc()
-    local ret_index = 0
-    populate_tokens(owner, ret_array, ret_index, res)
-    return (res, ret_array)
+    let (nb_tokens) = balances.read(owner=owner)
+    let (nv) = populate_tokens(owner, ret_array, nb_tokens - 1)
+    return (nv - ret_array, ret_array)
 end
-

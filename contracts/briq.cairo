@@ -4,6 +4,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_not_zero
+from starkware.cairo.common.registers import get_fp_and_pc
 
 from contracts.ownership_utils import (
     assert_allowed_to_admin_contract
@@ -331,6 +332,7 @@ func transfer_from{
     return ()
 end
 
+# Transfer multiple briqs at once.
 @external
 func transfer_briqs{
         pedersen_ptr: HashBuiltin*,
@@ -355,38 +357,75 @@ func transfer_briqs{
     return ()
 end
 
+
+############
+############
+############
+#
+# Enumerability
+#
+
 func populate_tokens{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (owner: felt, rett: felt*, ret_index: felt, max: felt):
-    alloc_locals
-    if ret_index == max:
-        return ()
+    } (owner: felt, rett: felt*, idx: felt) -> (res: felt*):
+    if idx == -1:
+        return (rett)
     end
-    let(local retval0: felt) = balance_details.read(owner=owner, index=ret_index)
-    let(local retMat0: felt) = material.read(token_id=retval0)
-    let(local retSet0: felt) = part_of_set.read(token_id=retval0)
-    rett[0] = retval0
-    rett[1] = retMat0
-    rett[2] = retSet0
-    return populate_tokens(owner, rett + 3, ret_index + 1, max)
+    let (token_id) = balance_details.read(owner=owner, index=idx)
+    let (mat) = material.read(token_id=token_id)
+    let (set) = part_of_set.read(token_id=token_id)
+    rett[0] = token_id
+    rett[1] = mat
+    rett[2] = set
+    return populate_tokens(owner, rett + 3, idx - 1)
 end
 
 from starkware.cairo.common.alloc import alloc
 
+# Get all tokens from an address
 @view
 func get_all_tokens_for_owner{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (owner: felt) -> (bricks_len: felt, bricks: felt*):
+    } (owner: felt) -> (tokens_len: felt, tokens: felt*):
     alloc_locals
-
-    let (local res: felt) = balances.read(owner=owner)
     let (local ret_array : felt*) = alloc()
-    local ret_index = 0
-    populate_tokens(owner, ret_array, ret_index, res)
-    return (res * 3, ret_array)
+    let (nb_tokens) = balances.read(owner=owner)
+    let (nv) = populate_tokens(owner, ret_array, nb_tokens - 1)
+    return (nv - ret_array, ret_array)
 end
 
+func _do_get_bricks_for_set{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt, set_id: felt, rett: felt*, idx: felt) -> (res: felt*):
+    if idx == -1:
+        return (rett)
+    end
+    let (token_id) = balance_details.read(owner=owner, index=idx)
+    let (set) = part_of_set.read(token_id=token_id)
+    if set == set_id:
+        rett[0] = token_id
+        return _do_get_bricks_for_set(owner, set_id, rett + 1, idx - 1)
+    else:
+        return _do_get_bricks_for_set(owner, set_id, rett, idx - 1)
+    end
+end
+
+# Get all tokens from a set (you need the set owner which can be queried separately from the set contract).
+@view
+func get_bricks_for_set{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (owner: felt, set_id: felt) -> (tokens_len: felt, tokens: felt*):
+    alloc_locals
+    let (local ret_array : felt*) = alloc()
+    let (nb_tokens) = balances.read(owner=owner)
+    let (nv) = _do_get_bricks_for_set(owner, set_id, ret_array, nb_tokens - 1)
+    return (nv - ret_array, ret_array)
+end
