@@ -8,6 +8,10 @@
             {
                 "name": "mint_contract_address",
                 "type": "felt"
+            },
+            {
+                "name": "erc20_contract_address",
+                "type": "felt"
             }
         ],
         "name": "initialize",
@@ -218,6 +222,30 @@
         ],
         "name": "transfer_briqs",
         "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "ERC20_transfer",
+        "outputs": [
+            {
+                "name": "success",
+                "type": "felt"
+            }
+        ],
         "type": "function"
     },
     {

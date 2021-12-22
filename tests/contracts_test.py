@@ -32,15 +32,18 @@ async def set_contract(starknet):
     # Deploy the contract.
     return await starknet.deploy(SET_CONTRACT_FILE)
 
+ADMIN_ADDR = 0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb
+# fake address
+ERC20_ADDR = 0x0011223344
 
 @pytest.mark.asyncio
 async def test_micro(briq_contract, set_contract):
-    await briq_contract.initialize(set_contract.contract_address, 0).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
-    await briq_contract.mint(owner=0x11, token_id=0x123, material=1).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
+    await briq_contract.initialize(set_contract.contract_address, 0, 0).invoke(caller_address=ADMIN_ADDR)
+    await briq_contract.mint(owner=0x11, token_id=0x123, material=1).invoke(caller_address=ADMIN_ADDR)
     with pytest.raises(StarkException):
         await briq_contract.mint(owner=0x11, token_id=0x124, material=1).invoke(caller_address=0xdead)
-    await briq_contract.mint(owner=0x11, token_id=0x124, material=2).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
-    await briq_contract.mint_multiple(owner=0x11, token_start=0x200, material=2, nb=5).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
+    await briq_contract.mint(owner=0x11, token_id=0x124, material=2).invoke(caller_address=ADMIN_ADDR)
+    await briq_contract.mint_multiple(owner=0x11, token_start=0x200, material=2, nb=5).invoke(caller_address=ADMIN_ADDR)
     assert (await briq_contract.get_all_tokens_for_owner(owner=0x11).call()).result[0] == [
         0x200, 2, 0,
         0x201, 2, 0,
@@ -51,7 +54,7 @@ async def test_micro(briq_contract, set_contract):
         0x123, 1, 0,
     ]
 
-    await set_contract.initialize(briq_contract.contract_address).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
+    await set_contract.initialize(briq_contract.contract_address).invoke(caller_address=ADMIN_ADDR)
     await set_contract.mint(owner=0x11, token_id=0x100, bricks=[0x123, 0x124, 0x200, 0x202]).invoke(caller_address=0x11)
 
     assert (await briq_contract.get_all_tokens_for_owner(owner=0x11).call()).result[0] == [
@@ -201,3 +204,14 @@ async def test_mint_proxy(starknet, briq_contract):
     for i in range(100):
         res = res + [i + 101, 1, 0]
     assert (await briq_contract.get_all_tokens_for_owner(owner=0x12).call()).result[0] == res
+
+@pytest.mark.asyncio
+async def test_erc20_transfer(briq_contract):
+    await briq_contract.initialize(0, 0, ERC20_ADDR).invoke(caller_address=ADMIN_ADDR)
+    await briq_contract.mint_multiple(owner=0x11, token_start=0x200, material=1, nb=10).invoke(caller_address=ADMIN_ADDR)
+
+    await briq_contract.ERC20_transfer(sender=0x11, recipient=0x12, amount=5).invoke(caller_address=ERC20_ADDR)    
+
+    assert (await briq_contract.balance_of(owner=0x11).call()).result[0] == 5
+    assert (await briq_contract.balance_of(owner=0x12).call()).result[0] == 5
+

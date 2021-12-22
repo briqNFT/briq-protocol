@@ -6,6 +6,7 @@ __pycache__
 venv/
 
 briq.json
+briq_erc20.json
 set.json
 account.json
 mint_proxy.json

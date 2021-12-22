@@ -1,60 +1,17 @@
+# Briq Protocol
 
-```source venv/bin/activate```
+This repository contains the Cairo code for Briq StarkNet contracts, as well as the python helper server.
 
-```pip3 install -r requirements```
-```pip3 install flask_async```
+This is currently ongoing substantial changes.
 
-
-
-`pytest`
-
-
+## TestNet Addresses
 ```sh
-export STARKNET_NETWORK=alpha
-starknet-devnet --port 4999
+export BRIQ_ADDRESS="0x066c0a6dbfa8c1e2a9d41658d03ec22f20e751f0b81c189d451cade12cf2cef9"
+export MINT_ADDRESS="0x036b6a131a44e2b60684529c7dbd4f857371b0279e6d309e2bf094f5a976ddfa"
+export SET_ADDRESS="0x05958f8b2214242bd436faac06e0db6b953c03348ce960aab9f4f4bcecb23014"
+export ERC20_ADDRESS="0x0373419e9c39a1f5e1995382c7bd89e00dea6cd02f8bb26e8d7e1df071aac775"
+```
 
-scripts/compile.sh
+## Setup
 
-export GATEWAY_URL="http://localhost:4999"
-export FEEDER_GATEWAY_URL="http://localhost:4999"
-ADD=$(starknet deploy --contract briq.json --gateway_url $GATEWAY_URL --feeder_gateway_url $FEEDER_GATEWAY_URL | grep "Contract")
-export ADDRESS=$(echo $ADD | sed "s/Contract address: //")
-ADD=$(starknet deploy --contract set.json --gateway_url $GATEWAY_URL --feeder_gateway_url $FEEDER_GATEWAY_URL | grep "Contract")
-export SET_ADDRESS=$(echo $ADD | sed "s/Contract address: //")
-
-starknet deploy --contract briq.json --network alpha
-starknet deploy --contract set.json --network alpha
-
-export ADDRESS="0x01d6b126e22d2f805a64fa0ce53ddebcd37363d13ab89960bd2bf896dd2742d4"
-export SET_ADDRESS="0x01618ffcb9f43bfd894eb4a176ce265323372bb4d833a77e20363180efca3a65"
-
-starknet deploy --contract mint_proxy.json --network alpha --inputs $ADDRESS
-export MINT_ADDRESS="0x03dbda16e85ad0d72cd54ffd2971b4e18e71a4f9d1d310cc8fd2deb564fc8a59"
-
-starknet invoke --function initialize --network alpha --abi briq_abi.json --address $ADDRESS --inputs $SET_ADDRESS $MINT_ADDRESS
-starknet invoke --function initialize --network alpha --abi set_abi.json --address $SET_ADDRESS --inputs $ADDRESS
-
-curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"inputs": { "owner": 17, "token_id": 100, "material": 1 }}' \
-  http://localhost:5000/call_func/mint
-
-  curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"inputs": { "owner": 17, "token_id": 101, "material": 1 }}' \
-  http://localhost:5000/call_func/mint
-
-  curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"inputs": { "owner": 17 }}' \
-  http://localhost:5000/call_func/balance_of
-
-  curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"inputs": { "sender": 17, "recipient": 18, "token_id": 101}}' \
-  http://localhost:5000/call_func/transfer_from
-
-    curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"inputs": { "owner": 17 }}' \
-  http://localhost:5000/get_bricks/17
+Make a python virtual env and install the requirements. You may need to reinstall lask-parser (for some reason).

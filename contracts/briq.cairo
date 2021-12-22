@@ -35,6 +35,14 @@ end
 func mint_contract() -> (res: felt):
 end
 
+# Address of the ERC20 proxy contract.
+@storage_var
+func erc20_contract() -> (res: felt):
+end
+
+
+###
+
 # Material encodes the rarity. Values range 1-16
 @storage_var
 func material(token_id: felt) -> (res: felt):
@@ -54,16 +62,18 @@ func initialize{
         pedersen_ptr: HashBuiltin*,
         syscall_ptr: felt*,
         range_check_ptr
-    } (set_contract_address: felt, mint_contract_address: felt):
+    } (
+        set_contract_address: felt,
+        mint_contract_address: felt,
+        erc20_contract_address: felt
+    ):
 
     let (caller) = get_caller_address()
     assert_allowed_to_admin_contract(caller)
 
-    let (addr) = set_contract.read()
-    assert addr = 0
     set_contract.write(set_contract_address)
-
     mint_contract.write(mint_contract_address)
+    erc20_contract.write(erc20_contract_address)
 
     return ()
 end
@@ -355,6 +365,45 @@ func transfer_briqs{
     transfer_briqs(sender=sender, recipient=recipient, bricks_len=bricks_len-1, bricks=bricks)
 
     return ()
+end
+
+
+func _erc20_transfer{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (sender: felt, recipient: felt, amount: felt, idx: felt):
+    if amount == 0:
+        return ()
+    end
+    let (token_id) = balance_details.read(sender, idx)
+    assert_not_zero(token_id)
+    let (set) = part_of_set.read(token_id)
+    if set == 0:
+        _transfer(sender, recipient, token_id)
+        _erc20_transfer(sender, recipient, amount - 1, idx)
+    else:
+        _erc20_transfer(sender, recipient, amount, idx + 1)
+    end
+    return ()
+end
+
+# Transfer multiple briqs at once, without specifying which.
+@external
+func ERC20_transfer{
+        pedersen_ptr: HashBuiltin*,
+        syscall_ptr: felt*,
+        range_check_ptr
+    } (sender: felt, recipient: felt, amount: felt) -> (success: felt):
+
+    # Only let the ERC20 proxy contract call this
+    let (caller) = get_caller_address()
+    let (addr) = erc20_contract.read()
+    assert caller = addr
+
+    _erc20_transfer(sender, recipient, amount, 0)
+
+    return (1)
 end
 
 
