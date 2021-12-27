@@ -20,7 +20,7 @@ if not BRIQ:
     print(contract.stdout)
 
 if not MINT:
-    contract = subprocess.run(["starknet", "deploy", "--contract", "mint_proxy.json", "--network", NETWORK, "--inputs", BRIQ] + TOKEN_ARGS, capture_output=True, encoding="utf-8")
+    contract = subprocess.run(["starknet", "deploy", "--contract", "mint_proxy.json", "--network", NETWORK, "--inputs", BRIQ, "100"] + TOKEN_ARGS, capture_output=True, encoding="utf-8")
     MINT = re.search("Contract address: ([0-9a-z]+)", contract.stdout).group(1)
     print(contract.stdout)
 

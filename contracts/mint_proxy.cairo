@@ -3,9 +3,9 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
+from starkware.cairo.common.math import assert_le
 
 # Contract that limits minting for the alpha-mainnet release
-
 
 @contract_interface
 namespace IBriqContract:
@@ -13,9 +13,14 @@ namespace IBriqContract:
     end
 end
 
-# Whether a user minted.
+# How many free briqs a user can mint.
 @storage_var
-func _has_minted(user: felt) -> (res: felt):
+func _max_mint() -> (res: felt):
+end
+
+# How many briqs a user has minted so far.
+@storage_var
+func _amount_minted(user: felt) -> (res: felt):
 end
 
 # Current start token ID
@@ -33,21 +38,41 @@ func constructor{
         syscall_ptr : felt*, 
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
-    }(briq_contract_address: felt):
+    }(briq_contract_address: felt, max_mint: felt):
     _briq_contract_address.write(briq_contract_address)
+    _max_mint.write(max_mint)
     _cur_token_id.write(0x1)
     return()
 end
 
-# Whether a user already minted his briqs
+# Whether how many briqs a user has minted
 @view
-func has_minted{
+func amount_minted{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (user: felt) -> (res: felt):
-    let (res) = _has_minted.read(user=user)
+    let (res) = _amount_minted.read(user=user)
     return (res)
+end
+
+# Mint briqs for a given user.
+func _mint{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (user: felt, amount: felt):
+    let (already_minted) = amount_minted(user)
+    let (max) = _max_mint.read()
+    assert_le(already_minted + amount, max)
+
+    let (bca) = _briq_contract_address.read()
+    let (start) = _cur_token_id.read()
+    
+    IBriqContract.mint_multiple(bca, user, 1, start, amount)
+    _cur_token_id.write(start + amount)
+    _amount_minted.write(user, already_minted + amount)
+    return ()
 end
 
 # Request minting briqs for a given user.
@@ -60,13 +85,21 @@ func mint{
     let (ca) = get_caller_address()
     assert ca = user
 
-    let (already_minted) = has_minted(user)
-    assert already_minted = 0
+    let (max) = _max_mint.read()
+    _mint(user, max)
+    return ()
+end
 
-    let (bca) = _briq_contract_address.read()
-    let (start) = _cur_token_id.read()
-    IBriqContract.mint_multiple(bca, user, 1, start, 100)
-    _cur_token_id.write(start + 100)
-    _has_minted.write(user, 1)
+# Request minting briqs for a given user.
+@external
+func mint_amount{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (user: felt, amount: felt):
+    let (ca) = get_caller_address()
+    assert ca = user
+
+    _mint(user, amount)
     return ()
 end

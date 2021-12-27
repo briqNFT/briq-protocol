@@ -180,30 +180,33 @@ async def test_transfer(briq_contract, set_contract):
     ]
 
 
-
 @pytest.mark.asyncio
 async def test_mint_proxy(starknet, briq_contract):
-    mint_contract = await starknet.deploy(MINT_CONTRACT_FILE, constructor_calldata=[briq_contract.contract_address])
-    await briq_contract.initialize(0, mint_contract.contract_address).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
+    NB_BRIQS = 50
+    mint_contract = await starknet.deploy(MINT_CONTRACT_FILE, constructor_calldata=[briq_contract.contract_address, NB_BRIQS])
+    await briq_contract.initialize(0, mint_contract.contract_address, 0).invoke(caller_address=ADMIN_ADDR)
 
-    (await mint_contract.has_minted(0x11).call()).result[0] == 0
+    (await mint_contract.amount_minted(0x11).call()).result[0] == 0
     with pytest.raises(StarkException):
         await mint_contract.mint(0x11).invoke(caller_address=0x12)
     await mint_contract.mint(0x11).invoke(caller_address=0x11)
-    (await mint_contract.has_minted(0x11).call()).result[0] == 1
+    (await mint_contract.amount_minted(0x11).call()).result[0] == NB_BRIQS
     with pytest.raises(StarkException):
         await mint_contract.mint(0x11).invoke(caller_address=0x11)
+    with pytest.raises(StarkException):
+        await mint_contract.mint_amount(0x11, 1).invoke(caller_address=0x11)
 
     res = []
-    for i in range(100):
+    for i in range(50):
         res = res + [i + 1, 1, 0]
     assert (await briq_contract.get_all_tokens_for_owner(owner=0x11).call()).result[0] == res
 
     await mint_contract.mint(0x12).invoke(caller_address=0x12)
     res = []
-    for i in range(100):
-        res = res + [i + 101, 1, 0]
+    for i in range(50):
+        res = res + [i + 51, 1, 0]
     assert (await briq_contract.get_all_tokens_for_owner(owner=0x12).call()).result[0] == res
+
 
 @pytest.mark.asyncio
 async def test_erc20_transfer(briq_contract):
