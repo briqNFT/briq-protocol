@@ -1,7 +1,0 @@
-#@data/values
----
-name: briq-protocol
-env: prod
-storage_bucket: briq-bucket-prod-1
-static_ip: lb-sltech-company-ipv4-1
-sites: ["api.briq.construction", "api.sltech.company"]

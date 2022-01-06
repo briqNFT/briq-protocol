@@ -1,6 +1,6 @@
 # Briq Protocol
 
-This repository contains the Cairo code for Briq StarkNet contracts, as well as the python helper server.
+This repository contains the Cairo code for Briq StarkNet contracts.
 
 This is currently ongoing substantial changes.
 
@@ -14,4 +14,4 @@ export ERC20_ADDRESS="0x0373419e9c39a1f5e1995382c7bd89e00dea6cd02f8bb26e8d7e1df0
 
 ## Setup
 
-Make a python virtual env and install the requirements. You may need to reinstall lask-parser (for some reason).
+Make a python virtual env and install the requirements.
