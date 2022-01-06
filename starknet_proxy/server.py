@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from google.cloud import storage
 
 app = FastAPI()
 
@@ -58,7 +59,14 @@ class Set(BaseModel):
 async def store_set(set: Set):
     # TODO: improve on this.
     if storage_client.has_json(path=set.token_id):
-        raise HTTPException(status_code=500, detail="Set already exists or existed")
+        data = storage_client.load_json(path=set.token_id)
+        if (data != set.data):
+            raise HTTPException(status_code=500, detail="Set already exists or existed")
+        else:
+            return {
+                "code": 200,
+                "value": set.token_id
+            }
     storage_client.store_json(path=set.token_id, data=set.data)
     return {
         "code": 200,
