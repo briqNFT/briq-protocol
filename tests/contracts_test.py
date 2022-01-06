@@ -4,6 +4,19 @@ import pytest
 from starkware.starknet.testing.starknet import Starknet
 from starkware.starkware_utils.error_handling import StarkException
 
+
+from starkware.starknet.compiler.compile import compile_starknet_files
+
+CONTRACT_SRC = [os.path.dirname(__file__), "..", "contracts"]
+
+def compile(path):
+    return compile_starknet_files(
+        files=[path],
+        debug_info=True,
+        cairo_path=CONTRACT_SRC,
+    )
+
+
 # The path to the contract source code.
 CONTRACT_FILE = os.path.join(
     os.path.dirname(__file__), "../contracts/briq.cairo")
@@ -14,6 +27,18 @@ SET_CONTRACT_FILE = os.path.join(
 MINT_CONTRACT_FILE = os.path.join(
     os.path.dirname(__file__), "../contracts/mint_proxy.cairo")
 
+@pytest.fixture(scope="session")
+def compiled_briq():
+    return compile(CONTRACT_FILE)
+
+@pytest.fixture(scope="session")
+def compiled_set():
+    return compile(SET_CONTRACT_FILE)
+
+@pytest.fixture(scope="session")
+def compiled_mint():
+    return compile(MINT_CONTRACT_FILE)
+
 @pytest.mark.asyncio
 @pytest.fixture
 async def starknet():
@@ -22,15 +47,15 @@ async def starknet():
 
 @pytest.mark.asyncio
 @pytest.fixture
-async def briq_contract(starknet):
+async def briq_contract(starknet, compiled_briq):
     # Deploy the contract.
-    return await starknet.deploy(CONTRACT_FILE)
+    return await starknet.deploy(contract_def=compiled_briq)
 
 @pytest.mark.asyncio
 @pytest.fixture
-async def set_contract(starknet):
+async def set_contract(starknet, compiled_set):
     # Deploy the contract.
-    return await starknet.deploy(SET_CONTRACT_FILE)
+    return await starknet.deploy(contract_def=compiled_set)
 
 ADMIN_ADDR = 0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb
 # fake address
@@ -120,7 +145,7 @@ async def test_micro(briq_contract, set_contract):
 
 @pytest.mark.asyncio
 async def test_transfer(briq_contract, set_contract):
-    await briq_contract.initialize(set_contract.contract_address, 0).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
+    await briq_contract.initialize(set_contract.contract_address, 0, 0).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
     await set_contract.initialize(briq_contract.contract_address).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
 
     await briq_contract.mint_multiple(owner=0x11, token_start=0x200, material=2, nb=5).invoke(caller_address=0x46fda85f6ff5b7303b71d632b842e950e354fa08225c4f62eee23a1abbec4eb)
@@ -181,9 +206,9 @@ async def test_transfer(briq_contract, set_contract):
 
 
 @pytest.mark.asyncio
-async def test_mint_proxy(starknet, briq_contract):
+async def test_mint_proxy(starknet, briq_contract, compiled_mint):
     NB_BRIQS = 50
-    mint_contract = await starknet.deploy(MINT_CONTRACT_FILE, constructor_calldata=[briq_contract.contract_address, NB_BRIQS])
+    mint_contract = await starknet.deploy(contract_def=compiled_mint, constructor_calldata=[briq_contract.contract_address, NB_BRIQS])
     await briq_contract.initialize(0, mint_contract.contract_address, 0).invoke(caller_address=ADMIN_ADDR)
 
     (await mint_contract.amount_minted(0x11).call()).result[0] == 0
