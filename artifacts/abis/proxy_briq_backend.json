@@ -2,6 +2,79 @@
     {
         "inputs": [
             {
+                "name": "new_implementation",
+                "type": "felt"
+            }
+        ],
+        "name": "setImplementation",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "selector",
+                "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
+            }
+        ],
+        "name": "__default__",
+        "outputs": [
+            {
+                "name": "retdata_size",
+                "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setMintContract",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getMintContract",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "name": "address",
                 "type": "felt"
             }
@@ -9,17 +82,6 @@
         "name": "setProxyAddress",
         "outputs": [],
         "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "proxy_address",
-                "type": "felt"
-            }
-        ],
-        "name": "constructor",
-        "outputs": [],
-        "type": "constructor"
     },
     {
         "inputs": [
@@ -35,110 +97,141 @@
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "selector",
                 "type": "felt"
             },
             {
-                "name": "material",
+                "name": "calldata_size",
                 "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "balanceOf",
         "outputs": [
             {
-                "name": "balance",
+                "name": "retdata_size",
                 "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "selector",
                 "type": "felt"
             },
             {
-                "name": "material",
+                "name": "calldata_size",
                 "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "balanceDetailsOf",
         "outputs": [
             {
-                "name": "ft_balance",
+                "name": "retdata_size",
                 "type": "felt"
             },
             {
-                "name": "nft_ids_len",
-                "type": "felt"
-            },
-            {
-                "name": "nft_ids",
+                "name": "retdata",
                 "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "selector",
                 "type": "felt"
             },
             {
-                "name": "material",
+                "name": "calldata_size",
                 "type": "felt"
             },
             {
-                "name": "index",
-                "type": "felt"
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "tokenOfOwnerByIndex",
         "outputs": [
             {
-                "name": "token_id",
+                "name": "retdata_size",
                 "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "token_id",
+                "name": "selector",
                 "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "ownerOf",
         "outputs": [
             {
-                "name": "owner",
+                "name": "retdata_size",
                 "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "material",
+                "name": "selector",
                 "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "totalSupply",
         "outputs": [
             {
-                "name": "supply",
+                "name": "retdata_size",
                 "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {

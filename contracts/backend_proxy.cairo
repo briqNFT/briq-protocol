@@ -5,6 +5,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.starknet.common.syscalls import call_contract, delegate_l1_handler, delegate_call
 
 from contracts.proxy.library import (
+    Proxy_admin,
     Proxy_implementation_address,
     Proxy_set_implementation,
     Proxy_initializer
@@ -47,7 +48,8 @@ func _onlyAdmin{
         range_check_ptr
     } ():
     let (caller) = get_caller_address()
-    if (caller - 0x123456) == 0:
+    let (admin) = Proxy_admin.read()
+    if (caller - admin) == 0:
         return ()
     end
     # Failure

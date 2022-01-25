@@ -271,6 +271,7 @@ func mintFT{
     return ()    
 end
 
+
 @external
 func mintOneNFT{
         syscall_ptr: felt*,
