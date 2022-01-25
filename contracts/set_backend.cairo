@@ -8,6 +8,10 @@ from starkware.cairo.common.alloc import alloc
 
 from starkware.cairo.common.bitwise import bitwise_and
 
+from contracts.backend_common import (
+    _onlyProxy,
+    setProxyAddress
+)
 
 @contract_interface
 namespace IBriqBackendContract:
@@ -28,10 +32,12 @@ func _owner(token_id: felt) -> (owner: felt):
 end
 
 # To save on gas costs, the LSB of the token_uri can be 1 to indicate extra data is present. A 0 indicates no extra data.
+# As a result, the token_uri variable can only store 249 bits of informations, or 31 bytes.
 @storage_var
 func _token_uri(token_id: felt) -> (token_uri: felt):
 end
 
+# Likewise, the LSB indicates whether the data continues or not.
 @storage_var
 func _token_uri_extra(token_id: felt, index: felt) -> (uri_data: felt):
 end
@@ -51,25 +57,10 @@ end
 func _briq_backend_address() -> (address: felt):
 end
 
-@storage_var
-func _proxy_address() -> (address: felt):
-end
-
 ############
 ############
 ############
 # Admin functions
-
-func _onlyProxy{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } ():
-    let (caller) = get_caller_address()
-    let (proxy) = _proxy_address.read()
-    assert caller = proxy
-    return ()
-end
 
 @constructor
 func constructor{
@@ -82,17 +73,6 @@ func constructor{
 end
 
 ##
-
-@external
-func setProxyAddress{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (address: felt):
-    _onlyProxy()
-    _proxy_address.write(address)
-    return ()
-end
 
 @external
 func setBriqBackendAddress{
@@ -311,16 +291,41 @@ func _transferNFT{
     return _transferNFT(owner, token_id, index - 1, nfts)
 end
 
+from starkware.cairo.common.hash_state import (
+    hash_init, hash_finalize, hash_update, hash_update_single
+)
+
+# To prevent people from generating collisions, we need the token_id to be random.
+# However, we need it to be predictable for good UI.
+# The solution adopted is to hash a hint. Our security becomes the chain security.
+func _hashTokenId{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, token_id_hint: felt) -> (token_id: felt):
+    let hash_ptr = pedersen_ptr
+    with hash_ptr:
+        let (hash_state_ptr) = hash_init()
+        let (hash_state_ptr) = hash_update_single(hash_state_ptr, owner)
+        let (hash_state_ptr) = hash_update_single(hash_state_ptr, token_id_hint)
+        let (token_id) = hash_finalize(hash_state_ptr)
+    end
+    let pedersen_ptr = hash_ptr
+    return (token_id)
+end
+
+
 @external
 func assemble{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    alloc_locals
     _onlyProxy()
-    
-    assert_not_zero(token_id)
     assert_not_zero(owner)
+
+    let (local token_id: felt) = _hashTokenId(owner, token_id_hint)
 
     let (curr_owner) = _owner.read(token_id)
     assert curr_owner = 0
@@ -389,6 +394,9 @@ func setTokenUri{
     _onlyProxy()
     assert_not_zero(uri_len)
     
+    let (owner) = _owner.read(token_id)
+    assert_not_zero(owner)
+
     let (tok) = _token_uri.read(token_id)
     let (extra) = bitwise_and(tok, 1)
     assert_lt_felt(uri[0], 2**250)
