@@ -19,6 +19,56 @@
     {
         "inputs": [
             {
+                "name": "new_implementation",
+                "type": "felt"
+            }
+        ],
+        "name": "setImplementation",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "selector",
+                "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
+            }
+        ],
+        "name": "__default__",
+        "outputs": [
+            {
+                "name": "retdata_size",
+                "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
                 "name": "address",
                 "type": "felt"
             }
@@ -26,17 +76,6 @@
         "name": "setProxyAddress",
         "outputs": [],
         "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "proxy_address",
-                "type": "felt"
-            }
-        ],
-        "name": "constructor",
-        "outputs": [],
-        "type": "constructor"
     },
     {
         "inputs": [
@@ -52,98 +91,141 @@
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "selector",
                 "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "balanceOf",
         "outputs": [
             {
-                "name": "balance",
+                "name": "retdata_size",
                 "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "selector",
                 "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "balanceDetailsOf",
         "outputs": [
             {
-                "name": "token_ids_len",
+                "name": "retdata_size",
                 "type": "felt"
             },
             {
-                "name": "token_ids",
+                "name": "retdata",
                 "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "selector",
                 "type": "felt"
             },
             {
-                "name": "index",
+                "name": "calldata_size",
                 "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "tokenOfOwnerByIndex",
         "outputs": [
             {
-                "name": "token_id",
+                "name": "retdata_size",
                 "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "token_id",
+                "name": "selector",
                 "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "ownerOf",
         "outputs": [
             {
-                "name": "owner",
+                "name": "retdata_size",
                 "type": "felt"
+            },
+            {
+                "name": "retdata",
+                "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "token_id",
+                "name": "selector",
                 "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
             }
         ],
         "name": "tokenUri",
         "outputs": [
             {
-                "name": "uri_len",
+                "name": "retdata_size",
                 "type": "felt"
             },
             {
-                "name": "uri",
+                "name": "retdata",
                 "type": "felt*"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {

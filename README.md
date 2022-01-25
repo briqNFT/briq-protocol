@@ -6,6 +6,7 @@ This is currently ongoing substantial changes.
 
 ## Setup
 
+Nile is used to handle deployment and compiling.
 #### Install python environment (via venv)
 ```sh
 python3 -m venv venv
@@ -15,7 +16,12 @@ pip3 install -r requirements.txt
 
 ## Deployment
 
-- Deploy backend contract, with your wallet address as the proxy address
-- Deploy proxy contracts, hard-coding the backend adress in the contract.
-- Update the backend contracts proxy to the proxy.
-- Deploy the rest of the ecosystem.
+```sh
+nile run scripts/deploy.sh
+```
+
+Test run:
+```sh
+SIGNER=123456 nile send SIGNER mint mint_amount [signer_address] 50
+
+```

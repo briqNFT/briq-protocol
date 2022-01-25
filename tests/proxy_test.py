@@ -22,7 +22,7 @@ def compile(path):
 
 @pytest.fixture(scope="session")
 def compiled_set_proxy():
-    return compile("backend_set_proxy.cairo")
+    return compile("proxy_set_backend.cairo")
 
 
 @pytest_asyncio.fixture

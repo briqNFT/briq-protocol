@@ -6,11 +6,7 @@ __pycache__
 venv/
 
 artifacts/*.json
-!artifacts/*_abi.json
+!artifacts/abi
 
-*.log
-
-.env
-dist/
-
-temp/
+localhost.*
+node.json
