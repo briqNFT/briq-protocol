@@ -84,6 +84,7 @@ from contracts.backend_proxy import (
 
     _constructor,
     setImplementation,
+    setAdmin,
 
     _onlyAdmin,
     _onlyAdminAnd,

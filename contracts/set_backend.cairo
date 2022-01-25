@@ -13,6 +13,11 @@ from contracts.backend_common import (
     setProxyAddress
 )
 
+from contracts.events import (
+    uri as event_uri,
+    transfer_token as event_transfer
+)
+
 @contract_interface
 namespace IBriqBackendContract:
     func transferFT(sender: felt, recipient: felt, material: felt, qty: felt):
@@ -406,6 +411,8 @@ func setTokenUri{
     end
     _token_uri.write(token_id, uri[0] * 2 + 1)
     _setExtraTokenUri(token_id, uri_len - 2, 0, uri + 1)
+    
+    # event_uri.emit(token_id, uri_len, uri)
     return()
 end
 
@@ -432,6 +439,8 @@ func transferOneNFT{
 
     _setTokenByOwner(recipient, token_id, 0)
     _unsetTokenByOwner(sender, token_id)
+
+    # event_transfer.emit(sender, recipient, token_id)
     return ()
 end
 
