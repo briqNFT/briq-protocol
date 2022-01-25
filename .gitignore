@@ -8,5 +8,6 @@ venv/
 artifacts/*.json
 !artifacts/abi
 
-localhost.*
+*.deployments.txt
+*.accounts.json
 node.json

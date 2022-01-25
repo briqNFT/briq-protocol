@@ -21,7 +21,7 @@
                 "type": "felt"
             }
         ],
-        "name": "amount_minted",
+        "name": "amountMinted",
         "outputs": [
             {
                 "name": "res",
@@ -53,7 +53,7 @@
                 "type": "felt"
             }
         ],
-        "name": "mint_amount",
+        "name": "mintAmount",
         "outputs": [],
         "type": "function"
     }

@@ -5,37 +5,10 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.starknet.common.syscalls import call_contract, delegate_l1_handler, delegate_call
 
 from contracts.proxy.library import (
-    Proxy_admin,
     Proxy_implementation_address,
     Proxy_set_implementation,
-    Proxy_initializer
+    Proxy_admin
 )
-
-####################
-####################
-####################
-# Backend proxies don't delegate the calls, but instead call.
-# This is because the backend proxy handles authorization,
-# the actual backend contract only checks that its caller is the proxy.
-
-func _constructor{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (owner: felt):
-    Proxy_initializer(owner)
-    return ()
-end
-
-@external
-func setImplementation{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    }(new_implementation: felt):
-    Proxy_set_implementation(new_implementation)
-    return()
-end
 
 ####################
 ####################
@@ -71,6 +44,46 @@ func _onlyAdminAnd{
     _onlyAdmin()
     return ()
 end
+
+
+####################
+####################
+####################
+# Backend proxies don't delegate the calls, but instead call.
+# This is because the backend proxy handles authorization,
+# the actual backend contract only checks that its caller is the proxy.
+
+func _constructor{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt):
+    Proxy_admin.write(owner)
+    return ()
+end
+
+@external
+func setImplementation{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (new_implementation: felt):
+    _onlyAdmin()
+    Proxy_set_implementation(new_implementation)
+    return()
+end
+
+@external
+func setAdmin{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (new_admin: felt):
+    _onlyAdmin()
+    Proxy_admin.write(new_admin)
+    return()
+end
+
 
 ####################
 ####################

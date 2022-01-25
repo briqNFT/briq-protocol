@@ -42,7 +42,7 @@ end
 
 # Whether how many briqs a user has minted
 @view
-func amount_minted{
+func amountMinted{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -57,7 +57,7 @@ func _mint{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (user: felt, amount: felt):
-    let (already_minted) = amount_minted(user)
+    let (already_minted) = amountMinted(user)
     let (max) = _max_mint.read()
     assert_le(already_minted + amount, max)
 
@@ -84,7 +84,7 @@ end
 
 # Request minting briqs for a given user.
 @external
-func mint_amount{
+func mintAmount{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr

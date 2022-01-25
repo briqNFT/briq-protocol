@@ -28,6 +28,63 @@
         "type": "function"
     },
     {
+        "data": [
+            {
+                "name": "_from",
+                "type": "felt"
+            },
+            {
+                "name": "_to",
+                "type": "felt"
+            },
+            {
+                "name": "_token_id",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "transfer_token",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "_from",
+                "type": "felt"
+            },
+            {
+                "name": "_to",
+                "type": "felt"
+            },
+            {
+                "name": "_value",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "transfer_value",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "_id",
+                "type": "felt"
+            },
+            {
+                "name": "_value_len",
+                "type": "felt"
+            },
+            {
+                "name": "_value",
+                "type": "felt*"
+            }
+        ],
+        "keys": [],
+        "name": "uri",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "name": "proxy_address",

@@ -13,6 +13,17 @@
     {
         "inputs": [
             {
+                "name": "new_admin",
+                "type": "felt"
+            }
+        ],
+        "name": "setAdmin",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "name": "selector",
                 "type": "felt"
             },
