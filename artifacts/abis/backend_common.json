@@ -1,0 +1,13 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setProxyAddress",
+        "outputs": [],
+        "type": "function"
+    }
+]

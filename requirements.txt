@@ -1,4 +1,4 @@
 pytest>=6
 pytest-asyncio>=0
 cairo-lang>=0.7
-#starknet-devnet>=0
+cairo-nile>=0.3.0
