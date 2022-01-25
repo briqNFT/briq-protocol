@@ -6,6 +6,11 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
 
+from contracts.backend_common import (
+    _onlyProxy,
+    setProxyAddress
+)
+
 ## Semantics:
 # briq_token_id: 188 bits token_id, where 0 means 'FT' & 64 bits for material.
 # owner can refer to a set token_id or a Starknet contract.
@@ -28,6 +33,12 @@ end
 func _owner(briq_token_id: felt) -> (owner: felt):
 end
 
+## Utility
+
+@storage_var
+func _set_backend_address() -> (address: felt):
+end
+
 # We allow enumerating briq_token_ids per owner/material, but not other things.
 # The list of plausible materials is not kept here.
 # NB: the FT token is not listed.
@@ -38,18 +49,50 @@ end
 ############
 ############
 ############
-# Utility functions
+# Admin functions
+
+@constructor
+func constructor{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (proxy_address: felt):
+    setProxyAddress(proxy_address)
+    return ()
+end
+
+
+@external
+func setSetBackendAddress{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (address: felt):
+    _onlyProxy()
+    _set_backend_address.write(address)
+    return ()
+end
+
+
+func _onlyProxyOrSet{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } ():
+    let (caller) = get_caller_address()
+    let (address) = _set_backend_address.read()
+    if caller == address:
+        return()
+    end
+    _onlyProxy()
+    return ()
+end
 
 ############
 ############
 ############
 # Public functions - no authentication required
 
-#- balanceof(owner, material)
-#- ownerOf(token_id) -> returns a wallet or set Token Id
-
-#- totalSupply(material) -> needed for ERC20 compatibility
-#    - Maybe in 'material' contract? Do we actually need this?
 
 # NB: not as fast as regular ERCs because we recompute the balance dynamically.
 # TODO: is that a good idea?
@@ -103,6 +146,17 @@ func balanceDetailsOf{
     return (ft_balance, nfts_full - nfts, nfts)
 end
 
+# We don't implement full enumerability, just per-user
+@view
+func tokenOfOwnerByIndex{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, material: felt, index: felt) -> (token_id: felt):
+    let (token_id) = _token_by_owner.read(owner, material, index)
+    return (token_id)
+end
+
 @view
 func ownerOf{
         syscall_ptr: felt*,
@@ -123,16 +177,10 @@ func totalSupply{
     return (res)
 end
 
-# We don't implement full enumerability, just per-user
-@view
-func tokenOfOwnerByIndex{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (owner: felt, material: felt, index: felt) -> (token_id: felt):
-    let (token_id) = _token_by_owner.read(owner, material, index)
-    return (token_id)
-end
+############
+############
+############
+# Authenticated functions
 
 
 # TODOOO -> use builtins?
@@ -207,7 +255,9 @@ func mintFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, qty: felt):
-    assert_not_zero(qty)
+    _onlyProxy()
+    
+    assert_not_zero(qty * owner * material)
 
     # Update total supply.
     let (res) = _total_supply.read(material)
@@ -227,6 +277,9 @@ func mintOneNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, uid: felt):
+    _onlyProxy()
+
+    assert_not_zero(owner * material * uid)
     assert_lt_felt(uid, 2**188)
 
     # Update total supply.
@@ -253,6 +306,8 @@ func transferFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, qty: felt):
+    _onlyProxyOrSet()
+    
     assert_not_zero(qty)
     
     # FT conversion
@@ -274,6 +329,7 @@ func transferOneNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, briq_token_id: felt):
+    _onlyProxyOrSet()
 
     let (curr_owner) = _owner.read(briq_token_id)
     assert sender = curr_owner
@@ -302,6 +358,7 @@ func transferNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, nfts_len: felt, nfts: felt*):
+    _onlyProxy()
     _transferNFT(sender, recipient, material, nfts_len, nfts)
     return ()
 end
@@ -312,8 +369,9 @@ func mutateFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, source_material: felt, target_material: felt, qty: felt):
-    assert_not_zero(qty)
-    assert_not_zero(source_material - target_material)
+    _onlyProxy()
+    
+    assert_not_zero(qty * (source_material - target_material))
 
     let (balance) = _ft_balance.read(owner, source_material)
     assert_le(qty, balance)
@@ -338,14 +396,17 @@ func mutateOneNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, source_material: felt, target_material: felt, uid: felt, new_uid: felt):
-    
+    _onlyProxy()
+
     assert_lt_felt(uid, 2**188)
     assert_lt_felt(new_uid, 2**188)
     assert_not_zero(source_material - target_material)
 
-       # NFT conversion
+    # NFT conversion
     let briq_token_id = uid * 2**64 + source_material
 
+    let (curr_owner) = _owner.read(briq_token_id)
+    assert curr_owner = owner
     _unsetTokenByOwner(owner, source_material, briq_token_id)
     _owner.write(briq_token_id, 0)
 

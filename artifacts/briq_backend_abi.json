@@ -1,0 +1,305 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setProxyAddress",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "proxy_address",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setSetBackendAddress",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceDetailsOf",
+        "outputs": [
+            {
+                "name": "ft_balance",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenOfOwnerByIndex",
+        "outputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "ownerOf",
+        "outputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "totalSupply",
+        "outputs": [
+            {
+                "name": "supply",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "mintFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            }
+        ],
+        "name": "mintOneNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "transferFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "briq_token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transferOneNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            }
+        ],
+        "name": "transferNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "source_material",
+                "type": "felt"
+            },
+            {
+                "name": "target_material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "mutateFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "source_material",
+                "type": "felt"
+            },
+            {
+                "name": "target_material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            },
+            {
+                "name": "new_uid",
+                "type": "felt"
+            }
+        ],
+        "name": "mutateOneNFT",
+        "outputs": [],
+        "type": "function"
+    }
+]

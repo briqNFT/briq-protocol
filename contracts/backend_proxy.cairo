@@ -51,7 +51,9 @@ func _onlyAdmin{
         return ()
     end
     # Failure
-    assert 0 = 1
+    with_attr error_message("You are not authorized to call this function"):
+        assert 0 = 1
+    end
     return ()
 end
 
