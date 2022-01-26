@@ -17,6 +17,7 @@ from contracts.proxy.library import (
 
 from contracts.types import (FTSpec)
 
+# Actually the interface of the proxy.
 @contract_interface
 namespace ISetBackend:
     func ownerOf(token_id: felt):
@@ -26,16 +27,15 @@ namespace ISetBackend:
     func tokenOfOwnerByIndex(owner: felt, index: felt) -> (token_id: felt):
     end
 
-    func setProxyAddress(address: felt):
+    func approve(approved_address: felt, token_id: felt):
     end
-    func setBriqBackendAddress(address: felt):
+    func getApproved(token_id: felt) -> (approved: felt):
     end
-    func assemble(owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    func setApprovalForAll(approved_address: felt, allowed: felt):
     end
-    func disassemble(owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    func isApprovedForAll(owner: felt, operator: felt) -> (is_approved: felt):
     end
-    func setTokenUri(token_id: felt, uri_len: felt, uri: felt*):
-    end
+
     func transferOneNFT(sender: felt, recipient: felt, token_id: felt):
     end
 end
@@ -163,22 +163,60 @@ func transferFrom{
     return ()
 end
 
-func approve(approved: felt, token_id: Uint256):
-    # TODO
+@external
+func approve{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (approved: felt, token_id: Uint256):
+    assert_lt_felt(token_id.high, 2**122)
+    tempvar tok = token_id.high * (2 ** 128) + token_id.low
+    tempvar cd: felt*
+    cd[0] = approved
+    cd[1] = tok
+    let (address) = Proxy_implementation_address.read()
+    let (retdata_size: felt, retdata: felt*) = delegate_call(contract_address=address, function_selector=ISetBackend.approve, calldata_size=2, calldata=cd)
     return ()
 end
 
-func setApprovalForAll(operator: felt, approved: felt):
-    # TODO
-    return ()
+@external
+@raw_input
+@raw_output
+func setApprovalForAll{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
+    let (address) = Proxy_implementation_address.read()
+    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
+    return (retdata_size=retdata_size, retdata=retdata)
 end
 
-func getApproved(token_id: Uint256) -> (approved: felt):
-    # TODO
-    return (0)
+@external
+@raw_output
+func getApproved{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (token_id: Uint256) -> (retdata_size: felt,retdata: felt*):
+    assert_lt_felt(token_id.high, 2**122)
+    tempvar tok = token_id.high * (2 ** 128) + token_id.low
+    tempvar cd: felt*
+    cd[0] = tok
+    let (address) = Proxy_implementation_address.read()
+    let (retdata_size: felt, retdata: felt*) = delegate_call(contract_address=address, function_selector=ISetBackend.getApproved, calldata_size=1, calldata=cd)
+    return (retdata_size=retdata_size, retdata=retdata)
 end
 
-func isApprovedForAll(owner: felt, operator: felt) -> (is_approved: felt):
-    # TODO
-    return (0)
+@external
+@raw_input
+@raw_output
+func isApprovedForAll{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
+    let (address) = Proxy_implementation_address.read()
+    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
+    return (retdata_size=retdata_size, retdata=retdata)
 end
