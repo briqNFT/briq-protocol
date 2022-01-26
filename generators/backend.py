@@ -42,7 +42,7 @@ from contracts.types import (FTSpec)
 
 @contract_interface
 namespace ProxiedInterface:
-    func ownerOf({owner_args}):
+    func ownerOf({owner_args}) -> (owner: felt):
     end
 {functions}
 end
