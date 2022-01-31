@@ -1,6 +1,6 @@
 import json
 
-from .backend import get_cairo, get_header, onlyAdmin, onlyAdminAndFirst
+from .backend import get_cairo, get_header, onlyAdmin, onlyFirst
 
 def generate():
     data = json.load(open("artifacts/briq_backend.json", "r"))
@@ -9,15 +9,19 @@ def generate():
         return "_onlyAdminAndMintContract()"
 
     spec = {
-        "setProxyAddress": False,
-        "setSetBackendAddress": False,
         "mintFT": onlyAdminAndMintContract,
         "mintOneNFT": onlyAdminAndMintContract,
-        "mutateFT": onlyAdmin,
-        "mutateOneNFT": onlyAdmin,
+        "transferFT": onlyFirst,
+        "transferOneNFT": onlyFirst,
+        "transferNFT": onlyFirst,
+        #"mutateFT": onlyAdmin,
+        #"mutateOneNFT": onlyAdmin,
+        #"convertOneToFT": onlyAdmin,
+        #"convertToFT": onlyAdmin,
+        #"convertOneToNFT": onlyAdmin,
     }
 
-    code, interface = get_cairo(data, spec, onlyAdminAndFirst)
+    code, interface = get_cairo(data, spec, onlyAdmin)
     header = get_header()
 
     output = f"""
@@ -62,5 +66,4 @@ end
 {interface}
 {code}
     """
-
     return output

@@ -16,4 +16,4 @@ jobs:
       with:
         python-version: "3.9"
     - run: python -m pip install -r requirements.txt
-    - run: python -m pytest
+    - run: python -m pytest -k "not integration"

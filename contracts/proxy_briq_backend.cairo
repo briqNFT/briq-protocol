@@ -15,6 +15,7 @@ from contracts.backend_proxy import (
     setImplementation,
     setAdmin,
 
+    _only,
     _onlyAdmin,
     _onlyAdminAnd,
 
@@ -81,29 +82,45 @@ func _onlyAdminAndMintContract{
 end
 
 
-from contracts.types import (FTSpec)
+from contracts.types import (FTSpec, NFTSpec)
 
 @contract_interface
 namespace ProxiedInterface:
-    func ownerOf(token_id: felt):
+    func setProxyAddress(address: felt) -> ():
     end
-    func setProxyAddress(address: felt):
+    func setSetBackendAddress(address: felt) -> ():
     end
-    func setSetBackendAddress(address: felt):
+    func balanceOf(owner: felt, material: felt) -> (balance: felt):
     end
-    func mintFT(owner: felt, material: felt, qty: felt):
+    func multiBalanceOf(owner: felt, materials_len: felt, materials: felt*) -> (balances_len: felt, balances: felt*):
     end
-    func mintOneNFT(owner: felt, material: felt, uid: felt):
+    func balanceDetailsOf(owner: felt, material: felt) -> (ft_balance: felt, nft_ids_len: felt, nft_ids: felt*):
     end
-    func transferFT(sender: felt, recipient: felt, material: felt, qty: felt):
+    func tokenOfOwnerByIndex(owner: felt, material: felt, index: felt) -> (token_id: felt):
     end
-    func transferOneNFT(sender: felt, recipient: felt, material: felt, briq_token_id: felt):
+    func ownerOf(token_id: felt) -> (owner: felt):
     end
-    func transferNFT(sender: felt, recipient: felt, material: felt, nfts_len: felt, nfts: felt*):
+    func totalSupply(material: felt) -> (supply: felt):
     end
-    func mutateFT(owner: felt, source_material: felt, target_material: felt, qty: felt):
+    func mintFT(owner: felt, material: felt, qty: felt) -> ():
     end
-    func mutateOneNFT(owner: felt, source_material: felt, target_material: felt, uid: felt, new_uid: felt):
+    func mintOneNFT(owner: felt, material: felt, uid: felt) -> ():
+    end
+    func transferFT(sender: felt, recipient: felt, material: felt, qty: felt) -> ():
+    end
+    func transferOneNFT(sender: felt, recipient: felt, material: felt, briq_token_id: felt) -> ():
+    end
+    func transferNFT(sender: felt, recipient: felt, material: felt, token_ids_len: felt, token_ids: felt*) -> ():
+    end
+    func mutateFT(owner: felt, source_material: felt, target_material: felt, qty: felt) -> ():
+    end
+    func mutateOneNFT(owner: felt, source_material: felt, target_material: felt, uid: felt, new_uid: felt) -> ():
+    end
+    func convertOneToFT(owner: felt, material: felt, token_id: felt) -> ():
+    end
+    func convertToFT(owner: felt, token_ids_len: felt, token_ids: NFTSpec*) -> ():
+    end
+    func convertOneToNFT(owner: felt, material: felt, uid: felt) -> ():
     end
 end
 
@@ -115,11 +132,9 @@ func setProxyAddress{
         range_check_ptr
     } (address: felt):
     alloc_locals
-    _onlyAdminAnd(address)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.setProxyAddress(address, address)
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.setProxyAddress(__address, address)
     return ()
 end
 
@@ -130,62 +145,60 @@ func setSetBackendAddress{
         range_check_ptr
     } (address: felt):
     alloc_locals
-    _onlyAdminAnd(address)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.setSetBackendAddress(address, address)
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.setSetBackendAddress(__address, address)
     return ()
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func balanceOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (owner: felt, material: felt) -> (balance: felt):
+    let (__address) = Proxy_implementation_address.read()
+    let (balance: felt) = ProxiedInterface.balanceOf(__address, owner, material)
+    return (balance)
 end
 
-@external
-@raw_input
-@raw_output
+@view
+func multiBalanceOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    } (owner: felt, materials_len: felt, materials: felt*) -> (balances_len: felt, balances: felt*):
+    alloc_locals
+    let (__address) = Proxy_implementation_address.read()
+    local pedersen_ptr: HashBuiltin* = pedersen_ptr
+    let (balances_len: felt, balances: felt*) = ProxiedInterface.multiBalanceOf(__address, owner, materials_len, materials)
+    return (balances_len, balances)
+end
+
+@view
 func balanceDetailsOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (owner: felt, material: felt) -> (ft_balance: felt, nft_ids_len: felt, nft_ids: felt*):
+    let (__address) = Proxy_implementation_address.read()
+    let (ft_balance: felt, nft_ids_len: felt, nft_ids: felt*) = ProxiedInterface.balanceDetailsOf(__address, owner, material)
+    return (ft_balance, nft_ids_len, nft_ids)
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func tokenOfOwnerByIndex{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (owner: felt, material: felt, index: felt) -> (token_id: felt):
+    let (__address) = Proxy_implementation_address.read()
+    let (token_id: felt) = ProxiedInterface.tokenOfOwnerByIndex(__address, owner, material, index)
+    return (token_id)
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func ownerOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (token_id: felt) -> (owner: felt):
+    let (__address) = Proxy_implementation_address.read()
+    let (owner: felt) = ProxiedInterface.ownerOf(__address, token_id)
+    return (owner)
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func totalSupply{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (material: felt) -> (supply: felt):
+    let (__address) = Proxy_implementation_address.read()
+    let (supply: felt) = ProxiedInterface.totalSupply(__address, material)
+    return (supply)
 end
 
 @external
@@ -196,10 +209,8 @@ func mintFT{
     } (owner: felt, material: felt, qty: felt):
     alloc_locals
     _onlyAdminAndMintContract()
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.mintFT(address, owner, material, qty)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.mintFT(__address, owner, material, qty)
     return ()
 end
 
@@ -211,10 +222,8 @@ func mintOneNFT{
     } (owner: felt, material: felt, uid: felt):
     alloc_locals
     _onlyAdminAndMintContract()
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.mintOneNFT(address, owner, material, uid)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.mintOneNFT(__address, owner, material, uid)
     return ()
 end
 
@@ -225,11 +234,9 @@ func transferFT{
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, qty: felt):
     alloc_locals
-    _onlyAdminAnd(sender)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.transferFT(address, sender, recipient, material, qty)
+    _only(sender)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.transferFT(__address, sender, recipient, material, qty)
     return ()
 end
 
@@ -240,11 +247,9 @@ func transferOneNFT{
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, briq_token_id: felt):
     alloc_locals
-    _onlyAdminAnd(sender)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.transferOneNFT(address, sender, recipient, material, briq_token_id)
+    _only(sender)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.transferOneNFT(__address, sender, recipient, material, briq_token_id)
     return ()
 end
 
@@ -253,13 +258,11 @@ func transferNFT{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (sender: felt, recipient: felt, material: felt, nfts_len: felt, nfts: felt*):
+    } (sender: felt, recipient: felt, material: felt, token_ids_len: felt, token_ids: felt*):
     alloc_locals
-    _onlyAdminAnd(sender)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.transferNFT(address, sender, recipient, material, nfts_len, nfts)
+    _only(sender)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.transferNFT(__address, sender, recipient, material, token_ids_len, token_ids)
     return ()
 end
 
@@ -271,10 +274,8 @@ func mutateFT{
     } (owner: felt, source_material: felt, target_material: felt, qty: felt):
     alloc_locals
     _onlyAdmin()
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.mutateFT(address, owner, source_material, target_material, qty)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.mutateFT(__address, owner, source_material, target_material, qty)
     return ()
 end
 
@@ -286,10 +287,47 @@ func mutateOneNFT{
     } (owner: felt, source_material: felt, target_material: felt, uid: felt, new_uid: felt):
     alloc_locals
     _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.mutateOneNFT(__address, owner, source_material, target_material, uid, new_uid)
+    return ()
+end
 
-    let (address) = Proxy_implementation_address.read()
+@external
+func convertOneToFT{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, material: felt, token_id: felt):
+    alloc_locals
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.convertOneToFT(__address, owner, material, token_id)
+    return ()
+end
 
-    ProxiedInterface.mutateOneNFT(address, owner, source_material, target_material, uid, new_uid)
+@external
+func convertToFT{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, token_ids_len: felt, token_ids: NFTSpec*):
+    alloc_locals
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.convertToFT(__address, owner, token_ids_len, token_ids)
+    return ()
+end
+
+@external
+func convertOneToNFT{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, material: felt, uid: felt):
+    alloc_locals
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.convertOneToNFT(__address, owner, material, uid)
     return ()
 end
 

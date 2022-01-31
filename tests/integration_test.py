@@ -45,6 +45,11 @@ def deploy(node):
         f.write("{}")
     subprocess.run(["nile", "run", "scripts/deploy.py"])
 
+# Just a passing test to say we're started on CLI.
+def test_inte_tests_started(node):
+    return
+
+
 # TODO: use starknet.py instead, with a custom wallet.
 def test_integration(deploy):
     #client = Client("http://localhost:5000", chain_from_network(TESTNET, None))

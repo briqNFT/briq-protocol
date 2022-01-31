@@ -170,141 +170,98 @@
     {
         "inputs": [
             {
-                "name": "selector",
+                "name": "owner",
                 "type": "felt"
-            },
-            {
-                "name": "calldata_size",
-                "type": "felt"
-            },
-            {
-                "name": "calldata",
-                "type": "felt*"
             }
         ],
         "name": "balanceOf",
         "outputs": [
             {
-                "name": "retdata_size",
+                "name": "balance",
                 "type": "felt"
-            },
-            {
-                "name": "retdata",
-                "type": "felt*"
             }
         ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "selector",
+                "name": "owner",
                 "type": "felt"
-            },
-            {
-                "name": "calldata_size",
-                "type": "felt"
-            },
-            {
-                "name": "calldata",
-                "type": "felt*"
             }
         ],
         "name": "balanceDetailsOf",
         "outputs": [
             {
-                "name": "retdata_size",
+                "name": "token_ids_len",
                 "type": "felt"
             },
             {
-                "name": "retdata",
+                "name": "token_ids",
                 "type": "felt*"
             }
         ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "selector",
+                "name": "owner",
                 "type": "felt"
             },
             {
-                "name": "calldata_size",
+                "name": "index",
                 "type": "felt"
-            },
-            {
-                "name": "calldata",
-                "type": "felt*"
             }
         ],
         "name": "tokenOfOwnerByIndex",
         "outputs": [
             {
-                "name": "retdata_size",
+                "name": "token_id",
                 "type": "felt"
-            },
-            {
-                "name": "retdata",
-                "type": "felt*"
             }
         ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "selector",
+                "name": "token_id",
                 "type": "felt"
-            },
-            {
-                "name": "calldata_size",
-                "type": "felt"
-            },
-            {
-                "name": "calldata",
-                "type": "felt*"
             }
         ],
         "name": "ownerOf",
         "outputs": [
             {
-                "name": "retdata_size",
+                "name": "owner",
                 "type": "felt"
-            },
-            {
-                "name": "retdata",
-                "type": "felt*"
             }
         ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "selector",
+                "name": "token_id",
                 "type": "felt"
-            },
-            {
-                "name": "calldata_size",
-                "type": "felt"
-            },
-            {
-                "name": "calldata",
-                "type": "felt*"
             }
         ],
         "name": "tokenUri",
         "outputs": [
             {
-                "name": "retdata_size",
+                "name": "uri_len",
                 "type": "felt"
             },
             {
-                "name": "retdata",
+                "name": "uri",
                 "type": "felt*"
             }
         ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -332,9 +289,91 @@
             {
                 "name": "nfts",
                 "type": "felt*"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
             }
         ],
         "name": "assemble",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "name": "setTokenUri",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "add_fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "add_fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "add_nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "add_nfts",
+                "type": "felt*"
+            },
+            {
+                "name": "remove_fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "remove_fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "remove_nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "remove_nfts",
+                "type": "felt*"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "name": "updateBriqs",
         "outputs": [],
         "type": "function"
     },
@@ -366,25 +405,6 @@
             }
         ],
         "name": "disassemble",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
-                "type": "felt*"
-            }
-        ],
-        "name": "setTokenUri",
         "outputs": [],
         "type": "function"
     },

@@ -1,20 +1,22 @@
-def view_proxy(name):
+def view_proxy(func_data):
+    inputs = ", ".join([f"{arg['name']}: {arg['type']}" for arg in func_data["inputs"]])
+    outputs = ", ".join([f"{arg['name']}: {arg['type']}" for arg in func_data["outputs"]])
+    args_in = ", ".join(["__address"] + [arg['name'] for arg in func_data["inputs"]])
+    args_out = ", ".join([arg['name'] for arg in func_data["outputs"]])
     return f"""
-@external
-@raw_input
-@raw_output
-func {name}{{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }} (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+@view
+func {func_data['name']}{{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }} ({inputs}) -> ({outputs}):
+    let (__address) = Proxy_implementation_address.read()
+    let ({outputs}) = ProxiedInterface.{func_data['name']}({args_in})
+    return ({args_out})
 end
 """
 
 # TODO: will need to check the builtins from the artifact.
 def mutable_proxy(func_data, auth_method):
     inputs = ", ".join([f"{arg['name']}: {arg['type']}" for arg in func_data["inputs"]])
-    args = ", ".join(["address"] + [arg['name'] for arg in func_data["inputs"]])
+    args = ", ".join(["__address"] + [arg['name'] for arg in func_data["inputs"]])
     return f"""
 @external
 func {func_data["name"]}{{
@@ -24,9 +26,7 @@ func {func_data["name"]}{{
     }} ({inputs}):
     alloc_locals
     {auth_method}
-
-    let (address) = Proxy_implementation_address.read()
-
+    let (__address) = Proxy_implementation_address.read()
     ProxiedInterface.{func_data["name"]}({args})
     return ()
 end
@@ -35,15 +35,14 @@ end
 def get_proxied_interface(proxied_interface, owner_args):
     def print_func(func_data):
         inputs = ", ".join([f"{arg['name']}: {arg['type']}" for arg in func_data["inputs"]])
-        return f"    func {func_data['name']}({inputs}):\n    end"
+        outputs = " -> (" + ", ".join([f"{arg['name']}: {arg['type']}" for arg in func_data["outputs"]]) + ")"
+        return f"    func {func_data['name']}({inputs}){outputs}:\n    end"
     functions = "\n".join([print_func(func_data) for func_data in proxied_interface])
     return f"""
-from contracts.types import (FTSpec)
+from contracts.types import (FTSpec, NFTSpec)
 
 @contract_interface
 namespace ProxiedInterface:
-    func ownerOf({owner_args}) -> (owner: felt):
-    end
 {functions}
 end
 """
@@ -54,6 +53,9 @@ def onlyAdmin(func_data):
 def onlyAdminAndFirst(func_data):
     return f"_onlyAdminAnd({func_data['inputs'][0]['name']})"
 
+def onlyFirst(func_data):
+    return f"_only({func_data['inputs'][0]['name']})"
+
 def get_cairo(data, spec, default_auth):
     output = ""
     proxied_interface = []
@@ -61,10 +63,10 @@ def get_cairo(data, spec, default_auth):
     for func_data in data["abi"]:
         if func_data["type"] != "function":
             continue
-        if "stateMutability" in func_data and func_data["stateMutability"] == "view":
-            output += view_proxy(func_data["name"])
-            continue
         proxied_interface.append(func_data)
+        if "stateMutability" in func_data and func_data["stateMutability"] == "view":
+            output += view_proxy(func_data)
+            continue
         output += mutable_proxy(func_data, spec[func_data['name']](func_data) if func_data['name'] in spec and spec[func_data['name']] else default_auth(func_data))
 
     return (output, get_proxied_interface(proxied_interface, "token_id: felt"))
@@ -86,6 +88,7 @@ from contracts.backend_proxy import (
     setImplementation,
     setAdmin,
 
+    _only,
     _onlyAdmin,
     _onlyAdminAnd,
 
