@@ -1,23 +1,25 @@
 import json
 
-from .backend import get_cairo, get_header, onlyAdminAndFirst
+from .backend import get_cairo, get_header, onlyAdmin, onlyAdminAndFirst, onlyFirst
 
 def generate():
     data = json.load(open("artifacts/set_backend.json", "r"))
 
-    def onlyAdminAndApproved(func_data):
+    def onlyApproved(func_data):
         return """
-    _onlyAdminAndApproved(sender, token_id)
+    _onlyApproved(sender, token_id)
     # Reset approval (0 cost if was 0 before)
     _approve_noauth(0, token_id)"""
 
     spec = {
-        "setProxyAddress": False,
-        "setBriqBackendAddress": False,
-        "transferOneNFT": onlyAdminAndApproved,
+        "assemble": onlyFirst,
+        # "setTokenUri": onlyAdmin,
+        # updateBriqs: onlyAdmin,
+        "disassemble": onlyFirst,
+        "transferOneNFT": onlyApproved,
     }
 
-    code, interface = get_cairo(data, spec, onlyAdminAndFirst)
+    code, interface = get_cairo(data, spec, onlyAdmin)
     header = get_header()
 
     output = f"""
@@ -59,7 +61,7 @@ end
 ########################
 ########################
 
-func _onlyAdminAndApproved{{
+func _onlyApproved{{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -73,15 +75,10 @@ func _onlyAdminAndApproved{{
         return ()
     end
     let (approved) = getApproved(token_id)
-    if approved - caller == 0:
-        return ()
-    end
-    _onlyAdmin()
+    _only(approved)
     return ()
 end
 
-
 {code}
     """
-
     return output

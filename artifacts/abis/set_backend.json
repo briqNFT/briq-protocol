@@ -85,6 +85,44 @@
         "type": "event"
     },
     {
+        "data": [
+            {
+                "name": "from_",
+                "type": "felt"
+            },
+            {
+                "name": "to_",
+                "type": "felt"
+            },
+            {
+                "name": "token_id_",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Transfer",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "value__len",
+                "type": "felt"
+            },
+            {
+                "name": "value_",
+                "type": "felt*"
+            },
+            {
+                "name": "id_",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "URI",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "name": "proxy_address",
@@ -228,9 +266,91 @@
             {
                 "name": "nfts",
                 "type": "felt*"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
             }
         ],
         "name": "assemble",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "name": "setTokenUri",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "add_fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "add_fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "add_nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "add_nfts",
+                "type": "felt*"
+            },
+            {
+                "name": "remove_fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "remove_fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "remove_nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "remove_nfts",
+                "type": "felt*"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "name": "updateBriqs",
         "outputs": [],
         "type": "function"
     },
@@ -262,25 +382,6 @@
             }
         ],
         "name": "disassemble",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
-                "type": "felt*"
-            }
-        ],
-        "name": "setTokenUri",
         "outputs": [],
         "type": "function"
     },

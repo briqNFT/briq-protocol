@@ -1,7 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
-from starkware.starknet.common.syscalls import get_caller_address
+from starkware.starknet.common.syscalls import get_caller_address, get_contract_address
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, assert_not_zero, assert_lt_felt, assert_le_felt
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
@@ -9,6 +9,10 @@ from starkware.cairo.common.alloc import alloc
 from contracts.backend_common import (
     _onlyProxy,
     setProxyAddress
+)
+
+from contracts.types import (
+    NFTSpec
 )
 
 ## Semantics:
@@ -33,17 +37,44 @@ end
 func _owner(briq_token_id: felt) -> (owner: felt):
 end
 
+# We allow enumerating briq_token_ids per owner/material, but not other things.
+# The list of plausible materials is not kept here.
+# NB: the FT token is not listed.
+@storage_var
+func _token_by_owner(owner: felt, material: felt, index: felt) -> (briq_token_id: felt):
+end
+
 ## Utility
 
 @storage_var
 func _set_backend_address() -> (address: felt):
 end
 
-# We allow enumerating briq_token_ids per owner/material, but not other things.
-# The list of plausible materials is not kept here.
-# NB: the FT token is not listed.
-@storage_var
-func _token_by_owner(owner: felt, material: felt, index: felt) -> (briq_token_id: felt):
+############
+############
+############
+# Events
+
+## ERC1155 compatibility (without URI - there is none)
+
+# NB: Operator is the address of the current contract.
+# I don't really want to forward a semi-arbitrary operator for this.
+# NB2: Mutate does two transfer events & a single Mutate event
+@event
+func TransferSingle(operator_: felt, from_: felt, to_: felt, id_: felt, value_: felt):
+end
+
+# When a NFT is mutated (FT are handled by Transfer)
+@event
+func Mutate(owner_: felt, old_id_: felt, new_id_: felt, from_material_: felt, to_material_: felt):
+end
+
+@event
+func ConvertToFT(owner_: felt, material: felt, id_: felt):
+end
+
+@event
+func ConvertToNFT(owner_: felt, material: felt, id_: felt):
 end
 
 ############
@@ -120,6 +151,31 @@ func balanceOf{
     return (nft_balance + ft_balance)
 end
 
+func _multiBalanceOf{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, index: felt, materials: felt*, output: felt*):
+    if index == 0:
+        return ()
+    end
+    let (balance) = balanceOf(owner, materials[0])
+    output[0] = balance
+    return _multiBalanceOf(owner, index - 1, materials + 1, output + 1)
+end
+
+@view
+func multiBalanceOf{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, materials_len: felt, materials: felt*) -> (balances_len: felt, balances: felt*):
+    alloc_locals
+    let (local toto: felt*) = alloc()
+    _multiBalanceOf(owner, materials_len, materials, toto)
+    return (materials_len, toto)
+end
+
 func _NFTBalanceDetailsOfIdx{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
@@ -177,9 +233,9 @@ func totalSupply{
     return (res)
 end
 
-############
-############
-############
+########################
+########################
+########################
 # Authenticated functions
 
 
@@ -268,6 +324,10 @@ func mintFT{
 
     let (balance) = _ft_balance.read(owner, briq_token_id)
     _ft_balance.write(owner, briq_token_id, balance + qty)
+
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, 0, owner, briq_token_id, qty)
+
     return ()    
 end
 
@@ -295,6 +355,10 @@ func mintOneNFT{
     _owner.write(briq_token_id, owner)
 
     _setTokenByOwner(owner, material, briq_token_id, 0)
+
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, 0, owner, briq_token_id, 1)
+
     return ()
 end
 
@@ -309,17 +373,21 @@ func transferFT{
     } (sender: felt, recipient: felt, material: felt, qty: felt):
     _onlyProxyOrSet()
     
+    assert_not_zero(material)
     assert_not_zero(qty)
     
     # FT conversion
     let briq_token_id = material
 
     let (balance_sender) = _ft_balance.read(sender, briq_token_id)
-    assert_le(qty, balance_sender)
+    assert_le_felt(qty, balance_sender)
     _ft_balance.write(sender, briq_token_id, balance_sender - qty)
     
     let (balance) = _ft_balance.read(recipient, briq_token_id)
     _ft_balance.write(recipient, briq_token_id, balance + qty)
+
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, sender, recipient, briq_token_id, qty)
 
     return ()
 end
@@ -332,12 +400,19 @@ func transferOneNFT{
     } (sender: felt, recipient: felt, material: felt, briq_token_id: felt):
     _onlyProxyOrSet()
 
+    assert_not_zero(material)
+    assert_not_zero(briq_token_id)
+
     let (curr_owner) = _owner.read(briq_token_id)
     assert sender = curr_owner
     _owner.write(briq_token_id, recipient)
 
     _setTokenByOwner(recipient, material, briq_token_id, 0)
     _unsetTokenByOwner(sender, material, briq_token_id)
+
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, sender, recipient, briq_token_id, 1)
+
     return ()
 end
 
@@ -345,12 +420,12 @@ func _transferNFT{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (sender: felt, recipient: felt, material: felt, index: felt, nfts: felt*):
+    } (sender: felt, recipient: felt, material: felt, index: felt, token_ids: felt*):
     if index == 0:
         return ()
     end
-    transferOneNFT(sender, recipient, material, nfts[index - 1])
-    return _transferNFT(sender, recipient, material, index - 1, nfts)
+    transferOneNFT(sender, recipient, material, token_ids[index - 1])
+    return _transferNFT(sender, recipient, material, index - 1, token_ids)
 end
 
 @external
@@ -358,9 +433,9 @@ func transferNFT{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (sender: felt, recipient: felt, material: felt, nfts_len: felt, nfts: felt*):
+    } (sender: felt, recipient: felt, material: felt, token_ids_len: felt, token_ids: felt*):
     _onlyProxy()
-    _transferNFT(sender, recipient, material, nfts_len, nfts)
+    _transferNFT(sender, recipient, material, token_ids_len, token_ids)
     return ()
 end
 
@@ -375,7 +450,7 @@ func mutateFT{
     assert_not_zero(qty * (source_material - target_material))
 
     let (balance) = _ft_balance.read(owner, source_material)
-    assert_le(qty, balance)
+    assert_le_felt(qty, balance)
     _ft_balance.write(owner, source_material, balance - qty)
     
     let (balance) = _ft_balance.read(owner, target_material)
@@ -386,6 +461,10 @@ func mutateFT{
 
     let (res) = _total_supply.read(target_material)
     _total_supply.write(target_material, res + qty)
+
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, owner, 0, source_material, qty)
+    TransferSingle.emit(__addr, 0, owner, target_material, qty)
 
     return ()
 end
@@ -414,8 +493,105 @@ func mutateOneNFT{
     let (res) = _total_supply.read(source_material)
     _total_supply.write(source_material, res - 1)
 
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, owner, 0, uid * 2**64 + source_material, 1)
+
     # Should probably use something else.
     mintOneNFT(owner, target_material, new_uid)
+
+    Mutate.emit(owner, briq_token_id, new_uid * 2**64 + target_material, source_material, target_material)
+
+    return ()
+end
+
+###############
+
+@external
+func convertOneToFT{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, material: felt, token_id: felt):
+    _onlyProxy()
+    
+    assert_not_zero(owner)
+    assert_not_zero(token_id)
+
+    let (curr_owner) = _owner.read(token_id)
+    if curr_owner == owner:
+        assert curr_owner = owner
+    else:
+        assert token_id = curr_owner
+    end
+    _unsetTokenByOwner(owner, material, token_id)
+    _owner.write(token_id, 0)
+
+    let (balance) = _ft_balance.read(owner, material)
+    _ft_balance.write(owner, material, balance + 1)
+
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, owner, 0, token_id, 1)
+    TransferSingle.emit(__addr, 0, owner, material, 1)
+    ConvertToFT.emit(owner, material, token_id)
+    return ()
+end
+
+func _convertToFT{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, index: felt, nfts: NFTSpec*):
+    if index == 0:
+        return ()
+    end
+    convertOneToFT(owner, nfts[0].material, nfts[0].token_id)
+    return _convertToFT(owner, index - 1, nfts + NFTSpec.SIZE)
+end
+
+@external
+func convertToFT{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, token_ids_len: felt, token_ids: NFTSpec*):
+    _onlyProxy()
+    
+    assert_not_zero(owner)
+    assert_not_zero(token_ids_len)
+
+    _convertToFT(owner, token_ids_len, token_ids)
+
+    return ()
+end
+
+
+@external
+func convertOneToNFT{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, material: felt, uid: felt):
+    _onlyProxy()
+
+    assert_not_zero(owner)
+    assert_not_zero(material)
+    assert_lt_felt(uid, 2**188)
+
+    # NFT conversion
+    let token_id = uid * 2**64 + material
+
+    let (curr_owner) = _owner.read(token_id)
+    assert curr_owner = 0
+    _owner.write(token_id, owner)
+    _setTokenByOwner(owner, material, token_id, 0)
+
+    let (balance) = _ft_balance.read(owner, material)
+    _ft_balance.write(owner, material, balance - 1)
+
+    let (__addr) = get_contract_address()
+    TransferSingle.emit(__addr, owner, 0, material, 1)
+    TransferSingle.emit(__addr, 0, owner, token_id, 1)
+    ConvertToNFT.emit(owner, material, token_id)
 
     return ()
 end

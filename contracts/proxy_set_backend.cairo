@@ -15,6 +15,7 @@ from contracts.backend_proxy import (
     setImplementation,
     setAdmin,
 
+    _only,
     _onlyAdmin,
     _onlyAdminAnd,
 
@@ -44,23 +45,33 @@ end
 # Forwarded calls
 
 
-from contracts.types import (FTSpec)
+from contracts.types import (FTSpec, NFTSpec)
 
 @contract_interface
 namespace ProxiedInterface:
+    func setProxyAddress(address: felt) -> ():
+    end
+    func setBriqBackendAddress(address: felt) -> ():
+    end
+    func balanceOf(owner: felt) -> (balance: felt):
+    end
+    func balanceDetailsOf(owner: felt) -> (token_ids_len: felt, token_ids: felt*):
+    end
+    func tokenOfOwnerByIndex(owner: felt, index: felt) -> (token_id: felt):
+    end
     func ownerOf(token_id: felt) -> (owner: felt):
     end
-    func setProxyAddress(address: felt):
+    func tokenUri(token_id: felt) -> (uri_len: felt, uri: felt*):
     end
-    func setBriqBackendAddress(address: felt):
+    func assemble(owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*) -> ():
     end
-    func assemble(owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    func setTokenUri(token_id: felt, uri_len: felt, uri: felt*) -> ():
     end
-    func disassemble(owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    func updateBriqs(owner: felt, token_id: felt, add_fts_len: felt, add_fts: FTSpec*, add_nfts_len: felt, add_nfts: felt*, remove_fts_len: felt, remove_fts: FTSpec*, remove_nfts_len: felt, remove_nfts: felt*, uri_len: felt, uri: felt*) -> ():
     end
-    func setTokenUri(token_id: felt, uri_len: felt, uri: felt*):
+    func disassemble(owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*) -> ():
     end
-    func transferOneNFT(sender: felt, recipient: felt, token_id: felt):
+    func transferOneNFT(sender: felt, recipient: felt, token_id: felt) -> ():
     end
 end
 
@@ -100,7 +111,7 @@ end
 ########################
 ########################
 
-func _onlyAdminAndApproved{
+func _onlyApproved{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -114,13 +125,9 @@ func _onlyAdminAndApproved{
         return ()
     end
     let (approved) = getApproved(token_id)
-    if approved - caller == 0:
-        return ()
-    end
-    _onlyAdmin()
+    _only(approved)
     return ()
 end
-
 
 
 @external
@@ -130,11 +137,9 @@ func setProxyAddress{
         range_check_ptr
     } (address: felt):
     alloc_locals
-    _onlyAdminAnd(address)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.setProxyAddress(address, address)
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.setProxyAddress(__address, address)
     return ()
 end
 
@@ -145,62 +150,50 @@ func setBriqBackendAddress{
         range_check_ptr
     } (address: felt):
     alloc_locals
-    _onlyAdminAnd(address)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.setBriqBackendAddress(address, address)
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.setBriqBackendAddress(__address, address)
     return ()
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func balanceOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (owner: felt) -> (balance: felt):
+    let (__address) = Proxy_implementation_address.read()
+    let (balance: felt) = ProxiedInterface.balanceOf(__address, owner)
+    return (balance)
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func balanceDetailsOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (owner: felt) -> (token_ids_len: felt, token_ids: felt*):
+    let (__address) = Proxy_implementation_address.read()
+    let (token_ids_len: felt, token_ids: felt*) = ProxiedInterface.balanceDetailsOf(__address, owner)
+    return (token_ids_len, token_ids)
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func tokenOfOwnerByIndex{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (owner: felt, index: felt) -> (token_id: felt):
+    let (__address) = Proxy_implementation_address.read()
+    let (token_id: felt) = ProxiedInterface.tokenOfOwnerByIndex(__address, owner, index)
+    return (token_id)
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func ownerOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (token_id: felt) -> (owner: felt):
+    let (__address) = Proxy_implementation_address.read()
+    let (owner: felt) = ProxiedInterface.ownerOf(__address, token_id)
+    return (owner)
 end
 
-@external
-@raw_input
-@raw_output
+@view
 func tokenUri{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    } (selector: felt, calldata_size: felt, calldata: felt*) -> (retdata_size: felt,retdata: felt*):
-    let (address) = Proxy_implementation_address.read()
-    let (retdata_size: felt, retdata: felt*) = call_contract(contract_address=address, function_selector=selector, calldata_size=calldata_size, calldata=calldata)
-    return (retdata_size=retdata_size, retdata=retdata)
+    } (token_id: felt) -> (uri_len: felt, uri: felt*):
+    let (__address) = Proxy_implementation_address.read()
+    let (uri_len: felt, uri: felt*) = ProxiedInterface.tokenUri(__address, token_id)
+    return (uri_len, uri)
 end
 
 @external
@@ -208,28 +201,11 @@ func assemble{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*):
     alloc_locals
-    _onlyAdminAnd(owner)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.assemble(address, owner, token_id_hint, fts_len, fts, nfts_len, nfts)
-    return ()
-end
-
-@external
-func disassemble{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
-    alloc_locals
-    _onlyAdminAnd(owner)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.disassemble(address, owner, token_id, fts_len, fts, nfts_len, nfts)
+    _only(owner)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.assemble(__address, owner, token_id_hint, fts_len, fts, nfts_len, nfts, uri_len, uri)
     return ()
 end
 
@@ -240,11 +216,35 @@ func setTokenUri{
         range_check_ptr
     } (token_id: felt, uri_len: felt, uri: felt*):
     alloc_locals
-    _onlyAdminAnd(token_id)
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.setTokenUri(__address, token_id, uri_len, uri)
+    return ()
+end
 
-    let (address) = Proxy_implementation_address.read()
+@external
+func updateBriqs{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, token_id: felt, add_fts_len: felt, add_fts: FTSpec*, add_nfts_len: felt, add_nfts: felt*, remove_fts_len: felt, remove_fts: FTSpec*, remove_nfts_len: felt, remove_nfts: felt*, uri_len: felt, uri: felt*):
+    alloc_locals
+    _onlyAdmin()
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.updateBriqs(__address, owner, token_id, add_fts_len, add_fts, add_nfts_len, add_nfts, remove_fts_len, remove_fts, remove_nfts_len, remove_nfts, uri_len, uri)
+    return ()
+end
 
-    ProxiedInterface.setTokenUri(address, token_id, uri_len, uri)
+@external
+func disassemble{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    alloc_locals
+    _only(owner)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.disassemble(__address, owner, token_id, fts_len, fts, nfts_len, nfts)
     return ()
 end
 
@@ -256,13 +256,11 @@ func transferOneNFT{
     } (sender: felt, recipient: felt, token_id: felt):
     alloc_locals
     
-    _onlyAdminAndApproved(sender, token_id)
+    _onlyApproved(sender, token_id)
     # Reset approval (0 cost if was 0 before)
     _approve_noauth(0, token_id)
-
-    let (address) = Proxy_implementation_address.read()
-
-    ProxiedInterface.transferOneNFT(address, sender, recipient, token_id)
+    let (__address) = Proxy_implementation_address.read()
+    ProxiedInterface.transferOneNFT(__address, sender, recipient, token_id)
     return ()
 end
 

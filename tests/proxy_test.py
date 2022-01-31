@@ -9,8 +9,8 @@ from starkware.starknet.compiler.compile import compile_starknet_files
 from starkware.starknet.public.abi import get_selector_from_name
 from starkware.cairo.common.hash_state import compute_hash_on_elements
 
-from .briq_backend_test import compiled_briq, briq_backend
-from .set_backend_test import compiled_set, set_backend
+from .briq_backend_test import compiled_briq, briq_backend, invoke_briq
+from .set_backend_test import hash_token_id, compiled_set
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 
@@ -33,37 +33,43 @@ async def starknet():
 
 
 @pytest.mark.asyncio
-async def test_call(starknet, compiled_set_proxy, compiled_set):
+async def test_call(starknet, briq_backend, compiled_set_proxy, compiled_set):
+    await invoke_briq(briq_backend.mintFT(owner=0x11, material=1, qty=50))
     proxy = await starknet.deploy(contract_def=compiled_set_proxy, constructor_calldata=[0x123456])
     set_backend = await starknet.deploy(contract_def=compiled_set, constructor_calldata=[proxy.contract_address])
     await proxy.setImplementation(set_backend.contract_address).invoke(caller_address=ADMIN)
+    await proxy.setBriqBackendAddress(briq_backend.contract_address).invoke(caller_address=ADMIN)
+    await invoke_briq(briq_backend.setSetBackendAddress(set_backend.contract_address))
 
     await starknet.state.invoke_raw(contract_address=proxy.contract_address,
         selector=get_selector_from_name("assemble"),
-        calldata=[0x11, 0x1, 0, 0],
-        caller_address=0x123456,
+        calldata=[0x11, 0x1, 1, 1, 5, 0, 1, 0xcafe],
+        caller_address=0x11,
     )
     with pytest.raises(StarkException):
         await starknet.state.invoke_raw(contract_address=proxy.contract_address,
             selector=get_selector_from_name("assemble"),
-            calldata=[0x12, 0x2, 0, 0],
+            calldata=[0x12, 0x2, 1, 1, 5, 0, 0xfade],
             caller_address=0xcafe,
         )
 
 ADMIN = 0x123456
 
 @pytest.mark.asyncio
-async def test_transfer_approval(starknet, compiled_set_proxy, compiled_set):
+async def test_transfer_approval(starknet, briq_backend, compiled_set_proxy, compiled_set):
+    await invoke_briq(briq_backend.mintFT(owner=0x11, material=1, qty=50))
     proxy = await starknet.deploy(contract_def=compiled_set_proxy, constructor_calldata=[ADMIN])
     set_backend = await starknet.deploy(contract_def=compiled_set, constructor_calldata=[proxy.contract_address])
     await proxy.setImplementation(set_backend.contract_address).invoke(caller_address=ADMIN)
+    await proxy.setBriqBackendAddress(briq_backend.contract_address).invoke(caller_address=ADMIN)
+    await invoke_briq(briq_backend.setSetBackendAddress(set_backend.contract_address))
 
-    tok_id_1 = compute_hash_on_elements([0x11, 1])
+    tok_id_1 = hash_token_id(0x11, 1, [0xcafe])
 
     await starknet.state.invoke_raw(contract_address=proxy.contract_address,
         selector=get_selector_from_name("assemble"),
-        calldata=[0x11, 0x1, 0, 0],
-        caller_address=ADMIN,
+        calldata=[0x11, 0x1, 1, 1, 5, 0, 1, 0xcafe],
+        caller_address=0x11,
     )
 
     #assert(await starknet.state.invoke_raw(contract_address=proxy.contract_address,
