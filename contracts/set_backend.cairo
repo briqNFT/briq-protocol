@@ -391,11 +391,11 @@ func assemble{
     assert curr_owner = 0
     _owner.write(token_id, owner)
 
-    _transferFT(owner, token_id, fts_len, fts)
-    _transferNFT(owner, token_id, nfts_len, nfts)
-
     let (balance) = _balance.read(owner)
     _balance.write(owner, balance + 1)
+
+    _transferFT(owner, token_id, fts_len, fts)
+    _transferNFT(owner, token_id, nfts_len, nfts)
 
     _setTokenByOwner(owner, token_id, 0)
 
@@ -466,7 +466,7 @@ func setTokenUri{
         range_check_ptr
     } (token_id: felt, uri_len: felt, uri: felt*):
     alloc_locals
-
+    
     _onlyProxy()
 
     # TODO: is this useless?
@@ -527,18 +527,18 @@ func disassemble{
     assert_not_zero(owner)
 
     let (local curr_owner) = _owner.read(token_id)
-    assert_not_zero(curr_owner)
+    assert curr_owner = owner
     _owner.write(token_id, 0)
 
     _transferFT(token_id, curr_owner, fts_len, fts)
     _transferNFT(token_id, curr_owner, nfts_len, nfts)
 
     let (balance) = _balance.read(owner)
-    _balance.write(owner, balance - 1)
+    _balance.write(curr_owner, balance - 1)
 
-    _unsetTokenByOwner(owner, token_id)
+    _unsetTokenByOwner(curr_owner, token_id)
 
-    Transfer.emit(owner, 0, token_id)
+    Transfer.emit(curr_owner, 0, token_id)
 
     return ()
 end

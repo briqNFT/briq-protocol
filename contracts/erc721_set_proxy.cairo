@@ -6,9 +6,29 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.math import split_felt
 from starkware.cairo.common.uint256 import Uint256
 
-from contracts.proxy.library import (
-    Proxy_implementation_address
+from contracts.backend_proxy import (
+    Proxy_implementation_address,
+
+    _constructor,
+    setImplementation,
+    setAdmin,
 )
+
+####################
+####################
+####################
+# Frontend proxies delegate the calls to backend proxies.
+# They don't check authorizations because that's done there.
+
+@constructor
+func constructor{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt):
+    _constructor(owner)
+    return ()
+end
 
 ###############
 ###############
@@ -59,7 +79,7 @@ func tokenURI{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (token_id: Uint256) -> (retdata_size : felt, retdata : felt*):
-    assert_lt_felt(token_id.high, 2**122)
+    assert_lt_felt(token_id.high, 2**123)
     tempvar tok = token_id.high * (2 ** 128) + token_id.low
     tempvar cd: felt*
     cd[0] = tok
@@ -76,7 +96,7 @@ func tokenOfOwnerByIndex{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, index: Uint256) -> (tokenId: Uint256):
-    assert_lt_felt(index.high, 2**122)
+    assert_lt_felt(index.high, 2**123)
     tempvar tok = index.high * (2 ** 128) + index.low
     tempvar cd: felt*
     cd[1] = owner
@@ -118,7 +138,7 @@ func ownerOf{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (token_id: Uint256) -> (retdata_size : felt, retdata : felt*):
-    assert_lt_felt(token_id.high, 2**122)
+    assert_lt_felt(token_id.high, 2**123)
     tempvar tok = token_id.high * (2 ** 128) + token_id.low
     tempvar cd: felt*
     cd[0] = tok
@@ -151,7 +171,7 @@ func transferFrom{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (_from: felt, to: felt, token_id: Uint256):
-    assert_lt_felt(token_id.high, 2**122)
+    assert_lt_felt(token_id.high, 2**123)
     tempvar tok = token_id.high * (2 ** 128) + token_id.low
     tempvar cd: felt*
     cd[0] = _from
@@ -169,7 +189,7 @@ func approve{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (approved: felt, token_id: Uint256):
-    assert_lt_felt(token_id.high, 2**122)
+    assert_lt_felt(token_id.high, 2**123)
     tempvar tok = token_id.high * (2 ** 128) + token_id.low
     tempvar cd: felt*
     cd[0] = approved
@@ -199,7 +219,7 @@ func getApproved{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (token_id: Uint256) -> (retdata_size: felt,retdata: felt*):
-    assert_lt_felt(token_id.high, 2**122)
+    assert_lt_felt(token_id.high, 2**123)
     tempvar tok = token_id.high * (2 ** 128) + token_id.low
     tempvar cd: felt*
     cd[0] = tok
