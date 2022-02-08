@@ -77,7 +77,7 @@ end
 ############
 ## Authorization patterns
 
-from contracts.backend_proxy import (
+from contracts.authorization import (
     _only,
     _onlyAdmin,
     _onlyAdminAnd,
@@ -103,7 +103,7 @@ end
 # Admin functions
 
 @external
-func setSetBackendAddress{
+func setSetAddress{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr

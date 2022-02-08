@@ -3,7 +3,7 @@ import json
 from .backend import get_cairo, get_header, onlyAdmin, onlyFirst
 
 def generate():
-    data = json.load(open("artifacts/briq_backend.json", "r"))
+    data = json.load(open("artifacts/briq_impl.json", "r"))
 
     def onlyAdminAndMintContract(func_data):
         return "_onlyAdminAndMintContract()"
