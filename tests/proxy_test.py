@@ -13,7 +13,8 @@ from .briq_backend_test import compiled_briq, briq_backend, invoke_briq
 from .set_backend_test import hash_token_id, compiled_set
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
-
+ADMIN = 0x123456
+OTHER_ADDRESS = 0x654321
 
 def compile(path):
     return compile_starknet_files(
@@ -22,8 +23,8 @@ def compile(path):
     )
 
 @pytest.fixture(scope="session")
-def compiled_set_proxy():
-    return compile("proxy_set_backend.cairo")
+def compiled_proxy():
+    return compile("proxy/_proxy.cairo")
 
 
 @pytest_asyncio.fixture
@@ -32,103 +33,235 @@ async def starknet():
     return await Starknet.empty()
 
 
-@pytest.mark.asyncio
-async def test_call(starknet, briq_backend, compiled_set_proxy, compiled_set):
-    await invoke_briq(briq_backend.mintFT(owner=0x11, material=1, qty=50))
-    proxy = await starknet.deploy(contract_def=compiled_set_proxy, constructor_calldata=[0x123456])
-    set_backend = await starknet.deploy(contract_def=compiled_set, constructor_calldata=[proxy.contract_address])
-    await proxy.setImplementation(set_backend.contract_address).invoke(caller_address=ADMIN)
-    await proxy.setBriqBackendAddress(briq_backend.contract_address).invoke(caller_address=ADMIN)
-    await invoke_briq(briq_backend.setSetBackendAddress(set_backend.contract_address))
+@pytest_asyncio.fixture
+async def setup_proxies(starknet, compiled_proxy, compiled_briq, compiled_set):
+    briq_backend = await starknet.deploy(contract_def=compiled_briq)
+    set_backend = await starknet.deploy(contract_def=compiled_set)
+    briq_proxy = await starknet.deploy(contract_def=compiled_proxy, constructor_calldata=[ADMIN, briq_backend.contract_address])
+    set_proxy = await starknet.deploy(contract_def=compiled_proxy, constructor_calldata=[ADMIN, set_backend.contract_address])
 
-    await starknet.state.invoke_raw(contract_address=proxy.contract_address,
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+        selector=get_selector_from_name("setBriqBackendAddress"),
+        calldata=[briq_proxy.contract_address],
+        caller_address=ADMIN,
+    )
+
+    await starknet.state.invoke_raw(contract_address=briq_proxy.contract_address,
+        selector=get_selector_from_name("setSetBackendAddress"),
+        calldata=[set_proxy.contract_address],
+        caller_address=ADMIN,
+    )
+    return briq_proxy, set_proxy
+
+@pytest.mark.asyncio
+async def test_admin(starknet, setup_proxies):
+    briq_proxy = setup_proxies[0]
+    set_proxy = setup_proxies[1]
+
+    assert (await briq_proxy.getAdmin().call()).result.address == ADMIN
+    assert (await set_proxy.getAdmin().call()).result.address == ADMIN
+
+    await briq_proxy.setImplementation(0xcafe).invoke(ADMIN)
+    await set_proxy.setImplementation(0xcafe).invoke(ADMIN)
+
+    assert (await briq_proxy.getImplementation().call()).result.address == 0xcafe
+    assert (await set_proxy.getImplementation().call()).result.address == 0xcafe
+
+    with pytest.raises(StarkException):
+        await briq_proxy.setImplementation(0xcafe).invoke(0xdead)
+    with pytest.raises(StarkException):
+        await set_proxy.setImplementation(0xcafe).invoke(0xdead)
+
+    await briq_proxy.setAdmin(0xdead).invoke(ADMIN)
+    await set_proxy.setAdmin(0xdead).invoke(ADMIN)
+
+    assert (await briq_proxy.getAdmin().call()).result.address == 0xdead
+    assert (await set_proxy.getAdmin().call()).result.address == 0xdead
+
+    with pytest.raises(StarkException):
+        await briq_proxy.setImplementation(0xcafe).invoke(ADMIN)
+    with pytest.raises(StarkException):
+        await set_proxy.setImplementation(0xcafe).invoke(ADMIN)
+
+    await briq_proxy.setImplementation(0xcafe).invoke(0xdead)
+    await set_proxy.setImplementation(0xcafe).invoke(0xdead)
+
+
+@pytest.mark.asyncio
+async def test_call(starknet, setup_proxies):
+    briq_proxy = setup_proxies[0]
+    set_proxy = setup_proxies[1]
+
+    # await invoke_briq(briq_backend.mintFT(owner=ADMIN, material=1, qty=50), ADMIN)
+    await starknet.state.invoke_raw(contract_address=briq_proxy.contract_address,
+        selector=get_selector_from_name("mintFT"),
+        calldata=[ADMIN, 1, 50],
+        caller_address=ADMIN,
+    )
+
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("assemble"),
-        calldata=[0x11, 0x1, 1, 1, 5, 0, 1, 0xcafe],
-        caller_address=0x11,
+        calldata=[ADMIN, 0x1, 1, 1, 5, 0, 1, 0xcafe],
+        caller_address=ADMIN,
     )
     with pytest.raises(StarkException):
-        await starknet.state.invoke_raw(contract_address=proxy.contract_address,
+        await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
             selector=get_selector_from_name("assemble"),
             calldata=[0x12, 0x2, 1, 1, 5, 0, 0xfade],
             caller_address=0xcafe,
         )
 
-ADMIN = 0x123456
+
+@pytest.fixture(scope="session")
+def compiled_mint():
+    return compile("mint.cairo")
+
 
 @pytest.mark.asyncio
-async def test_transfer_approval(starknet, briq_backend, compiled_set_proxy, compiled_set):
-    await invoke_briq(briq_backend.mintFT(owner=0x11, material=1, qty=50))
-    proxy = await starknet.deploy(contract_def=compiled_set_proxy, constructor_calldata=[ADMIN])
-    set_backend = await starknet.deploy(contract_def=compiled_set, constructor_calldata=[proxy.contract_address])
-    await proxy.setImplementation(set_backend.contract_address).invoke(caller_address=ADMIN)
-    await proxy.setBriqBackendAddress(briq_backend.contract_address).invoke(caller_address=ADMIN)
-    await invoke_briq(briq_backend.setSetBackendAddress(set_backend.contract_address))
+async def test_mint(starknet, compiled_mint, compiled_proxy, setup_proxies):
+    briq_proxy = setup_proxies[0]
+    set_proxy = setup_proxies[1]
 
-    tok_id_1 = hash_token_id(0x11, 1, [0xcafe])
+    mint = await starknet.deploy(contract_def=compiled_mint, constructor_calldata=[briq_proxy.contract_address, 100])
 
-    await starknet.state.invoke_raw(contract_address=proxy.contract_address,
-        selector=get_selector_from_name("assemble"),
-        calldata=[0x11, 0x1, 1, 1, 5, 0, 1, 0xcafe],
-        caller_address=0x11,
+    await starknet.state.invoke_raw(contract_address=briq_proxy.contract_address,
+        selector=get_selector_from_name("setMintContract"),
+        calldata=[mint.contract_address],
+        caller_address=ADMIN,
     )
 
-    #assert(await starknet.state.invoke_raw(contract_address=proxy.contract_address,
-    #    selector=get_selector_from_name("ownerOf"),
-    #    calldata=[tok_id_1],
-    #    caller_address=0x57384,
-    #)).result.owner == 0x11
-
-    await starknet.state.invoke_raw(contract_address=proxy.contract_address,
-        selector=get_selector_from_name("transferOneNFT"),
-        calldata=[0x11, 0x12, tok_id_1],
-        caller_address=0x11,
+    await starknet.state.invoke_raw(contract_address=mint.contract_address,
+        selector=get_selector_from_name("mint"),
+        calldata=[0xcafe],
+        caller_address=0xcafe,
     )
 
     with pytest.raises(StarkException):
-        await starknet.state.invoke_raw(contract_address=proxy.contract_address,
-            selector=get_selector_from_name("transferOneNFT"),
-            calldata=[0x12, 0x11, tok_id_1],
-            caller_address=0x11,
+        await starknet.state.invoke_raw(contract_address=mint.contract_address,
+            selector=get_selector_from_name("mint"),
+            calldata=[0xfade],
+            caller_address=0xdead,
         )
 
-    await starknet.state.invoke_raw(contract_address=proxy.contract_address,
-        selector=get_selector_from_name("approve"),
-        calldata=[0x11, tok_id_1],
-        caller_address=0x12,
+
+@pytest.mark.asyncio
+async def test_redo_implementation(starknet, setup_proxies):
+    briq_proxy = setup_proxies[0]
+    set_proxy = setup_proxies[1]
+
+    await starknet.state.invoke_raw(contract_address=briq_proxy.contract_address,
+        selector=get_selector_from_name("mintFT"),
+        calldata=[ADMIN, 1, 50],
+        caller_address=ADMIN,
     )
 
-    await starknet.state.invoke_raw(contract_address=proxy.contract_address,
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+        selector=get_selector_from_name("assemble"),
+        calldata=[ADMIN, 0x1, 1, 1, 5, 0, 1, 0xcafe],
+        caller_address=ADMIN,
+    )
+
+    bimp = (await briq_proxy.getImplementation().call()).result.address
+    simp = (await set_proxy.getImplementation().call()).result.address
+
+    await briq_proxy.setImplementation(0xcafe).invoke(ADMIN)
+    await set_proxy.setImplementation(0xcafe).invoke(ADMIN)
+
+    with pytest.raises(StarkException):
+        await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+            selector=get_selector_from_name("disassemble"),
+            calldata=[ADMIN, 0x1, 1, 1, 5, 0],
+            caller_address=0xdead,
+        )
+
+    await briq_proxy.setImplementation(bimp).invoke(ADMIN)
+    await set_proxy.setImplementation(simp).invoke(ADMIN)
+
+    tok_id = hash_token_id(ADMIN, 1, uri=[0xcafe])
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+        selector=get_selector_from_name("disassemble"),
+        calldata=[ADMIN, tok_id, 1, 1, 5, 0],
+        caller_address=ADMIN,
+    )
+
+
+@pytest.mark.asyncio
+async def test_transfer_approval(starknet, setup_proxies):
+    briq_proxy = setup_proxies[0]
+    set_proxy = setup_proxies[1]
+
+    #await invoke_briq(briq_backend.mintFT(owner=ADMIN, material=1, qty=50), ADMIN)
+    await starknet.state.invoke_raw(contract_address=briq_proxy.contract_address,
+        selector=get_selector_from_name("mintFT"),
+        calldata=[ADMIN, 1, 50],
+        caller_address=ADMIN,
+    )
+
+    tok_id_1 = hash_token_id(ADMIN, 1, [0xcafe])
+
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+        selector=get_selector_from_name("assemble"),
+        calldata=[ADMIN, 0x1, 1, 1, 5, 0, 1, 0xcafe],
+        caller_address=ADMIN,
+    )
+
+    #assert(await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+    #    selector=get_selector_from_name("ownerOf"),
+    #    calldata=[tok_id_1],
+    #    caller_address=0x57384,
+    #)).result.owner == ADMIN
+
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("transferOneNFT"),
-        calldata=[0x12, 0x11, tok_id_1],
-        caller_address=0x11,
+        calldata=[ADMIN, OTHER_ADDRESS, tok_id_1],
+        caller_address=ADMIN,
+    )
+
+    with pytest.raises(StarkException):
+        await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+            selector=get_selector_from_name("transferOneNFT"),
+            calldata=[OTHER_ADDRESS, ADMIN, tok_id_1],
+            caller_address=ADMIN,
+        )
+
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+        selector=get_selector_from_name("approve_"),
+        calldata=[ADMIN, tok_id_1],
+        caller_address=OTHER_ADDRESS,
+    )
+
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+        selector=get_selector_from_name("transferOneNFT"),
+        calldata=[OTHER_ADDRESS, ADMIN, tok_id_1],
+        caller_address=ADMIN,
     )
 
     # TODO check approve status
 
     with pytest.raises(StarkException):
-        await starknet.state.invoke_raw(contract_address=proxy.contract_address,
+        await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
             selector=get_selector_from_name("transferOneNFT"),
-            calldata=[0x11, 0x12, tok_id_1],
-            caller_address=0x12,
+            calldata=[ADMIN, OTHER_ADDRESS, tok_id_1],
+            caller_address=OTHER_ADDRESS,
         )
 
-    await starknet.state.invoke_raw(contract_address=proxy.contract_address,
-        selector=get_selector_from_name("setApprovalForAll"),
-        calldata=[0x12, 1],
-        caller_address=0x11,
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
+        selector=get_selector_from_name("setApprovalForAll_"),
+        calldata=[OTHER_ADDRESS, 1],
+        caller_address=ADMIN,
     )
 
     # Now transfer goes through, approved as operator
-    await starknet.state.invoke_raw(contract_address=proxy.contract_address,
+    await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("transferOneNFT"),
-        calldata=[0x11, 0x12, tok_id_1],
-        caller_address=0x12,
+        calldata=[ADMIN, OTHER_ADDRESS, tok_id_1],
+        caller_address=OTHER_ADDRESS,
     )
 
     # authorization was burned, this fails.
     with pytest.raises(StarkException):
-        await starknet.state.invoke_raw(contract_address=proxy.contract_address,
+        await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
             selector=get_selector_from_name("transferOneNFT"),
-            calldata=[0x12, 0x11, tok_id_1],
-            caller_address=0x11,
+            calldata=[OTHER_ADDRESS, ADMIN, tok_id_1],
+            caller_address=ADMIN,
         )

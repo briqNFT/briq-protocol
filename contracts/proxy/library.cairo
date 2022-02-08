@@ -29,6 +29,7 @@ func Proxy_initializer{
         range_check_ptr
     }(proxy_admin: felt):
     let (initialized) = Proxy_initialized.read()
+    assert initialized = 0
     Proxy_initialized.write(1)
     Proxy_admin.write(proxy_admin)
     return ()

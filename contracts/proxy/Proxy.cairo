@@ -1,7 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.starknet.common.syscalls import call_contract, delegate_l1_handler, delegate_call
+from starkware.starknet.common.syscalls import delegate_l1_handler, delegate_call
 from contracts.proxy.library import (
     Proxy_implementation_address,
     Proxy_set_implementation
@@ -11,26 +11,15 @@ from contracts.proxy.library import (
 # Constructor
 #
 
-@constructor
-func constructor{
+func _constructor{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } ():
-    #implementation_address: felt):
-    #Proxy_set_implementation(implementation_address)
+    }(implementation_address: felt):
+    Proxy_set_implementation(implementation_address)
     return ()
 end
 
-@external
-func setImplementation{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    }(new_implementation: felt):
-    Proxy_set_implementation(new_implementation)
-    return()
-end
 #
 # Fallback functions
 #
@@ -52,7 +41,7 @@ func __default__{
     ):
     let (address) = Proxy_implementation_address.read()
 
-    let (retdata_size: felt, retdata: felt*) = call_contract(
+    let (retdata_size: felt, retdata: felt*) = delegate_call(
         contract_address=address,
         function_selector=selector,
         calldata_size=calldata_size,

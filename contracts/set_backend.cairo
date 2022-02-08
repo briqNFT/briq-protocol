@@ -8,9 +8,11 @@ from starkware.cairo.common.alloc import alloc
 
 from starkware.cairo.common.bitwise import bitwise_and
 
-from contracts.backend_common import (
-    _onlyProxy,
-    setProxyAddress
+from starkware.cairo.common.uint256 import Uint256
+
+from contracts.Uint256_felt_conv import (
+    _uint_to_felt,
+    _felt_to_uint,
 )
 
 from contracts.events import (
@@ -71,7 +73,7 @@ end
 
 ## ERC721 compatibility
 @event
-func Transfer(from_: felt, to_: felt, token_id_: felt):
+func Transfer(from_: felt, to_: felt, token_id_: Uint256):
 end
 
 ## ERC1155 compatibility
@@ -79,22 +81,50 @@ end
 func URI(value__len: felt, value_: felt*, id_: felt):
 end
 
+func _onTransfer{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (sender: felt, recipient: felt, token_id: felt):
+    let (tk) = _felt_to_uint(token_id)
+    Transfer.emit(sender, recipient, tk)
+    return ()
+end
+
+############
+############
+############
+## Authorization patterns
+
+from contracts.backend_proxy import (
+    _only,
+    _onlyAdmin,
+    _onlyAdminAnd,
+)
+
+func _onlyApproved{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (sender: felt, token_id: felt):
+    let (caller) = get_caller_address()
+    if sender == caller:
+        return ()
+    end
+    let (isOperator) = isApprovedForAll(sender, caller)
+    if isOperator - 1 == 0:
+        return ()
+    end
+    let (approved) = getApproved_(token_id)
+    _only(approved)
+    return ()
+end
+
+
 ############
 ############
 ############
 # Admin functions
-
-@constructor
-func constructor{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (proxy_address: felt):
-    setProxyAddress(proxy_address)
-    return ()
-end
-
-##
 
 @external
 func setBriqBackendAddress{
@@ -102,7 +132,7 @@ func setBriqBackendAddress{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (address: felt):
-    _onlyProxy()
+    _onlyAdmin()
     _briq_backend_address.write(address)
     return ()
 end
@@ -113,7 +143,7 @@ end
 # Public functions - no authentication required
 
 @view
-func balanceOf{
+func balanceOf_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -136,7 +166,7 @@ func _NFTBalanceDetailsOfIdx{
 end
 
 @view
-func balanceDetailsOf{
+func balanceDetailsOf_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -149,7 +179,7 @@ end
 
 # We don't implement full enumerability, just per-user
 @view
-func tokenOfOwnerByIndex{
+func tokenOfOwnerByIndex_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -159,7 +189,7 @@ func tokenOfOwnerByIndex{
 end
 
 @view
-func ownerOf{
+func ownerOf_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -187,7 +217,7 @@ func _fetchExtraUri{
 end
 
 @view
-func tokenUri{
+func tokenUri_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
@@ -381,7 +411,8 @@ func assemble{
         range_check_ptr
     } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*):
     alloc_locals
-    _onlyProxy()
+
+    _only(owner)
     assert_not_zero(owner)
     assert_not_zero(fts_len + nfts_len)
 
@@ -401,7 +432,7 @@ func assemble{
 
     _setTokenUri(1, token_id, uri_len, uri)
 
-    Transfer.emit(0, owner, token_id)
+    _onTransfer(0, owner, token_id)
     URI.emit(uri_len, uri, token_id)
 
     return ()
@@ -467,8 +498,7 @@ func setTokenUri{
     } (token_id: felt, uri_len: felt, uri: felt*):
     alloc_locals
     
-    _onlyProxy()
-
+    _onlyAdmin()
     # TODO: is this useless?
     let (owner) = _owner.read(token_id)
     assert_not_zero(owner)
@@ -494,7 +524,7 @@ func updateBriqs{
         remove_nfts_len: felt, remove_nfts: felt*,
         uri_len: felt, uri: felt*):
     alloc_locals
-    _onlyProxy()
+    _onlyAdmin()
 
     assert_not_zero(token_id)
     assert_not_zero(owner)
@@ -521,7 +551,7 @@ func disassemble{
         range_check_ptr
     } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
     alloc_locals
-    _onlyProxy()
+    _only(owner)
 
     assert_not_zero(token_id)
     assert_not_zero(owner)
@@ -538,7 +568,7 @@ func disassemble{
 
     _unsetTokenByOwner(curr_owner, token_id)
 
-    Transfer.emit(curr_owner, 0, token_id)
+    _onTransfer(curr_owner, 0, token_id)
 
     return ()
 end
@@ -554,7 +584,9 @@ func transferOneNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
-    _onlyProxy()
+    _onlyApproved(sender, token_id)
+    # Reset approval (0 cost if was 0 before)
+    _approve_noauth(0, token_id)
 
     let (curr_owner) = _owner.read(token_id)
     assert sender = curr_owner
@@ -568,8 +600,161 @@ func transferOneNFT{
     _setTokenByOwner(recipient, token_id, 0)
     _unsetTokenByOwner(sender, token_id)
 
-    Transfer.emit(sender, recipient, token_id)
+    _onTransfer(sender, recipient, token_id)
 
     return ()
 end
 
+################
+################
+################
+# Approval stuff
+
+from contracts.allowance import (
+    get_approved as getApproved_,
+    is_approved_for_all as isApprovedForAll_,
+    _setApprovalForAll_noauth,
+    _approve_noauth,
+)
+
+@external
+func approve_{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (approved_address: felt, token_id: felt):
+    let (owner) = ownerOf_(token_id)
+    _only(owner)
+    _approve_noauth(approved_address, token_id)
+    return ()
+end
+
+@external
+func setApprovalForAll_{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (approved_address: felt, allowed: felt):
+    let (owner) = get_caller_address()
+    _setApprovalForAll_noauth(on_behalf_of=owner, approved_address=approved_address, allowed=allowed)
+    return ()
+end
+
+
+################
+################
+################
+################
+################
+################
+# ERC 721 - OZ compatibility
+
+@view
+func balanceOf{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt) -> (balance: Uint256):
+    let (res) = balanceOf_(owner)
+    let (res2) = _felt_to_uint(res)
+    return (res2)
+end
+
+# This isn't part of ERC721 but I have it so let's have it.
+@view
+func balanceDetailsOf{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt) -> (token_ids_len: felt, token_ids: felt*):
+    let (i, j) = balanceDetailsOf_(owner)
+    return (i, j)
+end
+
+# We don't implement full enumerability, just per-user
+@view
+func tokenOfOwnerByIndex{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, index: felt) -> (token_id: Uint256):
+    let (token_id) = tokenOfOwnerByIndex_(owner, index)
+    let (t2) = _felt_to_uint(token_id)
+    return (t2)
+end
+
+@view
+func ownerOf{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (token_id: Uint256) -> (owner: felt):
+    let (_tok) = _uint_to_felt(token_id)
+    let (owner) = ownerOf_(_tok)
+    return (owner)
+end
+
+@view
+func tokenUri{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (token_id: Uint256) -> (uri_len: felt, uri: felt*):
+    let (_tok) = _uint_to_felt(token_id)
+    let (l, u) = tokenUri_(_tok)
+    return (l, u)
+end
+
+@external
+func transfer{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (sender: felt, recipient: felt, token_id: Uint256):
+    let (_tok) = _uint_to_felt(token_id)
+    transferOneNFT(sender, recipient, _tok)
+    return ()
+end
+
+@view
+func getApproved{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (token_id: Uint256) -> (approved: felt):
+    let (_tok) = _uint_to_felt(token_id)
+    let (res) = getApproved_(_tok)
+    return (res)
+end
+
+@view
+func isApprovedForAll{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, operator: felt) -> (is_approved: felt):
+    let (res) = isApprovedForAll_(owner, operator)
+    return (res)
+end
+
+@external
+func approve{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (approved_address: felt, token_id: Uint256):
+    let (_tok) = _uint_to_felt(token_id)
+    approve_(approved_address, _tok)
+    return ()
+end
+
+@external
+func setApprovalForAll{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (approved_address: felt, allowed: felt):
+    setApprovalForAll(approved_address, allowed)
+    return ()
+end

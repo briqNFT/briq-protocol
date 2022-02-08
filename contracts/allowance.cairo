@@ -33,9 +33,8 @@ func _setApprovalForAll_noauth{
     return ()
 end
 
-# Mimic OZ interface
 @view
-func getApproved{
+func get_approved{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -45,7 +44,7 @@ func getApproved{
 end
 
 @view
-func isApprovedForAll{
+func is_approved_for_all{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr

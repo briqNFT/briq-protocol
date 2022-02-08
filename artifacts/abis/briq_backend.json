@@ -17,17 +17,6 @@
         "type": "struct"
     },
     {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setProxyAddress",
-        "outputs": [],
-        "type": "function"
-    },
-    {
         "data": [
             {
                 "name": "operator_",
@@ -122,13 +111,13 @@
     {
         "inputs": [
             {
-                "name": "proxy_address",
+                "name": "address",
                 "type": "felt"
             }
         ],
-        "name": "constructor",
+        "name": "setSetBackendAddress",
         "outputs": [],
-        "type": "constructor"
+        "type": "function"
     },
     {
         "inputs": [
@@ -137,8 +126,20 @@
                 "type": "felt"
             }
         ],
-        "name": "setSetBackendAddress",
+        "name": "setMintContract",
         "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getMintContract",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
