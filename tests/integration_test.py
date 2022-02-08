@@ -68,4 +68,4 @@ def test_integration(deploy):
     os.environ["SIGNER"] = "123456"
     subprocess.run(["nile", "send", "SIGNER", "mint", "mintAmount", addr, "0x150"])
     
-    assert subprocess.run(["nile", "call", "briq_backend", "balanceOf", addr, "1"], capture_output=True).stdout == b'336\n'
+    assert subprocess.run(["nile", "call", "briq", "balanceOf", addr, "1"], capture_output=True).stdout == b'336\n'

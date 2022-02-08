@@ -15,13 +15,8 @@ from contracts.Uint256_felt_conv import (
     _felt_to_uint,
 )
 
-from contracts.events import (
-    uri as event_uri,
-    transfer_token as event_transfer
-)
-
 @contract_interface
-namespace IBriqBackendContract:
+namespace IBriqContract:
     func transferFT(sender: felt, recipient: felt, material: felt, qty: felt):
     end
     func transferOneNFT(sender: felt, recipient: felt, material: felt, briq_token_id: felt):
@@ -62,7 +57,7 @@ end
 ## Utility
 
 @storage_var
-func _briq_backend_address() -> (address: felt):
+func _briq_address() -> (address: felt):
 end
 
 
@@ -96,7 +91,7 @@ end
 ############
 ## Authorization patterns
 
-from contracts.backend_proxy import (
+from contracts.authorization import (
     _only,
     _onlyAdmin,
     _onlyAdminAnd,
@@ -127,13 +122,13 @@ end
 # Admin functions
 
 @external
-func setBriqBackendAddress{
+func setBriqAddress{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (address: felt):
     _onlyAdmin()
-    _briq_backend_address.write(address)
+    _briq_address.write(address)
     return ()
 end
 
@@ -333,8 +328,8 @@ func _transferFT{
     if index == 0:
         return()
     end
-    let (address) = _briq_backend_address.read()
-    IBriqBackendContract.transferFT(address, sender, recipient, fts[index - 1].token_id, fts[index - 1].qty)
+    let (address) = _briq_address.read()
+    IBriqContract.transferFT(address, sender, recipient, fts[index - 1].token_id, fts[index - 1].qty)
     return _transferFT(sender, recipient, index - 1, fts)
 end
 
@@ -347,9 +342,9 @@ func _transferNFT{
     if index == 0:
         return()
     end
-    let (address) = _briq_backend_address.read()
+    let (address) = _briq_address.read()
     let (uid, material) = unsigned_div_rem(nfts[index - 1], 2**64)
-    IBriqBackendContract.transferOneNFT(address, sender, recipient, material, nfts[index - 1])
+    IBriqContract.transferOneNFT(address, sender, recipient, material, nfts[index - 1])
     return _transferNFT(sender, recipient, index - 1, nfts)
 end
 
