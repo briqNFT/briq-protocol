@@ -6,7 +6,7 @@
                 "type": "felt"
             }
         ],
-        "name": "getApproved",
+        "name": "get_approved",
         "outputs": [
             {
                 "name": "approved",
@@ -27,7 +27,7 @@
                 "type": "felt"
             }
         ],
-        "name": "isApprovedForAll",
+        "name": "is_approved_for_all",
         "outputs": [
             {
                 "name": "is_approved",

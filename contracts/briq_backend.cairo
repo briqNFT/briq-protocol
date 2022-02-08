@@ -6,11 +6,6 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
 
-from contracts.backend_common import (
-    _onlyProxy,
-    setProxyAddress
-)
-
 from contracts.types import (
     NFTSpec
 )
@@ -80,18 +75,32 @@ end
 ############
 ############
 ############
-# Admin functions
+## Authorization patterns
 
-@constructor
-func constructor{
+from contracts.backend_proxy import (
+    _only,
+    _onlyAdmin,
+    _onlyAdminAnd,
+)
+
+func _onlySetAnd{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (proxy_address: felt):
-    setProxyAddress(proxy_address)
+    } (address: felt):
+    let (caller) = get_caller_address()
+    let (setaddr) = _set_backend_address.read()
+    if caller == setaddr:
+        return()
+    end
+    _only(address)
     return ()
 end
 
+############
+############
+############
+# Admin functions
 
 @external
 func setSetBackendAddress{
@@ -99,23 +108,50 @@ func setSetBackendAddress{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (address: felt):
-    _onlyProxy()
+    _onlyAdmin()
     _set_backend_address.write(address)
     return ()
 end
 
 
-func _onlyProxyOrSet{
+####################
+####################
+####################
+# Mint Contract
+
+@storage_var
+func _mint_contract() -> (address: felt):
+end
+
+@external
+func setMintContract{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (address: felt):
+    _onlyAdmin()
+    _mint_contract.write(address)
+    return ()
+end
+
+
+@view
+func getMintContract{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } () -> (address: felt):
+    let (addr) = _mint_contract.read()
+    return (addr)
+end
+
+func _onlyAdminAndMintContract{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } ():
-    let (caller) = get_caller_address()
-    let (address) = _set_backend_address.read()
-    if caller == address:
-        return()
-    end
-    _onlyProxy()
+    let (address) = _mint_contract.read()
+    _onlyAdminAnd(address)
     return ()
 end
 
@@ -127,7 +163,6 @@ end
 
 # NB: not as fast as regular ERCs because we recompute the balance dynamically.
 # TODO: is that a good idea?
-
 func _balanceOfIdx{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
@@ -304,6 +339,9 @@ func _unsetTokenByOwner{
     return()
 end
 
+################
+################
+################
 
 @external
 func mintFT{
@@ -311,9 +349,11 @@ func mintFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, qty: felt):
-    _onlyProxy()
-    
-    assert_not_zero(qty * owner * material)
+    _onlyAdminAndMintContract()
+
+    assert_not_zero(owner)
+    assert_not_zero(material)
+    assert_not_zero(qty)
 
     # Update total supply.
     let (res) = _total_supply.read(material)
@@ -331,16 +371,17 @@ func mintFT{
     return ()    
 end
 
-
 @external
 func mintOneNFT{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, uid: felt):
-    _onlyProxy()
+    _onlyAdminAndMintContract()
 
-    assert_not_zero(owner * material * uid)
+    assert_not_zero(owner)
+    assert_not_zero(material)
+    assert_not_zero(uid)
     assert_lt_felt(uid, 2**188)
 
     # Update total supply.
@@ -371,8 +412,9 @@ func transferFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, qty: felt):
-    _onlyProxyOrSet()
+    _onlySetAnd(sender)
     
+    assert_not_zero(sender)
     assert_not_zero(material)
     assert_not_zero(qty)
     
@@ -398,8 +440,9 @@ func transferOneNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, briq_token_id: felt):
-    _onlyProxyOrSet()
+    _onlySetAnd(sender)
 
+    assert_not_zero(sender)
     assert_not_zero(material)
     assert_not_zero(briq_token_id)
 
@@ -434,7 +477,7 @@ func transferNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (sender: felt, recipient: felt, material: felt, token_ids_len: felt, token_ids: felt*):
-    _onlyProxy()
+    # Calls authorized methods, no need to check here.
     _transferNFT(sender, recipient, material, token_ids_len, token_ids)
     return ()
 end
@@ -445,7 +488,7 @@ func mutateFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, source_material: felt, target_material: felt, qty: felt):
-    _onlyProxy()
+    _onlyAdmin()
     
     assert_not_zero(qty * (source_material - target_material))
 
@@ -476,30 +519,40 @@ func mutateOneNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, source_material: felt, target_material: felt, uid: felt, new_uid: felt):
-    _onlyProxy()
+    _onlyAdmin()
 
     assert_lt_felt(uid, 2**188)
     assert_lt_felt(new_uid, 2**188)
     assert_not_zero(source_material - target_material)
 
     # NFT conversion
+    let (res) = _total_supply.read(source_material)
+    _total_supply.write(source_material, res - 1)
+
     let briq_token_id = uid * 2**64 + source_material
 
     let (curr_owner) = _owner.read(briq_token_id)
     assert curr_owner = owner
-    _unsetTokenByOwner(owner, source_material, briq_token_id)
     _owner.write(briq_token_id, 0)
 
-    let (res) = _total_supply.read(source_material)
-    _total_supply.write(source_material, res - 1)
+    _unsetTokenByOwner(owner, source_material, briq_token_id)
+
+    let (res) = _total_supply.read(target_material)
+    _total_supply.write(target_material, res + 1)
+
+    # briq_token_id is not the new ID
+    let briq_token_id = new_uid * 2**64 + target_material
+
+    let (curr_owner) = _owner.read(briq_token_id)
+    assert curr_owner = 0
+    _owner.write(briq_token_id, owner)
+
+    _setTokenByOwner(owner, target_material, briq_token_id, 0)
 
     let (__addr) = get_contract_address()
     TransferSingle.emit(__addr, owner, 0, uid * 2**64 + source_material, 1)
-
-    # Should probably use something else.
-    mintOneNFT(owner, target_material, new_uid)
-
-    Mutate.emit(owner, briq_token_id, new_uid * 2**64 + target_material, source_material, target_material)
+    TransferSingle.emit(__addr, 0, owner, new_uid * 2**64 + target_material, 1)
+    Mutate.emit(owner, uid * 2**64 + source_material, new_uid * 2**64 + target_material, source_material, target_material)
 
     return ()
 end
@@ -512,7 +565,7 @@ func convertOneToFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, token_id: felt):
-    _onlyProxy()
+    _onlyAdmin()
     
     assert_not_zero(owner)
     assert_not_zero(token_id)
@@ -554,7 +607,7 @@ func convertToFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, token_ids_len: felt, token_ids: NFTSpec*):
-    _onlyProxy()
+    _onlyAdmin()
     
     assert_not_zero(owner)
     assert_not_zero(token_ids_len)
@@ -571,7 +624,7 @@ func convertOneToNFT{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, uid: felt):
-    _onlyProxy()
+    _onlyAdmin()
 
     assert_not_zero(owner)
     assert_not_zero(material)
