@@ -212,7 +212,7 @@ func _fetchExtraUri{
 end
 
 @view
-func tokenUri_{
+func tokenURI_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
@@ -355,7 +355,7 @@ from starkware.cairo.common.hash_state import (
 # To prevent people from generating collisions, we need the token_id to be random.
 # However, we need it to be predictable for good UI.
 # The solution adopted is to hash a hint. Our security becomes the chain hash security.
-# To be able to store e.g. sha-256 IPFS data in the tokenUri, we reserve a few bits
+# To be able to store e.g. sha-256 IPFS data in the tokenURI, we reserve a few bits
 # off the end for extra-URI storage when minting.
 func _hashTokenId{
         syscall_ptr: felt*,
@@ -425,7 +425,7 @@ func assemble{
 
     _setTokenByOwner(owner, token_id, 0)
 
-    _setTokenUri(1, token_id, uri_len, uri)
+    _setTokenURI(1, token_id, uri_len, uri)
 
     _onTransfer(0, owner, token_id)
     URI.emit(uri_len, uri, token_id)
@@ -433,7 +433,7 @@ func assemble{
     return ()
 end
 
-func _setExtraTokenUri{
+func _setExtraTokenURI{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
@@ -445,10 +445,10 @@ func _setExtraTokenUri{
         return()
     end
     _token_uri_extra.write(token_id, index, uri[0] * 4 + 1)
-    return _setExtraTokenUri(token_id, max, index + 1, uri + 1)
+    return _setExtraTokenURI(token_id, max, index + 1, uri + 1)
 end
 
-func _setTokenUri{
+func _setTokenURI{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
@@ -468,7 +468,7 @@ func _setTokenUri{
         end
         # Write the first URI with the special continuation LSB
         _token_uri.write(token_id, uri[0] * 4 + 1)
-        _setExtraTokenUri(token_id, uri_len - 2, 0, uri + 1)
+        _setExtraTokenURI(token_id, uri_len - 2, 0, uri + 1)
         # event_uri.emit(token_id, uri_len, uri)
     else:
         if uri_len == 1:
@@ -478,14 +478,14 @@ func _setTokenUri{
         end
         # Write the first URI with the special continuation LSB
         _token_uri.write(token_id, uri[0] * 4 + 1)
-        _setExtraTokenUri(token_id, uri_len - 2, 0, uri + 1)
+        _setExtraTokenURI(token_id, uri_len - 2, 0, uri + 1)
         # event_uri.emit(token_id, uri_len, uri)
     end    
     return()
 end
 
 @external
-func setTokenUri{
+func setTokenURI{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
@@ -498,7 +498,7 @@ func setTokenUri{
     let (owner) = _owner.read(token_id)
     assert_not_zero(owner)
     
-    _setTokenUri(0, token_id, uri_len, uri)
+    _setTokenURI(0, token_id, uri_len, uri)
 
     URI.emit(uri_len, uri, token_id)
 
@@ -532,7 +532,7 @@ func updateBriqs{
 
     # TODO: would be nice to be able to check that the set is not empty here.
 
-    _setTokenUri(0, token_id, uri_len, uri)
+    _setTokenURI(0, token_id, uri_len, uri)
 
     URI.emit(uri_len, uri, token_id)
 
@@ -690,19 +690,19 @@ func ownerOf{
 end
 
 @view
-func tokenUri{
+func tokenURI{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
     } (token_id: Uint256) -> (uri_len: felt, uri: felt*):
     let (_tok) = _uint_to_felt(token_id)
-    let (l, u) = tokenUri_(_tok)
+    let (l, u) = tokenURI_(_tok)
     return (l, u)
 end
 
 @external
-func transfer{
+func transferFrom{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr

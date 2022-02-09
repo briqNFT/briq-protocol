@@ -13,7 +13,7 @@ def generate():
 
     spec = {
         "assemble": onlyFirst,
-        # "setTokenUri": onlyAdmin,
+        # "setTokenURI": onlyAdmin,
         # updateBriqs: onlyAdmin,
         "disassemble": onlyFirst,
         "transferOneNFT": onlyApproved,

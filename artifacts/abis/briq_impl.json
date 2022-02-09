@@ -115,7 +115,7 @@
                 "type": "felt"
             }
         ],
-        "name": "setSetBackendAddress",
+        "name": "setSetAddress",
         "outputs": [],
         "type": "function"
     },
