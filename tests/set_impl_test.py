@@ -59,21 +59,21 @@ async def test_minting_compactness(briq_contract, set_contract):
 
     tok_id_50 = hash_token_id(ADDRESS, 50, uri=[0x1234, 0x4321])
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50]
-    assert (await set_contract.tokenUri_(token_id=tok_id_50).call()).result.uri == [0x1234, 0x4321]
+    assert (await set_contract.tokenURI_(token_id=tok_id_50).call()).result.uri == [0x1234, 0x4321]
 
     # Now let's break stuff up.
-    await invoke_set(set_contract.setTokenUri(tok_id_50, [0xcafe]), ADMIN)
+    await invoke_set(set_contract.setTokenURI(tok_id_50, [0xcafe]), ADMIN)
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50]
-    assert (await set_contract.tokenUri_(token_id=tok_id_50).call()).result.uri == [0xcafe]
+    assert (await set_contract.tokenURI_(token_id=tok_id_50).call()).result.uri == [0xcafe]
 
-    await invoke_set(set_contract.setTokenUri(tok_id_50, [0x1, 0x2, 0x3, 0x4]), ADMIN)
+    await invoke_set(set_contract.setTokenURI(tok_id_50, [0x1, 0x2, 0x3, 0x4]), ADMIN)
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50]
-    assert (await set_contract.tokenUri_(token_id=tok_id_50).call()).result.uri == [0x1, 0x2, 0x3, 0x4]
+    assert (await set_contract.tokenURI_(token_id=tok_id_50).call()).result.uri == [0x1, 0x2, 0x3, 0x4]
 
     # This would write to the token_id initially, but not any more.
-    await invoke_set(set_contract.setTokenUri(tok_id_50, [0x1234, 0x4444]), ADMIN)
+    await invoke_set(set_contract.setTokenURI(tok_id_50, [0x1234, 0x4444]), ADMIN)
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50]
-    assert (await set_contract.tokenUri_(token_id=tok_id_50).call()).result.uri == [0x1234, 0x4444]
+    assert (await set_contract.tokenURI_(token_id=tok_id_50).call()).result.uri == [0x1234, 0x4444]
 
 @pytest.mark.asyncio
 async def test_minting_and_querying(briq_contract, set_contract):
@@ -175,38 +175,38 @@ async def test_token_uri(briq_contract, set_contract):
     assert (await set_contract.ownerOf_(token_id).call()).result.owner == ADDRESS
 
     with pytest.raises(StarkException):
-        await invoke_set(set_contract.setTokenUri(token_id=0xdead, uri=[0xcafecafe]), ADMIN)
+        await invoke_set(set_contract.setTokenURI(token_id=0xdead, uri=[0xcafecafe]), ADMIN)
 
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0xcafecafe]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0xcafecafe]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe]
 
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0xcafecafe, 0xfadefade]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade]
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0xcafecafe, 0xfadefade, 0x1234, 0x5678]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade, 0x1234, 0x5678]
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0xcafecafe]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0xcafecafe]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe, 0xfadefade]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe, 0xfadefade, 0x1234, 0x5678]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade, 0x1234, 0x5678]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe]
     # edge cases around 0-value items
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0xcafecafe, 0xfadefade, 0, 0x1234, 0x5678]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade, 0, 0x1234, 0x5678]
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0, 0xfadefade, 0, 0x1234, 0x5678]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0, 0xfadefade, 0, 0x1234, 0x5678]
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0]
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0, 0, 0]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0, 0, 0]
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0x1, 0]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0x1, 0]
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[0x1, 0, 0, 0]), ADMIN)
-    assert (await set_contract.tokenUri_(token_id=token_id).call()).result.uri == [0x1, 0, 0, 0]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe, 0xfadefade, 0, 0x1234, 0x5678]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade, 0, 0x1234, 0x5678]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0, 0xfadefade, 0, 0x1234, 0x5678]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0, 0xfadefade, 0, 0x1234, 0x5678]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0, 0, 0]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0, 0, 0]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0x1, 0]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0x1, 0]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0x1, 0, 0, 0]), ADMIN)
+    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0x1, 0, 0, 0]
 
     # Need to keep the two LSBs free.
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[2**248]), ADMIN)
-    await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[2**249 - 1]), ADMIN)
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[2**248]), ADMIN)
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[2**249 - 1]), ADMIN)
     with pytest.raises(StarkException):
-        await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[2**249]), ADMIN)
+        await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[2**249]), ADMIN)
     with pytest.raises(StarkException):
-        await invoke_set(set_contract.setTokenUri(token_id=token_id, uri=[1, 2, 3, 2**249, 4]), ADMIN)
+        await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[1, 2, 3, 2**249, 4]), ADMIN)
 
 
 @pytest.mark.asyncio

@@ -116,7 +116,7 @@
                 "type": "felt"
             }
         ],
-        "name": "setBriqBackendAddress",
+        "name": "setBriqAddress",
         "outputs": [],
         "type": "function"
     },
@@ -203,7 +203,7 @@
                 "type": "felt"
             }
         ],
-        "name": "tokenUri_",
+        "name": "tokenURI_",
         "outputs": [
             {
                 "name": "uri_len",
@@ -271,7 +271,7 @@
                 "type": "felt*"
             }
         ],
-        "name": "setTokenUri",
+        "name": "setTokenURI",
         "outputs": [],
         "type": "function"
     },
@@ -493,7 +493,7 @@
                 "type": "Uint256"
             }
         ],
-        "name": "tokenUri",
+        "name": "tokenURI",
         "outputs": [
             {
                 "name": "uri_len",
@@ -522,7 +522,7 @@
                 "type": "Uint256"
             }
         ],
-        "name": "transfer",
+        "name": "transferFrom",
         "outputs": [],
         "type": "function"
     },
