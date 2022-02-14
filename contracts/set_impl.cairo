@@ -645,6 +645,18 @@ end
 # ERC 721 - OZ compatibility
 
 @view
+func name() -> (name: felt):
+    # briq
+    return (0x62726971)
+end
+
+@view
+func symbol() -> (symbol: felt):
+    # briq
+    return (0x62726971)
+end
+
+@view
 func balanceOf{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
@@ -750,6 +762,6 @@ func setApprovalForAll{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (approved_address: felt, allowed: felt):
-    setApprovalForAll(approved_address, allowed)
+    setApprovalForAll_(approved_address, allowed)
     return ()
 end
