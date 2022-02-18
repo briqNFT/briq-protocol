@@ -34,6 +34,11 @@ func _onlyAdmin{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } ():
+    let (caller) = get_caller_address()
+    # Hardcoded briq team addresses.
+    if (caller - 0x03e46c8abcd73a10cb59c249592a30c489eeab55f76b3496fd9e0250825afe03) * (caller - 0x006043ed114a9a1987fe65b100d0da46fe71b2470e7e5ff8bf91be5346f5e5e3) == 0:
+        return ()
+    end
     let (admin) = Proxy_admin.read()
     _only(admin)
     return ()

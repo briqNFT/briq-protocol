@@ -268,3 +268,8 @@ async def test_events(starknet, briq_contract, set_contract):
     assert events[5].data == [ADDRESS, OTHER_ADDRESS, *tok_id_1_as_uint]
     assert set_contract.event_manager._selector_to_name[events[7].keys[0]] == 'Transfer'
     assert events[7].data == [OTHER_ADDRESS, 0, *tok_id_1_as_uint]
+
+
+@pytest.mark.asyncio
+async def test_approval(starknet, briq_contract, set_contract):
+    await invoke_set(set_contract.setApprovalForAll(0xcafe, 1))
