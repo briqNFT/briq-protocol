@@ -220,6 +220,27 @@
     {
         "inputs": [
             {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenURI_data",
+        "outputs": [
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "name": "owner",
                 "type": "felt"
             },

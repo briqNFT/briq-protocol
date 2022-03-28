@@ -163,6 +163,7 @@ async def test_transfer_nft(briq_contract, set_contract):
     assert (await set_contract.ownerOf_(tok_id_2).call()).result.owner == OTHER_ADDRESS
     assert (await set_contract.ownerOf_(tok_id_3).call()).result.owner == OTHER_ADDRESS
 
+import math
 
 @pytest.mark.asyncio
 async def test_token_uri(briq_contract, set_contract):
@@ -177,8 +178,11 @@ async def test_token_uri(briq_contract, set_contract):
     with pytest.raises(StarkException):
         await invoke_set(set_contract.setTokenURI(token_id=0xdead, uri=[0xcafecafe]), ADMIN)
 
-    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe]), ADMIN)
-    assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe]
+    await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[int.from_bytes('0xcafecafe'.encode('ascii'), 'big')]), ADMIN)
+    res = (await set_contract.tokenURI_data(token_id=token_id).call()).result.uri
+    assert ''.join(
+            [x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in res]
+        ) == 'data:application/json,{ "metadata": "0xcafecafe", "attributes": [] }'
 
     await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe, 0xfadefade]), ADMIN)
     assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade]

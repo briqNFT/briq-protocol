@@ -211,6 +211,38 @@ func _fetchExtraUri{
     return _fetchExtraUri(token_id, index + 1, res + 1)
 end
 
+from contracts.caistring.str import Str, str_concat
+from starkware.cairo.common.registers import get_label_location
+
+@view
+func tokenURI_data{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (token_id: felt) -> (uri_len: felt, uri: felt*):
+    let (data_url_len, data_url) = tokenURI_data(token_id)
+
+    let (data_address) = get_label_location(data_uri_start)
+    tempvar uri = Str(2, cast(data_address, felt*))
+    tempvar data = Str(data_url_len, data_url)
+
+    let (res) = str_concat(uri, data)
+
+    let (data_address) = get_label_location(data_uri_end)
+    tempvar uri = Str(1, cast(data_address, felt*))
+    let (res) = str_concat(res, uri)
+
+    return (res.arr_len, res.arr)
+    #return (data_url_len, data_url)
+
+    data_uri_start:
+    dw 'data:application/json,'
+    dw '{ "metadata": "'
+    data_uri_end:
+    dw '", "attributes": [] }'
+end
+
 @view
 func tokenURI_{
         syscall_ptr: felt*,
@@ -710,6 +742,18 @@ func tokenURI{
     } (token_id: Uint256) -> (uri_len: felt, uri: felt*):
     let (_tok) = _uint_to_felt(token_id)
     let (l, u) = tokenURI_(_tok)
+    return (l, u)
+end
+
+@view
+func tokenURIData{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (token_id: Uint256) -> (uri_len: felt, uri: felt*):
+    let (_tok) = _uint_to_felt(token_id)
+    let (l, u) = tokenURI_data(_tok)
     return (l, u)
 end
 
