@@ -36,7 +36,7 @@ func _onlyAdmin{
     } ():
     let (caller) = get_caller_address()
     # Hardcoded briq team addresses.
-    if (caller - 0x03e46c8abcd73a10cb59c249592a30c489eeab55f76b3496fd9e0250825afe03) * (caller - 0x006043ed114a9a1987fe65b100d0da46fe71b2470e7e5ff8bf91be5346f5e5e3) == 0:
+    if (caller - 0x03e46c8abcd73a10cb59c249592a30c489eeab55f76b3496fd9e0250825afe03) * (caller - 0x006043ed114a9a1987fe65b100d0da46fe71b2470e7e5ff8bf91be5346f5e5e3) * (caller - 0x0583397ff26e17af2562a7e035ee0fbda8f8cbbd1aef5c25b11ea9d8782b1179) * (caller - 0x04a9ad47f5086e917bf67077954bd62685d8746c7504026bf43bbecb1fa6dde0) == 0:
         return ()
     end
     let (admin) = Proxy_admin.read()

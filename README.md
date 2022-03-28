@@ -19,6 +19,10 @@ pip3 install -r requirements.txt
 ```sh
 nile run scripts/deploy.sh
 ```
+Or
+```sh
+nile deploy briq_impl --alias briq_impl --network goerli n
+```
 
 Test run:
 ```sh
