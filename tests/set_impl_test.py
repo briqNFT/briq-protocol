@@ -182,7 +182,7 @@ async def test_token_uri(briq_contract, set_contract):
     res = (await set_contract.tokenURI_data(token_id=token_id).call()).result.uri
     assert ''.join(
             [x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in res]
-        ) == 'data:application/json,{ "metadata": "0xcafecafe", "attributes": [] }'
+        ) == 'data:application/json,{ "metadata": "0xcafecafe", "attributes": [{"trait_type": "Realms", "value": "no"}]}'
 
     await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[0xcafecafe, 0xfadefade]), ADMIN)
     assert (await set_contract.tokenURI_(token_id=token_id).call()).result.uri == [0xcafecafe, 0xfadefade]

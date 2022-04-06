@@ -221,7 +221,7 @@ func tokenURI_data{
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
     } (token_id: felt) -> (uri_len: felt, uri: felt*):
-    let (data_url_len, data_url) = tokenURI_data(token_id)
+    let (data_url_len, data_url) = tokenURI_(token_id)
 
     let (data_address) = get_label_location(data_uri_start)
     tempvar uri = Str(2, cast(data_address, felt*))
@@ -230,17 +230,19 @@ func tokenURI_data{
     let (res) = str_concat(uri, data)
 
     let (data_address) = get_label_location(data_uri_end)
-    tempvar uri = Str(1, cast(data_address, felt*))
+    tempvar uri = Str(4, cast(data_address, felt*))
     let (res) = str_concat(res, uri)
 
     return (res.arr_len, res.arr)
-    #return (data_url_len, data_url)
 
     data_uri_start:
     dw 'data:application/json,'
     dw '{ "metadata": "'
     data_uri_end:
-    dw '", "attributes": [] }'
+    dw '", "attributes": [{'
+    dw '"trait_type": "Realms", '
+    dw '"value": "no"'
+    dw '}]}'
 end
 
 @view

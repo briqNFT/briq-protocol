@@ -203,7 +203,7 @@
                 "type": "felt"
             }
         ],
-        "name": "tokenURI_",
+        "name": "tokenURI_data",
         "outputs": [
             {
                 "name": "uri_len",
@@ -224,7 +224,7 @@
                 "type": "felt"
             }
         ],
-        "name": "tokenURI_data",
+        "name": "tokenURI_",
         "outputs": [
             {
                 "name": "uri_len",
@@ -539,6 +539,27 @@
             }
         ],
         "name": "tokenURI",
+        "outputs": [
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "Uint256"
+            }
+        ],
+        "name": "tokenURIData",
         "outputs": [
             {
                 "name": "uri_len",
