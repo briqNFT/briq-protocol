@@ -21,6 +21,8 @@ namespace IBriqContract:
     end
     func transferOneNFT(sender: felt, recipient: felt, material: felt, briq_token_id: felt):
     end
+    func balanceOf(owner: felt, material: felt) -> (balance: felt):
+    end
 end
 
 
@@ -215,12 +217,32 @@ from contracts.caistring.str import Str, str_concat
 from starkware.cairo.common.registers import get_label_location
 
 @view
+func is_realms_set{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (token_id: felt) -> (is_realms: felt):
+    let (address) = _briq_address.read()
+    let (nb_normal_briqs) = IBriqContract.balanceOf(address, token_id, 1)
+    if nb_normal_briqs != 0:
+        return (0)
+    end
+    let (nb_realms_briqs) = IBriqContract.balanceOf(address, token_id, 2)
+    if nb_realms_briqs == 0:
+        return (0)
+    end
+    return (1)
+end
+
+@view
 func tokenURI_data{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
     } (token_id: felt) -> (uri_len: felt, uri: felt*):
+    alloc_locals
     let (data_url_len, data_url) = tokenURI_(token_id)
 
     let (data_address) = get_label_location(data_uri_start)
@@ -229,20 +251,33 @@ func tokenURI_data{
 
     let (res) = str_concat(uri, data)
 
-    let (data_address) = get_label_location(data_uri_end)
-    tempvar uri = Str(4, cast(data_address, felt*))
-    let (res) = str_concat(res, uri)
+    let (data_address) = get_label_location(data_uri_middle)
+    tempvar uri = Str(2, cast(data_address, felt*))
+    let (local res: Str) = str_concat(res, uri)
+    let (is_realms) = is_realms_set(token_id)
 
-    return (res.arr_len, res.arr)
+    if is_realms == 0:
+        let (data_address) = get_label_location(data_uri_end_no)
+        tempvar uri = Str(1, cast(data_address, felt*))
+        let (result_) = str_concat(res, uri)
+        return (result_.arr_len, result_.arr)
+    end
+
+    let (data_address) = get_label_location(data_uri_end_yes)
+    tempvar uri = Str(1, cast(data_address, felt*))
+    let (result_) = str_concat(res, uri)
+    return (result_.arr_len, result_.arr)
 
     data_uri_start:
     dw 'data:application/json,'
     dw '{ "metadata": "'
-    data_uri_end:
+    data_uri_middle:
     dw '", "attributes": [{'
     dw '"trait_type": "Realms", '
-    dw '"value": "no"'
-    dw '}]}'
+    data_uri_end_yes:
+    dw '"value": "yes"}]}'
+    data_uri_end_no:
+    dw '"value": "no"}]}'
 end
 
 @view

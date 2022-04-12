@@ -212,6 +212,29 @@ async def test_token_uri(briq_contract, set_contract):
     with pytest.raises(StarkException):
         await invoke_set(set_contract.setTokenURI(token_id=token_id, uri=[1, 2, 3, 2**249, 4]), ADMIN)
 
+@pytest.mark.asyncio
+async def test_token_uri_realms(briq_contract, set_contract):
+    await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=50))
+    await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=2, qty=50))
+    await invoke_set(set_contract.assemble(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
+    await invoke_set(set_contract.assemble(owner=ADDRESS, token_id_hint=0x2, fts=[(2, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
+    await invoke_set(set_contract.assemble(owner=ADDRESS, token_id_hint=0x3, fts=[(1, 5), (2, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
+    token_id_1 = hash_token_id(ADDRESS, 0x1, uri=[1234])
+    token_id_2 = hash_token_id(ADDRESS, 0x2, uri=[1234])
+    token_id_3 = hash_token_id(ADDRESS, 0x3, uri=[1234])
+
+    res = (await set_contract.tokenURI_data(token_id=token_id_1).call()).result.uri
+    assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in res]
+        ) == 'data:application/json,{ "metadata": "1234", "attributes": [{"trait_type": "Realms", "value": "no"}]}'
+
+    res = (await set_contract.tokenURI_data(token_id=token_id_2).call()).result.uri
+    assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in res]
+        ) == 'data:application/json,{ "metadata": "1234", "attributes": [{"trait_type": "Realms", "value": "yes"}]}'
+
+    res = (await set_contract.tokenURI_data(token_id=token_id_3).call()).result.uri
+    assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in res]
+        ) == 'data:application/json,{ "metadata": "1234", "attributes": [{"trait_type": "Realms", "value": "no"}]}'
+
 
 @pytest.mark.asyncio
 async def test_update_nft(briq_contract, set_contract):

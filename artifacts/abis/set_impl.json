@@ -203,6 +203,23 @@
                 "type": "felt"
             }
         ],
+        "name": "is_realms_set",
+        "outputs": [
+            {
+                "name": "is_realms",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
         "name": "tokenURI_data",
         "outputs": [
             {
