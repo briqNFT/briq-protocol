@@ -29,6 +29,7 @@ func _only{
     return ()
 end
 
+@view
 func _onlyAdmin{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,

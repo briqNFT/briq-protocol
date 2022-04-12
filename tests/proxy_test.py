@@ -34,22 +34,24 @@ async def starknet():
 
 
 @pytest_asyncio.fixture
-async def setup_proxies(starknet, compiled_proxy, compiled_briq, compiled_set):
+async def setup_proxies(starknet: Starknet, compiled_proxy, compiled_briq, compiled_set):
     briq_impl = await starknet.deploy(contract_def=compiled_briq)
-    set_backend = await starknet.deploy(contract_def=compiled_set)
+    set_impl = await starknet.deploy(contract_def=compiled_set)
     briq_proxy = await starknet.deploy(contract_def=compiled_proxy, constructor_calldata=[ADMIN, briq_impl.contract_address])
-    set_proxy = await starknet.deploy(contract_def=compiled_proxy, constructor_calldata=[ADMIN, set_backend.contract_address])
+    set_proxy = await starknet.deploy(contract_def=compiled_proxy, constructor_calldata=[ADMIN, set_impl.contract_address])
 
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("setBriqAddress"),
         calldata=[briq_proxy.contract_address],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     await starknet.state.invoke_raw(contract_address=briq_proxy.contract_address,
         selector=get_selector_from_name("setSetAddress"),
         calldata=[set_proxy.contract_address],
         caller_address=ADMIN,
+        max_fee=0,
     )
     return briq_proxy, set_proxy
 
@@ -97,19 +99,34 @@ async def test_call(starknet, setup_proxies):
         selector=get_selector_from_name("mintFT"),
         calldata=[ADMIN, 1, 50],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("assemble"),
         calldata=[ADMIN, 0x1, 1, 1, 5, 0, 1, 0xcafe],
         caller_address=ADMIN,
+        max_fee=0,
     )
     with pytest.raises(StarkException):
         await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
             selector=get_selector_from_name("assemble"),
             calldata=[0x12, 0x2, 1, 1, 5, 0, 0xfade],
             caller_address=0xcafe,
+            max_fee=0,
         )
+
+
+
+@pytest.mark.asyncio
+async def test_admin_evolution(starknet, setup_proxies):
+    briq_proxy = setup_proxies[0]
+
+    # Check that admin auth depends on implementation.
+    await invoke_briq(briq_proxy.setImplementation(0xcafe), 0x03e46c8abcd73a10cb59c249592a30c489eeab55f76b3496fd9e0250825afe03)
+    with pytest.raises(StarkException):
+        await invoke_briq(briq_proxy.setImplementation(0xcafe), 0x03e46c8abcd73a10cb59c249592a30c489eeab55f76b3496fd9e0250825afe03)
+    await invoke_briq(briq_proxy.setImplementation(0xbabe), ADMIN)
 
 
 @pytest.fixture(scope="session")
@@ -128,12 +145,14 @@ async def test_mint(starknet, compiled_mint, compiled_proxy, setup_proxies):
         selector=get_selector_from_name("setMintContract"),
         calldata=[mint.contract_address],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     await starknet.state.invoke_raw(contract_address=mint.contract_address,
         selector=get_selector_from_name("mint"),
         calldata=[0xcafe],
         caller_address=0xcafe,
+        max_fee=0,
     )
 
     with pytest.raises(StarkException):
@@ -141,6 +160,7 @@ async def test_mint(starknet, compiled_mint, compiled_proxy, setup_proxies):
             selector=get_selector_from_name("mint"),
             calldata=[0xfade],
             caller_address=0xdead,
+            max_fee=0,
         )
 
 
@@ -153,12 +173,14 @@ async def test_redo_implementation(starknet, setup_proxies):
         selector=get_selector_from_name("mintFT"),
         calldata=[ADMIN, 1, 50],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("assemble"),
         calldata=[ADMIN, 0x1, 1, 1, 5, 0, 1, 0xcafe],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     bimp = (await briq_proxy.getImplementation().call()).result.address
@@ -172,6 +194,7 @@ async def test_redo_implementation(starknet, setup_proxies):
             selector=get_selector_from_name("disassemble"),
             calldata=[ADMIN, 0x1, 1, 1, 5, 0],
             caller_address=0xdead,
+            max_fee=0,
         )
 
     await briq_proxy.setImplementation(bimp).invoke(ADMIN)
@@ -182,6 +205,7 @@ async def test_redo_implementation(starknet, setup_proxies):
         selector=get_selector_from_name("disassemble"),
         calldata=[ADMIN, tok_id, 1, 1, 5, 0],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
 
@@ -194,6 +218,7 @@ async def test_transfer_approval(starknet, setup_proxies):
         selector=get_selector_from_name("mintFT"),
         calldata=[ADMIN, 1, 50],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     tok_id_1 = hash_token_id(ADMIN, 1, [0xcafe])
@@ -202,6 +227,7 @@ async def test_transfer_approval(starknet, setup_proxies):
         selector=get_selector_from_name("assemble"),
         calldata=[ADMIN, 0x1, 1, 1, 5, 0, 1, 0xcafe],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     #assert(await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
@@ -214,6 +240,7 @@ async def test_transfer_approval(starknet, setup_proxies):
         selector=get_selector_from_name("transferOneNFT"),
         calldata=[ADMIN, OTHER_ADDRESS, tok_id_1],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     with pytest.raises(StarkException):
@@ -221,18 +248,21 @@ async def test_transfer_approval(starknet, setup_proxies):
             selector=get_selector_from_name("transferOneNFT"),
             calldata=[OTHER_ADDRESS, ADMIN, tok_id_1],
             caller_address=ADMIN,
+            max_fee=0,
         )
 
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("approve_"),
         calldata=[ADMIN, tok_id_1],
         caller_address=OTHER_ADDRESS,
+        max_fee=0,
     )
 
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("transferOneNFT"),
         calldata=[OTHER_ADDRESS, ADMIN, tok_id_1],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     # TODO check approve status
@@ -242,12 +272,14 @@ async def test_transfer_approval(starknet, setup_proxies):
             selector=get_selector_from_name("transferOneNFT"),
             calldata=[ADMIN, OTHER_ADDRESS, tok_id_1],
             caller_address=OTHER_ADDRESS,
+            max_fee=0,
         )
 
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("setApprovalForAll_"),
         calldata=[OTHER_ADDRESS, 1],
         caller_address=ADMIN,
+        max_fee=0,
     )
 
     # Now transfer goes through, approved as operator
@@ -255,6 +287,7 @@ async def test_transfer_approval(starknet, setup_proxies):
         selector=get_selector_from_name("transferOneNFT"),
         calldata=[ADMIN, OTHER_ADDRESS, tok_id_1],
         caller_address=OTHER_ADDRESS,
+        max_fee=0,
     )
 
     # authorization was burned, this fails.
@@ -263,4 +296,5 @@ async def test_transfer_approval(starknet, setup_proxies):
             selector=get_selector_from_name("transferOneNFT"),
             calldata=[OTHER_ADDRESS, ADMIN, tok_id_1],
             caller_address=ADMIN,
+            max_fee=0,
         )

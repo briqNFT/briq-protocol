@@ -52,13 +52,15 @@ end
 # Guards
 #
 
-func Proxy_only_admin{
+func Proxy_is_admin{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    }():
+    }() -> (is_admin:felt):
     let (caller) = get_caller_address()
     let (admin) = Proxy_admin.read()
-    assert admin = caller
-    return ()
+    if admin == caller:
+        return (1)
+    end
+    return (0)
 end

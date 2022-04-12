@@ -11,8 +11,15 @@ from contracts.proxy.library import (
 
     Proxy_initializer,
     Proxy_set_implementation,
-    Proxy_only_admin,
+    Proxy_is_admin,
 )
+
+@contract_interface
+namespace Implementation:
+    func _onlyAdmin():
+    end
+end
+
 
 #
 # Constructor
@@ -38,10 +45,17 @@ func setAdmin{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (new_admin: felt):
-    Proxy_only_admin()
+    let (is_admin) = Proxy_is_admin()
+    if is_admin == 1:
+        Proxy_admin.write(new_admin)
+        return ()
+    end
+    let (address) = Proxy_implementation_address.read()
+    Implementation.delegate__onlyAdmin(address)
     Proxy_admin.write(new_admin)
     return ()
 end
+
 ##
 
 @external
@@ -50,7 +64,13 @@ func setImplementation{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (new_implementation: felt):
-    Proxy_only_admin()
+    let (is_admin) = Proxy_is_admin()
+    if is_admin == 1:
+        Proxy_set_implementation(new_implementation)
+        return ()
+    end
+    let (address) = Proxy_implementation_address.read()
+    Implementation.delegate__onlyAdmin(address)
     Proxy_set_implementation(new_implementation)
     return ()
 end
