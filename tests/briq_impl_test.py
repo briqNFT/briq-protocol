@@ -31,7 +31,7 @@ async def starknet():
     return await Starknet.empty()
 
 @pytest_asyncio.fixture
-async def briq_contract(starknet, compiled_briq):
+async def briq_contract(starknet: Starknet, compiled_briq):
     briq_contract = await starknet.deploy(contract_def=compiled_briq)
     return briq_contract
 
