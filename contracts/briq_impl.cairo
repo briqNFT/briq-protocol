@@ -39,6 +39,12 @@ end
 func _token_by_owner(owner: felt, material: felt, index: felt) -> (briq_token_id: felt):
 end
 
+# Enumerate materials per owner.
+# TODO: consider extending with the # of briqs per material, since material is 0-2^64
+@storage_var
+func _material_by_owner(owner: felt, index: felt) -> (material: felt):
+end
+
 ## Utility
 
 @storage_var
@@ -211,6 +217,30 @@ func multiBalanceOf{
     return (materials_len, bals)
 end
 
+@view
+func materialsOf{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt) -> (materials_len: felt, materials: felt*):
+    alloc_locals
+    let (local mat_ids: felt*) = alloc()
+    return _materialsOfImpl(owner, mat_ids, 0)
+end
+
+func _materialsOfImpl{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, mat_ids: felt*, index: felt) -> (materials_len: felt, materials: felt*):
+    let (mat) = _material_by_owner.read(owner, index)
+    if mat != 0:
+        [mat_ids] = mat
+        return _materialsOfImpl(owner, mat_ids + 1, index + 1)
+    end
+    return (index, mat_ids - index)
+end
+
 func _NFTBalanceDetailsOfIdx{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
@@ -235,6 +265,40 @@ func balanceDetailsOf{
     let (nfts_full) = _NFTBalanceDetailsOfIdx(owner, material, 0, nfts)
     let (ft_balance) = _ft_balance.read(owner, material)
     return (ft_balance, nfts_full - nfts, nfts)
+end
+
+struct BalanceSpec:
+    member material: felt
+    member balance: felt
+end
+
+# NB: slightly less efficient than doing it manually.
+@view
+func fullBalanceOf{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt) -> (balances_len: felt, balances: BalanceSpec*):
+    alloc_locals
+    let (local bals: BalanceSpec*) = alloc()
+    return _fullBalanceOfImpl(owner, 0,  bals)
+end
+
+func _fullBalanceOfImpl{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, index: felt, bals: BalanceSpec*) -> (balances_len: felt, balances: BalanceSpec*):
+    alloc_locals
+
+    let (mat) = _material_by_owner.read(owner, index)
+    if mat == 0:
+        return (index, bals - index * BalanceSpec.SIZE)
+    end
+    bals[0].material = mat
+    let (balance) = balanceOf(owner, mat)
+    bals[0].balance = balance
+    return _fullBalanceOfImpl(owner, index + 1, bals + BalanceSpec.SIZE)
 end
 
 # We don't implement full enumerability, just per-user
@@ -328,7 +392,72 @@ func _unsetTokenByOwner_erasePhase{
         return ()
     end
     return _unsetTokenByOwner_erasePhase(owner, material, tok, index + 1, target_index)
+
+# Same function but without the material to enumerate materials.
+func _setMaterialByOwner{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner, material, index):
+
+    let (token_id) = _material_by_owner.read(owner, index)
+    if token_id == material:
+        return()
+    end
+    if token_id == 0:
+        _material_by_owner.write(owner, index, material)
+        return ()
+    end
+    return _setMaterialByOwner(owner, material, index + 1)
 end
+
+# Unset the material from the list if the balance is 0. Swap and pop idiom.
+# NB: the item is asserted to be in the list.
+func _maybeUnsetMaterialByOwner{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner, material):
+
+    let (ft_balance) = _ft_balance.read(owner, material)
+    if ft_balance != 0:
+        return ()
+    end
+    let (nft_balance) = _balanceOfIdx(owner, material, 0, 0)
+    if nft_balance != 0:
+        return ()
+    end
+    return _unsetMaterialByOwner_searchPhase(owner, material, 0)
+end
+
+
+# During the search phase, we check for a matching token ID.
+func _unsetMaterialByOwner_searchPhase{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    } (owner, material_id, index):
+    let (tok) = _material_by_owner.read(owner, index)
+    assert_not_zero(tok)
+    if tok == material_id:
+        return _unsetMaterialByOwner_erasePhase(owner, 0, index + 1, index)
+    end
+    return _unsetMaterialByOwner_searchPhase(owner, material_id, index + 1)
+end
+
+# During the erase phase, we pass the last known value and the slot to insert it in, and go one past the end.
+func _unsetMaterialByOwner_erasePhase{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner, last_known_value, index, target_index):
+    let (tok) = _material_by_owner.read(owner, index)
+    if tok == 0:
+        assert_lt_felt(target_index, index)
+        _material_by_owner.write(owner, target_index, last_known_value)
+        _material_by_owner.write(owner, index - 1, 0)
+        return ()
+    end
+    return _unsetMaterialByOwner_erasePhase(owner, tok, index + 1, target_index)
+<<<<
 
 ################
 ################
@@ -355,6 +484,8 @@ func mintFT{
 
     let (balance) = _ft_balance.read(owner, briq_token_id)
     _ft_balance.write(owner, briq_token_id, balance + qty)
+
+    _setMaterialByOwner(owner, material, 0)
 
     let (__addr) = get_contract_address()
     TransferSingle.emit(__addr, 0, owner, briq_token_id, qty)
@@ -386,6 +517,7 @@ func mintOneNFT{
     assert curr_owner = 0
     _owner.write(briq_token_id, owner)
 
+    _setMaterialByOwner(owner, material, 0)
     _setTokenByOwner(owner, material, briq_token_id, 0)
 
     let (__addr) = get_contract_address()
@@ -419,6 +551,9 @@ func transferFT{
     let (balance) = _ft_balance.read(recipient, briq_token_id)
     _ft_balance.write(recipient, briq_token_id, balance + qty)
 
+    _setMaterialByOwner(recipient, material, 0)
+    _maybeUnsetMaterialByOwner(sender, material)
+
     let (__addr) = get_contract_address()
     TransferSingle.emit(__addr, sender, recipient, briq_token_id, qty)
 
@@ -443,6 +578,9 @@ func transferOneNFT{
 
     # Unset before setting, so that self-transfers work.
     _unsetTokenByOwner(sender, material, briq_token_id)
+    _setTokenByOwner(recipient, material, briq_token_id, 0)
+
+    _maybeUnsetMaterialByOwner(sender, material) # Keep after unset token or it won't unset
     _setTokenByOwner(recipient, material, briq_token_id, 0)
 
     let (__addr) = get_contract_address()
@@ -497,6 +635,9 @@ func mutateFT{
     let (res) = _total_supply.read(target_material)
     _total_supply.write(target_material, res + qty)
 
+    _setMaterialByOwner(owner, target_material, 0)
+    _maybeUnsetMaterialByOwner(owner, source_material)
+
     let (__addr) = get_contract_address()
     TransferSingle.emit(__addr, owner, 0, source_material, qty)
     TransferSingle.emit(__addr, 0, owner, target_material, qty)
@@ -528,6 +669,7 @@ func mutateOneNFT{
     _owner.write(briq_token_id, 0)
 
     _unsetTokenByOwner(owner, source_material, briq_token_id)
+    _maybeUnsetMaterialByOwner(owner, source_material) # Keep after unset token or it won't unset
 
     let (res) = _total_supply.read(target_material)
     _total_supply.write(target_material, res + 1)
@@ -539,6 +681,7 @@ func mutateOneNFT{
     assert curr_owner = 0
     _owner.write(briq_token_id, owner)
 
+    _setMaterialByOwner(owner, target_material, 0)
     _setTokenByOwner(owner, target_material, briq_token_id, 0)
 
     let (__addr) = get_contract_address()
@@ -568,6 +711,7 @@ func convertOneToFT{
     else:
         assert token_id = curr_owner
     end
+    # No need to change material
     _unsetTokenByOwner(owner, material, token_id)
     _owner.write(token_id, 0)
 
@@ -628,6 +772,8 @@ func convertOneToNFT{
     let (curr_owner) = _owner.read(token_id)
     assert curr_owner = 0
     _owner.write(token_id, owner)
+
+    # No need to change material
     _setTokenByOwner(owner, material, token_id, 0)
 
     let (balance) = _ft_balance.read(owner, material)

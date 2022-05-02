@@ -7,6 +7,23 @@
                 "type": "felt"
             },
             {
+                "name": "balance",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "BalanceSpec",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "material",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
                 "name": "token_id",
                 "offset": 1,
                 "type": "felt"
@@ -204,6 +221,27 @@
             {
                 "name": "owner",
                 "type": "felt"
+            }
+        ],
+        "name": "materialsOf",
+        "outputs": [
+            {
+                "name": "materials_len",
+                "type": "felt"
+            },
+            {
+                "name": "materials",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
             },
             {
                 "name": "material",
@@ -223,6 +261,27 @@
             {
                 "name": "nft_ids",
                 "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "fullBalanceOf",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "BalanceSpec*"
             }
         ],
         "stateMutability": "view",
