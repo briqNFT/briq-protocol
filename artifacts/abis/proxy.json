@@ -1,5 +1,31 @@
 [
     {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "admin",
+                "type": "felt"
+            },
+            {
+                "name": "implementation_address",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
         "inputs": [
             {
                 "name": "selector",

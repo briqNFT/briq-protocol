@@ -4,8 +4,8 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.starknet.common.syscalls import call_contract, delegate_l1_handler, delegate_call
 
-from contracts.proxy.library import (
-    Proxy_admin,
+from contracts.OZ.upgrades.library import (
+    Proxy_only_admin,
 )
 
 ####################
@@ -29,7 +29,6 @@ func _only{
     return ()
 end
 
-@view
 func _onlyAdmin{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
@@ -40,8 +39,8 @@ func _onlyAdmin{
     if (caller - 0x03e46c8abcd73a10cb59c249592a30c489eeab55f76b3496fd9e0250825afe03) * (caller - 0x006043ed114a9a1987fe65b100d0da46fe71b2470e7e5ff8bf91be5346f5e5e3) * (caller - 0x0583397ff26e17af2562a7e035ee0fbda8f8cbbd1aef5c25b11ea9d8782b1179) * (caller - 0x04a9ad47f5086e917bf67077954bd62685d8746c7504026bf43bbecb1fa6dde0) == 0:
         return ()
     end
-    let (admin) = Proxy_admin.read()
-    _only(admin)
+    # Fallback to the proxy admin.
+    Proxy_only_admin()
     return ()
 end
 

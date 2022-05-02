@@ -24,7 +24,7 @@ def compile(path):
 
 @pytest.fixture(scope="session")
 def compiled_proxy():
-    return compile("proxy/_proxy.cairo")
+    return compile("upgrades/proxy.cairo")
 
 
 @pytest_asyncio.fixture

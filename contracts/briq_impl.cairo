@@ -392,6 +392,8 @@ func _unsetTokenByOwner_erasePhase{
         return ()
     end
     return _unsetTokenByOwner_erasePhase(owner, material, tok, index + 1, target_index)
+end
+
 
 # Same function but without the material to enumerate materials.
 func _setMaterialByOwner{
@@ -457,7 +459,8 @@ func _unsetMaterialByOwner_erasePhase{
         return ()
     end
     return _unsetMaterialByOwner_erasePhase(owner, tok, index + 1, target_index)
-<<<<
+end
+
 
 ################
 ################
