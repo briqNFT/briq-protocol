@@ -1,4 +1,10 @@
 from nile.nre import NileRuntimeEnvironment
+from nile import signer
+
+import os
+
+
+# NB: for now, run the starknet devnet node manually.
 
 def run(nre: NileRuntimeEnvironment):
     if nre.network != "127.0.0.1":
@@ -32,6 +38,5 @@ def run(nre: NileRuntimeEnvironment):
 
     mint_address, abi = nre.deploy("mint", arguments=[briq_address, "1000"], alias="mint")
     account.send(briq_address, "setMintContract", [int(mint_address, 16)])
-
     account.send(briq_address, "setAdmin", [int("0x030fe8f19ab0436a74a7498baa8003eb47aea7e543807df0f8f0c7783f7e7400", 16)])
     account.send(set_address, "setAdmin", [int("0x030fe8f19ab0436a74a7498baa8003eb47aea7e543807df0f8f0c7783f7e7400", 16)])
