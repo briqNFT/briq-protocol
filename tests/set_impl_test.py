@@ -143,9 +143,10 @@ async def test_transfer_nft(briq_contract, set_contract):
     tok_id_3 = hash_token_id(ADDRESS, 0x3, uri=[1234])
 
     await invoke_set(set_contract.transferOneNFT(sender=ADDRESS, recipient=OTHER_ADDRESS, token_id=tok_id_2))
+    await invoke_set(set_contract.transferOneNFT(sender=ADDRESS, recipient=ADDRESS, token_id=tok_id_1))
     assert (await set_contract.balanceOf_(owner=ADDRESS).call()).result.balance == 2
     assert (await set_contract.balanceOf_(owner=OTHER_ADDRESS).call()).result.balance == 1
-    assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_1, tok_id_3]
+    assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_3, tok_id_1]
     assert (await set_contract.balanceDetailsOf_(owner=OTHER_ADDRESS).call()).result.token_ids == [tok_id_2]
     assert (await set_contract.ownerOf_(tok_id_1).call()).result.owner == ADDRESS
     assert (await set_contract.ownerOf_(tok_id_2).call()).result.owner == OTHER_ADDRESS

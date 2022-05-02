@@ -17,6 +17,13 @@
         "type": "struct"
     },
     {
+        "inputs": [],
+        "name": "_onlyAdmin",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "data": [
             {
                 "name": "operator_",

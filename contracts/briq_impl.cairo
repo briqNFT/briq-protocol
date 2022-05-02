@@ -206,9 +206,9 @@ func multiBalanceOf{
         range_check_ptr
     } (owner: felt, materials_len: felt, materials: felt*) -> (balances_len: felt, balances: felt*):
     alloc_locals
-    let (local toto: felt*) = alloc()
-    _multiBalanceOf(owner, materials_len, materials, toto)
-    return (materials_len, toto)
+    let (local bals: felt*) = alloc()
+    _multiBalanceOf(owner, materials_len, materials, bals)
+    return (materials_len, bals)
 end
 
 func _NFTBalanceDetailsOfIdx{
@@ -275,6 +275,8 @@ end
 
 
 # TODOOO -> use builtins?
+# Store the new token id in the list, at an empty slot (marked by 0).
+# If the item already exists in the list, do nothing.
 func _setTokenByOwner{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
@@ -292,51 +294,40 @@ func _setTokenByOwner{
     return _setTokenByOwner(owner, material, briq_token_id, index + 1)
 end
 
-# TODOOO -> use builtins?
-# Step 1 -> find the target index.
-func _unsetTokenByOwner_step1{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (owner, material, briq_token_id, index) -> (target_index: felt, last_token_id: felt):
-    
-    let (token_id) = _token_by_owner.read(owner, material, index)
-    assert_not_zero(token_id)
-    if token_id == briq_token_id:
-        return (index, token_id)
-    end
-    return _unsetTokenByOwner_step1(owner, material, briq_token_id, index + 1)
-end
-
-# Step 2 -> once we're past the end, get the last item
-func _unsetTokenByOwner_step2{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (owner, material, index, last_token_id) -> (last_index: felt, last_token_id: felt):
-    let (token_id) = _token_by_owner.read(owner, material, index)
-    if token_id == 0:
-        return (index - 1, last_token_id)
-    end
-    return _unsetTokenByOwner_step2(owner, material, index + 1, token_id)
-end
-
+# Unset the token id from the list. Swap and pop idiom.
+# NB: the item is asserted to be in the list.
 func _unsetTokenByOwner{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    } (owner, material, briq_token_id):
+    return _unsetTokenByOwner_searchPhase(owner, material, briq_token_id, 0)
+end
+
+# During the search phase, we check for a matching token ID.
+func _unsetTokenByOwner_searchPhase{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    } (owner, material, briq_token_id, index):
+    let (tok) = _token_by_owner.read(owner, material, index)
+    assert_not_zero(tok)
+    if tok == briq_token_id:
+        return _unsetTokenByOwner_erasePhase(owner, material, 0, index + 1, index)
+    end
+    return _unsetTokenByOwner_searchPhase(owner, material, briq_token_id, index + 1)
+end
+
+# During the erase phase, we pass the last known value and the slot to insert it in, and go one past the end.
+func _unsetTokenByOwner_erasePhase{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (owner, material, briq_token_id):
-    alloc_locals
-
-    let (local target_index, last_token_id) = _unsetTokenByOwner_step1(owner, material, briq_token_id, 0)
-    let (last_index, last_token_id) = _unsetTokenByOwner_step2(owner, material, target_index + 1, last_token_id)
-    if last_index == target_index:
-        _token_by_owner.write(owner, material, target_index, 0)
-    else:
-        _token_by_owner.write(owner, material, target_index, last_token_id)
-        _token_by_owner.write(owner, material, last_index, 0)
+    } (owner, material, last_known_value, index, target_index):
+    let (tok) = _token_by_owner.read(owner, material, index)
+    if tok == 0:
+        assert_lt_felt(target_index, index)
+        _token_by_owner.write(owner, material, target_index, last_known_value)
+        _token_by_owner.write(owner, material, index - 1, 0)
+        return ()
     end
-    return()
+    return _unsetTokenByOwner_erasePhase(owner, material, tok, index + 1, target_index)
 end
 
 ################
@@ -450,8 +441,9 @@ func transferOneNFT{
     assert sender = curr_owner
     _owner.write(briq_token_id, recipient)
 
-    _setTokenByOwner(recipient, material, briq_token_id, 0)
+    # Unset before setting, so that self-transfers work.
     _unsetTokenByOwner(sender, material, briq_token_id)
+    _setTokenByOwner(recipient, material, briq_token_id, 0)
 
     let (__addr) = get_contract_address()
     TransferSingle.emit(__addr, sender, recipient, briq_token_id, 1)

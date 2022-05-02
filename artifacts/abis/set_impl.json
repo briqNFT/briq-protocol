@@ -34,6 +34,13 @@
         "type": "struct"
     },
     {
+        "inputs": [],
+        "name": "_onlyAdmin",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "name": "token_id",
