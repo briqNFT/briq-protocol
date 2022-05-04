@@ -352,3 +352,105 @@ async def test_approval(set_contract):
 
     with pytest.raises(StarkException):
         await set_contract.transferFrom_(sender=OTHER_ADDRESS, recipient=ADDRESS, token_id=tok_id_1).invoke(ADDRESS)
+
+from generators.shape_utils import compress_shape_item
+
+@pytest.mark.asyncio
+async def test_mint_shape(set_contract):
+    hash_token_id(ADDRESS, 0x1, uri=[1234])
+    await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+        fts=[(1, 1)], nfts=[], shape=[set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=1, x=0, y=4, z=-2
+        ))], target_shape_token_id=0,
+        uri=[1234]).invoke(ADDRESS)
+
+@pytest.mark.asyncio
+async def test_mint_shape_nft(briq_contract, set_contract):
+    hash_token_id(ADDRESS, 0x1, uri=[1234])
+    await briq_contract.mintOneNFT(ADDRESS, material=2, uid=0x1).invoke()
+    await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+        fts=[(1, 2)], nfts=[1 * 2**64 + 2], shape=[set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=1, x=0, y=4, z=-2
+        )), set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
+        )), set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=1, x=0, y=6, z=-2
+        ))], target_shape_token_id=0,
+        uri=[1234]).invoke(ADDRESS)
+
+@pytest.mark.asyncio
+async def test_mint_shape_nft_only(briq_contract, set_contract):
+    hash_token_id(ADDRESS, 0x1, uri=[1234])
+    await briq_contract.mintOneNFT(ADDRESS, material=1, uid=0x2).invoke()
+    await briq_contract.mintOneNFT(ADDRESS, material=2, uid=0x1).invoke()
+    print(await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+        fts=[], nfts=[1 * 2**64 + 2, 2 * 2**64 + 1], shape=[set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
+        )), set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=1, x=1, y=5, z=-2, has_token_id=True
+        ))], target_shape_token_id=0,
+        uri=[1234]).invoke(ADDRESS))
+    assert 0
+
+@pytest.mark.asyncio
+async def test_mint_shape_multimat(briq_contract, set_contract):
+    hash_token_id(ADDRESS, 0x1, uri=[1234])
+    await briq_contract.mintFT(ADDRESS, material=2, qty=50).invoke()
+    await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+        fts=[(1, 2), (2, 1)], nfts=[], shape=[set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=1, x=0, y=4, z=-2
+        )), set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=2, x=1, y=4, z=-2
+        )), set_contract.ShapeItem(*compress_shape_item(
+            color="#ffaaff", material=1, x=2, y=4, z=-2
+        ))], target_shape_token_id=0,
+        uri=[1234]).invoke(ADDRESS)
+
+@pytest.mark.asyncio
+async def test_mint_shape_bad_noshape(set_contract):
+    with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
+        await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+            fts=[(1, 1)], nfts=[], shape=[], target_shape_token_id=0,
+            uri=[1234]).invoke(ADDRESS)
+
+@pytest.mark.asyncio
+async def test_mint_shape_bad_bad_material(set_contract):
+    with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
+        await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+            fts=[(1, 1)], nfts=[], shape=[set_contract.ShapeItem(*compress_shape_item(
+                color="#ffaaff", material=2, x=0, y=4, z=-2
+            ))], target_shape_token_id=0,
+            uri=[1234]).invoke(ADDRESS)
+
+@pytest.mark.asyncio
+async def test_mint_shape_bad_repeated_nft(briq_contract, set_contract):
+    hash_token_id(ADDRESS, 0x1, uri=[1234])
+    await briq_contract.mintOneNFT(ADDRESS, material=2, uid=0x1).invoke()
+    with pytest.raises(StarkException, match="assert sender = curr_owner"):
+        await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+            fts=[], nfts=[1 * 2**64 + 2, 1 * 2**64 + 2], shape=[set_contract.ShapeItem(*compress_shape_item(
+                color="#ffaaff", material=1, x=0, y=4, z=-2, has_token_id=True
+            )), set_contract.ShapeItem(*compress_shape_item(
+                color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
+            ))], target_shape_token_id=0,
+            uri=[1234]).invoke(ADDRESS)
+
+@pytest.mark.asyncio
+async def test_mint_shape_bad_not_enough(set_contract):
+    with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
+        await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+            fts=[(1, 2)], nfts=[], shape=[set_contract.ShapeItem(*compress_shape_item(
+                color="#ffaaff", material=1, x=0, y=4, z=-2
+            ))], target_shape_token_id=0,
+            uri=[1234]).invoke(ADDRESS)
+
+@pytest.mark.asyncio
+async def test_mint_shape_bad_too_many(set_contract):
+    with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
+        await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+            fts=[(1, 1)], nfts=[], shape=[set_contract.ShapeItem(*compress_shape_item(
+                color="#ffaaff", material=1, x=0, y=4, z=-2
+            )), set_contract.ShapeItem(*compress_shape_item(
+                color="#ffaaff", material=1, x=1, y=4, z=-2
+            ))], target_shape_token_id=0,
+            uri=[1234]).invoke(ADDRESS)

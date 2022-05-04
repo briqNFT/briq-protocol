@@ -6,16 +6,13 @@ from starkware.cairo.common.math import assert_le_felt, assert_not_zero
 
 from starkware.cairo.common.bitwise import bitwise_and
 
-struct ShapeItem:
-    # Material is 64 bit so this is COLOR as short string shifted 136 bits left, and material.
-    # The 128th bit indicates 'This is an NFT', at which point you need to refer to the list of NFTs.
-    # (I'm shifting colors by 7 more bits so that the corresponding hex is easily readable and I don't need more).
-    member color_nft_material: felt
-    # Stored as reversed two's completement, shifted by 64 bits.
-    # (reversed az in -> the presence of the 64th bit indicates positive number)
-    # (This is done so that sorting works)
-    member x_y_z: felt
-end
+from contracts.types import ShapeItem
+
+from contracts.shape.guards import (
+    _check_properly_sorted,
+    _check_for_duplicates,
+    _check_nfts_ok,
+)
 
 # For reference, see also cairo-based uncompression below.
 struct UncompressedShapeItem:
@@ -54,84 +51,8 @@ func constructor{
         _check_properly_sorted(shape_len, shape)
     end
     # Validate that there are the right number/material of NFTs
-    _check_nft_numbers_ok(shape_len, shape, nfts_len, nfts)
+    _check_nfts_ok(shape_len, shape, nfts_len, nfts)
     return ()
-end
-
-@view
-func _check_properly_sorted{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*) -> ():
-    if shape_len == 0:
-        return ()
-    end
-    return _check_properly_sorted_impl(shape_len, shape)
-end
-
-func _check_properly_sorted_impl{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*) -> ():
-    # nothing more to sort
-    if shape_len == 1:
-        return ()
-    end
-    assert_le_felt(shape[0].x_y_z, shape[1].x_y_z)
-    return _check_properly_sorted_impl(shape_len - 1, shape + ShapeItem.SIZE)
-end
-
-@view
-func _check_for_duplicates{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*) -> ():
-    if shape_len == 0:
-        assert nfts_len = 0
-        return ()
-    end
-    _check_for_duplicates_shape_impl(shape_len, shape)
-    if nfts_len == 0:
-        return ()
-    end
-    _check_for_duplicates_nfts_impl(nfts_len, nfts)
-    return ()
-end
-
-func _check_for_duplicates_shape_impl{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*) -> ():
-    if shape_len == 1:
-        return ()
-    end
-    if shape[0].x_y_z == shape[1].x_y_z:
-        assert 0 = 1
-    end
-    return _check_for_duplicates_shape_impl(shape_len - 1, shape + ShapeItem.SIZE)
-end
-
-func _check_for_duplicates_nfts_impl{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr
-    } (nfts_len: felt, nfts: felt*) -> ():
-    if nfts_len == 1:
-        return ()
-    end
-    if nfts[0] == nfts[1]:
-        assert 0 = 1
-    end
-    return _check_for_duplicates_nfts_impl(nfts_len - 1, nfts + 1)
 end
 
 @view
@@ -189,30 +110,6 @@ func _check_nfts_impl{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_pt
         assert a[0] = b[0]
     end
     return _check_nfts_impl(length - 1, a + 1, b + 1)
-end
-
-func _check_nft_numbers_ok{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*):
-    if shape_len == 0:
-        with_attr error_message("Shape does not have the right number of NFTs"):
-            assert nfts_len = 0
-        end
-        return ()
-    end
-    let (nft) = bitwise_and(shape[0].color_nft_material, 2**128)
-    if nft == 2**128:
-        with_attr error_message("Shape does not have the right number of NFTs"):
-            assert_not_zero(nfts_len)
-        end
-        with_attr error_message("NFT does not have the right material"):
-            let (material_shape) = bitwise_and(shape[0].color_nft_material, 2**64 - 1)
-            let (material_nft) = bitwise_and(nfts[0], 2**64 - 1)
-            assert material_shape = material_nft
-        end
-        return _check_nft_numbers_ok(shape_len - 1, shape + ShapeItem.SIZE, nfts_len - 1, nfts + 1)
-    else:
-        return _check_nft_numbers_ok(shape_len - 1, shape + ShapeItem.SIZE, nfts_len, nfts)
-    end
 end
 
 #@view
