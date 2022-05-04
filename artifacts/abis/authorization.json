@@ -1,9 +1,0 @@
-[
-    {
-        "inputs": [],
-        "name": "_onlyAdmin",
-        "outputs": [],
-        "stateMutability": "view",
-        "type": "function"
-    }
-]

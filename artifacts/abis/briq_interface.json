@@ -1,0 +1,1209 @@
+[
+    {
+        "members": [
+            {
+                "name": "material",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "balance",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "BalanceSpec",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "material",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "NFTSpec",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "ownerOf_",
+        "outputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceOfMaterial_",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "materials_len",
+                "type": "felt"
+            },
+            {
+                "name": "materials",
+                "type": "felt*"
+            }
+        ],
+        "name": "balanceOfMaterials_",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "materialsOf_",
+        "outputs": [
+            {
+                "name": "materials_len",
+                "type": "felt"
+            },
+            {
+                "name": "materials",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceDetailsOfMaterial_",
+        "outputs": [
+            {
+                "name": "ft_balance",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "fullBalanceOf_",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "BalanceSpec*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenOfOwnerByIndex_",
+        "outputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "totalSupplyOfMaterial_",
+        "outputs": [
+            {
+                "name": "supply",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "operator_",
+                "type": "felt"
+            },
+            {
+                "name": "from_",
+                "type": "felt"
+            },
+            {
+                "name": "to_",
+                "type": "felt"
+            },
+            {
+                "name": "id_",
+                "type": "felt"
+            },
+            {
+                "name": "value_",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "TransferSingle",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setSetAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "transferFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "briq_token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transferOneNFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids",
+                "type": "felt*"
+            }
+        ],
+        "name": "transferNFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setMintContract_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getMintContract_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "mintFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            }
+        ],
+        "name": "mintOneNFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "owner_",
+                "type": "felt"
+            },
+            {
+                "name": "old_id_",
+                "type": "felt"
+            },
+            {
+                "name": "new_id_",
+                "type": "felt"
+            },
+            {
+                "name": "from_material_",
+                "type": "felt"
+            },
+            {
+                "name": "to_material_",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Mutate",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "owner_",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "id_",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ConvertToFT",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "owner_",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "id_",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ConvertToNFT",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "source_material",
+                "type": "felt"
+            },
+            {
+                "name": "target_material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "mutateFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "source_material",
+                "type": "felt"
+            },
+            {
+                "name": "target_material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            },
+            {
+                "name": "new_uid",
+                "type": "felt"
+            }
+        ],
+        "name": "mutateOneNFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "convertOneToFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids",
+                "type": "NFTSpec*"
+            }
+        ],
+        "name": "convertToFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            }
+        ],
+        "name": "convertOneToNFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "name_",
+        "outputs": [
+            {
+                "name": "name",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "symbol_",
+        "outputs": [
+            {
+                "name": "symbol",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceOf_",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceDetailsOf_",
+        "outputs": [
+            {
+                "name": "ft_balance",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "materials_len",
+                "type": "felt"
+            },
+            {
+                "name": "materials",
+                "type": "felt*"
+            }
+        ],
+        "name": "multiBalanceOf_",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "totalSupply_",
+        "outputs": [
+            {
+                "name": "supply",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "ownerOf",
+        "outputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceOfMaterial",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "materials_len",
+                "type": "felt"
+            },
+            {
+                "name": "materials",
+                "type": "felt*"
+            }
+        ],
+        "name": "balanceOfMaterials",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "materialsOf",
+        "outputs": [
+            {
+                "name": "materials_len",
+                "type": "felt"
+            },
+            {
+                "name": "materials",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceDetailsOfMaterial",
+        "outputs": [
+            {
+                "name": "ft_balance",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "fullBalanceOf",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "BalanceSpec*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenOfOwnerByIndex",
+        "outputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "totalSupplyOfMaterial",
+        "outputs": [
+            {
+                "name": "supply",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "transferFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "briq_token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transferOneNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids",
+                "type": "felt*"
+            }
+        ],
+        "name": "transferNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "mintFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            }
+        ],
+        "name": "mintOneNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "source_material",
+                "type": "felt"
+            },
+            {
+                "name": "target_material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "mutateFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "source_material",
+                "type": "felt"
+            },
+            {
+                "name": "target_material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            },
+            {
+                "name": "new_uid",
+                "type": "felt"
+            }
+        ],
+        "name": "mutateOneNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "convertOneToFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids",
+                "type": "NFTSpec*"
+            }
+        ],
+        "name": "convertToFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            }
+        ],
+        "name": "convertOneToNFT",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "name",
+        "outputs": [
+            {
+                "name": "name",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [
+            {
+                "name": "symbol",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceDetailsOf",
+        "outputs": [
+            {
+                "name": "ft_balance",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "nft_ids",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "materials_len",
+                "type": "felt"
+            },
+            {
+                "name": "materials",
+                "type": "felt*"
+            }
+        ],
+        "name": "multiBalanceOf",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "material",
+                "type": "felt"
+            }
+        ],
+        "name": "totalSupply",
+        "outputs": [
+            {
+                "name": "supply",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

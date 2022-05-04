@@ -9,3 +9,8 @@ struct NFTSpec:
     member material: felt
     member token_id: felt
 end
+
+struct BalanceSpec:
+    member material: felt
+    member balance: felt
+end

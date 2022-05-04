@@ -10,12 +10,12 @@ from contracts.OZ.upgrades.library import (
     Proxy_set_admin,
     Proxy_set_implementation,
 )
-from contracts.authorization import (
+from contracts.utilities.authorization import (
     _onlyAdmin
 )
 
 @view
-func getAdmin{
+func getAdmin_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -24,7 +24,8 @@ func getAdmin{
     return (admin)
 end 
 
-func getImplementation{
+@view
+func getImplementation_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -37,7 +38,7 @@ end
 #### Upgrade
 
 @external
-func UpgradeImplementation{
+func upgradeImplementation_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
@@ -48,7 +49,7 @@ func UpgradeImplementation{
 end
 
 @external
-func SetRootAdmin{
+func setRootAdmin_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr

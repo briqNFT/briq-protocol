@@ -34,10 +34,83 @@
         "type": "struct"
     },
     {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
         "inputs": [],
-        "name": "_onlyAdmin",
-        "outputs": [],
+        "name": "getAdmin_",
+        "outputs": [
+            {
+                "name": "admin",
+                "type": "felt"
+            }
+        ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getImplementation_",
+        "outputs": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_implementation",
+                "type": "felt"
+            }
+        ],
+        "name": "upgradeImplementation_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_admin",
+                "type": "felt"
+            }
+        ],
+        "name": "setRootAdmin_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getBriqAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setBriqAddress_",
+        "outputs": [],
         "type": "function"
     },
     {
@@ -47,84 +120,14 @@
                 "type": "felt"
             }
         ],
-        "name": "get_approved",
+        "name": "ownerOf_",
         "outputs": [
-            {
-                "name": "approved",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
             {
                 "name": "owner",
                 "type": "felt"
-            },
-            {
-                "name": "operator",
-                "type": "felt"
-            }
-        ],
-        "name": "is_approved_for_all",
-        "outputs": [
-            {
-                "name": "is_approved",
-                "type": "felt"
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "data": [
-            {
-                "name": "from_",
-                "type": "felt"
-            },
-            {
-                "name": "to_",
-                "type": "felt"
-            },
-            {
-                "name": "token_id_",
-                "type": "Uint256"
-            }
-        ],
-        "keys": [],
-        "name": "Transfer",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
-                "name": "value__len",
-                "type": "felt"
-            },
-            {
-                "name": "value_",
-                "type": "felt*"
-            },
-            {
-                "name": "id_",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "URI",
-        "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setBriqAddress",
-        "outputs": [],
         "type": "function"
     },
     {
@@ -189,57 +192,89 @@
     {
         "inputs": [
             {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "ownerOf_",
-        "outputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "is_realms_set",
-        "outputs": [
-            {
-                "name": "is_realms",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "tokenURI_data",
-        "outputs": [
-            {
-                "name": "uri_len",
+                "name": "to",
                 "type": "felt"
             },
             {
-                "name": "uri",
-                "type": "felt*"
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "approve_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "approved_address",
+                "type": "felt"
+            },
+            {
+                "name": "is_approved",
+                "type": "felt"
+            }
+        ],
+        "name": "setApprovalForAll_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "getApproved_",
+        "outputs": [
+            {
+                "name": "approved",
+                "type": "felt"
             }
         ],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "on_behalf_of",
+                "type": "felt"
+            },
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "isApprovedForAll_",
+        "outputs": [
+            {
+                "name": "is_approved",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "value__len",
+                "type": "felt"
+            },
+            {
+                "name": "value_",
+                "type": "felt*"
+            },
+            {
+                "name": "id_",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "URI",
+        "type": "event"
     },
     {
         "inputs": [
@@ -260,6 +295,101 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "name": "setTokenURI_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "is_realms_set_",
+        "outputs": [
+            {
+                "name": "is_realms",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenURIData_",
+        "outputs": [
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "from_",
+                "type": "felt"
+            },
+            {
+                "name": "to_",
+                "type": "felt"
+            },
+            {
+                "name": "token_id_",
+                "type": "Uint256"
+            }
+        ],
+        "keys": [],
+        "name": "Transfer",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transferFrom_",
+        "outputs": [],
         "type": "function"
     },
     {
@@ -297,26 +427,38 @@
                 "type": "felt*"
             }
         ],
-        "name": "assemble",
+        "name": "assemble_",
         "outputs": [],
         "type": "function"
     },
     {
         "inputs": [
             {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
                 "name": "token_id",
                 "type": "felt"
             },
             {
-                "name": "uri_len",
+                "name": "fts_len",
                 "type": "felt"
             },
             {
-                "name": "uri",
+                "name": "fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
                 "type": "felt*"
             }
         ],
-        "name": "setTokenURI",
+        "name": "disassemble_",
         "outputs": [],
         "type": "function"
     },
@@ -371,8 +513,48 @@
                 "type": "felt*"
             }
         ],
-        "name": "updateBriqs",
+        "name": "updateBriqs_",
         "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "token_id_hint",
+                "type": "felt"
+            },
+            {
+                "name": "fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "name": "assemble",
+        "outputs": [],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -404,6 +586,7 @@
         ],
         "name": "disassemble",
         "outputs": [],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -423,36 +606,7 @@
         ],
         "name": "transferOneNFT",
         "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "approve_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "allowed",
-                "type": "felt"
-            }
-        ],
-        "name": "setApprovalForAll_",
-        "outputs": [],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -474,6 +628,69 @@
             {
                 "name": "symbol",
                 "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "tokenId",
+                "type": "Uint256"
+            }
+        ],
+        "name": "tokenURI",
+        "outputs": [
+            {
+                "name": "tokenURI_len",
+                "type": "felt"
+            },
+            {
+                "name": "tokenURI",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "tokenId",
+                "type": "Uint256"
+            }
+        ],
+        "name": "tokenURIData",
+        "outputs": [
+            {
+                "name": "tokenURI_len",
+                "type": "felt"
+            },
+            {
+                "name": "tokenURI",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenOfOwnerByIndex",
+        "outputs": [
+            {
+                "name": "token_id",
+                "type": "Uint256"
             }
         ],
         "stateMutability": "view",
@@ -506,11 +723,11 @@
         "name": "balanceDetailsOf",
         "outputs": [
             {
-                "name": "token_ids_len",
+                "name": "tokenIds_len",
                 "type": "felt"
             },
             {
-                "name": "token_ids",
+                "name": "tokenIds",
                 "type": "felt*"
             }
         ],
@@ -520,28 +737,7 @@
     {
         "inputs": [
             {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "index",
-                "type": "felt"
-            }
-        ],
-        "name": "tokenOfOwnerByIndex",
-        "outputs": [
-            {
-                "name": "token_id",
-                "type": "Uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
+                "name": "tokenId",
                 "type": "Uint256"
             }
         ],
@@ -558,57 +754,15 @@
     {
         "inputs": [
             {
-                "name": "token_id",
-                "type": "Uint256"
-            }
-        ],
-        "name": "tokenURI",
-        "outputs": [
-            {
-                "name": "uri_len",
+                "name": "from_",
                 "type": "felt"
             },
             {
-                "name": "uri",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "Uint256"
-            }
-        ],
-        "name": "tokenURIData",
-        "outputs": [
-            {
-                "name": "uri_len",
+                "name": "to",
                 "type": "felt"
             },
             {
-                "name": "uri",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "sender",
-                "type": "felt"
-            },
-            {
-                "name": "recipient",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
+                "name": "tokenId",
                 "type": "Uint256"
             }
         ],
@@ -619,7 +773,37 @@
     {
         "inputs": [
             {
-                "name": "token_id",
+                "name": "approved",
+                "type": "felt"
+            },
+            {
+                "name": "tokenId",
+                "type": "Uint256"
+            }
+        ],
+        "name": "approve",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "operator",
+                "type": "felt"
+            },
+            {
+                "name": "approved",
+                "type": "felt"
+            }
+        ],
+        "name": "setApprovalForAll",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "tokenId",
                 "type": "Uint256"
             }
         ],
@@ -647,41 +831,11 @@
         "name": "isApprovedForAll",
         "outputs": [
             {
-                "name": "is_approved",
+                "name": "isApproved",
                 "type": "felt"
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "Uint256"
-            }
-        ],
-        "name": "approve",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "allowed",
-                "type": "felt"
-            }
-        ],
-        "name": "setApprovalForAll",
-        "outputs": [],
         "type": "function"
     }
 ]

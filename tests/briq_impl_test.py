@@ -21,14 +21,24 @@ def compile(path):
         debug_info=True
     )
 
+import asyncio
+@pytest.fixture(scope="session")
+def event_loop():
+    return asyncio.get_event_loop()
+
+
 @pytest.fixture(scope="session")
 def compiled_briq():
-    return compile("briq_impl.cairo")
+    return compile("briq_interface.cairo")
+
+@pytest_asyncio.fixture(scope="session")
+async def empty_starknet():
+    return await Starknet.empty()
 
 @pytest_asyncio.fixture
-async def starknet():
+async def starknet(empty_starknet):
     # Create a new Starknet class that simulates the StarkNet
-    return await Starknet.empty()
+    return Starknet(state=empty_starknet.state.copy())
 
 @pytest_asyncio.fixture
 async def briq_contract(starknet: Starknet, compiled_briq):

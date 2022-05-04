@@ -1,12 +1,8 @@
 import argparse
+from .generate_interface import generate
 
-parser = argparse.ArgumentParser(description='Generate a proxy contract.')
-parser.add_argument('target', help='The name of the target contract')
+parser = argparse.ArgumentParser(description='Generate an interface contract.')
+parser.add_argument('source', help='The name of the source contract.')
 args = parser.parse_args()
 
-if args.target == "set":
-    from .backend_set import generate
-    print(generate())
-elif args.target == "briq":
-    from .backend_briq import generate
-    print(generate())
+generate(args.source, f"contracts/{args.source}_interface.cairo")
