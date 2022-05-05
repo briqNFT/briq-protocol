@@ -84,8 +84,6 @@ func _check_for_duplicates_nfts_impl{
     return _check_for_duplicates_nfts_impl(nfts_len - 1, nfts + 1)
 end
 
-from starkware.cairo.common.math_cmp import is_le_felt
-
 @view
 func _check_nfts_ok{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
     } (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*):
@@ -95,28 +93,15 @@ func _check_nfts_ok{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr:
         end
         return ()
     end
-    # Shift to the left - if the item is an NFT (indicated by 1 in the 128th bit),
-    # then the right * 2*122 is necessarily bigger than 2**251 (the new left-most bit).
-    let (nft) = is_le_felt(2**250, shape[0].color_nft_material * (2**(122)))
-    
-    #let toto = shape[0].color_nft_material
-    #let a = shape[0].color_nft_material / (2 ** 64)
-    #let b = 1 / (2 ** 64)
-    #%{ print(hex(ids.toto), hex(ids.a), hex(ids.b), ids.nft) %}
-
-    if nft == 1:
+    let (nft) = bitwise_and(shape[0].color_nft_material, 2**128)
+    if nft == 2**128:
         with_attr error_message("Shape does not have the right number of NFTs"):
             assert_not_zero(nfts_len)
         end
         with_attr error_message("NFT does not have the right material"):
-            # Shift-right, now the top 64 bits are the material. So if the difference there is 0, we have the same material.
-            # (Note that I have some leeway because the color only occupies bits 136-192)
-            # TODO: check that this works even for negative numbers, but I think it does because of modulo maths.
-            let a = shape[0].color_nft_material / (2 ** 64)
-            let b = nfts[0] / (2 ** 64)
-            let (is_same_mat) = is_le_felt(a - b, 2**187)
-            #%{ print(hex(ids.a - ids.b), hex(2**187), ids.is_same_mat) %}
-            assert is_same_mat = 1
+            let (material_shape) = bitwise_and(shape[0].color_nft_material, 2**64 - 1)
+            let (material_nft) = bitwise_and(nfts[0], 2**64 - 1)
+            assert material_shape = material_nft
         end
         return _check_nfts_ok(shape_len - 1, shape + ShapeItem.SIZE, nfts_len - 1, nfts + 1)
     else:

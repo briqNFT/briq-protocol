@@ -1,5 +1,5 @@
 pytest>=6
 pytest-asyncio>=0
 cairo-lang>=0.8.1
-git+https://github.com/OpenZeppelin/nile.git#egg=cairo-nile
+cairo-nile>=0.6.1
 starknet-devnet>=0.1.21

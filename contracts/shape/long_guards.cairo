@@ -4,17 +4,19 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin,
 from starkware.cairo.common.registers import get_label_location
 from starkware.cairo.common.math import assert_le_felt, assert_not_zero
 
+from starkware.cairo.common.math_cmp import is_le_felt
+
 from starkware.cairo.common.bitwise import bitwise_and
 
-from contracts.types import ShapeItem
+from contracts.types import LongShapeItem
 
 @view
-func _check_properly_sorted{
+func _check_properly_sorted_l{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*) -> ():
+    } (shape_len: felt, shape: LongShapeItem*) -> ():
     if shape_len == 0:
         return ()
     end
@@ -26,22 +28,22 @@ func _check_properly_sorted_impl{
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*) -> ():
+    } (shape_len: felt, shape: LongShapeItem*) -> ():
     # nothing more to sort
     if shape_len == 1:
         return ()
     end
     assert_le_felt(shape[0].x_y_z, shape[1].x_y_z)
-    return _check_properly_sorted_impl(shape_len - 1, shape + ShapeItem.SIZE)
+    return _check_properly_sorted_impl(shape_len - 1, shape + LongShapeItem.SIZE)
 end
 
 @view
-func _check_for_duplicates{
+func _check_for_duplicates_l{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*) -> ():
+    } (shape_len: felt, shape: LongShapeItem*, nfts_len: felt, nfts: felt*) -> ():
     if shape_len == 0:
         assert nfts_len = 0
         return ()
@@ -59,14 +61,14 @@ func _check_for_duplicates_shape_impl{
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*) -> ():
+    } (shape_len: felt, shape: LongShapeItem*) -> ():
     if shape_len == 1:
         return ()
     end
     if shape[0].x_y_z == shape[1].x_y_z:
         assert 0 = 1
     end
-    return _check_for_duplicates_shape_impl(shape_len - 1, shape + ShapeItem.SIZE)
+    return _check_for_duplicates_shape_impl(shape_len - 1, shape + LongShapeItem.SIZE)
 end
 
 func _check_for_duplicates_nfts_impl{
@@ -84,42 +86,27 @@ func _check_for_duplicates_nfts_impl{
     return _check_for_duplicates_nfts_impl(nfts_len - 1, nfts + 1)
 end
 
-from starkware.cairo.common.math_cmp import is_le_felt
-
 @view
-func _check_nfts_ok{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-    } (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*):
+func _check_nfts_ok_l{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
+    } (shape_len: felt, shape: LongShapeItem*, nfts_len: felt, nfts: felt*):
     if shape_len == 0:
         with_attr error_message("Shape does not have the right number of NFTs"):
             assert nfts_len = 0
         end
         return ()
     end
-    # Shift to the left - if the item is an NFT (indicated by 1 in the 128th bit),
-    # then the right * 2*122 is necessarily bigger than 2**251 (the new left-most bit).
-    let (nft) = is_le_felt(2**250, shape[0].color_nft_material * (2**(122)))
-    
-    #let toto = shape[0].color_nft_material
-    #let a = shape[0].color_nft_material / (2 ** 64)
-    #let b = 1 / (2 ** 64)
-    #%{ print(hex(ids.toto), hex(ids.a), hex(ids.b), ids.nft) %}
-
+    let (nft) = is_le_felt(2**64, shape[0].nft_material)
     if nft == 1:
         with_attr error_message("Shape does not have the right number of NFTs"):
             assert_not_zero(nfts_len)
         end
         with_attr error_message("NFT does not have the right material"):
-            # Shift-right, now the top 64 bits are the material. So if the difference there is 0, we have the same material.
-            # (Note that I have some leeway because the color only occupies bits 136-192)
-            # TODO: check that this works even for negative numbers, but I think it does because of modulo maths.
-            let a = shape[0].color_nft_material / (2 ** 64)
-            let b = nfts[0] / (2 ** 64)
-            let (is_same_mat) = is_le_felt(a - b, 2**187)
-            #%{ print(hex(ids.a - ids.b), hex(2**187), ids.is_same_mat) %}
-            assert is_same_mat = 1
+            #let (material_shape) = bitwise_and(shape[0].color_nft_material, 2**64 - 1)
+            #let (material_nft) = bitwise_and(nfts[0], 2**64 - 1)
+            assert shape[0].nft_material = nfts[0]
         end
-        return _check_nfts_ok(shape_len - 1, shape + ShapeItem.SIZE, nfts_len - 1, nfts + 1)
+        return _check_nfts_ok_l(shape_len - 1, shape + LongShapeItem.SIZE, nfts_len - 1, nfts + 1)
     else:
-        return _check_nfts_ok(shape_len - 1, shape + ShapeItem.SIZE, nfts_len, nfts)
+        return _check_nfts_ok_l(shape_len - 1, shape + LongShapeItem.SIZE, nfts_len, nfts)
     end
 end

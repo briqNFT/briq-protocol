@@ -390,7 +390,6 @@ async def test_mint_shape_nft_only(briq_contract, set_contract):
             color="#ffaaff", material=1, x=1, y=5, z=-2, has_token_id=True
         ))], target_shape_token_id=0,
         uri=[1234]).invoke(ADDRESS))
-    assert 0
 
 @pytest.mark.asyncio
 async def test_mint_shape_multimat(briq_contract, set_contract):

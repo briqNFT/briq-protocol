@@ -107,13 +107,13 @@ async def test_nfts_onchain_decompression(starknet: Starknet):
     shape_data:
     {to_shape_data('#ffaaff', 1, 4, -2, -4)}
     {to_shape_data('#ffaaff', 1, 4, 1, -4, True)}
-    {to_shape_data('#ffaaff', 1, 4, 2, -4)}
-    {to_shape_data('#ffaaff', 1, 4, 3, -4, True)}
+    {to_shape_data('#ffaaff', 2, 4, 2, -4)}
+    {to_shape_data('#ffaaff', 2, 4, 3, -4, True)}
     {to_shape_data('#ffaaff', 1, 4, 4, -4)}
     shape_data_end:
     nft_data:
     dw {1 * 2**64 + 1}
-    dw {2 * 2**64 + 1}
+    dw {2 * 2**64 + 2}
     nft_data_end:
 """)
     test_code = compile_starknet_codes(codes=[(shape, "test_code")], disable_hint_validation=True)
@@ -124,11 +124,9 @@ async def test_nfts_onchain_decompression(starknet: Starknet):
         x=cast_to_felts([4])[0], y=cast_to_felts([1])[0], z=cast_to_felts([-4])[0])
 
     assert (await contract.decompress_data(contract.ShapeItem(*compress_shape_item(
-        color='#ffaaff', material=1, x=4, y=3, z=-4, has_token_id=True))).call()).result.data == contract.UncompressedShapeItem(
-        color=short_string_to_felt('#ffaaff'), material=1, nft_token_id=2 * 2**64 + 1,
+        color='#ffaaff', material=2, x=4, y=3, z=-4, has_token_id=True))).call()).result.data == contract.UncompressedShapeItem(
+        color=short_string_to_felt('#ffaaff'), material=2, nft_token_id=2 * 2**64 + 2,
         x=cast_to_felts([4])[0], y=cast_to_felts([3])[0], z=cast_to_felts([-4])[0])
-
-
 
 @pytest.mark.asyncio
 async def test_simple(starknet: Starknet):

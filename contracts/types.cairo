@@ -25,3 +25,13 @@ struct ShapeItem:
     # (This is done so that sorting works)
     member x_y_z: felt
 end
+
+struct LongShapeItem:
+    # Token ID
+    member nft_material: felt
+    member color: felt
+    # Stored as reversed two's completement, shifted by 64 bits.
+    # (reversed az in -> the presence of the 64th bit indicates positive number)
+    # (This is done so that sorting works)
+    member x_y_z: felt
+end
