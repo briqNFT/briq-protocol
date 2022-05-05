@@ -43,3 +43,10 @@ def uncompress_shape_item(col_nft_mat: int, x_y_z: int):
     y: int = from_storage_form((x_y_z // 2 ** 64) & 0xffffffffffffffff)
     z: int = from_storage_form(x_y_z & 0xffffffffffffffff)
     return color.to_bytes(7, 'big').decode('ascii'), mat, x, y, z, has_token_id
+
+def to_shape_data(color: str, material: int, x: int, y: int, z: int, has_nft: bool = False):
+    col_nft_mat, xyz = compress_shape_item(color, material, x, y, z, has_nft)
+    return f"""
+    dw {col_nft_mat}
+    dw {xyz}
+"""

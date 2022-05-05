@@ -11,24 +11,11 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.set_erc721.link_to_briq_token import (
-    getBriqAddress_,
-    setBriqAddress_,
-)
+from contracts.set_erc721.link_to_briq_token import set_briq
 
-from contracts.set_erc721.approvals import (
-    approve_,
-    setApprovalForAll_,
-    getApproved_,
-    isApprovedForAll_,
-)
-
-from contracts.set_erc721.balance_enumerability import (
-    balanceOf_,
-    ownerOf_,
-    balanceDetailsOf_,
-    tokenOfOwnerByIndex_,
-)
+from contracts.library_erc721.approvals import ERC721_approvals
+from contracts.library_erc721.balance import ERC721 as ERC721_a
+from contracts.library_erc721.enumerability import ERC721_enumerability
 
 from contracts.set_erc721.token_uri import (
     tokenURI_,
@@ -37,9 +24,7 @@ from contracts.set_erc721.token_uri import (
     is_realms_set_,
 )
 
-from contracts.set_erc721.transferability import (
-    transferFrom_,
-)
+from contracts.library_erc721.transferability_enum import ERC271_transferability
 
 from contracts.set_erc721.assembly import (
     assemble_,
@@ -67,6 +52,6 @@ end
 @view
 func transferOneNFT{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
-    transferFrom_(sender, recipient, token_id)
+    ERC271_transferability.transferFrom_(sender, recipient, token_id)
     return ()
 end

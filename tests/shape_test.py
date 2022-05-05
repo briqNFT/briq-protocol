@@ -45,7 +45,7 @@ async def starknet(empty_starknet):
 
 
 ## Test compress
-from generators.shape_utils import compress_shape_item, uncompress_shape_item
+from generators.shape_utils import to_shape_data, compress_shape_item, uncompress_shape_item
 
 def test_compression():
     col_nft_mat, xyz = compress_shape_item("#ffffff", 2, 5, -1, 4)
@@ -69,14 +69,6 @@ def test_compression():
     assert x == 2**63 - 1
     assert y == -2**63 + 1
     assert z == 0
-
-
-def to_shape_data(color: str, material: int, x: int, y: int, z: int, has_nft: bool = False):
-    col_nft_mat, xyz = compress_shape_item(color, material, x, y, z, has_nft)
-    return f"""
-    dw {col_nft_mat}
-    dw {xyz}
-"""
 
 @pytest.mark.asyncio
 async def test_onchain_decompression(starknet: Starknet):

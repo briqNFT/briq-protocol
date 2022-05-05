@@ -59,7 +59,6 @@ end
 func _shape{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
     } () -> (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*):
     let (_shape_data_start) = get_label_location(shape_data)

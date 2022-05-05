@@ -10,9 +10,7 @@ from starkware.cairo.common.bitwise import bitwise_and
 
 from starkware.cairo.common.registers import get_label_location
 
-from contracts.set_erc721.balance_enumerability import (
-    _owner,
-)
+from contracts.library_erc721.balance import _owner
 
 from contracts.utilities.authorization import (
     _onlyAdmin,
