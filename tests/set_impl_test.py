@@ -312,9 +312,6 @@ async def test_events(starknet, set_contract):
     await invoke_set(set_contract.disassemble_(owner=OTHER_ADDRESS, token_id=tok_id_1, fts=[(1, 10)], nfts=[]), OTHER_ADDRESS)
 
     events = starknet.state.events
-
-    #print(briq_contract.event_manager._selector_to_name)
-    #print(set_contract.event_manager._selector_to_name)
     
     assert set_contract.event_manager._selector_to_name[events[2].keys[0]] == 'Transfer'
     assert events[2].data == [0, ADDRESS, *tok_id_1_as_uint]
@@ -383,13 +380,13 @@ async def test_mint_shape_nft_only(briq_contract, set_contract):
     hash_token_id(ADDRESS, 0x1, uri=[1234])
     await briq_contract.mintOneNFT(ADDRESS, material=1, uid=0x2).invoke()
     await briq_contract.mintOneNFT(ADDRESS, material=2, uid=0x1).invoke()
-    print(await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+    await set_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
         fts=[], nfts=[1 * 2**64 + 2, 2 * 2**64 + 1], shape=[set_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
         )), set_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=1, x=1, y=5, z=-2, has_token_id=True
         ))], target_shape_token_id=0,
-        uri=[1234]).invoke(ADDRESS))
+        uri=[1234]).invoke(ADDRESS)
 
 @pytest.mark.asyncio
 async def test_mint_shape_multimat(briq_contract, set_contract):

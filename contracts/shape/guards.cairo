@@ -95,26 +95,29 @@ func _check_nfts_ok{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr:
         end
         return ()
     end
+    # Bitwise is 255 times more costly than a cairo step and 32 times more than a range builtin,
+    # so it's more efficient to use other tools. The code below has similar output to:
+    # let (nft) = bitwise_and(shape[0].color_nft_material, 2**128)
+
     # Shift to the left - if the item is an NFT (indicated by 1 in the 128th bit),
     # then the right * 2*122 is necessarily bigger than 2**251 (the new left-most bit).
     let (nft) = is_le_felt(2**250, shape[0].color_nft_material * (2**(122)))
-    
-    #let toto = shape[0].color_nft_material
-    #let a = shape[0].color_nft_material / (2 ** 64)
-    #let b = 1 / (2 ** 64)
-    #%{ print(hex(ids.toto), hex(ids.a), hex(ids.b), ids.nft) %}
-
     if nft == 1:
         with_attr error_message("Shape does not have the right number of NFTs"):
             assert_not_zero(nfts_len)
         end
         with_attr error_message("NFT does not have the right material"):
+            # Corresponding bitwise:
+            # let (material_shape) = bitwise_and(shape[0].color_nft_material, 2**64 - 1)
+            # let (material_nft) = bitwise_and(nfts[0], 2**64 - 1)
+            # assert material_shape = material_nft
+
             # Shift-right, now the top 64 bits are the material. So if the difference there is 0, we have the same material.
+            # This works even if the subtraction leads to a negative number, because of the modulo wraparound.
             # (Note that I have some leeway because the color only occupies bits 136-192)
-            # TODO: check that this works even for negative numbers, but I think it does because of modulo maths.
-            let a = shape[0].color_nft_material / (2 ** 64)
-            let b = nfts[0] / (2 ** 64)
-            let (is_same_mat) = is_le_felt(a - b, 2**187)
+            let a = shape[0].color_nft_material - nfts[0]
+            let b = a / (2 ** 64)
+            let (is_same_mat) = is_le_felt(b, 2**187)
             #%{ print(hex(ids.a - ids.b), hex(2**187), ids.is_same_mat) %}
             assert is_same_mat = 1
         end
