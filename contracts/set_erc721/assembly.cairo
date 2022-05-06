@@ -6,6 +6,7 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
+from starkware.starknet.common.syscalls import call_contract
 
 from starkware.cairo.common.bitwise import bitwise_and
 
@@ -119,11 +120,20 @@ func assemble_{
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
         range_check_ptr
-    } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*):
+    } (
+        owner: felt,
+        token_id_hint: felt,
+        fts_len: felt,
+        fts: FTSpec*,
+        nfts_len: felt,
+        nfts: felt*,
+        uri_len: felt,
+        uri: felt*
+    ):
     alloc_locals
 
-    # TODO: Re-enable this & check for the notice contract.
-    #_only(owner)
+    # TODO: consider allowing approved operators?
+    _only(owner)
 
     assert_not_zero(owner)
     # This can't actually overflow because calldata of 2^252 elements would break the universe first.
@@ -150,6 +160,56 @@ func assemble_{
 
     return ()
 end
+
+from starkware.cairo.common.memcpy import memcpy
+
+# This functions assembles the NFT,
+# then calls the provided external contract's selector
+# Purpose:
+# - Decentralized augmentations should not be white-listed by the set contract.
+@external
+@raw_input
+func assemble_and_proxy_{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (
+        selector: felt,
+        calldata_size: felt,
+        calldata: felt*
+    ) -> (
+        #retdata_size: felt,
+        #retdata: felt*
+    ):
+    alloc_locals
+    let fts_len = calldata[2] * FTSpec.SIZE
+    let nfts_len = calldata[3 + fts_len] * 1
+    let uri_len = calldata[4 + fts_len + nfts_len] * 1
+
+    assemble_(
+        owner=calldata[0],
+        token_id_hint=calldata[1],
+        fts_len=calldata[2],
+        fts=cast(calldata + 3, FTSpec*),
+        nfts_len=calldata[3 + fts_len],
+        nfts=cast(calldata + 4 + fts_len, felt*),
+        uri_len=calldata[4 + fts_len + nfts_len],
+        uri=cast(calldata + 5 + fts_len + nfts_len, felt*)
+    )
+    
+    # Once assembled, we can proxy the call.
+    # NB -> we proxy the whole metadata.
+    call_contract(
+        contract_address=calldata[5 + fts_len + nfts_len + uri_len],
+        function_selector=calldata[6 + fts_len + nfts_len + uri_len],
+        calldata_size=calldata_size,
+        calldata=calldata
+    )
+    #(owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*, shape_len: felt, shape: ShapeItem*, target_shape_token_id: felt):
+    return ()
+end
+
 
 @external
 func disassemble_{

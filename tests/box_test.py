@@ -37,11 +37,11 @@ async def factory_root():
     shape_mock = await starknet.deploy(contract_def=compile("mocks/shape_mock.cairo"))
     await box_contract.setSetAddress_(set_mock.contract_address).invoke()
     await box_contract.mint_(MOCK_SHAPE_TOKEN, MOCK_SHAPE_TOKEN, shape_mock.contract_address).invoke()
-    return (starknet, box_contract, shape_mock)
+    return (starknet, box_contract, shape_mock, set_mock)
 
 @pytest_asyncio.fixture
 async def factory(factory_root):
-    [starknet, a, b] = factory_root
+    [starknet, a, b, set_mock] = factory_root
     state = Starknet(state=starknet.state.copy())
     a = StarknetContract(
         state=state.state,
@@ -55,11 +55,11 @@ async def factory(factory_root):
         contract_address=b.contract_address,
         deploy_execution_info=b.deploy_execution_info,
     )
-    return (state, a, b)
+    return (state, a, b, set_mock)
 
 @pytest.mark.asyncio
 async def test_mint_transfer(factory):
-    [_, box_contract, _] = factory
+    [_, box_contract, _, _] = factory
     TOKEN = 1
     await box_contract.mint_(ADDRESS, TOKEN, 2).invoke()
     await box_contract.transferFrom_(ADDRESS, OTHER_ADDRESS, TOKEN).invoke()
@@ -67,7 +67,7 @@ async def test_mint_transfer(factory):
 
 @pytest.mark.asyncio
 async def test_shape(factory):
-    [starknet, box_contract, _] = factory
+    [starknet, box_contract, _, _] = factory
 
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     data = data.replace("#DEFINE_SHAPE", f"""
@@ -97,113 +97,86 @@ async def test_shape(factory):
 
 @pytest.mark.asyncio
 async def test_mint_shape(factory):
-    [_, box_contract, _] = factory
-    await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+    [_, box_contract, _, set_mock] = factory
+    await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
         fts=[(1, 1)], nfts=[], shape=[box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=1, x=0, y=4, z=-2
-        ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-        uri=[1234]).invoke(ADDRESS)
+        ))], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+        uri=[1234]).invoke(set_mock.contract_address)
 
 @pytest.mark.asyncio
 async def test_mint_shape_nft(factory):
-    [_, box_contract, _] = factory
-    await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+    [_, box_contract, _, set_mock] = factory
+    await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
         fts=[(1, 2)], nfts=[1 * 2**64 + 2], shape=[box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=1, x=0, y=4, z=-2
         )), box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
         )), box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=1, x=0, y=6, z=-2
-        ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-        uri=[1234]).invoke(ADDRESS)
+        ))], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+        uri=[1234]).invoke(set_mock.contract_address)
 
 @pytest.mark.asyncio
 async def test_mint_shape_nft_only(factory):
-    [_, box_contract, _] = factory
-    await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+    [_, box_contract, _, set_mock] = factory
+    await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
         fts=[], nfts=[1 * 2**64 + 2, 2 * 2**64 + 1], shape=[box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
         )), box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=1, x=1, y=5, z=-2, has_token_id=True
-        ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-        uri=[1234]).invoke(ADDRESS)
+        ))], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+        uri=[1234]).invoke(set_mock.contract_address)
 
 @pytest.mark.asyncio
 async def test_mint_shape_multimat(factory):
-    [_, box_contract, _] = factory
-    await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+    [_, box_contract, _, set_mock] = factory
+    await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
         fts=[(1, 2), (2, 1)], nfts=[], shape=[box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=1, x=0, y=4, z=-2
         )), box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=2, x=1, y=4, z=-2
         )), box_contract.ShapeItem(*compress_shape_item(
             color="#ffaaff", material=1, x=2, y=4, z=-2
-        ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-        uri=[1234]).invoke(ADDRESS)
+        ))], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+        uri=[1234]).invoke(set_mock.contract_address)
 
 @pytest.mark.asyncio
 async def test_mint_shape_bad_noshape(factory):
-    [_, box_contract, _] = factory
+    [_, box_contract, _, set_mock] = factory
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
-        await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
-            fts=[(1, 1)], nfts=[], shape=[], target_shape_token_id=MOCK_SHAPE_TOKEN,
-            uri=[1234]).invoke(ADDRESS)
+        await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
+            fts=[(1, 1)], nfts=[], shape=[], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+            uri=[1234]).invoke(set_mock.contract_address)
 
 @pytest.mark.asyncio
 async def test_mint_shape_bad_bad_material(factory):
-    [_, box_contract, _] = factory
+    [_, box_contract, _, set_mock] = factory
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
-        await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+        await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
             fts=[(1, 1)], nfts=[], shape=[box_contract.ShapeItem(*compress_shape_item(
                 color="#ffaaff", material=2, x=0, y=4, z=-2
-            ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-            uri=[1234]).invoke(ADDRESS)
-
-@pytest.mark.asyncio
-async def test_mint_shape_bad_repeated_nft(factory):
-    [starknet, box_contract, _] = factory
-    # This goes through despite the repeated NFT because of the mock
-    await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
-        fts=[], nfts=[1 * 2**64 + 2, 1 * 2**64 + 2], shape=[box_contract.ShapeItem(*compress_shape_item(
-            color="#ffaaff", material=2, x=0, y=4, z=-2, has_token_id=True
-        )), box_contract.ShapeItem(*compress_shape_item(
-            color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
-        ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-        uri=[1234]).invoke(ADDRESS)
-
-    # But if we don't mock, then it'll fail.
-    briq = await starknet.deploy(contract_def=compile("briq_impl.cairo"))
-    set = await starknet.deploy(contract_def=compile("set_impl.cairo"))
-    await briq.setSetAddress_(set.contract_address).invoke()
-    await set.setBriqAddress_(briq.contract_address).invoke()
-    await box_contract.setSetAddress_(set.contract_address).invoke()
-    with pytest.raises(StarkException, match="assert sender = curr_owner"):
-        await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
-            fts=[], nfts=[1 * 2**64 + 2, 1 * 2**64 + 2], shape=[box_contract.ShapeItem(*compress_shape_item(
-                color="#ffaaff", material=2, x=0, y=4, z=-2, has_token_id=True
-            )), box_contract.ShapeItem(*compress_shape_item(
-                color="#ffaaff", material=2, x=0, y=5, z=-2, has_token_id=True
-            ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-            uri=[1234]).invoke(ADDRESS)
+            ))], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+            uri=[1234]).invoke(set_mock.contract_address)
 
 @pytest.mark.asyncio
 async def test_mint_shape_bad_not_enough(factory):
-    [_, box_contract, _] = factory
+    [_, box_contract, _, set_mock] = factory
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
-        await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+        await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
             fts=[(1, 2)], nfts=[], shape=[box_contract.ShapeItem(*compress_shape_item(
                 color="#ffaaff", material=1, x=0, y=4, z=-2
-            ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-            uri=[1234]).invoke(ADDRESS)
+            ))], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+            uri=[1234]).invoke(set_mock.contract_address)
 
 @pytest.mark.asyncio
 async def test_mint_shape_bad_too_many(factory):
-    [_, box_contract, _] = factory
+    [_, box_contract, _, set_mock] = factory
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
-        await box_contract.assemble_with_shape_(owner=ADDRESS, token_id_hint=0x1,
+        await box_contract.on_set_assembly_(owner=ADDRESS, token_id_hint=0x1,
             fts=[(1, 1)], nfts=[], shape=[box_contract.ShapeItem(*compress_shape_item(
                 color="#ffaaff", material=1, x=0, y=4, z=-2
             )), box_contract.ShapeItem(*compress_shape_item(
                 color="#ffaaff", material=1, x=1, y=4, z=-2
-            ))], target_shape_token_id=MOCK_SHAPE_TOKEN,
-            uri=[1234]).invoke(ADDRESS)
+            ))], target_shape_token_id=MOCK_SHAPE_TOKEN, contract=0, selector=0,
+            uri=[1234]).invoke(set_mock.contract_address)

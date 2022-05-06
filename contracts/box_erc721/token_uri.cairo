@@ -1,6 +1,6 @@
 %lang starknet
 
-from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
+from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
 
 from contracts.types import ShapeItem
 
@@ -29,10 +29,11 @@ namespace box_token_uri:
     end
 
     @view
-    func check_shape_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    func check_shape_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
         } (token_id: felt, shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*) -> ():
         alloc_locals
         local pedersen_ptr: HashBuiltin* = pedersen_ptr
+        local bitwise_ptr: BitwiseBuiltin* = bitwise_ptr
         let (addr) = _shape_contract.read(token_id)
         IShapeContract.check_shape(addr, shape_len, shape, nfts_len, nfts)
         return ()

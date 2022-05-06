@@ -4,6 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin,
 from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.bitwise import bitwise_and
+from starkware.starknet.common.syscalls import get_caller_address
 
 from contracts.utilities.authorization import (
     _onlyAdmin,
@@ -48,17 +49,18 @@ namespace box_set_factory:
     ############
 
     @external
-    func assemble_with_shape_{
+    func on_set_assembly_{
             syscall_ptr: felt*,
             pedersen_ptr: HashBuiltin*,
             bitwise_ptr: BitwiseBuiltin*,
             range_check_ptr
-        } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*, shape_len: felt, shape: ShapeItem*, target_shape_token_id: felt):
-        alloc_locals
-
-        local pedersen_ptr: HashBuiltin* = pedersen_ptr
-        let (addr) = getSetAddress_()
-        ISetContract.assemble_(addr, owner, token_id_hint, fts_len, fts, nfts_len, nfts, uri_len, uri)
+        } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*,
+            contract: felt,
+            selector: felt,
+        shape_len: felt, shape: ShapeItem*, target_shape_token_id: felt):
+        let (caller) = get_caller_address()
+        let (set_addr) = getSetAddress_()
+        assert caller = set_addr
 
         # Check that the passed shape does match what we'd expect.
         # NB -> This expects the NFTs to be sorted according to the shape sorting (which itself is standardised).

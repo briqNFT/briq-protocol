@@ -7,17 +7,12 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
 
 from contracts.set_impl import (
-    balanceOf_,
-    balanceDetailsOf_,
-    ownerOf_,
+    ERC721_approvals,
+    ERC721_balance,
+    ERC721_enumerability,
+    ERC271_transferability,
     tokenURI_,
     tokenURIData_,
-    tokenOfOwnerByIndex_,
-    transferFrom_,
-    approve_,
-    setApprovalForAll_,
-    getApproved_,
-    isApprovedForAll_,
 )
 
 from starkware.cairo.common.uint256 import Uint256
@@ -78,7 +73,7 @@ func tokenOfOwnerByIndex{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, index: felt) -> (token_id: Uint256):
-    let (token_id) = tokenOfOwnerByIndex_(owner, index)
+    let (token_id) = ERC721_enumerability.tokenOfOwnerByIndex_(owner, index)
     let (t2) = _felt_to_uint(token_id)
     return (t2)
 end
@@ -93,7 +88,7 @@ func balanceOf{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt) -> (balance: Uint256):
-    let (res) = balanceOf_(owner)
+    let (res) = ERC721_balance.balanceOf_(owner)
     let (res2) = _felt_to_uint(res)
     return (res2)
 end
@@ -105,7 +100,7 @@ func balanceDetailsOf{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt) -> (tokenIds_len: felt, tokenIds: felt*):
-    let (i, j) = balanceDetailsOf_(owner)
+    let (i, j) = ERC721_enumerability.balanceDetailsOf_(owner)
     return (i, j)
 end
 
@@ -116,7 +111,7 @@ func ownerOf{
         range_check_ptr
     } (tokenId: Uint256) -> (owner: felt):
     let (_tok) = _uint_to_felt(tokenId)
-    let (owner) = ownerOf_(_tok)
+    let (owner) = ERC721_balance.ownerOf_(_tok)
     return (owner)
 end
 
@@ -127,7 +122,7 @@ func transferFrom{
         range_check_ptr
     } (from_: felt, to: felt, tokenId: Uint256):
     let (_tok) = _uint_to_felt(tokenId)
-    transferFrom_(from_, to, _tok)
+    ERC271_transferability.transferFrom_(from_, to, _tok)
     return ()
 end
 
@@ -140,7 +135,7 @@ func approve{
         range_check_ptr
     } (approved: felt, tokenId: Uint256):
     let (_tok) = _uint_to_felt(tokenId)
-    approve_(approved, _tok)
+    ERC721_approvals.approve_(approved, _tok)
     return ()
 end
 
@@ -151,7 +146,7 @@ func setApprovalForAll{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (operator: felt, approved: felt):
-    setApprovalForAll_(approved, operator)
+    ERC721_approvals.setApprovalForAll_(approved, operator)
     return ()
 end
 
@@ -162,7 +157,7 @@ func getApproved{
         range_check_ptr
     } (tokenId: Uint256) -> (approved: felt):
     let (_tok) = _uint_to_felt(tokenId)
-    let (res) = getApproved_(_tok)
+    let (res) = ERC721_approvals.getApproved_(_tok)
     return (res)
 end
 
@@ -172,6 +167,6 @@ func isApprovedForAll{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, operator: felt) -> (isApproved: felt):
-    let (res) = isApprovedForAll_(owner, operator)
+    let (res) = ERC721_approvals.isApprovedForAll_(owner, operator)
     return (res)
 end

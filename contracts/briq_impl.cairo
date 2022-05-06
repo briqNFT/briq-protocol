@@ -35,6 +35,14 @@ from contracts.briq_erc1155_like.convert_mutate import (
     convertOneToNFT_,
 )
 
+
+from contracts.upgrades.upgradable_mixin import (
+    getAdmin_,
+    getImplementation_,
+    upgradeImplementation_,
+    setRootAdmin_,
+)
+
 ####
 
 @view

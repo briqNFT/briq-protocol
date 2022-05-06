@@ -14,7 +14,7 @@ from contracts.upgrades.upgradable_mixin import (
 from contracts.set_erc721.link_to_briq_token import set_briq
 
 from contracts.library_erc721.approvals import ERC721_approvals
-from contracts.library_erc721.balance import ERC721 as ERC721_a
+from contracts.library_erc721.balance import ERC721 as ERC721_balance
 from contracts.library_erc721.enumerability import ERC721_enumerability
 
 from contracts.set_erc721.token_uri import (

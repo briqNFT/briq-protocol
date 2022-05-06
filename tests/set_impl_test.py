@@ -165,6 +165,12 @@ async def test_minting_and_querying(briq_contract, set_contract):
     with pytest.raises(StarkException):
         await invoke_set(set_contract.assemble_(owner=OTHER_ADDRESS, token_id_hint=25, fts=[], nfts=[], uri=[1234]), OTHER_ADDRESS)
 
+@pytest.mark.asyncio
+async def test_minting_bad_duplicate_nft(briq_contract, set_contract):
+    await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=1))
+    with pytest.raises(StarkException):
+        await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, fts=[(1, 25)], nfts=[1 * 2**64 + 1, 1 * 2**64 + 1], uri=[1234]))
+
 
 @pytest.mark.asyncio
 async def test_transfer_nft(set_contract):
