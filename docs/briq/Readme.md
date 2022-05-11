@@ -52,7 +52,7 @@ Note that if the same `briq NFT` exists (same material and token id), the mintin
 ### Transfer
 
 Transfer is implemented for owners, without approval & such for now.
-The `set contract` is always authorized to transfer briqs, which is required for minting/burning (see [set contract](../set/Readme.md) ).
+The `set contract` is always authorized to transfer briqs, which is required for minting/burning (see [set contract](../set/) ).
 
 ### Conversion / Mutation
 

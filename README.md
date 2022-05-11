@@ -7,7 +7,7 @@ This repository contains the Cairo code for briq StarkNet contracts.
  - briq contract: ERC1155-like. Handles briq tokens. briqs have a material, and fungible & NFT briqs may have the same material. The interface is material-based instead of token-id based.
  - set contract: ERC721-like. Handles sets. Essentially a regular ERC721, but handles assembly/disassembly. When assembling, it becomes the owner of the underlying briq tokens, and vice-versa.
 
-See [docs/Readme.md](docs/Readme.md) for more information.
+See [docs/](docs/) for more information.
 
 ## Setup
 #### Install python environment (via venv)

@@ -12,5 +12,5 @@ It has two core components:
 
 Both contracts are upgradable for the foreseeable future. See [`contracts/upgrades/proxy.cairo`](../contracts/upgrades/proxy.cairo) for the core proxy contract.
 
- - briq contract: somewhat ERC1155-like. Handles `briq tokens`. `briqs` have a material. The interface is material-based instead of token_id based as that is a more natural usage.
- - set contract: ERC721-like. Handles `sets`. Essentially a regular ERC721, but handles assembly/disassembly. When assembling, it becomes the owner of the underlying briq tokens, and vice-versa. This vastly reduces the gas costs when transferring sets.
+ - [briq contract](briq/): somewhat ERC1155-like. Handles `briq tokens`. `briqs` have a material. The interface is material-based instead of token_id based as that is a more natural usage.
+ - [set contract](set/): ERC721-like. Handles `sets`. Essentially a regular ERC721, but handles assembly/disassembly. When assembling, it becomes the owner of the underlying briq tokens, and vice-versa. This vastly reduces the gas costs when transferring sets.
