@@ -1,24 +1,24 @@
-from nile.core.account import account_raw_execute, account_send, account_setup
-
 import os
 
-os.environ["SIGNER"] = "123456"
+from nile.nre import NileRuntimeEnvironment
 
-def run(nre):
-    signer = account_setup("SIGNER", nre.network)
-    print(f"Signer account: {signer.account}")
 
-    briq_impl, abi = nre.deploy("briq_impl", arguments=[], alias="briq_impl")
-    set_impl, abi = nre.deploy("set_impl", arguments=[], alias="set_impl")
+def run(nre: NileRuntimeEnvironment):
+    if not os.getenv("ADMIN"):
+        print("ADMIN env variable must be set to the address of the admin wallet")
 
-    briq_address, abi = nre.deploy("_proxy", arguments=[signer.account, briq_impl], alias="briq")
-    set_address, abi = nre.deploy("_proxy", arguments=[signer.account, set_impl], alias="set")
+    #os.environ["toto"] = "123456"
+    #account = nre.get_or_deploy_account("toto")
+    #print(f"Deployed deploy account to {account.address}")
+
+    briq_interface_addr, abi = nre.deploy("briq_interface", arguments=[], alias="briq_interface")
+    set_interface_addr, abi = nre.deploy("set_interface", arguments=[], alias="set_interface")
+
+    briq_address, abi = nre.deploy("proxy", arguments=[os.getenv("ADMIN"), briq_interface_addr], alias="briq_proxy")
+    set_address, abi = nre.deploy("proxy", arguments=[os.getenv("ADMIN"), set_interface_addr], alias="set_proxy")
 
     print(f"Deployed briq to {briq_address}")
     print(f"Deployed set to {set_address}")
 
-    account_send("SIGNER", "briq", "setSetAddress", params=[set_address], network=nre.network)
-    account_send("SIGNER", "set", "setBriqAddress", params=[briq_address], network=nre.network)
-
-    mint_address, abi = nre.deploy("mint", arguments=[briq_address, "1000"], alias="mint")
-    account_send("SIGNER", "briq", "setMintContract", params=[mint_address], network=nre.network)
+    #account.send(briq_address, "setSetAddress_", [int(set_address, 16)])
+    #account.send(set_address, "setBriqAddress_", [int(briq_address, 16)])

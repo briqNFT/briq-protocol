@@ -150,48 +150,6 @@
     {
         "inputs": [
             {
-                "name": "owner",
-                "type": "felt"
-            }
-        ],
-        "name": "balanceDetailsOf_",
-        "outputs": [
-            {
-                "name": "token_ids_len",
-                "type": "felt"
-            },
-            {
-                "name": "token_ids",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "index",
-                "type": "felt"
-            }
-        ],
-        "name": "tokenOfOwnerByIndex_",
-        "outputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "name": "to",
                 "type": "felt"
             },
@@ -251,6 +209,48 @@
         "outputs": [
             {
                 "name": "is_approved",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceDetailsOf_",
+        "outputs": [
+            {
+                "name": "token_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "token_ids",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenOfOwnerByIndex_",
+        "outputs": [
+            {
+                "name": "token_id",
                 "type": "felt"
             }
         ],
@@ -428,6 +428,25 @@
             }
         ],
         "name": "assemble_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "selector",
+                "type": "felt"
+            },
+            {
+                "name": "calldata_size",
+                "type": "felt"
+            },
+            {
+                "name": "calldata",
+                "type": "felt*"
+            }
+        ],
+        "name": "assemble_and_proxy_",
         "outputs": [],
         "type": "function"
     },

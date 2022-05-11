@@ -71,6 +71,15 @@ func setSetAddress_{
     return ()
 end
 
+@view
+func getSetAddress_{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } () -> (address: felt):
+    let (value) = _set_backend_address.read()
+    return (value)
+end
 
 ## TODO -> mint multiple NFT
 
