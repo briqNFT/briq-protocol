@@ -183,6 +183,8 @@ async def test_transfer_nft(briq_contract):
     await invoke_briq(briq_contract.transferOneNFT(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, briq_token_id=2 * 2**64 + 1))
     assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 2
     assert (await briq_contract.balanceOf(owner=OTHER_ADDRESS, material=1).call()).result.balance == 1
+    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.materialsOf(owner=OTHER_ADDRESS).call()).result.materials == [1]
     assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 3 * 2**64 + 1]
     assert (await briq_contract.balanceDetailsOf(owner=OTHER_ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1]
     assert (await briq_contract.ownerOf(1 * 2**64 + 1).call()).result.owner == ADDRESS

@@ -105,8 +105,8 @@ func transferFT_{
     let (balance) = _balance.read(recipient, briq_token_id)
     _balance.write(recipient, briq_token_id, balance + qty)
 
-    _setMaterialByOwner(recipient, material, 0)
     _maybeUnsetMaterialByOwner(sender, material)
+    _setMaterialByOwner(recipient, material, 0)
 
     let (__addr) = get_contract_address()
     TransferSingle.emit(__addr, sender, recipient, briq_token_id, qty)
@@ -135,7 +135,7 @@ func transferOneNFT_{
     _setTokenByOwner(recipient, material, briq_token_id, 0)
 
     _maybeUnsetMaterialByOwner(sender, material) # Keep after unset token or it won't unset
-    _setTokenByOwner(recipient, material, briq_token_id, 0)
+    _setMaterialByOwner(recipient, material, 0)
 
     let (__addr) = get_contract_address()
     TransferSingle.emit(__addr, sender, recipient, briq_token_id, 1)
