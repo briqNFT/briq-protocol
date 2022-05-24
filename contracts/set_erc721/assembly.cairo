@@ -27,15 +27,17 @@ from contracts.library_erc721.enumerability import ERC721_enumerability
 
 from contracts.library_erc721.transferability_library import ERC721_lib_transfer
 
-from contracts.set_erc721.link_to_briq_token import _briq_address, IBriqContract
+from contracts.set_erc721.link_to_ecosystem import _briq_address, _box_address, IBriqContract, IBoxContract
 
-from contracts.types import ShapeItem
+from contracts.types import ShapeItem, FTSpec
+
+from starkware.cairo.common.hash_state import (
+    hash_init, hash_finalize, hash_update, hash_update_single
+)
 
 ############
 ############
 # Assembly/Disassembly
-
-from contracts.types import FTSpec
 
 func _transferFT{
         syscall_ptr: felt*,
@@ -64,10 +66,6 @@ func _transferNFT{
     IBriqContract.transferOneNFT_(address, sender, recipient, material, nfts[index - 1])
     return _transferNFT(sender, recipient, index - 1, nfts)
 end
-
-from starkware.cairo.common.hash_state import (
-    hash_init, hash_finalize, hash_update, hash_update_single
-)
 
 # To prevent people from generating collisions, we need the token_id to be random.
 # However, we need it to be predictable for good UI.
@@ -133,12 +131,81 @@ func assemble_{
     ):
     alloc_locals
 
+    let (token_id) = _create_token_(owner, token_id_hint, uri_len, uri)
+
+    _transferFT(owner, token_id, fts_len, fts)
+    _transferNFT(owner, token_id, nfts_len, nfts)
+
+    return ()
+end
+
+from starkware.cairo.common.memcpy import memcpy
+
+
+@external
+func assemble_with_box_{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (
+        owner: felt,
+        token_id_hint: felt,
+        uri_len: felt,
+        uri: felt*,
+        fts_len: felt,
+        fts: FTSpec*,
+        nfts_len: felt,
+        nfts: felt*,
+        box_token_id: felt,
+        shape_len: felt,
+        shape: ShapeItem*,
+    ):
+    alloc_locals
+    let (token_id) = _create_token_(owner, token_id_hint, uri_len, uri)
+
+    _transferFT(owner, token_id, fts_len, fts)
+    _transferNFT(owner, token_id, nfts_len, nfts)
+
+    local pedersen_ptr: HashBuiltin* = pedersen_ptr
+
+    let (box_address) = _box_address.read()
+    # Call the box contract to validate the shape (and wrap it inside ourselves)
+    IBoxContract.wrap_(
+        box_address,
+        owner,
+        token_id,
+        box_token_id,
+        shape_len,
+        shape,
+        fts_len,
+        fts,
+        nfts_len,
+        nfts
+    )
+
+    # Assert balance in box contract ?
+
+    return ()
+end
+
+func _create_token_{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (
+        owner: felt,
+        token_id_hint: felt,
+        uri_len: felt,
+        uri: felt*
+    ) -> (token_id: felt):
+    alloc_locals
+
     # TODO: consider allowing approved operators?
     _only(owner)
 
     assert_not_zero(owner)
-    # This can't actually overflow because calldata of 2^252 elements would break the universe first.
-    assert_not_zero(fts_len + nfts_len)
 
     let (local token_id: felt) = _hashTokenId(owner, token_id_hint, uri_len, uri)
 
@@ -149,9 +216,6 @@ func assemble_{
     let (balance) = _balance.read(owner)
     _balance.write(owner, balance + 1)
 
-    _transferFT(owner, token_id, fts_len, fts)
-    _transferNFT(owner, token_id, nfts_len, nfts)
-
     ERC721_enumerability._setTokenByOwner(owner, token_id, 0)
 
     _setTokenURI(TRUE, token_id, uri_len, uri)
@@ -159,56 +223,7 @@ func assemble_{
     ERC721_lib_transfer._onTransfer(0, owner, token_id)
     URI.emit(uri_len, uri, token_id)
 
-    return ()
-end
-
-from starkware.cairo.common.memcpy import memcpy
-
-# This functions assembles the NFT,
-# then calls the provided external contract's selector
-# Purpose:
-# - Decentralized augmentations should not be white-listed by the set contract.
-@external
-@raw_input
-func assemble_and_proxy_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr
-    } (
-        selector: felt,
-        calldata_size: felt,
-        calldata: felt*
-    ) -> (
-        #retdata_size: felt,
-        #retdata: felt*
-    ):
-    alloc_locals
-    let fts_len = calldata[2] * FTSpec.SIZE
-    let nfts_len = calldata[3 + fts_len] * 1
-    let uri_len = calldata[4 + fts_len + nfts_len] * 1
-
-    assemble_(
-        owner=calldata[0],
-        token_id_hint=calldata[1],
-        fts_len=calldata[2],
-        fts=cast(calldata + 3, FTSpec*),
-        nfts_len=calldata[3 + fts_len],
-        nfts=cast(calldata + 4 + fts_len, felt*),
-        uri_len=calldata[4 + fts_len + nfts_len],
-        uri=cast(calldata + 5 + fts_len + nfts_len, felt*)
-    )
-    
-    # Once assembled, we can proxy the call.
-    # NB -> we proxy the whole metadata.
-    call_contract(
-        contract_address=calldata[5 + fts_len + nfts_len + uri_len],
-        function_selector=calldata[6 + fts_len + nfts_len + uri_len],
-        calldata_size=calldata_size,
-        calldata=calldata
-    )
-    #(owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*, shape_len: felt, shape: ShapeItem*, target_shape_token_id: felt):
-    return ()
+    return (token_id)
 end
 
 
@@ -218,6 +233,58 @@ func disassemble_{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
+    
+    _destroy_token(owner, token_id)
+
+    _transferFT(token_id, owner, fts_len, fts)
+    _transferNFT(token_id, owner, nfts_len, nfts)
+
+    # Check that we sucessfully gave back all wrapped items.
+    let (briq_addr) = _briq_address.read()
+    let (mat_len, mat) = IBriqContract.materialsOf_(briq_addr, token_id)
+    assert mat_len = 0
+    let (box_addr) = _box_address.read()
+    let (balance) = IBoxContract.balanceOf_(box_addr, token_id)
+    assert balance = 0
+    # TODO: add generic support.
+
+    return ()
+end
+
+
+@external
+func disassemble_with_box_{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, box_token_id: felt):
+ 
+    _destroy_token(owner, token_id)
+
+    _transferFT(token_id, owner, fts_len, fts)
+    _transferNFT(token_id, owner, nfts_len, nfts)
+
+    let (box_address) = _box_address.read()
+    IBoxContract.unwrap_(box_address, owner, token_id, box_token_id)
+
+    # Check that we sucessfully gave back all wrapped items.
+    let (briq_addr) = _briq_address.read()
+    let (mat_len, mat) = IBriqContract.materialsOf_(briq_addr, token_id)
+    assert mat_len = 0
+    let (box_addr) = _box_address.read()
+    let (balance) = IBoxContract.balanceOf_(box_addr, token_id)
+    assert balance = 0
+    # TODO: add generic support.
+
+    return ()
+end
+
+
+func _destroy_token{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr
+    } (owner: felt, token_id: felt):
     alloc_locals
     _only(owner)
 
@@ -228,52 +295,11 @@ func disassemble_{
     assert curr_owner = owner
     _owner.write(token_id, 0)
 
-    _transferFT(token_id, curr_owner, fts_len, fts)
-    _transferNFT(token_id, curr_owner, nfts_len, nfts)
-
     let (balance) = _balance.read(owner)
-    _balance.write(curr_owner, balance - 1)
+    _balance.write(owner, balance - 1)
 
-    ERC721_enumerability._unsetTokenByOwner(curr_owner, token_id)
+    ERC721_enumerability._unsetTokenByOwner(owner, token_id)
 
-    ERC721_lib_transfer._onTransfer(curr_owner, 0, token_id)
-
-    return ()
-end
-
-# TODO
-@external
-func updateBriqs_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr
-    } (owner: felt, token_id: felt,
-        add_fts_len: felt, add_fts: FTSpec*,
-        add_nfts_len: felt, add_nfts: felt*,
-        remove_fts_len: felt, remove_fts: FTSpec*,
-        remove_nfts_len: felt, remove_nfts: felt*,
-        uri_len: felt, uri: felt*):
-    alloc_locals
-    _onlyAdmin()
-
-    assert_not_zero(token_id)
-    assert_not_zero(owner)
- 
-    let (local curr_owner) = _owner.read(token_id)
-    assert curr_owner = owner
-
-    _transferFT(owner, token_id, add_fts_len, add_fts)
-    _transferNFT(owner, token_id, add_nfts_len, add_nfts)
-
-    _transferFT(token_id, owner, remove_fts_len, remove_fts)
-    _transferNFT(token_id, owner, remove_nfts_len, remove_nfts)
-
-    # TODO: would be nice to be able to check that the set is not empty here.
-
-    _setTokenURI(FALSE, token_id, uri_len, uri)
-
-    URI.emit(uri_len, uri, token_id)
-
+    ERC721_lib_transfer._onTransfer(owner, 0, token_id)
     return ()
 end

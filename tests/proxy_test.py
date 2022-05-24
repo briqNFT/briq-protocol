@@ -45,7 +45,10 @@ async def setup_proxies_initial(compiled_proxy, compiled_briq, compiled_set):
     briq_proxy = briq_proxy.replace_abi(briq_impl.abi)
     set_proxy = set_proxy.replace_abi(set_impl.abi)
 
+    box_mock = await starknet.deploy(contract_def=compile_starknet_files(files=[os.path.join(CONTRACT_SRC, "mocks/box_mock.cairo")]))
+
     await set_proxy.setBriqAddress_(briq_proxy.contract_address).invoke(ADMIN)
+    await set_proxy.setBoxAddress_(box_mock.contract_address).invoke(ADMIN)
     await briq_proxy.setSetAddress_(set_proxy.contract_address).invoke(ADMIN)
 
     return starknet, briq_proxy, set_proxy

@@ -18,7 +18,7 @@ from contracts.utilities.authorization import (
 )
 
 
-from contracts.set_erc721.link_to_briq_token import (
+from contracts.set_erc721.link_to_ecosystem import (
     IBriqContract,
     _briq_address,
 )

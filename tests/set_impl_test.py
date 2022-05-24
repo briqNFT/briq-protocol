@@ -43,7 +43,9 @@ async def factory_root(compiled_set, compiled_briq):
     starknet = await Starknet.empty()
     set_contract = await starknet.deploy(contract_def=compiled_set)
     briq_contract = await starknet.deploy(contract_def=compiled_briq)
+    box_mock = await starknet.deploy(contract_def=compile_starknet_files(files=[os.path.join(CONTRACT_SRC, "mocks/box_mock.cairo")]))
     await set_contract.setBriqAddress_(address=briq_contract.contract_address).invoke(caller_address=ADMIN)
+    await set_contract.setBoxAddress_(address=box_mock.contract_address).invoke(caller_address=ADMIN)
     await briq_contract.setSetAddress_(address=set_contract.contract_address).invoke(caller_address=ADMIN)
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=50))
     return (starknet, set_contract, briq_contract)
@@ -171,6 +173,20 @@ async def test_minting_bad_duplicate_nft(briq_contract, set_contract):
     with pytest.raises(StarkException):
         await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, fts=[(1, 25)], nfts=[1 * 2**64 + 1, 1 * 2**64 + 1], uri=[1234]))
 
+@pytest.mark.asyncio
+async def test_minting_bad_disassembly(briq_contract, set_contract):
+    tok_id = hash_token_id(ADDRESS, 150, uri=[1234])
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=150, fts=[(1, 10)], nfts=[], uri=[1234]))
+    with pytest.raises(StarkException):
+        await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id, fts=[], nfts=[]))
+    with pytest.raises(StarkException):
+        await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id, fts=[(1, 15)], nfts=[]))
+    with pytest.raises(StarkException):
+        await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id, fts=[(1, 5)], nfts=[]))
+    with pytest.raises(StarkException):
+        await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id, fts=[(1, 10)], nfts=[2]))
+    # Finally the correct variant.
+    await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id, fts=[(1, 10)], nfts=[]))
 
 @pytest.mark.asyncio
 async def test_transfer_nft(set_contract):
@@ -277,59 +293,28 @@ async def test_token_uri_realms(briq_contract, set_contract):
 
 
 @pytest.mark.asyncio
-async def test_update_nft(briq_contract, set_contract):
-    await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=2, qty=50))
-    await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=1))
-    await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=2, uid=1))
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[2**64 + 1], uri=[1234]))
-
-    tok_id_1 = hash_token_id(ADDRESS, 0x1, uri=[1234])
-
-    assert (await briq_contract.balanceDetailsOf(tok_id_1, 1).call()).result.ft_balance == 10
-    assert (await briq_contract.balanceDetailsOf(tok_id_1, 1).call()).result.nft_ids == [2**64 + 1]
-    assert (await briq_contract.balanceOf(ADDRESS, 1).call()).result.balance == 40
-
-    await invoke_set(set_contract.updateBriqs_(owner=ADDRESS, token_id=tok_id_1,
-        add_fts=[(2, 10)], add_nfts=[2**64 + 2],
-        remove_fts=[(1, 10)], remove_nfts=[2**64 + 1],
-        uri=[0x1234]
-    ), ADMIN)
-
-    assert (await briq_contract.balanceOf(ADDRESS, 1).call()).result.balance == 51
-    assert (await briq_contract.balanceOf(ADDRESS, 2).call()).result.balance == 40
-    assert (await briq_contract.balanceDetailsOf(tok_id_1, 1).call()).result.ft_balance == 0
-    assert (await briq_contract.balanceDetailsOf(tok_id_1, 1).call()).result.nft_ids == []
-    assert (await briq_contract.balanceDetailsOf(tok_id_1, 2).call()).result.ft_balance == 10
-    assert (await briq_contract.balanceDetailsOf(tok_id_1, 2).call()).result.nft_ids == [2**64 + 2]
-
-
-@pytest.mark.asyncio
 async def test_events(starknet, set_contract):
     tok_id_1 = hash_token_id(ADDRESS, 0x1, uri=[1234])
 
     tok_id_1_as_uint = [tok_id_1 & (2**128 - 1), tok_id_1 >> 128]
 
     await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], uri=[1234]))
-    await invoke_set(set_contract.updateBriqs_(owner=ADDRESS, token_id=tok_id_1,
-        add_fts=[], add_nfts=[],
-        remove_fts=[], remove_nfts=[],
-        uri=[4321]
-    ), ADMIN)
+    await invoke_set(set_contract.setTokenURI_(token_id=tok_id_1, uri=[4321]), ADMIN)
     await invoke_set(set_contract.transferFrom_(sender=ADDRESS, recipient=OTHER_ADDRESS, token_id=tok_id_1))
     await invoke_set(set_contract.disassemble_(owner=OTHER_ADDRESS, token_id=tok_id_1, fts=[(1, 10)], nfts=[]), OTHER_ADDRESS)
 
     events = starknet.state.events
-    
-    assert set_contract.event_manager._selector_to_name[events[2].keys[0]] == 'Transfer'
-    assert events[2].data == [0, ADDRESS, *tok_id_1_as_uint]
-    assert set_contract.event_manager._selector_to_name[events[3].keys[0]] == 'URI'
-    assert events[3].data == [1, 1234, tok_id_1]
+
+    assert set_contract.event_manager._selector_to_name[events[1].keys[0]] == 'Transfer'
+    assert events[1].data == [0, ADDRESS, *tok_id_1_as_uint]
+    assert set_contract.event_manager._selector_to_name[events[2].keys[0]] == 'URI'
+    assert events[2].data == [1, 1234, tok_id_1]
     assert set_contract.event_manager._selector_to_name[events[4].keys[0]] == 'URI'
     assert events[4].data == [1, 4321, tok_id_1]
     assert set_contract.event_manager._selector_to_name[events[5].keys[0]] == 'Transfer'
     assert events[5].data == [ADDRESS, OTHER_ADDRESS, *tok_id_1_as_uint]
-    assert set_contract.event_manager._selector_to_name[events[7].keys[0]] == 'Transfer'
-    assert events[7].data == [OTHER_ADDRESS, 0, *tok_id_1_as_uint]
+    assert set_contract.event_manager._selector_to_name[events[6].keys[0]] == 'Transfer'
+    assert events[6].data == [OTHER_ADDRESS, 0, *tok_id_1_as_uint]
 
 
 @pytest.mark.asyncio

@@ -1,3 +1,4 @@
+from collections import namedtuple
 import os
 from typing import Tuple
 import pytest
@@ -12,9 +13,13 @@ from starkware.starknet.compiler.compile import compile_starknet_files, compile_
 
 from starkware.starknet.public.abi import get_selector_from_name
 
+from generators.shape_utils import to_shape_data, compress_shape_item
+
 from .briq_impl_test import FAKE_BRIQ_PROXY_ADDRESS, compiled_briq, invoke_briq
+from starkware.starknet.testing.objects import StarknetTransactionExecutionInfo
 
 import asyncio
+
 @pytest.fixture(scope="session")
 def event_loop():
     return asyncio.get_event_loop()
@@ -22,13 +27,10 @@ def event_loop():
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 
-FAKE_SET_PROXY_ADDRESS = 0xcafefade
-ADMIN = 0x0  # No proxy so no admin
-ADDRESS = 0x123456
-OTHER_ADDRESS = 0x654321
-THIRD_ADDRESS = 0x551155
+ADDRESS = 0xcafe
+OTHER_ADDRESS = 0xd00d
+MOCK_SHAPE_TOKEN = 0xdeadfade
 
-MOCK_SHAPE_TOKEN=555
 
 def compile(path):
     return compile_starknet_files(
@@ -37,76 +39,39 @@ def compile(path):
         disable_hint_validation=True
     )
 
-@pytest.fixture(scope="session")
-def compiled_set():
-    return compile("set_impl.cairo")
 
-
-@pytest.fixture(scope="session")
-def compiled_box():
-    return compile("box.cairo")
-
-
-@pytest_asyncio.fixture(scope="session")
-async def factory_root(compiled_set, compiled_briq, compiled_box):
+@pytest_asyncio.fixture(scope="module")
+async def factory_root():
     starknet = await Starknet.empty()
-    set_contract = await starknet.deploy(contract_def=compiled_set)
-    briq_contract = await starknet.deploy(contract_def=compiled_briq)
-    box_contract = await starknet.deploy(contract_def=compiled_box)
-    await set_contract.setBriqAddress_(address=briq_contract.contract_address).invoke(caller_address=ADMIN)
-    await briq_contract.setSetAddress_(address=set_contract.contract_address).invoke(caller_address=ADMIN)
-    await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=100))
-    await box_contract.setSetAddress_(address=set_contract.contract_address).invoke(caller_address=ADMIN)
+    briq_contract = await starknet.deploy(contract_def=compile("briq_impl.cairo"))
+    set_contract = await starknet.deploy(contract_def=compile("set_impl.cairo"))
+    box_contract = await starknet.deploy(contract_def=compile("box.cairo"))
+    await set_contract.setBriqAddress_(briq_contract.contract_address).invoke()
+    await set_contract.setBoxAddress_(box_contract.contract_address).invoke()
+    await briq_contract.setSetAddress_(set_contract.contract_address).invoke()
+    await box_contract.setSetAddress_(set_contract.contract_address).invoke()
+    await briq_contract.mintFT_(ADDRESS, 0x1, 100).invoke()
+    return [starknet, set_contract, briq_contract, box_contract]
 
-    shape_mock = await starknet.deploy(contract_def=compile("mocks/shape_mock.cairo"))
-    await box_contract.mint_(MOCK_SHAPE_TOKEN, MOCK_SHAPE_TOKEN, shape_mock.contract_address).invoke()
-    return (starknet, set_contract, briq_contract, box_contract)
+
+def proxy_contract(state, contract):
+    return StarknetContract(
+        state=state.state,
+        abi=contract.abi,
+        contract_address=contract.contract_address,
+        deploy_execution_info=contract.deploy_execution_info,
+    )
 
 @pytest_asyncio.fixture
 async def factory(factory_root):
-    [starknet, sc, bc, box] = factory_root
+    [starknet, set_contract, briq_contract, box_contract] = factory_root
     state = Starknet(state=starknet.state.copy())
-    sc = StarknetContract(
-        state=state.state,
-        abi=sc.abi,
-        contract_address=sc.contract_address,
-        deploy_execution_info=sc.deploy_execution_info,
+    return namedtuple('State', ['starknet', 'set_contract', 'briq_contract', 'box_contract'])(
+        starknet=state,
+        set_contract=proxy_contract(state, set_contract),
+        briq_contract=proxy_contract(state, briq_contract),
+        box_contract=proxy_contract(state, box_contract),
     )
-    bc = StarknetContract(
-        state=state.state,
-        abi=bc.abi,
-        contract_address=bc.contract_address,
-        deploy_execution_info=bc.deploy_execution_info,
-    )
-    box = StarknetContract(
-        state=state.state,
-        abi=box.abi,
-        contract_address=box.contract_address,
-        deploy_execution_info=box.deploy_execution_info,
-    )
-    return (state, sc, bc, box)
-
-@pytest_asyncio.fixture
-async def set_contract(factory):
-    [starknet, sc, _, _] = factory
-    return sc
-
-@pytest_asyncio.fixture
-async def starknet(factory: Tuple[Starknet, StarknetContract, StarknetContract]):
-    [starknet, sc, bc] = factory
-    return starknet
-
-def invoke_set(call, addr=ADDRESS):
-    return call.invoke(caller_address=addr)
-
-def hash_token_id(owner: int, hint: int, uri):
-    raw_tid = compute_hash_on_elements([owner, hint]) & ((2**251 - 1) - (2**59 - 1))
-    if len(uri) == 2 and uri[1] < 2**59:
-        raw_tid += uri[1]
-    return raw_tid
-
-from generators.shape_utils import compress_shape_item, compress_long_shape_item
-from starkware.starknet.testing.objects import StarknetTransactionExecutionInfo
 
 def report_performance(exc_info: StarknetTransactionExecutionInfo):
     gas_cost = exc_info.call_info.execution_resources
@@ -116,68 +81,123 @@ def report_performance(exc_info: StarknetTransactionExecutionInfo):
     print("Range: ", gas_cost.builtin_instance_counter['range_check_builtin'], " gas cost: ", gas_cost.builtin_instance_counter['range_check_builtin'] * 0.4)
     print("Bitwise: ", gas_cost.builtin_instance_counter['bitwise_builtin'], " gas cost: ", gas_cost.builtin_instance_counter['bitwise_builtin'] * 12.8)
 
-def shapeItem(contract, i, material):
-    return contract.ShapeItem(*compress_shape_item(color="#ffaaff", material=material, x=i, y=4, z=-2))
-
 # The purpose of this test is to compare the L2 gas costs
-# On some simple shape-checking operations of 80 briqs. The material layout is different, resulting in different gas costs.
+# On some simple shape-checking operations of 100 briqs. The material layout is different, resulting in different gas costs.
 # In the current setup, gas costs are capped by bitwise comparisons (O(n) in # of briqs) for few materials,
 # but with enough materials, the steps start to dominate because of the counter-incrementing logic.
 # It's actually fairly well-balanced, so nice.
 
 @pytest.mark.asyncio
-async def test_performance_optimal(set_contract: StarknetContract, factory):
-    [_, _, _, box] = factory
-    call = set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1,
-        fts=[(1, 80)], nfts=[], uri=[1234])
-    call.name = 'assemble_and_proxy_'
-    call.calldata += [box.contract_address, get_selector_from_name("on_set_assembly_")]
-    shape_data = [compress_shape_item(color="#ffaaff", material=1, x=i, y=4, z=-2) for i in range(80)]
-    call.calldata += [len(shape_data)] + [z for shape_item in shape_data for z in shape_item]
-    call.calldata += [MOCK_SHAPE_TOKEN]
-    ex_info = await call.invoke(ADDRESS)
-    report_performance(ex_info)
+async def test_performance_optimal(factory):
+    state = factory
+    TOKEN_HINT = 1234
+    TOKEN_URI = [1234]
+    BOX_TOKEN_ID = 1234
+    data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
+    data = data.replace("#DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 100
+
+    shape_data:
+    {' '.join([to_shape_data('#ffaaff', 1, i, 0, 2) for i in range(100)])}
+    shape_data_end:
+    nft_data:
+    nft_data_end:
+""")
+    # write to a file so we can get error messages.
+    test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
+    shape_contract = await state.starknet.deploy(contract_def=test_code)
+
+    await state.box_contract.mint_(ADDRESS, BOX_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+
+    tx_info = await state.set_contract.assemble_with_box_(
+        owner=ADDRESS,
+        token_id_hint=TOKEN_HINT,
+        uri=TOKEN_URI,
+        fts=[(0x1, 100)],
+        nfts=[],
+        box_token_id=BOX_TOKEN_ID,
+        shape=[compress_shape_item('#ffaaff', 0x1, i, 0, 2, False) for i in range(100)],
+    ).invoke(ADDRESS)
+    report_performance(tx_info)
+
 
 @pytest.mark.asyncio
-async def test_performance_less_optimal(set_contract: StarknetContract, factory):
-    [_, _, briq_contract, box] = factory
-    await briq_contract.mintFT(ADDRESS, 2, 50).invoke()
-    call = set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1,
-        fts=[(1, 65), (2, 15)], nfts=[], uri=[1234])
-    call.name = 'assemble_and_proxy_'
-    call.calldata += [box.contract_address, get_selector_from_name("on_set_assembly_")]
-    shape_data = [compress_shape_item(color="#ffaaff", material=1, x=i, y=4, z=-2) for i in range(65)
-        ] + [compress_shape_item(color="#ffaaff", material=2, x=i, y=4, z=0) for i in range(15)]
-    call.calldata += [len(shape_data)] + [z for shape_item in shape_data for z in shape_item]
-    call.calldata += [MOCK_SHAPE_TOKEN]
-    ex_info = await call.invoke(ADDRESS)
-    report_performance(ex_info)
+async def test_performance_less_optimal(factory):
+    state = factory
+    await state.briq_contract.mintFT_(ADDRESS, 0x2, 100).invoke()
+    TOKEN_HINT = 1234
+    TOKEN_URI = [1234]
+    BOX_TOKEN_ID = 1234
+    data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
+    data = data.replace("#DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 100
 
+    shape_data:
+    {' '.join([to_shape_data('#ffaaff', 1, 0, i, 2) for i in range(80)])}
+    {' '.join([to_shape_data('#ffaaff', 2, 1, i, 2) for i in range(20)])}
+    shape_data_end:
+    nft_data:
+    nft_data_end:
+""")
+    # write to a file so we can get error messages.
+    test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
+    shape_contract = await state.starknet.deploy(contract_def=test_code)
+
+    await state.box_contract.mint_(ADDRESS, BOX_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+
+    tx_info = await state.set_contract.assemble_with_box_(
+        owner=ADDRESS,
+        token_id_hint=TOKEN_HINT,
+        uri=TOKEN_URI,
+        fts=[(0x1, 80), (0x2, 20)],
+        nfts=[],
+        box_token_id=BOX_TOKEN_ID,
+        shape=[compress_shape_item('#ffaaff', 0x1, 0, i, 2, False) for i in range(80)] + [
+            compress_shape_item('#ffaaff', 0x2, 1, i, 2, False) for i in range(20)
+        ],
+    ).invoke(ADDRESS)
+    report_performance(tx_info)
 
 @pytest.mark.asyncio
-async def test_performance_bad_case(set_contract: StarknetContract, factory):
-    [_, _, briq_contract, box] = factory
-    await briq_contract.mintFT(ADDRESS, 2, 50).invoke()
-    await briq_contract.mintFT(ADDRESS, 3, 50).invoke()
-    await briq_contract.mintFT(ADDRESS, 4, 50).invoke()
-    await briq_contract.mintFT(ADDRESS, 5, 50).invoke()
-    await briq_contract.mintFT(ADDRESS, 6, 50).invoke()
-    await briq_contract.mintFT(ADDRESS, 7, 50).invoke()
-    await briq_contract.mintFT(ADDRESS, 8, 50).invoke()
-    call = set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1,
-        fts=[(1, 10), (2, 10), (3, 10), (4, 10), (5, 10), (6, 10), (7, 10), (8, 10)], nfts=[], uri=[1234])
-    call.name = 'assemble_and_proxy_'
-    call.calldata += [box.contract_address, get_selector_from_name("on_set_assembly_")]
-    shape_data = [
-        compress_shape_item(color="#ffaaff", material=1, x=i, y=4, z=-2) for i in range(10)] + [
-        compress_shape_item(color="#ffaaff", material=2, x=i, y=4, z=-1) for i in range(10)] + [
-        compress_shape_item(color="#ffaaff", material=3, x=i, y=4, z=0) for i in range(10)] + [
-        compress_shape_item(color="#ffaaff", material=4, x=i, y=4, z=1) for i in range(10)] + [
-        compress_shape_item(color="#ffaaff", material=5, x=i, y=4, z=2) for i in range(10)] + [
-        compress_shape_item(color="#ffaaff", material=6, x=i, y=4, z=3) for i in range(10)] + [
-        compress_shape_item(color="#ffaaff", material=7, x=i, y=4, z=4) for i in range(10)] + [
-        compress_shape_item(color="#ffaaff", material=8, x=i, y=4, z=5) for i in range(10)]
-    call.calldata += [len(shape_data)] + [z for shape_item in shape_data for z in shape_item]
-    call.calldata += [MOCK_SHAPE_TOKEN]
-    ex_info = await call.invoke(ADDRESS)
-    report_performance(ex_info)
+async def test_performance_bad(factory):
+    state = factory
+    await state.briq_contract.mintFT_(ADDRESS, 0x2, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x3, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x4, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x5, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x6, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x7, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x8, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x9, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0xA, 10).invoke()
+    TOKEN_HINT = 1234
+    TOKEN_URI = [1234]
+    BOX_TOKEN_ID = 1234
+    data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
+    data = data.replace("#DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 100
+
+    shape_data:
+    {' '.join([to_shape_data('#ffaaff', j+1, j, i, 2) for j in range(10) for i in range(10)])}
+    shape_data_end:
+    nft_data:
+    nft_data_end:
+""")
+    # write to a file so we can get error messages.
+    test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
+    shape_contract = await state.starknet.deploy(contract_def=test_code)
+
+    await state.box_contract.mint_(ADDRESS, BOX_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+
+    tx_info = await state.set_contract.assemble_with_box_(
+        owner=ADDRESS,
+        token_id_hint=TOKEN_HINT,
+        uri=TOKEN_URI,
+        fts=[(i + 1, 10) for i in range(10)],
+        nfts=[],
+        box_token_id=BOX_TOKEN_ID,
+        shape=[
+            compress_shape_item('#ffaaff', j+1, j, i, 2, False) for j in range(10) for i in range(10)
+        ],
+    ).invoke(ADDRESS)
+    report_performance(tx_info)

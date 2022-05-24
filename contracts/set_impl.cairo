@@ -11,7 +11,7 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.set_erc721.link_to_briq_token import set_briq
+from contracts.set_erc721.link_to_ecosystem import set_ecosystem
 
 from contracts.library_erc721.approvals import ERC721_approvals
 from contracts.library_erc721.balance import ERC721 as ERC721_balance
