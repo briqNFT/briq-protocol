@@ -10,7 +10,7 @@ from contracts.set_impl import (
     ERC721_approvals,
     ERC721_balance,
     ERC721_enumerability,
-    ERC271_transferability,
+    ERC721_transferability,
     tokenURI_,
     tokenURIData_,
 )
@@ -122,7 +122,7 @@ func transferFrom{
         range_check_ptr
     } (from_: felt, to: felt, tokenId: Uint256):
     let (_tok) = _uint_to_felt(tokenId)
-    ERC271_transferability.transferFrom_(from_, to, _tok)
+    ERC721_transferability.transferFrom_(from_, to, _tok)
     return ()
 end
 

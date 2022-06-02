@@ -7,7 +7,7 @@ from contracts.library_erc721.transferability_library import ERC721_lib_transfer
 
 from contracts.library_erc721.enumerability import ERC721_enumerability
 
-namespace ERC271_transferability:
+namespace ERC721_transferability:
     @external
     func transferFrom_{
             syscall_ptr: felt*,

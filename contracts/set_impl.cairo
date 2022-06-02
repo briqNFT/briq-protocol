@@ -24,7 +24,7 @@ from contracts.set_erc721.token_uri import (
     is_realms_set_,
 )
 
-from contracts.library_erc721.transferability_enum import ERC271_transferability
+from contracts.library_erc721.transferability_enum import ERC721_transferability
 
 from contracts.set_erc721.assembly import (
     assemble_,
@@ -52,6 +52,6 @@ end
 @view
 func transferOneNFT{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
-    ERC271_transferability.transferFrom_(sender, recipient, token_id)
+    ERC721_transferability.transferFrom_(sender, recipient, token_id)
     return ()
 end

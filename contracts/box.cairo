@@ -11,7 +11,7 @@ from contracts.upgrades.upgradable_mixin import (
 
 from contracts.library_erc721.approvals import ERC721_approvals
 from contracts.library_erc721.balance import ERC721 as ERC721_b
-from contracts.library_erc721.transferability import ERC271_transferability
+from contracts.library_erc721.transferability import ERC721_transferability
 
 from contracts.box_erc721.minting import box_minting
 from contracts.box_erc721.token_uri import box_token_uri
