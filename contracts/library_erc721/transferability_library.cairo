@@ -67,6 +67,9 @@ namespace ERC721_lib_transfer:
         let (balance) = _balance.read(sender)
         _balance.write(sender, balance - 1)
         let (balance) = _balance.read(recipient)
+        with_attr error_message("Transfer would overflow recipient balance"):
+            assert_lt_felt(balance, balance + 1)
+        end
         _balance.write(recipient, balance + 1)
 
         _onTransfer(sender, recipient, token_id)
