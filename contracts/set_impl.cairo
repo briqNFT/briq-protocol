@@ -35,21 +35,21 @@ from contracts.types import FTSpec
 
 # Temporary retro-compatibility interface.
 
-@view
+@external
 func assemble{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
     } (owner: felt, token_id_hint: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, uri_len: felt, uri: felt*):
     assemble_(owner, token_id_hint, fts_len, fts, nfts_len, nfts, uri_len, uri)
     return ()
 end
 
-@view
+@external
 func disassemble{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
     } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*):
     disassemble_(owner, token_id, fts_len, fts, nfts_len, nfts)
     return ()
 end
 
-@view
+@external
 func transferOneNFT{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
     } (sender: felt, recipient: felt, token_id: felt):
     ERC721_transferability.transferFrom_(sender, recipient, token_id)
