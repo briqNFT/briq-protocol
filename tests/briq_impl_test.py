@@ -410,3 +410,18 @@ async def test_mint_non_fungible_overflow_reduce_balance(briq_contract):
     # Minting an FT fails - total supply overflow.
     with pytest.raises(StarkException, match="Overflow in total supply"):
         await invoke_briq(briq_contract.mintFT_(owner=ADDRESS, material=1, qty=1))
+
+@pytest.mark.asyncio
+async def test_transfer_mismatch_material_nft_id(briq_contract):
+    await invoke_briq(briq_contract.mintOneNFT_(owner=ADDRESS, material=2, uid=1))
+    assert(await briq_contract.ownerOf_(2 ** 64 + 2).call()).result.owner == ADDRESS
+    with pytest.raises(StarkException):
+        await invoke_briq(briq_contract.transferOneNFT_(sender=ADDRESS, recipient=OTHER_ADDRESS, material=0, briq_token_id=2**64 + 2), addr=ADDRESS)
+    with pytest.raises(StarkException, match="briq_token_id is not an NFT"):
+        await invoke_briq(briq_contract.transferOneNFT_(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, briq_token_id=1), addr=ADDRESS)
+    with pytest.raises(StarkException, match="material does not match briq_token_id"):
+        await invoke_briq(briq_contract.transferOneNFT_(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, briq_token_id=2**64 + 2), addr=ADDRESS)
+    with pytest.raises(StarkException, match="material does not match briq_token_id"):
+        await invoke_briq(briq_contract.transferOneNFT_(sender=ADDRESS, recipient=OTHER_ADDRESS, material=3, briq_token_id=2**64 + 2), addr=ADDRESS)
+    await invoke_briq(briq_contract.transferOneNFT_(sender=ADDRESS, recipient=OTHER_ADDRESS, material=2, briq_token_id=2**64 + 2), addr=ADDRESS)
+    assert(await briq_contract.ownerOf_(2 ** 64 + 2).call()).result.owner == OTHER_ADDRESS
