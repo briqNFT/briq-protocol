@@ -5,6 +5,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, assert_not_zero, assert_lt_felt, unsigned_div_rem, assert_not_equal
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
+from starkware.cairo.common.bool import FALSE
 
 from starkware.cairo.common.bitwise import bitwise_and
 
@@ -138,6 +139,7 @@ func _setTokenURI{
     } (may_use_special_token_mode: felt, token_id: felt, uri_len: felt, uri: felt*):
     assert_not_zero(uri_len)
     assert_lt_felt(uri[0], 2**249)
+    assert_lt_felt(may_use_special_token_mode, 2)
 
     # This is 0 or 1
     if uri_len * may_use_special_token_mode == 2:
@@ -181,7 +183,7 @@ func setTokenURI_{
     let (owner) = _owner.read(token_id)
     assert_not_zero(owner)
     
-    _setTokenURI(0, token_id, uri_len, uri)
+    _setTokenURI(FALSE, token_id, uri_len, uri)
 
     URI.emit(uri_len, uri, token_id)
 

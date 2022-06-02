@@ -6,6 +6,7 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
+from starkware.cairo.common.bool import FALSE, TRUE
 from starkware.starknet.common.syscalls import call_contract
 
 from starkware.cairo.common.bitwise import bitwise_and
@@ -153,7 +154,7 @@ func assemble_{
 
     ERC721_enumerability._setTokenByOwner(owner, token_id, 0)
 
-    _setTokenURI(1, token_id, uri_len, uri)
+    _setTokenURI(TRUE, token_id, uri_len, uri)
 
     ERC721_lib_transfer._onTransfer(0, owner, token_id)
     URI.emit(uri_len, uri, token_id)
@@ -270,7 +271,7 @@ func updateBriqs_{
 
     # TODO: would be nice to be able to check that the set is not empty here.
 
-    _setTokenURI(0, token_id, uri_len, uri)
+    _setTokenURI(FALSE, token_id, uri_len, uri)
 
     URI.emit(uri_len, uri, token_id)
 
