@@ -1,6 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
+from starkware.cairo.common.math import assert_not_zero
 
 from contracts.library_erc721.approvals import ERC721_approvals
 from contracts.library_erc721.transferability_library import ERC721_lib_transfer

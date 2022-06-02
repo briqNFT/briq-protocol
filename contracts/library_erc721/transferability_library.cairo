@@ -52,6 +52,11 @@ namespace ERC721_lib_transfer:
             pedersen_ptr: HashBuiltin*,
             range_check_ptr
         } (sender: felt, recipient: felt, token_id: felt):
+
+        assert_not_zero(recipient)
+        assert_not_zero(sender - recipient)
+        assert_not_zero(token_id)
+
         # Reset approval (0 cost if was 0 before on starknet I believe)
         ERC721_approvals.approve_nocheck_(0, token_id)
 
