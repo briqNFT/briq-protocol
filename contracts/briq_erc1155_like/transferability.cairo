@@ -94,6 +94,7 @@ func transferFT_{
     
     assert_not_zero(sender)
     assert_not_zero(recipient)
+    assert_not_zero(sender - recipient)
     assert_not_zero(material)
     assert_lt_felt(material, 2 ** 64) # Technically un-necessary, since balance would be 0
     assert_not_zero(qty)
@@ -133,6 +134,7 @@ func transferOneNFT_{
 
     assert_not_zero(sender)
     assert_not_zero(recipient)
+    assert_not_zero(sender - recipient)
     assert_not_zero(material)
 
     # Technically un-necessary, balance would be 0.
