@@ -4,11 +4,17 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.cairo.common.math import assert_not_zero
 from starkware.starknet.common.syscalls import delegate_l1_handler, delegate_call
 from contracts.OZ.upgrades.library import (
     Proxy_implementation_address,
     Proxy_initializer,
     Proxy_set_implementation,
+)
+
+from contracts.upgrades.events import (
+    ProxyAdminSet,
+    ProxyImplementationSet,
 )
 
 #
@@ -21,8 +27,12 @@ func constructor{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     }(admin: felt, implementation_address: felt):
+    assert_not_zero(admin)
+    assert_not_zero(implementation_address)
     Proxy_initializer(admin)
     Proxy_set_implementation(implementation_address)
+    ProxyAdminSet.emit(admin)
+    ProxyImplementationSet.emit(implementation_address)
     return ()
 end
 

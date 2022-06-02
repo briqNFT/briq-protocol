@@ -1,8 +1,10 @@
 # Import this to make a contract upgradable, but only for admins.
+# To turn off upgradability, simply remove the mixin from the contract and upgrade one last time.
 
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.cairo.common.math import assert_not_zero
 from contracts.OZ.upgrades.library import (
     Proxy_get_admin,
     Proxy_get_implementation,
@@ -12,6 +14,11 @@ from contracts.OZ.upgrades.library import (
 )
 from contracts.utilities.authorization import (
     _onlyAdmin
+)
+
+from contracts.upgrades.events import (
+    ProxyAdminSet,
+    ProxyImplementationSet,
 )
 
 @view
@@ -44,7 +51,9 @@ func upgradeImplementation_{
         range_check_ptr
     } (new_implementation: felt):
     _onlyAdmin()
+    assert_not_zero(new_implementation)
     Proxy_set_implementation(new_implementation)
+    ProxyImplementationSet.emit(new_implementation)
     return ()
 end
 
@@ -55,6 +64,8 @@ func setRootAdmin_{
         range_check_ptr
     } (new_admin: felt):
     _onlyAdmin()
+    assert_not_zero(new_admin)
     Proxy_set_admin(new_admin)
+    ProxyAdminSet.emit(new_admin)
     return ()
 end
