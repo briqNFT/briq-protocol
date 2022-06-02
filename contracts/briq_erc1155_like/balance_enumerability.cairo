@@ -40,7 +40,7 @@ func ownerOf_{
         range_check_ptr
     } (token_id: felt) -> (owner: felt):
     let (res) = _owner.read(token_id)
-    # OZ ∆: don't fail on res == 0, since 0 is impossible.
+    # Unlike the ERC1155 standard, don't assert that token_id != 0. This will just return 0.
     return (res)
 end
 
