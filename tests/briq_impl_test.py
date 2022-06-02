@@ -4,7 +4,7 @@ import pytest_asyncio
 
 from starkware.starknet.testing.starknet import Starknet
 from starkware.starkware_utils.error_handling import StarkException
-
+from starkware.crypto.signature.signature import FIELD_PRIME
 
 from starkware.starknet.compiler.compile import compile_starknet_files
 
@@ -379,3 +379,34 @@ async def test_mint_token_id_zero(briq_contract):
     assert maliciousTokenId == 0
     with pytest.raises(StarkException):
         await invoke_briq(briq_contract.mintOneNFT_(owner=OTHER_ADDRESS, material=maliciousMaterial, uid=maliciousUid))
+
+@pytest.mark.asyncio
+async def test_mint_fungible_negative_are_treated_as_positive(briq_contract):
+    # Mint -10 fungible tokens.
+    await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=-10))
+    # Record the balance
+    balance = (await briq_contract.balanceOfMaterial(owner=ADDRESS, material=1).call()).result.balance
+    # Balance is extremely large
+    # The value of balance will specifically be the `P` prime value of Starknet minus 10
+    assert balance == FIELD_PRIME - 10
+    # This is considered expected - negative numbers are not valid input for minting, and are treated as positive.
+    # I don't want to set an arbitrary limit to the mint function here, so this is a passing test.
+
+@pytest.mark.asyncio
+async def test_mint_fungible_overflow_reduce_balance(briq_contract):
+    # Mint 100 fungible tokens to `ADDRESS`
+    await invoke_briq(briq_contract.mintFT_(owner=ADDRESS, material=1, qty=100))
+    # Mint -10 fungible tokens fails - overflow in total supply (balance is never even reached).
+    with pytest.raises(StarkException, match="Overflow in total supply"):
+        await invoke_briq(briq_contract.mintFT_(owner=ADDRESS, material=1, qty=-10))
+
+@pytest.mark.asyncio
+async def test_mint_non_fungible_overflow_reduce_balance(briq_contract):
+    # Mint PRIME-1 fungible tokens to `ADDRESS`
+    await invoke_briq(briq_contract.mintFT_(owner=ADDRESS, material=1, qty=-1))
+    # Minting an NFT fails - total supply overflow.
+    with pytest.raises(StarkException, match="Overflow in total supply"):
+        await invoke_briq(briq_contract.mintOneNFT_(owner=ADDRESS, material=1, uid=1))
+    # Minting an FT fails - total supply overflow.
+    with pytest.raises(StarkException, match="Overflow in total supply"):
+        await invoke_briq(briq_contract.mintFT_(owner=ADDRESS, material=1, qty=1))

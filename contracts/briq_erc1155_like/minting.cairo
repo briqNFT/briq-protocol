@@ -85,12 +85,18 @@ func mintFT_{
 
     # Update total supply.
     let (res) = _total_supply.read(material)
+    with_attr error_message("Overflow in total supply"):
+        assert_lt_felt(res, res + qty)
+    end
     _total_supply.write(material, res + qty)
 
     # FT conversion
     let briq_token_id = material
 
     let (balance) = _balance.read(owner, briq_token_id)
+    with_attr error_message("Overflow in balance"):
+        assert_lt_felt(balance, balance + qty)
+    end
     _balance.write(owner, briq_token_id, balance + qty)
 
     _setMaterialByOwner(owner, material, 0)
@@ -117,6 +123,9 @@ func mintOneNFT_{
 
     # Update total supply.
     let (res) = _total_supply.read(material)
+    with_attr error_message("Overflow in total supply"):
+        assert_lt_felt(res, res + 1)
+    end
     _total_supply.write(material, res + 1)
 
     # NFT conversion
