@@ -106,6 +106,9 @@ func transferFT_{
     _balance.write(sender, briq_token_id, balance_sender - qty)
     
     let (balance) = _balance.read(recipient, briq_token_id)
+    with_attr error_message("Transfer would overflow recipient balance"):
+        assert_lt_felt(balance, balance + qty)
+    end
     _balance.write(recipient, briq_token_id, balance + qty)
 
     _maybeUnsetMaterialByOwner(sender, material)
