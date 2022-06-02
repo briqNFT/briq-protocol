@@ -80,6 +80,7 @@ func mintFT_{
 
     assert_not_zero(owner)
     assert_not_zero(material)
+    assert_lt_felt(material, 2**64)
     assert_not_zero(qty)
 
     # Update total supply.
@@ -110,6 +111,7 @@ func mintOneNFT_{
 
     assert_not_zero(owner)
     assert_not_zero(material)
+    assert_lt_felt(material, 2**64)
     assert_not_zero(uid)
     assert_lt_felt(uid, 2**188)
 

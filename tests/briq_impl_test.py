@@ -362,3 +362,20 @@ async def test_events(starknet, briq_contract):
     assert events[13].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2**64 + 2, 1]
     assert briq_contract.event_manager._selector_to_name[events[14].keys[0]] == 'ConvertToNFT'
     assert events[14].data == [OTHER_ADDRESS, 2, 2**64 + 2]
+
+
+@pytest.mark.asyncio
+async def test_mint_ft_nft_collision(briq_contract):
+    # Regression test - attempt to mint a fungible token with an NFT ID.
+    with pytest.raises(StarkException):
+        await invoke_briq(briq_contract.mintFT_(owner=OTHER_ADDRESS, material=2**64 + 1, qty=1))
+
+@pytest.mark.asyncio
+async def test_mint_token_id_zero(briq_contract):
+    # Regression test - attempt to create a 0 token_id by combining material and UID.
+    maliciousMaterial = -abs(2**64)
+    maliciousUid = 1
+    maliciousTokenId = maliciousUid * 2**64 + maliciousMaterial
+    assert maliciousTokenId == 0
+    with pytest.raises(StarkException):
+        await invoke_briq(briq_contract.mintOneNFT_(owner=OTHER_ADDRESS, material=maliciousMaterial, uid=maliciousUid))
