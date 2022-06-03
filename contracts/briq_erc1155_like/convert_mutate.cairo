@@ -51,18 +51,28 @@ func mutateFT_{
     _onlyAdmin()
     
     assert_not_zero(qty * (source_material - target_material))
+    assert_not_zero(target_material)
+    assert_lt_felt(target_material, 2**64)
 
     let (balance) = _balance.read(owner, source_material)
-    assert_le_felt(qty, balance)
+    with_attr error_message("Not enough briqs to mutate"):
+        assert_le_felt(qty, balance)
+    end
     _balance.write(owner, source_material, balance - qty)
     
     let (balance) = _balance.read(owner, target_material)
+    with_attr error_message("Mutate would overflow recipient balance"):
+        assert_le_felt(balance, balance + qty)
+    end
     _balance.write(owner, target_material, balance + qty)
 
     let (res) = _total_supply.read(source_material)
     _total_supply.write(source_material, res - qty)
 
     let (res) = _total_supply.read(target_material)
+    with_attr error_message("Mutate would overflow total supply"):
+        assert_le_felt(res, res + qty)
+    end
     _total_supply.write(target_material, res + qty)
 
     _setMaterialByOwner(owner, target_material, 0)
@@ -75,7 +85,8 @@ func mutateFT_{
     return ()
 end
 
-# The UI can potentially conflict. To avoid that situation, pass new_uid different from existing uid.
+# The general assumption is that new_uid == uid, but there can already be an NFT with that UID
+# and the target_material, in which case you can passe a different value instead.
 @external
 func mutateOneNFT_{
         syscall_ptr: felt*,
@@ -87,6 +98,8 @@ func mutateOneNFT_{
     assert_lt_felt(uid, 2**188)
     assert_lt_felt(new_uid, 2**188)
     assert_not_zero(source_material - target_material)
+    assert_not_zero(target_material)
+    assert_lt_felt(target_material, 2**64)
 
     # NFT conversion
     let (res) = _total_supply.read(source_material)
@@ -102,6 +115,9 @@ func mutateOneNFT_{
     _maybeUnsetMaterialByOwner(owner, source_material) # Keep after unset token or it won't unset
 
     let (res) = _total_supply.read(target_material)
+    with_attr error_message("Mutate would overflow total supply"):
+        assert_le_felt(res, res + 1)
+    end
     _total_supply.write(target_material, res + 1)
 
     # briq_token_id is not the new ID
@@ -141,11 +157,15 @@ func convertOneToFT_{
     else:
         assert token_id = curr_owner
     end
+
     # No need to change material
     _unsetTokenByOwner(owner, material, token_id)
     _owner.write(token_id, 0)
 
     let (balance) = _balance.read(owner, material)
+    with_attr error_message("Convert would overflow balance"):
+        assert_le_felt(balance, balance + 1)
+    end
     _balance.write(owner, material, balance + 1)
 
     let (__addr) = get_contract_address()
@@ -194,6 +214,7 @@ func convertOneToNFT_{
 
     assert_not_zero(owner)
     assert_not_zero(material)
+    assert_lt_felt(material, 2**64)
     assert_lt_felt(uid, 2**188)
 
     # NFT conversion
