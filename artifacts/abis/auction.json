@@ -1,0 +1,78 @@
+[
+    {
+        "members": [
+            {
+                "name": "payer",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "payer_erc20_contract",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "box_token_id",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "bid_amount",
+                "offset": 3,
+                "type": "felt"
+            }
+        ],
+        "name": "BidData",
+        "size": 4,
+        "type": "struct"
+    },
+    {
+        "data": [
+            {
+                "name": "payer",
+                "type": "felt"
+            },
+            {
+                "name": "payer_erc20_contract",
+                "type": "felt"
+            },
+            {
+                "name": "box_token_id",
+                "type": "felt"
+            },
+            {
+                "name": "bid_amount",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Bid",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "bid",
+                "type": "BidData"
+            }
+        ],
+        "name": "make_bid",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "bids_len",
+                "type": "felt"
+            },
+            {
+                "name": "bids",
+                "type": "BidData*"
+            }
+        ],
+        "name": "buy",
+        "outputs": [],
+        "type": "function"
+    }
+]
