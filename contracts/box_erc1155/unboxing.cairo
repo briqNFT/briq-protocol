@@ -4,10 +4,19 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.cairo.common.math import assert_lt_felt
 from starkware.starknet.common.syscalls import get_caller_address
 
+
+from starkware.cairo.common.registers import get_label_location
+
 from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
 from contracts.library_erc1155.balance import _balance
 
 from contracts.booklet_erc1155.token_uri import _shape_contract
+
+
+from contracts.box_erc1155.data import (
+    shape_data_start,
+    shape_data_end,
+)
 
 namespace box_unboxing:
 
@@ -28,6 +37,9 @@ namespace box_unboxing:
 
         let (caller) = get_caller_address()
         ERC1155_lib_transfer._onTransfer(caller, owner, 0, token_id, 1)
+
+        let (_shape_data_start) = get_label_location(shape_data_start)
+
 
         return ()
     end

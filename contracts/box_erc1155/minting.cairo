@@ -1,13 +1,20 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
-from starkware.cairo.common.math import assert_lt_felt
+from starkware.cairo.common.math import assert_lt_felt, assert_le_felt
 from starkware.starknet.common.syscalls import get_caller_address
+
+from starkware.cairo.common.registers import get_label_location
 
 from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
 from contracts.library_erc1155.balance import _balance
 
 from contracts.booklet_erc1155.token_uri import _shape_contract
+
+from contracts.box_erc1155.data import (
+    shape_data_start,
+    shape_data_end,
+)
 
 namespace box_minting:
 
@@ -26,6 +33,11 @@ namespace box_minting:
 
         let (caller) = get_caller_address()
         ERC1155_lib_transfer._onTransfer(caller, 0, owner, token_id, number)
+
+        let (_shape_data_start) = get_label_location(shape_data_start)
+        let (_shape_data_end) = get_label_location(shape_data_end)
+        assert_lt_felt(0, token_id)
+        assert_le_felt(token_id, cast(_shape_data_end, felt) - cast(_shape_data_start, felt))
 
         return ()
     end
