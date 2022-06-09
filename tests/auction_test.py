@@ -59,8 +59,8 @@ async def factory_root():
         ADDRESS  # owner: felt
     ])
     auction_contract = await starknet.deploy(contract_def=compile("auction/auction.cairo"))
-    box_contract = await starknet.deploy(contract_def=compile("box.cairo"))
-    return [starknet, auction_contract, box_contract, token_contract_eth, token_contract_dai]
+    booklet_contract = await starknet.deploy(contract_def=compile("booklet.cairo"))
+    return [starknet, auction_contract, booklet_contract, token_contract_eth, token_contract_dai]
 
 
 def proxy_contract(state, contract):
@@ -73,12 +73,12 @@ def proxy_contract(state, contract):
 
 @pytest_asyncio.fixture
 async def factory(factory_root):
-    [starknet, auction_contract, box_contract, token_contract_eth, token_contract_dai] = factory_root
+    [starknet, auction_contract, booklet_contract, token_contract_eth, token_contract_dai] = factory_root
     state = Starknet(state=starknet.state.copy())
-    return namedtuple('State', ['starknet', 'auction_contract', 'box_contract', 'token_contract_eth', 'token_contract_dai'])(
+    return namedtuple('State', ['starknet', 'auction_contract', 'booklet_contract', 'token_contract_eth', 'token_contract_dai'])(
         starknet=state,
         auction_contract=proxy_contract(state, auction_contract),
-        box_contract=proxy_contract(state, box_contract),
+        booklet_contract=proxy_contract(state, booklet_contract),
         token_contract_eth=proxy_contract(state, token_contract_eth),
         token_contract_dai=proxy_contract(state, token_contract_dai),
     )
@@ -89,7 +89,7 @@ async def test_bid(factory):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
             payer=ADDRESS,
             payer_erc20_contract=factory.token_contract_eth.contract_address,
-            box_token_id=0xfade,
+            booklet_token_id=0xfade,
             bid_amount=300
         )).invoke(ADDRESS)
 
@@ -97,7 +97,7 @@ async def test_bid(factory):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
             payer=ADDRESS,
             payer_erc20_contract=factory.token_contract_eth.contract_address,
-            box_token_id=0xfade,
+            booklet_token_id=0xfade,
             bid_amount=0
         )).invoke(ADDRESS)
 
@@ -107,14 +107,14 @@ async def test_bid(factory):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
             payer=ADDRESS,
             payer_erc20_contract=factory.token_contract_eth.contract_address,
-            box_token_id=0xfade,
+            booklet_token_id=0xfade,
             bid_amount=600
         )).invoke(ADDRESS)
 
     await factory.auction_contract.make_bid(factory.auction_contract.BidData(
         payer=ADDRESS,
         payer_erc20_contract=factory.token_contract_eth.contract_address,
-        box_token_id=0xfade,
+        booklet_token_id=0xfade,
         bid_amount=500
     )).invoke(ADDRESS)
 

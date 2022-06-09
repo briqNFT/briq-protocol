@@ -12,9 +12,9 @@ from contracts.utilities.authorization import (
 
 from contracts.types import FTSpec, ShapeItem
 
-from contracts.box_erc721.token_uri import box_token_uri
-from contracts.library_erc721.balance import ERC721
-from contracts.library_erc721.transferability_library import ERC721_lib_transfer
+from contracts.booklet_erc1155.token_uri import booklet_token_uri
+from contracts.library_erc1155.balance import ERC1155_balance
+from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
 
 ############
 ############
@@ -38,7 +38,7 @@ end
 func _set_address() -> (address: felt):
 end
 
-namespace box_set_factory:
+namespace booklet_set_factory:
 
     @view
     func getSetAddress_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
@@ -67,7 +67,7 @@ namespace box_set_factory:
         } (
             owner: felt,
             set_token_id: felt,
-            box_token_id: felt,
+            booklet_token_id: felt,
             shape_len: felt, shape: ShapeItem*,
             fts_len: felt, fts: FTSpec*,
             nfts_len: felt, nfts: felt*
@@ -79,15 +79,11 @@ namespace box_set_factory:
         assert caller = set_addr
         # TODO: check set is authorized still.
 
-        let (box_owner) = ERC721.ownerOf_(box_token_id)
-        # we trust 'owner' will be correct because it's passed from the set address.
-        assert box_owner = owner
-
-        # Transfer the box to the set (wrapping it inside the set).
-        ERC721_lib_transfer._transfer(owner, set_token_id, box_token_id)
+        # Transfer the booklet to the set (wrapping it inside the set).
+        ERC1155_lib_transfer._transfer(owner, set_token_id, booklet_token_id, 1)
 
         # Check that the shape matches the passed data
-        let (local addr) = box_token_uri.get_shape_contract_(box_token_id)
+        let (local addr) = booklet_token_uri.get_shape_contract_(booklet_token_id)
         local pedersen_ptr: HashBuiltin* = pedersen_ptr
         IShapeContract.check_shape_numbers_(
             addr, shape_len, shape, fts_len, fts, nfts_len, nfts
@@ -105,18 +101,14 @@ namespace box_set_factory:
         } (
             owner: felt,
             set_token_id: felt,
-            box_token_id: felt,
+            booklet_token_id: felt,
         ):
         let (caller) = get_caller_address()
         let (set_addr) = getSetAddress_()
         assert caller = set_addr
 
-        let (box_owner) = ERC721.ownerOf_(box_token_id)
-        # TODO: auth ?
-        assert box_owner = set_token_id
-
-        # Transfer the box to the set (wrapping it inside the set).
-        ERC721_lib_transfer._transfer(set_token_id, owner, box_token_id)
+        # Transfer the booklet to the set (wrapping it inside the set).
+        ERC1155_lib_transfer._transfer(set_token_id, owner, booklet_token_id, 1)
 
         return ()
     end

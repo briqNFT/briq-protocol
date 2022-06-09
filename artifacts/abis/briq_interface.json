@@ -263,6 +263,18 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getSetAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "name": "sender",
@@ -567,6 +579,28 @@
         "name": "convertOneToNFT_",
         "outputs": [],
         "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyAdminSet",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyImplementationSet",
+        "type": "event"
     },
     {
         "inputs": [],

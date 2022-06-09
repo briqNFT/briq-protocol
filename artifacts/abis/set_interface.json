@@ -34,6 +34,23 @@
         "type": "struct"
     },
     {
+        "members": [
+            {
+                "name": "color_nft_material",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "x_y_z",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "ShapeItem",
+        "size": 2,
+        "type": "struct"
+    },
+    {
         "data": [
             {
                 "name": "implementation",
@@ -42,6 +59,28 @@
         ],
         "keys": [],
         "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyAdminSet",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyImplementationSet",
         "type": "event"
     },
     {
@@ -110,6 +149,29 @@
             }
         ],
         "name": "setBriqAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getBookletAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setBookletAddress_",
         "outputs": [],
         "type": "function"
     },
@@ -434,19 +496,51 @@
     {
         "inputs": [
             {
-                "name": "selector",
+                "name": "owner",
                 "type": "felt"
             },
             {
-                "name": "calldata_size",
+                "name": "token_id_hint",
                 "type": "felt"
             },
             {
-                "name": "calldata",
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
                 "type": "felt*"
+            },
+            {
+                "name": "fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            },
+            {
+                "name": "booklet_token_id",
+                "type": "felt"
+            },
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
             }
         ],
-        "name": "assemble_and_proxy_",
+        "name": "assemble_with_booklet_",
         "outputs": [],
         "type": "function"
     },
@@ -492,47 +586,27 @@
                 "type": "felt"
             },
             {
-                "name": "add_fts_len",
+                "name": "fts_len",
                 "type": "felt"
             },
             {
-                "name": "add_fts",
+                "name": "fts",
                 "type": "FTSpec*"
             },
             {
-                "name": "add_nfts_len",
+                "name": "nfts_len",
                 "type": "felt"
             },
             {
-                "name": "add_nfts",
+                "name": "nfts",
                 "type": "felt*"
             },
             {
-                "name": "remove_fts_len",
+                "name": "booklet_token_id",
                 "type": "felt"
-            },
-            {
-                "name": "remove_fts",
-                "type": "FTSpec*"
-            },
-            {
-                "name": "remove_nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "remove_nfts",
-                "type": "felt*"
-            },
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
-                "type": "felt*"
             }
         ],
-        "name": "updateBriqs_",
+        "name": "disassemble_with_booklet_",
         "outputs": [],
         "type": "function"
     },
@@ -573,7 +647,6 @@
         ],
         "name": "assemble",
         "outputs": [],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -605,7 +678,6 @@
         ],
         "name": "disassemble",
         "outputs": [],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -625,7 +697,6 @@
         ],
         "name": "transferOneNFT",
         "outputs": [],
-        "stateMutability": "view",
         "type": "function"
     },
     {

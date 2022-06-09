@@ -14,7 +14,7 @@ end
 func _shape_contract(token_id: felt) -> (contract_address: felt):
 end
 
-namespace box_token_uri:
+namespace booklet_token_uri:
 
     @view
     func get_shape_contract_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr

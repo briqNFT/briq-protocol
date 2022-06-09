@@ -27,7 +27,7 @@ from contracts.library_erc721.enumerability import ERC721_enumerability
 
 from contracts.library_erc721.transferability_library import ERC721_lib_transfer
 
-from contracts.set_erc721.link_to_ecosystem import _briq_address, _box_address, IBriqContract, IBoxContract
+from contracts.set_erc721.link_to_ecosystem import _briq_address, _booklet_address, IBriqContract, IBookletContract
 
 from contracts.types import ShapeItem, FTSpec
 
@@ -143,7 +143,7 @@ from starkware.cairo.common.memcpy import memcpy
 
 
 @external
-func assemble_with_box_{
+func assemble_with_booklet_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         bitwise_ptr: BitwiseBuiltin*,
@@ -157,7 +157,7 @@ func assemble_with_box_{
         fts: FTSpec*,
         nfts_len: felt,
         nfts: felt*,
-        box_token_id: felt,
+        booklet_token_id: felt,
         shape_len: felt,
         shape: ShapeItem*,
     ):
@@ -169,13 +169,13 @@ func assemble_with_box_{
 
     local pedersen_ptr: HashBuiltin* = pedersen_ptr
 
-    let (box_address) = _box_address.read()
-    # Call the box contract to validate the shape (and wrap it inside ourselves)
-    IBoxContract.wrap_(
-        box_address,
+    let (booklet_address) = _booklet_address.read()
+    # Call the booklet contract to validate the shape (and wrap it inside ourselves)
+    IBookletContract.wrap_(
+        booklet_address,
         owner,
         token_id,
-        box_token_id,
+        booklet_token_id,
         shape_len,
         shape,
         fts_len,
@@ -184,7 +184,7 @@ func assemble_with_box_{
         nfts
     )
 
-    # Assert balance in box contract ?
+    # Assert balance in booklet contract ?
 
     return ()
 end
@@ -243,8 +243,8 @@ func disassemble_{
     let (briq_addr) = _briq_address.read()
     let (mat_len, mat) = IBriqContract.materialsOf_(briq_addr, token_id)
     assert mat_len = 0
-    let (box_addr) = _box_address.read()
-    let (balance) = IBoxContract.balanceOf_(box_addr, token_id)
+    let (booklet_addr) = _booklet_address.read()
+    let (balance) = IBookletContract.balanceOf_(booklet_addr, token_id)
     assert balance = 0
     # TODO: add generic support.
 
@@ -253,26 +253,26 @@ end
 
 
 @external
-func disassemble_with_box_{
+func disassemble_with_booklet_{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, box_token_id: felt):
+    } (owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*, booklet_token_id: felt):
  
     _destroy_token(owner, token_id)
 
     _transferFT(token_id, owner, fts_len, fts)
     _transferNFT(token_id, owner, nfts_len, nfts)
 
-    let (box_address) = _box_address.read()
-    IBoxContract.unwrap_(box_address, owner, token_id, box_token_id)
+    let (booklet_address) = _booklet_address.read()
+    IBookletContract.unwrap_(booklet_address, owner, token_id, booklet_token_id)
 
     # Check that we sucessfully gave back all wrapped items.
     let (briq_addr) = _briq_address.read()
     let (mat_len, mat) = IBriqContract.materialsOf_(briq_addr, token_id)
     assert mat_len = 0
-    let (box_addr) = _box_address.read()
-    let (balance) = IBoxContract.balanceOf_(box_addr, token_id)
+    let (booklet_addr) = _booklet_address.read()
+    let (balance) = IBookletContract.balanceOf_(booklet_addr, token_id)
     assert balance = 0
     # TODO: add generic support.
 

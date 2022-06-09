@@ -6,7 +6,6 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
-from starkware.cairo.common.math_cmp import is_le_felt
 
 from contracts.briq_erc1155_like.balance_enumerability import (
     _owner,

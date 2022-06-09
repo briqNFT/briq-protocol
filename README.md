@@ -28,7 +28,7 @@ nile compile contracts/set_interface.cairo contracts/briq_interface.cairo contra
 pytest
 
 # Gas-efficiency tests for the assembly with shape.
-pytest -s -k box_factory_perf_test
+pytest -s -k booklet_factory_perf_test
 ```
 
 ## Deployment

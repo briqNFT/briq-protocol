@@ -28,13 +28,13 @@ from contracts.OZ.token.erc721.interfaces.IERC721 import IERC721
 from starkware.cairo.common.bool import FALSE, TRUE
 
 @event
-func Bid(payer: felt, payer_erc20_contract: felt, box_token_id: felt, bid_amount: felt):
+func Bid(payer: felt, payer_erc20_contract: felt, booklet_token_id: felt, bid_amount: felt):
 end
 
 struct BidData:
     member payer: felt
     member payer_erc20_contract: felt
-    member box_token_id: felt
+    member booklet_token_id: felt
     member bid_amount: felt
 end
 
@@ -54,13 +54,13 @@ func make_bid{
     # Sanity checks
     assert_not_zero(bid.payer)
     assert_not_zero(bid.payer_erc20_contract)
-    assert_not_zero(bid.box_token_id)
+    assert_not_zero(bid.booklet_token_id)
 
     with_attr error_message("Bid must be greater than 0"):
         assert_not_zero(bid.bid_amount)
     end
 
-    Bid.emit(bid.payer, bid.payer_erc20_contract, bid.box_token_id, bid.bid_amount)
+    Bid.emit(bid.payer, bid.payer_erc20_contract, bid.booklet_token_id, bid.bid_amount)
 
     let (bid_as_uint) = _felt_to_uint(bid.bid_amount)
     let (contract_address) = get_contract_address()

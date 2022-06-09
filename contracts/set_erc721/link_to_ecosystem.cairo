@@ -25,17 +25,17 @@ namespace IBriqContract:
 end
 
 @contract_interface
-namespace IBoxContract:
+namespace IBookletContract:
     func wrap_(
             owner: felt,
             set_token_id: felt,
-            box_token_id: felt,
+            booklet_token_id: felt,
             shape_len: felt, shape: ShapeItem*,
             fts_len: felt, fts: FTSpec*,
             nfts_len: felt, nfts: felt*
         ):
     end
-    func unwrap_(owner: felt, set_token_id: felt, box_token_id: felt):
+    func unwrap_(owner: felt, set_token_id: felt, booklet_token_id: felt):
     end
     func balanceOf_(owner: felt) -> (balance: felt):
     end
@@ -46,7 +46,7 @@ func _briq_address() -> (address: felt):
 end
 
 @storage_var
-func _box_address() -> (address: felt):
+func _booklet_address() -> (address: felt):
 end
 
 namespace set_ecosystem:
@@ -72,23 +72,23 @@ namespace set_ecosystem:
     end
 
     @view
-    func getBoxAddress_{
+    func getBookletAddress_{
             syscall_ptr: felt*,
             pedersen_ptr: HashBuiltin*,
             range_check_ptr
         } () -> (address: felt):
-        let (value) = _box_address.read()
+        let (value) = _booklet_address.read()
         return (value)
     end
 
     @external
-    func setBoxAddress_{
+    func setBookletAddress_{
             syscall_ptr: felt*,
             pedersen_ptr: HashBuiltin*,
             range_check_ptr
         } (address: felt):
         _onlyAdmin()
-        _box_address.write(address)
+        _booklet_address.write(address)
         return ()
     end
 end

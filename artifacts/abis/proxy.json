@@ -11,6 +11,28 @@
         "type": "event"
     },
     {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyAdminSet",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyImplementationSet",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "name": "admin",

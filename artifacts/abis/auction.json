@@ -12,7 +12,7 @@
                 "type": "felt"
             },
             {
-                "name": "box_token_id",
+                "name": "booklet_token_id",
                 "offset": 2,
                 "type": "felt"
             },
@@ -37,7 +37,7 @@
                 "type": "felt"
             },
             {
-                "name": "box_token_id",
+                "name": "booklet_token_id",
                 "type": "felt"
             },
             {

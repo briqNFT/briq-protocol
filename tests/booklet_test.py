@@ -32,12 +32,12 @@ def compile(path):
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
     starknet = await Starknet.empty()
-    box_contract = await starknet.deploy(contract_def=compile("box.cairo"))
+    booklet_contract = await starknet.deploy(contract_def=compile("booklet.cairo"))
     set_mock = await starknet.deploy(contract_def=compile("mocks/set_mock.cairo"))
     shape_mock = await starknet.deploy(contract_def=compile("mocks/shape_mock.cairo"))
-    await box_contract.setSetAddress_(set_mock.contract_address).invoke()
-    await box_contract.mint_(MOCK_SHAPE_TOKEN, MOCK_SHAPE_TOKEN, shape_mock.contract_address).invoke()
-    return (starknet, box_contract, shape_mock, set_mock)
+    await booklet_contract.setSetAddress_(set_mock.contract_address).invoke()
+    await booklet_contract.mint_(MOCK_SHAPE_TOKEN, MOCK_SHAPE_TOKEN, shape_mock.contract_address).invoke()
+    return (starknet, booklet_contract, shape_mock, set_mock)
 
 @pytest_asyncio.fixture
 async def factory(factory_root):
@@ -59,15 +59,15 @@ async def factory(factory_root):
 
 @pytest.mark.asyncio
 async def test_mint_transfer(factory):
-    [_, box_contract, _, _] = factory
+    [_, booklet_contract, _, _] = factory
     TOKEN = 1
-    await box_contract.mint_(ADDRESS, TOKEN, 2).invoke()
-    await box_contract.transferFrom_(ADDRESS, OTHER_ADDRESS, TOKEN).invoke()
+    await booklet_contract.mint_(ADDRESS, TOKEN, 2).invoke()
+    await booklet_contract.transferFrom_(ADDRESS, OTHER_ADDRESS, TOKEN).invoke()
 
 
 @pytest.mark.asyncio
 async def test_shape(factory):
-    [starknet, box_contract, _, _] = factory
+    [starknet, booklet_contract, _, _] = factory
 
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     data = data.replace("#DEFINE_SHAPE", f"""
@@ -87,10 +87,10 @@ async def test_shape(factory):
     shape_contract = await starknet.deploy(contract_def=test_code)
 
     TOKEN = 1
-    await box_contract.mint_(ADDRESS, TOKEN, shape_contract.contract_address).invoke()
-    assert (await box_contract.get_shape_(TOKEN).call()).result.shape == [
+    await booklet_contract.mint_(ADDRESS, TOKEN, shape_contract.contract_address).invoke()
+    assert (await booklet_contract.get_shape_(TOKEN).call()).result.shape == [
         shape_contract.ShapeItem(*compress_shape_item(color='#ffaaff', material=1, x=4, y=-2, z=-6)),
         shape_contract.ShapeItem(*compress_shape_item(color='#ffaaff', material=1, x=4, y=0, z=-6)),
         shape_contract.ShapeItem(*compress_shape_item(color='#ffaaff', material=1, x=4, y=4, z=-6, has_token_id=True))
     ]
-    assert (await box_contract.get_shape_(TOKEN).call()).result.nfts == [1 * 2 ** 64 + 1]
+    assert (await booklet_contract.get_shape_(TOKEN).call()).result.nfts == [1 * 2 ** 64 + 1]
