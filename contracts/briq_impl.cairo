@@ -14,8 +14,6 @@ from contracts.briq_erc1155_like.balance_enumerability import (
 )
 
 from contracts.briq_erc1155_like.minting import (
-    setMintContract_,
-    getMintContract_,
     mintFT_,
     mintOneNFT_,
 )

@@ -6,11 +6,6 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
 
-from contracts.utilities.authorization import (
-    _onlyAdmin,
-    _onlyAdminAnd,
-)
-
 from contracts.briq_erc1155_like.balance_enumerability import (
     _owner,
     _balance,
@@ -25,50 +20,23 @@ from contracts.briq_erc1155_like.transferability import (
     TransferSingle,
 )
 
-####################
-####################
-####################
-# Mint Contract
+from contracts.ecosystem.to_box import _box_address
 
-@storage_var
-func _mint_contract() -> (address: felt):
-end
-
-@external
-func setMintContract_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (address: felt):
-    _onlyAdmin()
-    _mint_contract.write(address)
-    return ()
-end
+from contracts.utilities.authorization import (
+    _onlyAdminAnd,
+)
 
 
-@view
-func getMintContract_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } () -> (address: felt):
-    let (addr) = _mint_contract.read()
-    return (addr)
-end
-
-func _onlyAdminAndMintContract{
+func _onlyAdminAndBoxContract{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } ():
-    let (address) = _mint_contract.read()
+    let (address) = _box_address.read()
     _onlyAdminAnd(address)
     return ()
 end
 
-################
-################
-################
 
 @external
 func mintFT_{
@@ -76,7 +44,7 @@ func mintFT_{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, qty: felt):
-    _onlyAdminAndMintContract()
+    _onlyAdminAndBoxContract()
 
     assert_not_zero(owner)
     assert_not_zero(material)
@@ -113,7 +81,7 @@ func mintOneNFT_{
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
     } (owner: felt, material: felt, uid: felt):
-    _onlyAdminAndMintContract()
+    _onlyAdminAndBoxContract()
 
     assert_not_zero(owner)
     assert_not_zero(material)

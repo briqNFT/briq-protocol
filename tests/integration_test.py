@@ -27,12 +27,12 @@ CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 
 ADDRESS = 0xcafe
 OTHER_ADDRESS = 0xd00d
-
+THIRD_ADDRESS = 0xfade
 
 def compile(path):
     return compile_starknet_files(
         files=[os.path.join(CONTRACT_SRC, path)],
-        debug_info=False,
+        debug_info=True,
         disable_hint_validation=True
     )
 
@@ -53,6 +53,12 @@ async def factory_root():
     booklet_contract = await starknet.deploy(contract_def=compile("booklet.cairo"))
     set_contract = await starknet.deploy(contract_def=compile("set_interface.cairo"))
     briq_contract = await starknet.deploy(contract_def=compile("briq_interface.cairo"))
+
+    await set_contract.setBriqAddress_(briq_contract.contract_address).invoke()
+    await set_contract.setBookletAddress_(booklet_contract.contract_address).invoke()
+    await briq_contract.setSetAddress_(set_contract.contract_address).invoke()
+    await booklet_contract.setSetAddress_(set_contract.contract_address).invoke()
+    
     return [starknet, auction_contract, booklet_contract, token_contract_eth, set_contract, briq_contract]
 
 
@@ -95,8 +101,16 @@ async def deploy_shape(starknet, shape_data):
 
 from generators.generate_box import generate_box
 
+
+def hash_token_id(owner: int, hint: int, uri):
+    raw_tid = compute_hash_on_elements([owner, hint]) & ((2**251 - 1) - (2**59 - 1))
+    if len(uri) == 2 and uri[1] < 2**59:
+        raw_tid += uri[1]
+    return raw_tid
+
+
 @pytest.mark.asyncio
-async def test_everything(factory):
+async def test_everything(tmp_path, factory):
     # Deploy two shape contracts
     shape_basic = await deploy_shape(factory.starknet, [
         to_shape_data('#ffaaff', 0x1, -2, 0, 2),
@@ -120,10 +134,17 @@ async def test_everything(factory):
         0x1: shape_basic.contract_address,
         0x2: shape_bimat.contract_address,
     }, booklet_address=factory.booklet_contract.contract_address, briq_address=factory.briq_contract.contract_address)
-    box_core = open('contracts/box.cairo').read()
-    print(box_core, box_code)
-    box_code = compile_starknet_codes(codes=[(box_code, "contracts/box_erc1155/data"), (box_core, 'box')], disable_hint_validation=True, debug_info=True)
+    print(box_code)
+    (tmp_path / 'contracts' / 'box_erc1155').mkdir(parents=True, exist_ok=True)
+    open(tmp_path / 'contracts' / 'box_erc1155' / 'data.cairo', "w").write(box_code)
+    box_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'box.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path)])
+
     box_contract = await factory.starknet.deploy(contract_def=box_code)
+
+    await box_contract.setBookletAddress_(factory.booklet_contract.contract_address).invoke()
+    await box_contract.setBriqAddress_(factory.briq_contract.contract_address).invoke()
+    await factory.booklet_contract.setBoxAddress_(box_contract.contract_address).invoke()
+    await factory.briq_contract.setBoxAddress_(box_contract.contract_address).invoke()
 
     # Let's mint some boxes
     await box_contract.mint_(ADDRESS, 0x1, 10).invoke()
@@ -131,5 +152,41 @@ async def test_everything(factory):
     with pytest.raises(StarkException):
         await box_contract.mint_(ADDRESS, 0x3, 1).invoke()
 
+    # TODO -> Auction
     await box_contract.safeTransferFrom_(ADDRESS, OTHER_ADDRESS, 0x1, 1, []).invoke(ADDRESS)
     await box_contract.safeTransferFrom_(ADDRESS, OTHER_ADDRESS, 0x2, 1, []).invoke(ADDRESS)
+
+    assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 0
+
+    await box_contract.unbox_(OTHER_ADDRESS, 0x1).invoke(OTHER_ADDRESS)
+
+    assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, 0x1).call()).result.balance == 1
+    assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 3
+
+    await box_contract.unbox_(OTHER_ADDRESS, 0x2).invoke(OTHER_ADDRESS)
+    assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, 0x2).call()).result.balance == 1
+    assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 5
+    assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x4).call()).result.balance == 1
+
+    set_token_id_a = hash_token_id(OTHER_ADDRESS, 0x1234, [1234])
+
+    await factory.set_contract.assemble_with_booklet_(
+        owner=OTHER_ADDRESS,
+        token_id_hint=0x1234,
+        uri=[1234],
+        fts=[(0x1, 3)],
+        nfts=[],
+        booklet_token_id=0x1,
+        shape=[
+            compress_shape_item('#ffaaff', 0x1, -2, 0, 2, False),
+            compress_shape_item('#ffaaff', 0x1, -1, 0, 2, False),
+            compress_shape_item('#ffaaff', 0x1, 0, 0, 2, False),
+        ]
+    ).invoke(OTHER_ADDRESS)
+
+    assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, 0x1).call()).result.balance == 0
+    assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 2
+    assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x4).call()).result.balance == 1
+
+    assert (await factory.booklet_contract.balanceOf_(set_token_id_a, 0x1).call()).result.balance == 1
+    assert (await factory.briq_contract.balanceOfMaterial_(set_token_id_a, 0x1).call()).result.balance == 3

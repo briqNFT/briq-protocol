@@ -9,7 +9,11 @@ from contracts.library_erc1155.balance import _balance
 
 from contracts.booklet_erc1155.token_uri import _shape_contract
 
+from contracts.ecosystem.to_box import _box_address
+
 namespace booklet_minting:
+
+    ##########
 
     @external
     func mint_{
@@ -27,6 +31,8 @@ namespace booklet_minting:
         _shape_contract.write(token_id, shape_contract)
 
         let (caller) = get_caller_address()
+        let (box_addr) = _box_address.read()
+        assert caller = box_addr
         ERC1155_lib_transfer._onTransfer(caller, 0, owner, token_id, 1)
 
         return ()

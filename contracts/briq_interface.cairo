@@ -15,8 +15,6 @@ from contracts.briq_impl import (
 	transferFT_,
 	transferOneNFT_,
 	transferNFT_,
-	setMintContract_,
-	getMintContract_,
 	mintFT_,
 	mintOneNFT_,
 	mutateFT_,

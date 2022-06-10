@@ -37,7 +37,7 @@ namespace box_minting:
         let (_shape_data_start) = get_label_location(shape_data_start)
         let (_shape_data_end) = get_label_location(shape_data_end)
         assert_lt_felt(0, token_id)
-        assert_le_felt(token_id, cast(_shape_data_end, felt) - cast(_shape_data_start, felt))
+        assert_le_felt(token_id, _shape_data_end - _shape_data_start)
 
         return ()
     end
