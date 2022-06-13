@@ -348,19 +348,8 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setMintContract_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
         "inputs": [],
-        "name": "getMintContract_",
+        "name": "getBoxAddress_",
         "outputs": [
             {
                 "name": "address",
@@ -368,6 +357,17 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setBoxAddress_",
+        "outputs": [],
         "type": "function"
     },
     {

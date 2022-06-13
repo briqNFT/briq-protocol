@@ -91,7 +91,6 @@ namespace box_unboxing:
             range_check_ptr
         } (owner: felt, briq_addr: felt, _briq_data_start: felt*, token_id: felt, material: felt, offset: felt):
         let amnt = [_briq_data_start + (token_id - 1) * 5 + offset]
-        %{ print("totoro", ids.amnt, ids.material, ids.offset, ids.token_id) %}
         if amnt != 0:
             IBriqContract.mintFT_(briq_addr, owner, material, amnt)
             return ()
