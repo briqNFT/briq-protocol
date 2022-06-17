@@ -5,22 +5,10 @@ import pytest_asyncio
 
 from starkware.starknet.testing.starknet import Starknet
 from starkware.starknet.testing.starknet import StarknetContract
-from starkware.starknet.testing.contract import StarknetContractFunctionInvocation
 from starkware.starkware_utils.error_handling import StarkException
-from starkware.cairo.common.hash_state import compute_hash_on_elements
-from starkware.starknet.public.abi import get_selector_from_name
-
-from starkware.starknet.utils.api_utils import cast_to_felts
-from starkware.starknet.compiler.compile import compile_starknet_files, compile_starknet_codes
+from starkware.starknet.compiler.compile import compile_starknet_codes
 
 from generators.shape_utils import to_shape_data, compress_shape_item
-
-import asyncio
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
 
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
@@ -30,28 +18,10 @@ OTHER_ADDRESS = 0xd00d
 MOCK_SHAPE_TOKEN = 0xdeadfade
 
 
-def compile(path):
-    return compile_starknet_files(
-        files=[os.path.join(CONTRACT_SRC, path)],
-        debug_info=True,
-        disable_hint_validation=True
-    )
-
-
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
     starknet = await Starknet.empty()
     return [starknet]
-
-
-def proxy_contract(state, contract):
-    return StarknetContract(
-        state=state.state,
-        abi=contract.abi,
-        contract_address=contract.contract_address,
-        deploy_execution_info=contract.deploy_execution_info,
-    )
-
 
 @pytest_asyncio.fixture
 async def factory(factory_root):
@@ -76,7 +46,7 @@ async def deploy_shape(starknet, items, nfts=[]):
     nft_data_end:
 """)
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True)
-    return await starknet.deploy(contract_def=test_code)
+    return await starknet.deploy(contract_class=test_code)
 
 
 def to_shape_items(shape_contract, items):

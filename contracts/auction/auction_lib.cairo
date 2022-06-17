@@ -21,20 +21,30 @@ from starkware.starknet.common.syscalls import (
     get_contract_address
 )
 
-from contracts.utilities.Uint256_felt_conv import _felt_to_uint
+from starkware.cairo.common.registers import get_label_location
 
 from contracts.OZ.token.erc20.interfaces.IERC20 import IERC20
 from contracts.OZ.token.erc721.interfaces.IERC721 import IERC721
 from starkware.cairo.common.bool import FALSE, TRUE
 
+from contracts.utilities.Uint256_felt_conv import _felt_to_uint
+
+from contracts.utilities.authorization import _onlyAdmin
+
+
+from contracts.auction.data import (
+    auction_data_start,
+    box_address
+)
+
 @event
-func Bid(payer: felt, payer_erc20_contract: felt, booklet_token_id: felt, bid_amount: felt):
+func Bid(payer: felt, payer_erc20_contract: felt, box_token_id: felt, bid_amount: felt):
 end
 
 struct BidData:
     member payer: felt
     member payer_erc20_contract: felt
-    member booklet_token_id: felt
+    member box_token_id: felt
     member bid_amount: felt
 end
 
@@ -54,13 +64,13 @@ func make_bid{
     # Sanity checks
     assert_not_zero(bid.payer)
     assert_not_zero(bid.payer_erc20_contract)
-    assert_not_zero(bid.booklet_token_id)
+    assert_not_zero(bid.box_token_id)
 
     with_attr error_message("Bid must be greater than 0"):
         assert_not_zero(bid.bid_amount)
     end
 
-    Bid.emit(bid.payer, bid.payer_erc20_contract, bid.booklet_token_id, bid.bid_amount)
+    Bid.emit(bid.payer, bid.payer_erc20_contract, bid.box_token_id, bid.bid_amount)
 
     let (bid_as_uint) = _felt_to_uint(bid.bid_amount)
     let (contract_address) = get_contract_address()
@@ -85,7 +95,7 @@ end
 
 
 @external
-func buy{
+func close_auction{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
@@ -93,11 +103,19 @@ func buy{
         bids_len: felt,
         bids: BidData*
     ):
+    _onlyAdmin()
+
     assert_not_zero(bids_len)
 
     try_bid(bids_len, bids, bids[0])
 
     return ()
+end
+
+@contract_interface
+namespace IBoxContract:
+    func safeTransferFrom_(sender: felt, recipient: felt, token_id: felt, value: felt, data_len : felt, data : felt*):
+    end
 end
 
 func try_bid{
@@ -109,6 +127,7 @@ func try_bid{
         bids: BidData*,
         last_bid: BidData,
     ):
+    alloc_locals
     if (bids_len) == 0:
         with_attr error_message("All bids exhausted"):
             assert 0 = 1
@@ -122,9 +141,11 @@ func try_bid{
 
     let (contract_address) = get_contract_address()
     let (bid_as_uint) = _felt_to_uint(bid.bid_amount)
+    # Note -> This actually must succeed otherwise the whole TX reverts, which is kind of annoying.
     let (success) = IERC20.transferFrom(bid.payer_erc20_contract, bid.payer, contract_address, bid_as_uint)
     if success == FALSE:
         return try_bid(bids_len - 1, bids + BidData.SIZE, bids[0])
     end
+    IBoxContract.safeTransferFrom_(box_address, contract_address, bid.payer, bid.box_token_id, 1, 0, cast(0, felt*))
     return ()
 end

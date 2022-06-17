@@ -6,46 +6,32 @@ from starkware.starknet.testing.starknet import Starknet
 from starkware.starkware_utils.error_handling import StarkException
 from starkware.starknet.testing.starknet import StarknetContract
 
-from starkware.starknet.compiler.compile import compile_starknet_files
 from starkware.starknet.public.abi import get_selector_from_name
-from starkware.cairo.common.hash_state import compute_hash_on_elements
 
-from .briq_impl_test import compiled_briq, invoke_briq
-from .set_impl_test import hash_token_id, compiled_set
+from .conftest import compile, declare_and_deploy, hash_token_id
+
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 ADMIN = 0x123456
 OTHER_ADDRESS = 0x654321
 
-def compile(path):
-    return compile_starknet_files(
-        files=[os.path.join(CONTRACT_SRC, path)],
-        debug_info=True
-    )
-
-import asyncio
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
-
-
-@pytest.fixture(scope="session")
-def compiled_proxy():
-    return compile("upgrades/proxy.cairo")
 
 @pytest_asyncio.fixture(scope="module")
-async def setup_proxies_initial(compiled_proxy, compiled_briq, compiled_set):
+async def setup_proxies_initial(compiled_proxy):
     starknet = await Starknet.empty()
 
-    briq_impl = await starknet.deploy(contract_def=compiled_briq)
-    set_impl = await starknet.deploy(contract_def=compiled_set)
-    briq_proxy = await starknet.deploy(contract_def=compiled_proxy, constructor_calldata=[ADMIN, briq_impl.contract_address])
-    set_proxy = await starknet.deploy(contract_def=compiled_proxy, constructor_calldata=[ADMIN, set_impl.contract_address])
+    [briq_impl, _] = await declare_and_deploy(starknet, "briq_interface.cairo")
+    [set_impl, _] = await declare_and_deploy(starknet, "set_interface.cairo")
+
+    compiled_proxy = compile("upgrades/proxy.cairo")
+    await starknet.declare(contract_class=compiled_proxy)
+    briq_proxy = await starknet.deploy(contract_class=compiled_proxy, constructor_calldata=[ADMIN, briq_impl.class_hash])
+    set_proxy = await starknet.deploy(contract_class=compiled_proxy, constructor_calldata=[ADMIN, set_impl.class_hash])
 
     briq_proxy = briq_proxy.replace_abi(briq_impl.abi)
     set_proxy = set_proxy.replace_abi(set_impl.abi)
 
-    booklet_mock = await starknet.deploy(contract_def=compile_starknet_files(files=[os.path.join(CONTRACT_SRC, "mocks/booklet_mock.cairo")]))
+    [booklet_mock, _] = await declare_and_deploy(starknet, "mocks/booklet_mock.cairo")
 
     await set_proxy.setBriqAddress_(briq_proxy.contract_address).invoke(ADMIN)
     await set_proxy.setBookletAddress_(booklet_mock.contract_address).invoke(ADMIN)
@@ -127,7 +113,7 @@ def compiled_mint():
 async def test_mint(compiled_mint, compiled_proxy, setup_proxies):
     [starknet, briq_proxy, set_proxy] = setup_proxies
 
-    mint = await starknet.deploy(contract_def=compiled_mint, constructor_calldata=[briq_proxy.contract_address, 100])
+    mint = await starknet.deploy(contract_class=compiled_mint, constructor_calldata=[briq_proxy.contract_address, 100])
 
     await starknet.state.invoke_raw(contract_address=briq_proxy.contract_address,
         selector=get_selector_from_name("setMintContract_"),

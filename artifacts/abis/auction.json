@@ -12,7 +12,7 @@
                 "type": "felt"
             },
             {
-                "name": "booklet_token_id",
+                "name": "box_token_id",
                 "offset": 2,
                 "type": "felt"
             },
@@ -29,6 +29,85 @@
     {
         "data": [
             {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyAdminSet",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ProxyImplementationSet",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "getAdmin_",
+        "outputs": [
+            {
+                "name": "admin",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getImplementation_",
+        "outputs": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_implementation",
+                "type": "felt"
+            }
+        ],
+        "name": "upgradeImplementation_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_admin",
+                "type": "felt"
+            }
+        ],
+        "name": "setRootAdmin_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "data": [
+            {
                 "name": "payer",
                 "type": "felt"
             },
@@ -37,7 +116,7 @@
                 "type": "felt"
             },
             {
-                "name": "booklet_token_id",
+                "name": "box_token_id",
                 "type": "felt"
             },
             {
@@ -71,7 +150,7 @@
                 "type": "BidData*"
             }
         ],
-        "name": "buy",
+        "name": "close_auction",
         "outputs": [],
         "type": "function"
     }

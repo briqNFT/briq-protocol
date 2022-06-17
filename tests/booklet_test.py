@@ -11,10 +11,7 @@ from starkware.starknet.compiler.compile import compile_starknet_files, compile_
 
 from generators.shape_utils import to_shape_data, compress_shape_item
 
-import asyncio
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
+from .conftest import declare_and_deploy
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 
@@ -32,9 +29,9 @@ def compile(path):
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
     starknet = await Starknet.empty()
-    booklet_contract = await starknet.deploy(contract_def=compile("booklet.cairo"))
-    set_mock = await starknet.deploy(contract_def=compile("mocks/set_mock.cairo"))
-    shape_mock = await starknet.deploy(contract_def=compile("mocks/shape_mock.cairo"))
+    [booklet_contract, _] = await declare_and_deploy(starknet, "booklet.cairo")
+    [set_mock, _] = await declare_and_deploy(starknet, "mocks/set_mock.cairo")
+    [shape_mock, _] = await declare_and_deploy(starknet, "mocks/shape_mock.cairo")
     await booklet_contract.setSetAddress_(set_mock.contract_address).invoke()
     await booklet_contract.mint_(MOCK_SHAPE_TOKEN, MOCK_SHAPE_TOKEN, shape_mock.contract_address).invoke()
     return (starknet, booklet_contract, shape_mock, set_mock)
@@ -84,7 +81,7 @@ async def test_shape(factory):
     nft_data_end:
 """)
     test_code = compile_starknet_codes(codes=[(data, "test_code")])
-    shape_contract = await starknet.deploy(contract_def=test_code)
+    shape_contract = await starknet.deploy(contract_class=test_code)
 
     TOKEN = 1
     await booklet_contract.mint_(ADDRESS, TOKEN, shape_contract.contract_address).invoke()

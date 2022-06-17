@@ -5,7 +5,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
-from starkware.starknet.common.syscalls import delegate_l1_handler, delegate_call
+from starkware.starknet.common.syscalls import library_call_l1_handler, library_call
 from contracts.OZ.upgrades.library import (
     Proxy_implementation_address,
     Proxy_initializer,
@@ -26,13 +26,13 @@ func constructor{
         syscall_ptr: felt*,
         pedersen_ptr: HashBuiltin*,
         range_check_ptr
-    }(admin: felt, implementation_address: felt):
+    }(admin: felt, implentation_hash: felt):
     assert_not_zero(admin)
-    assert_not_zero(implementation_address)
+    assert_not_zero(implentation_hash)
     Proxy_initializer(admin)
-    Proxy_set_implementation(implementation_address)
+    Proxy_set_implementation(implentation_hash)
     ProxyAdminSet.emit(admin)
-    ProxyImplementationSet.emit(implementation_address)
+    ProxyImplementationSet.emit(implentation_hash)
     return ()
 end
 
@@ -57,8 +57,8 @@ func __default__{
     ):
     let (address) = Proxy_implementation_address.read()
 
-    let (retdata_size: felt, retdata: felt*) = delegate_call(
-        contract_address=address,
+    let (retdata_size: felt, retdata: felt*) = library_call(
+        class_hash=address,
         function_selector=selector,
         calldata_size=calldata_size,
         calldata=calldata
@@ -80,8 +80,8 @@ func __l1_default__{
     ):
     let (address) = Proxy_implementation_address.read()
 
-    delegate_l1_handler(
-        contract_address=address,
+    library_call_l1_handler(
+        class_hash=address,
         function_selector=selector,
         calldata_size=calldata_size,
         calldata=calldata

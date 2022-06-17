@@ -15,12 +15,7 @@ from starkware.starknet.compiler.compile import compile_starknet_files, compile_
 
 from generators.shape_utils import to_shape_data, compress_shape_item
 
-import asyncio
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
+from .conftest import declare_and_deploy, hash_token_id
 
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
@@ -30,20 +25,13 @@ OTHER_ADDRESS = 0xd00d
 MOCK_SHAPE_TOKEN = 0xdeadfade
 
 
-def compile(path):
-    return compile_starknet_files(
-        files=[os.path.join(CONTRACT_SRC, path)],
-        debug_info=True,
-        disable_hint_validation=True
-    )
-
 
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
     starknet = await Starknet.empty()
-    briq_contract = await starknet.deploy(contract_def=compile("briq_impl.cairo"))
-    set_contract = await starknet.deploy(contract_def=compile("set_impl.cairo"))
-    booklet_contract = await starknet.deploy(contract_def=compile("booklet.cairo"))
+    [briq_contract, _] = await declare_and_deploy(starknet, "briq_impl.cairo")
+    [set_contract, _] = await declare_and_deploy(starknet, "set_impl.cairo")
+    [booklet_contract, _] = await declare_and_deploy(starknet, "booklet.cairo")
     await set_contract.setBriqAddress_(briq_contract.contract_address).invoke()
     await set_contract.setBookletAddress_(booklet_contract.contract_address).invoke()
     await briq_contract.setSetAddress_(set_contract.contract_address).invoke()
@@ -71,13 +59,6 @@ async def factory(factory_root):
         booklet_contract=proxy_contract(state, booklet_contract),
     )
 
-
-def hash_token_id(owner: int, hint: int, uri):
-    raw_tid = compute_hash_on_elements([owner, hint]) & ((2**251 - 1) - (2**59 - 1))
-    if len(uri) == 2 and uri[1] < 2**59:
-        raw_tid += uri[1]
-    return raw_tid
-
 @pytest.mark.asyncio
 async def test_working(tmp_path, factory):
     state = factory
@@ -101,7 +82,7 @@ async def test_working(tmp_path, factory):
     # write to a file so we can get error messages.
     open(tmp_path / "contract.cairo", "w").write(data)
     test_code = compile_starknet_files(files=[str(tmp_path / "contract.cairo")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_def=test_code)
+    shape_contract = await state.starknet.deploy(contract_class=test_code)
 
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
 
@@ -164,7 +145,7 @@ async def test_bad_shape(tmp_path, factory):
     # write to a file so we can get error messages.
     open(tmp_path / "contract.cairo", "w").write(data)
     test_code = compile_starknet_files(files=[str(tmp_path / "contract.cairo")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_def=test_code)
+    shape_contract = await state.starknet.deploy(contract_class=test_code)
 
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
 
@@ -207,7 +188,7 @@ async def test_bad_number(tmp_path, factory):
     # write to a file so we can get error messages.
     open(tmp_path / "contract.cairo", "w").write(data)
     test_code = compile_starknet_files(files=[str(tmp_path / "contract.cairo")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_def=test_code)
+    shape_contract = await state.starknet.deploy(contract_class=test_code)
 
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
 

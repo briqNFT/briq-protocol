@@ -1,7 +1,6 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
-from starkware.starknet.common.syscalls import call_contract, delegate_l1_handler, delegate_call
 from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, assert_not_zero, assert_lt_felt, unsigned_div_rem
 from starkware.cairo.common.math import split_felt
 from starkware.cairo.common.uint256 import Uint256

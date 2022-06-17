@@ -18,12 +18,7 @@ from generators.shape_utils import to_shape_data, compress_shape_item
 from .briq_impl_test import FAKE_BRIQ_PROXY_ADDRESS, compiled_briq, invoke_briq
 from starkware.starknet.testing.objects import StarknetTransactionExecutionInfo
 
-import asyncio
-
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
-
+from .conftest import declare_and_deploy
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 
@@ -43,9 +38,9 @@ def compile(path):
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
     starknet = await Starknet.empty()
-    briq_contract = await starknet.deploy(contract_def=compile("briq_impl.cairo"))
-    set_contract = await starknet.deploy(contract_def=compile("set_impl.cairo"))
-    booklet_contract = await starknet.deploy(contract_def=compile("booklet.cairo"))
+    [briq_contract, _] = await declare_and_deploy(starknet, "briq_impl.cairo")
+    [set_contract, _] = await declare_and_deploy(starknet, "set_impl.cairo")
+    [booklet_contract, _] = await declare_and_deploy(starknet, "booklet.cairo")
     await set_contract.setBriqAddress_(briq_contract.contract_address).invoke()
     await set_contract.setBookletAddress_(booklet_contract.contract_address).invoke()
     await briq_contract.setSetAddress_(set_contract.contract_address).invoke()
@@ -54,7 +49,7 @@ async def factory_root():
     return [starknet, set_contract, briq_contract, booklet_contract]
 
 
-def proxy_contract(state, contract):
+def copy_contract(state, contract):
     return StarknetContract(
         state=state.state,
         abi=contract.abi,
@@ -68,9 +63,9 @@ async def factory(factory_root):
     state = Starknet(state=starknet.state.copy())
     return namedtuple('State', ['starknet', 'set_contract', 'briq_contract', 'booklet_contract'])(
         starknet=state,
-        set_contract=proxy_contract(state, set_contract),
-        briq_contract=proxy_contract(state, briq_contract),
-        booklet_contract=proxy_contract(state, booklet_contract),
+        set_contract=copy_contract(state, set_contract),
+        briq_contract=copy_contract(state, briq_contract),
+        booklet_contract=copy_contract(state, booklet_contract),
     )
 
 def report_performance(exc_info: StarknetTransactionExecutionInfo):
@@ -105,7 +100,7 @@ async def test_performance_optimal(factory):
 """)
     # write to a file so we can get error messages.
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_def=test_code)
+    shape_contract = await state.starknet.deploy(contract_class=test_code)
 
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
 
@@ -141,7 +136,7 @@ async def test_performance_less_optimal(factory):
 """)
     # write to a file so we can get error messages.
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_def=test_code)
+    shape_contract = await state.starknet.deploy(contract_class=test_code)
 
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
 
@@ -185,7 +180,7 @@ async def test_performance_bad(factory):
 """)
     # write to a file so we can get error messages.
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_def=test_code)
+    shape_contract = await state.starknet.deploy(contract_class=test_code)
 
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
 

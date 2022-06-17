@@ -2,7 +2,6 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
-from starkware.starknet.common.syscalls import call_contract, delegate_l1_handler, delegate_call
 
 from contracts.OZ.upgrades.library import (
     Proxy_only_admin,
@@ -36,7 +35,7 @@ func _onlyAdmin{
     } ():
     let (caller) = get_caller_address()
     # Hardcoded briq team addresses.
-    if (caller - 0x03e46c8abcd73a10cb59c249592a30c489eeab55f76b3496fd9e0250825afe03) * (caller - 0x006043ed114a9a1987fe65b100d0da46fe71b2470e7e5ff8bf91be5346f5e5e3) * (caller - 0x0583397ff26e17af2562a7e035ee0fbda8f8cbbd1aef5c25b11ea9d8782b1179) * (caller - 0x04a9ad47f5086e917bf67077954bd62685d8746c7504026bf43bbecb1fa6dde0) == 0:
+    if (caller - 0x03eF5b02BCc5D30f3f0D35d55F365E6388fE9501eca216Cb1596940bf41083E2) * (caller - 0x059dF66aF2E0E350842b11EA6B5a903b94640C4ff0418b04CceDcC320F531A08) == 0:
         return ()
     end
     # Fallback to the proxy admin.

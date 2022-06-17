@@ -34,7 +34,7 @@ pytest -s -k booklet_factory_perf_test
 ## Deployment
 
 ```sh
-ADMIN=0xcafe nile run scripts/deploy.sh
+ADMIN=0xcafe nile run scripts/deploy.py
 ```
 Or
 ```sh

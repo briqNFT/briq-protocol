@@ -12,13 +12,8 @@ from starkware.starknet.compiler.compile import compile_starknet_files, compile_
 
 from .briq_impl_test import FAKE_BRIQ_PROXY_ADDRESS, compiled_briq, invoke_briq
 
-import asyncio
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
+from .conftest import declare_and_deploy, hash_token_id
 
-
-CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 
 FAKE_SET_PROXY_ADDRESS = 0xcafefade
 ADMIN = 0x0  # No proxy so no admin
@@ -26,24 +21,13 @@ ADDRESS = 0x123456
 OTHER_ADDRESS = 0x654321
 THIRD_ADDRESS = 0x551155
 
-def compile(path):
-    return compile_starknet_files(
-        files=[os.path.join(CONTRACT_SRC, path)],
-        debug_info=True,
-        disable_hint_validation=True
-    )
-
-@pytest.fixture(scope="session")
-def compiled_set():
-    return compile("set_interface.cairo")
-
 
 @pytest_asyncio.fixture(scope="session")
-async def factory_root(compiled_set, compiled_briq):
+async def factory_root():
     starknet = await Starknet.empty()
-    set_contract = await starknet.deploy(contract_def=compiled_set)
-    briq_contract = await starknet.deploy(contract_def=compiled_briq)
-    booklet_mock = await starknet.deploy(contract_def=compile_starknet_files(files=[os.path.join(CONTRACT_SRC, "mocks/booklet_mock.cairo")]))
+    [set_contract, _] = await declare_and_deploy(starknet, "set_interface.cairo")
+    [briq_contract, _] = await declare_and_deploy(starknet, "briq_interface.cairo")
+    [booklet_mock, _] = await declare_and_deploy(starknet, "mocks/booklet_mock.cairo")
     await set_contract.setBriqAddress_(address=briq_contract.contract_address).invoke(caller_address=ADMIN)
     await set_contract.setBookletAddress_(address=booklet_mock.contract_address).invoke(caller_address=ADMIN)
     await briq_contract.setSetAddress_(address=set_contract.contract_address).invoke(caller_address=ADMIN)
@@ -84,12 +68,6 @@ async def starknet(factory: Tuple[Starknet, StarknetContract, StarknetContract])
 
 def invoke_set(call, addr=ADDRESS):
     return call.invoke(caller_address=addr)
-
-def hash_token_id(owner: int, hint: int, uri):
-    raw_tid = compute_hash_on_elements([owner, hint]) & ((2**251 - 1) - (2**59 - 1))
-    if len(uri) == 2 and uri[1] < 2**59:
-        raw_tid += uri[1]
-    return raw_tid
 
 @pytest.mark.asyncio
 async def test_minting_compactness(briq_contract, set_contract):

@@ -5,4 +5,5 @@ nile compile \
     contracts/briq_interface.cairo \
     contracts/booklet.cairo \
     contracts/box.cairo \
+    contracts/auction.cairo \
     contracts/upgrades/proxy.cairo

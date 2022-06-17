@@ -15,14 +15,6 @@ from starkware.starknet.compiler.compile import compile_starknet_files, compile_
 
 from generators.shape_utils import to_shape_data, compress_shape_item
 
-import asyncio
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
-
-
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 
 ADDRESS = 0xcafe
@@ -42,7 +34,8 @@ def compile(path):
 async def factory_root():
     starknet = await Starknet.empty()
     erc20 = compile("OZ/token/erc20/ERC20_Mintable.cairo")
-    token_contract_eth = await starknet.deploy(contract_def=erc20, constructor_calldata=[
+    await starknet.declare(contract_class=erc20)
+    token_contract_eth = await starknet.deploy(contract_class=erc20, constructor_calldata=[
         0x1,  # name: felt,
         0x1,  # symbol: felt,
         18,  # decimals: felt,
@@ -50,7 +43,7 @@ async def factory_root():
         ADDRESS,  # recipient: felt,
         ADDRESS  # owner: felt
     ])
-    token_contract_dai = await starknet.deploy(contract_def=erc20, constructor_calldata=[
+    token_contract_dai = await starknet.deploy(contract_class=erc20, constructor_calldata=[
         0x2,  # name: felt,
         0x2,  # symbol: felt,
         18,  # decimals: felt,
@@ -58,8 +51,12 @@ async def factory_root():
         ADDRESS,  # recipient: felt,
         ADDRESS  # owner: felt
     ])
-    auction_contract = await starknet.deploy(contract_def=compile("auction/auction.cairo"))
-    booklet_contract = await starknet.deploy(contract_def=compile("booklet.cairo"))
+    auction_code = compile("auction.cairo")
+    await starknet.declare(contract_class=auction_code)
+    auction_contract = await starknet.deploy(contract_class=auction_code)
+    booklet_code = compile("booklet.cairo")
+    await starknet.declare(contract_class=booklet_code)
+    booklet_contract = await starknet.deploy(contract_class=booklet_code)
     return [starknet, auction_contract, booklet_contract, token_contract_eth, token_contract_dai]
 
 

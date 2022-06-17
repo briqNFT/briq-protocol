@@ -39,7 +39,7 @@
                 "type": "felt"
             },
             {
-                "name": "implementation_address",
+                "name": "class_hash",
                 "type": "felt"
             }
         ],
