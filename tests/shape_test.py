@@ -292,14 +292,16 @@ async def test_bad_nft_too_many_1(starknet: Starknet):
 async def test_bad_nft_repetition(starknet: Starknet):
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     data = data.replace("#DEFINE_SHAPE", f"""
-    const SHAPE_LEN = 2
+    const SHAPE_LEN = 3
 
     shape_data:
     {to_shape_data('#ffaaff', 1, 4, -2, 4, True)}
     {to_shape_data('#ffaaff', 1, 5, -2, 4, True)}
+    {to_shape_data('#ffaaff', 1, 6, -2, 4, True)}
     shape_data_end:
     nft_data:
     dw {1 * 2 **64 + 1}
+    dw {1 * 2 **64 + 2}
     dw {1 * 2 **64 + 1}
     nft_data_end:
 """)
@@ -326,3 +328,27 @@ async def test_bad_nft_bad_material(starknet: Starknet):
     test_code = compile_starknet_codes(codes=[(data, "test_code")])
     with pytest.raises(StarkException, match="NFT does not have the right material"):
         await starknet.deploy(contract_class=test_code)
+
+
+@pytest.mark.asyncio
+async def test_good_nft_random_order(starknet: Starknet):
+    # NFTs don't actually have to be in any particular sorting, all they have to do is match the shape positions.
+    data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
+    data = data.replace("#DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 4
+
+    shape_data:
+    {to_shape_data('#ffaaff', 1, 4, -2, 4, True)}
+    {to_shape_data('#ffaaff', 1, 6, -2, 4, True)}
+    {to_shape_data('#ffaaff', 1, 7, -2, 4, True)}
+    {to_shape_data('#ffaaff', 2, 8, -2, 4, True)}
+    shape_data_end:
+    nft_data:
+    dw {5 * 2**64 + 1}
+    dw {2 * 2**64 + 1}
+    dw {1 * 2**64 + 1}
+    dw {1 * 2**64 + 2}
+    nft_data_end:
+""")
+    test_code = compile_starknet_codes(codes=[(data, "test_code")])
+    await starknet.deploy(contract_class=test_code)

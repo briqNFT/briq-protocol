@@ -9,7 +9,7 @@ from starkware.cairo.common.bitwise import bitwise_and
 
 from contracts.types import ShapeItem, FTSpec
 
-from contracts.shape.guards import (
+from contracts.shape.construction_guards import (
     _check_properly_sorted,
     _check_for_duplicates,
     _check_nfts_ok,
@@ -47,7 +47,7 @@ func constructor{
     with_attr error_message("Shape items contains duplicate position or NFTs"):
         _check_for_duplicates(shape_len, shape, nfts_len, nfts)
     end
-    # Validate that the shape is passed properly sorted (NFTs are thus also automatically sorted).
+    # Validate that the shape is passed properly sorted
     with_attr error_message("Shape items are not properly sorted (increasing X/Y/Z)"):
         _check_properly_sorted(shape_len, shape)
     end
@@ -138,9 +138,10 @@ func check_shape_numbers_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwis
     end
 
     # NB:
-    # - This expects the NFTs to be sorted according to the shape sorting (which itself is standardised).
+    # - This expects the NFTs to be sorted the same as the shape sorting,
+    #   so in the same X/Y/Z order.
     # - We don't actually need to check the shape sorting or duplicate NFTs, because:
-    #   - shape sorting would fail to match the target
+    #   - shape sorting would fail to match the target (which is sorted).
     #   - duplicated NFTs would fail to transfer.
     # - We need to make sure that the shape tokens match our numbers, so we count fungible tokens.
     #     To do that, we'll create a vector of quantities that we'll increment when iterating.

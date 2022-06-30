@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
 from starkware.cairo.common.registers import get_label_location
-from starkware.cairo.common.math import assert_le_felt, assert_not_zero
+from starkware.cairo.common.math import assert_le_felt, assert_lt_felt, assert_not_zero
 
 from starkware.cairo.common.bitwise import bitwise_and
 
@@ -31,7 +31,7 @@ func _check_properly_sorted_impl{
     if shape_len == 1:
         return ()
     end
-    assert_le_felt(shape[0].x_y_z, shape[1].x_y_z)
+    assert_lt_felt(shape[0].x_y_z, shape[1].x_y_z)
     return _check_properly_sorted_impl(shape_len - 1, shape + ShapeItem.SIZE)
 end
 
@@ -78,11 +78,26 @@ func _check_for_duplicates_nfts_impl{
     if nfts_len == 1:
         return ()
     end
-    if nfts[0] == nfts[1]:
-        assert 0 = 1
-    end
-    return _check_for_duplicates_nfts_impl(nfts_len - 1, nfts + 1)
+    _check_for_nft(nfts[0], nfts_len - 1, nfts + 1)
+    _check_for_duplicates_nfts_impl(nfts_len - 1, nfts + 1)
+    return ()
 end
+
+
+func _check_for_nft{
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        bitwise_ptr: BitwiseBuiltin*,
+        range_check_ptr
+    } (comp_to: felt, nfts_len: felt, nfts: felt*) -> ():
+    if nfts_len == 0:
+        return ()
+    end
+    assert_not_zero(comp_to - nfts[0])
+    _check_for_nft(comp_to, nfts_len - 1, nfts + 1)
+    return ()
+end
+
 
 from starkware.cairo.common.math_cmp import is_le_felt
 
