@@ -134,6 +134,9 @@ async def test_everything(tmp_path, factory):
     auction_impl_hash = await factory.starknet.declare(contract_class=auction_code)
     await factory.auction_contract.upgradeImplementation_(auction_impl_hash.class_hash).invoke(ADMIN_ADDRESS)
 
+    # At this point, we need to match the box token IDs with some box identifiers (e.g. 'starknet_planet/spaceman')
+    # and reveal the data.
+
     ################
     ################
 
@@ -169,7 +172,7 @@ async def test_everything(tmp_path, factory):
         to_shape_data('#ffaaff', 0x1, 0, 1, 2),
     ])
 
-    # Upgrade the box contract before the auction ends.
+    # Upgrade the box contract before the auction starts.
     box_code = generate_box(briq_data={
         1: {
             0x1: 3

@@ -78,7 +78,7 @@ namespace box_unboxing:
         _maybe_mint_briq(owner, briq_addr, cast(_briq_data_start, felt*), token_id, 3, 1)
         _maybe_mint_briq(owner, briq_addr, cast(_briq_data_start, felt*), token_id, 4, 2)
         _maybe_mint_briq(owner, briq_addr, cast(_briq_data_start, felt*), token_id, 5, 3)
-        # TODO -> NFTs
+        # TODO -> NFT briqs
         #let (amnt) = [cast(_briq_data_start, felt*) + 1]
         #IBriqContract.mintFT_(briq_addr, owner, 0x1, amnt)
 

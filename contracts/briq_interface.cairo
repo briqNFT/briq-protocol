@@ -12,6 +12,7 @@ from contracts.briq_impl import (
 	tokenOfOwnerByIndex_,
 	totalSupplyOfMaterial_,
 	setSetAddress_,
+    setBoxAddress_,
 	transferFT_,
 	transferOneNFT_,
 	transferNFT_,

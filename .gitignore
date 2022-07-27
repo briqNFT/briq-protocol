@@ -9,5 +9,8 @@ artifacts/*.json
 !artifacts/abi
 
 *.deployments.txt
+*.declarations.txt
+*.test_node.txt
 *.accounts.json
+devnetstate
 node.json

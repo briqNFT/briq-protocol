@@ -41,6 +41,8 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
+from contracts.ecosystem.to_box import setBoxAddress_
+
 ####
 
 @view

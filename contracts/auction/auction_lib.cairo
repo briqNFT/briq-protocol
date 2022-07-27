@@ -1,5 +1,6 @@
 %lang starknet
 
+from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import (
     assert_le,
@@ -34,6 +35,7 @@ from contracts.utilities.authorization import _onlyAdmin
 
 from contracts.auction.data import (
     auction_data_start,
+    auction_data_end,
     box_address
 )
 
@@ -46,6 +48,13 @@ struct BidData:
     member payer_erc20_contract: felt
     member box_token_id: felt
     member bid_amount: felt
+end
+
+struct AuctionData:
+    member box_token_id: felt # Token ID of the box
+    member total_supply: felt # Total supply of items
+    member auction_start: felt # timestamp of the auction start, in seconds
+    member auction_duration: felt # duration of the auction in seconds
 end
 
 @external
@@ -70,6 +79,9 @@ func make_bid{
         assert_not_zero(bid.bid_amount)
     end
 
+    # TODO: assert box exists and is up for grabs.
+    # TODO: we are in the correct time range for auction
+
     Bid.emit(bid.payer, bid.payer_erc20_contract, bid.box_token_id, bid.bid_amount)
 
     let (bid_as_uint) = _felt_to_uint(bid.bid_amount)
@@ -88,8 +100,6 @@ func make_bid{
         assert ok = TRUE
     end
 
-    # TODO: assert box exists and is up for grabs.
-    # TODO: we are in the correct time range for auction
     return ()
 end
 
@@ -148,4 +158,38 @@ func try_bid{
     end
     IBoxContract.safeTransferFrom_(box_address, contract_address, bid.payer, bid.box_token_id, 1, 0, cast(0, felt*))
     return ()
+end
+
+
+@view
+func get_auction_data{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr
+    }() -> (data_len: felt, data: AuctionData*):
+    alloc_locals
+
+    let (auction_data_start_label) = get_label_location(auction_data_start)
+    let (auction_data_end_label) = get_label_location(auction_data_end)
+
+    let nb = (auction_data_end_label - auction_data_start_label) / AuctionData.SIZE
+
+    let res: AuctionData* = alloc()
+    let (res_end) = _get_auction_data(nb, res)
+    let nb = (res_end - res) / AuctionData.SIZE
+    return (nb, res)
+end
+
+func _get_auction_data{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr
+    }(n: felt, data: AuctionData*) -> (data_end: AuctionData*):
+    if n == 0:
+        return(data)
+    end
+    let (auction_data_start_label) = get_label_location(auction_data_start)
+    let auction_data = cast(auction_data_start_label + (n-1) * AuctionData.SIZE, AuctionData*)[0]
+    assert data[0] = auction_data
+    return _get_auction_data(n-1, data + AuctionData.SIZE)
 end

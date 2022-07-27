@@ -1,5 +1,5 @@
 pytest>=6
 pytest-asyncio>=0
-cairo-lang==0.9.0
-cairo-nile>=0.6.1
-starknet-devnet>=0.1.21
+cairo-lang==0.9.1
+cairo-nile>=0.7.1
+starknet-devnet>=0.2.6

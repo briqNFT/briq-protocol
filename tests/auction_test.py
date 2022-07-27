@@ -81,6 +81,12 @@ async def factory(factory_root):
     )
 
 @pytest.mark.asyncio
+async def test_view(factory):
+    print(await factory.auction_contract.get_auction_data().call())
+    assert False
+
+
+@pytest.mark.asyncio
 async def test_bid(factory):
     with pytest.raises(StarkException, match="Bid greater than allowance"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(

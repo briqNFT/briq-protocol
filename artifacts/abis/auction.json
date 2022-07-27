@@ -27,6 +27,33 @@
         "type": "struct"
     },
     {
+        "members": [
+            {
+                "name": "box_token_id",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "total_supply",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "auction_start",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "auction_duration",
+                "offset": 3,
+                "type": "felt"
+            }
+        ],
+        "name": "AuctionData",
+        "size": 4,
+        "type": "struct"
+    },
+    {
         "data": [
             {
                 "name": "implementation",
@@ -152,6 +179,22 @@
         ],
         "name": "close_auction",
         "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_auction_data",
+        "outputs": [
+            {
+                "name": "data_len",
+                "type": "felt"
+            },
+            {
+                "name": "data",
+                "type": "AuctionData*"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     }
 ]
