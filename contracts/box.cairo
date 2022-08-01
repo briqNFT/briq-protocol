@@ -13,3 +13,4 @@ from contracts.library_erc1155.transferability import ERC1155_transferability
 
 from contracts.box_erc1155.minting import box_minting
 from contracts.box_erc1155.unboxing import box_unboxing
+from contracts.box_erc1155.token_uri import box_token_uri

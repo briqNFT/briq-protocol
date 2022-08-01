@@ -36,25 +36,27 @@ from contracts.utilities.authorization import _onlyAdmin
 from contracts.auction.data import (
     auction_data_start,
     auction_data_end,
-    box_address
+    box_address,
+    erc20_address
 )
 
+struct AuctionData:
+    member box_token_id: felt # Token ID of the box that is being bought.
+    member total_supply: felt # Total supply of items. If 1, the auction is an English auction. Otherwise, Dutch.
+    member auction_start: felt # Timestamp of the auction start, in seconds.
+    member auction_duration: felt # Duration of the auction in seconds.
+    member initial_price: felt # Initial price, will either increase or decrease depending on auction type.
+end
+
 @event
-func Bid(payer: felt, payer_erc20_contract: felt, box_token_id: felt, bid_amount: felt):
+func Bid(bidder: felt, box_token_id: felt, bid_amount: felt):
 end
 
 struct BidData:
-    member payer: felt
-    member payer_erc20_contract: felt
-    member box_token_id: felt
+    member bidder: felt
+    member auction_index: felt # Hint to the contract to know where to find relevant data.
+    member box_token_id: felt # Box being bid on (must match)
     member bid_amount: felt
-end
-
-struct AuctionData:
-    member box_token_id: felt # Token ID of the box
-    member total_supply: felt # Total supply of items
-    member auction_start: felt # timestamp of the auction start, in seconds
-    member auction_duration: felt # duration of the auction in seconds
 end
 
 @external
@@ -68,11 +70,10 @@ func make_bid{
     alloc_locals
 
     let (caller) = get_caller_address()
-    assert caller = bid.payer
+    assert caller = bid.bidder
 
     # Sanity checks
-    assert_not_zero(bid.payer)
-    assert_not_zero(bid.payer_erc20_contract)
+    assert_not_zero(bid.bidder)
     assert_not_zero(bid.box_token_id)
 
     with_attr error_message("Bid must be greater than 0"):
@@ -81,13 +82,17 @@ func make_bid{
 
     # TODO: assert box exists and is up for grabs.
     # TODO: we are in the correct time range for auction
+    let (auction_data_start_label) = get_label_location(auction_data_start)
+    let data = cast(auction_data_start_label + AuctionData.SIZE * bid.auction_index, AuctionData*)[0]
 
-    Bid.emit(bid.payer, bid.payer_erc20_contract, bid.box_token_id, bid.bid_amount)
+    with_attr error_message("box_token_id does not match auction_index"):
+        assert data.box_token_id = bid.box_token_id
+    end
 
     let (bid_as_uint) = _felt_to_uint(bid.bid_amount)
     let (contract_address) = get_contract_address()
-    let (allowance) = IERC20.allowance(bid.payer_erc20_contract, bid.payer, contract_address)
-    let (balance) = IERC20.balanceOf(bid.payer_erc20_contract, bid.payer)
+    let (allowance) = IERC20.allowance(erc20_address, bid.bidder, contract_address)
+    let (balance) = IERC20.balanceOf(erc20_address, bid.bidder)
     
     with_attr error_message("Bid greater than allowance"):
         let (ok) = uint256_le(bid_as_uint, allowance)
@@ -100,9 +105,32 @@ func make_bid{
         assert ok = TRUE
     end
 
+    if data.total_supply != 1:
+        let (bid_as_uint) = _felt_to_uint(bid.bid_amount)
+        return _make_direct_bid(bid, data)
+    end
+
+    Bid.emit(bid.bidder, bid.box_token_id, bid.bid_amount)
+
     return ()
 end
 
+func _make_direct_bid{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr
+    }(
+        bid: BidData,
+        data: AuctionData,
+    ):
+    # TODO: compute the price of the box.
+    tempvar price = Uint256(50, 0)
+    let (contract_address) = get_contract_address()
+    IERC20.transferFrom(erc20_address, bid.bidder, contract_address, price)
+    IBoxContract.safeTransferFrom_(box_address, contract_address, bid.bidder, bid.box_token_id, 1, 0, cast(0, felt*))
+
+    return ()
+end
 
 @external
 func close_auction{
@@ -152,11 +180,11 @@ func try_bid{
     let (contract_address) = get_contract_address()
     let (bid_as_uint) = _felt_to_uint(bid.bid_amount)
     # Note -> This actually must succeed otherwise the whole TX reverts, which is kind of annoying.
-    let (success) = IERC20.transferFrom(bid.payer_erc20_contract, bid.payer, contract_address, bid_as_uint)
+    let (success) = IERC20.transferFrom(erc20_address, bid.bidder, contract_address, bid_as_uint)
     if success == FALSE:
         return try_bid(bids_len - 1, bids + BidData.SIZE, bids[0])
     end
-    IBoxContract.safeTransferFrom_(box_address, contract_address, bid.payer, bid.box_token_id, 1, 0, cast(0, felt*))
+    IBoxContract.safeTransferFrom_(box_address, contract_address, bid.bidder, bid.box_token_id, 1, 0, cast(0, felt*))
     return ()
 end
 
@@ -184,6 +212,7 @@ func _get_auction_data{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
+    # Warning: n skips 0
     }(n: felt, data: AuctionData*) -> (data_end: AuctionData*):
     if n == 0:
         return(data)

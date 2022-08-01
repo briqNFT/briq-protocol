@@ -40,3 +40,11 @@ def hash_token_id(owner: int, hint: int, uri):
     if len(uri) == 2 and uri[1] < 2**59:
         raw_tid += uri[1]
     return raw_tid
+
+def proxy_contract(state, contract):
+    return StarknetContract(
+        state=state.state,
+        abi=contract.abi,
+        contract_address=contract.contract_address,
+        deploy_execution_info=contract.deploy_execution_info,
+    )

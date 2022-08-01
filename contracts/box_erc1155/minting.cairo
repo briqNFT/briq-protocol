@@ -10,6 +10,7 @@ from contracts.library_erc1155.transferability_library import ERC1155_lib_transf
 from contracts.library_erc1155.balance import _balance
 
 from contracts.booklet_erc1155.token_uri import _shape_contract
+from contracts.utilities.authorization import _onlyAdmin
 
 from contracts.box_erc1155.data import (
     shape_data_start,
@@ -24,6 +25,7 @@ namespace box_minting:
             pedersen_ptr: HashBuiltin*,
             range_check_ptr
         } (owner: felt, token_id: felt, number: felt):
+        _onlyAdmin()
 
         let (balance) = _balance.read(owner, token_id)
         with_attr error_message("Mint would overflow balance"):
@@ -34,6 +36,7 @@ namespace box_minting:
         let (caller) = get_caller_address()
         ERC1155_lib_transfer._onTransfer(caller, 0, owner, token_id, number)
 
+        # Make sure we have data for that token ID
         let (_shape_data_start) = get_label_location(shape_data_start)
         let (_shape_data_end) = get_label_location(shape_data_end)
         assert_lt_felt(0, token_id)

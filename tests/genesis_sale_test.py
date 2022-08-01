@@ -15,7 +15,7 @@ from generators.shape_utils import to_shape_data, compress_shape_item
 
 from generators.generate_box import generate_box
 
-from .conftest import declare_and_deploy, declare_and_deploy_proxied, hash_token_id
+from .conftest import declare_and_deploy, declare_and_deploy_proxied, hash_token_id, proxy_contract
 
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
@@ -70,14 +70,6 @@ async def factory_root():
 
     return [starknet, auction_contract, box_contract, booklet_contract, token_contract_eth, set_contract, briq_contract]
 
-
-def proxy_contract(state, contract):
-    return StarknetContract(
-        state=state.state,
-        abi=contract.abi,
-        contract_address=contract.contract_address,
-        deploy_execution_info=contract.deploy_execution_info,
-    )
 
 @pytest_asyncio.fixture
 async def factory(factory_root):

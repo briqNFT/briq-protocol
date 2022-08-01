@@ -30,6 +30,7 @@ namespace booklet_minting:
 
         _shape_contract.write(token_id, shape_contract)
 
+        # Can only be minted by the box contract
         let (caller) = get_caller_address()
         let (box_addr) = _box_address.read()
         assert caller = box_addr

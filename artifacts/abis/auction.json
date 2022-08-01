@@ -2,12 +2,12 @@
     {
         "members": [
             {
-                "name": "payer",
+                "name": "bidder",
                 "offset": 0,
                 "type": "felt"
             },
             {
-                "name": "payer_erc20_contract",
+                "name": "auction_index",
                 "offset": 1,
                 "type": "felt"
             },
@@ -47,10 +47,15 @@
                 "name": "auction_duration",
                 "offset": 3,
                 "type": "felt"
+            },
+            {
+                "name": "initial_price",
+                "offset": 4,
+                "type": "felt"
             }
         ],
         "name": "AuctionData",
-        "size": 4,
+        "size": 5,
         "type": "struct"
     },
     {
@@ -135,11 +140,7 @@
     {
         "data": [
             {
-                "name": "payer",
-                "type": "felt"
-            },
-            {
-                "name": "payer_erc20_contract",
+                "name": "bidder",
                 "type": "felt"
             },
             {

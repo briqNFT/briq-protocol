@@ -12,9 +12,11 @@ export STARKNET_NETWORK_ID="localhost"
 export STARKNET_CHAIN_ID=SN_GOERLI
 export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
 
-# NB: may need to be done manually changing ~/.starknet_accounts/starknet_open_zeppelin_accounts.json
+# NB: may need to be done manually changing
+rm ~/.starknet_accounts/starknet_open_zeppelin_accounts.json
 starknet deploy_account --account test
-WALLET_ADDRESS="0x0489fb007707f2afa97c40c268384c89298f35f88c4b8e77315a2c3ac951cf5b"
+WALLET_ADDRESS="0x04947d4a4c73a2c4cb8eefc283f28a9393d79516c8b84ed941703f14657cf47a"
+
 
 # --gateway_url "http://127.0.0.1:5000" --feeder_gateway_url "127.0.0.1:5000" --network_id localhost
 

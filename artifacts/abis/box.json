@@ -34,6 +34,43 @@
         "type": "struct"
     },
     {
+        "members": [
+            {
+                "name": "briq_1",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "briq_3",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "briq_4",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "briq_5",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "briq_6",
+                "offset": 4,
+                "type": "felt"
+            },
+            {
+                "name": "shape_class_hash",
+                "offset": 5,
+                "type": "felt"
+            }
+        ],
+        "name": "BoxData",
+        "size": 6,
+        "type": "struct"
+    },
+    {
         "data": [
             {
                 "name": "implementation",
@@ -505,6 +542,77 @@
         ],
         "name": "unbox_",
         "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_box_data",
+        "outputs": [
+            {
+                "name": "data",
+                "type": "BoxData"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_box_nb",
+        "outputs": [
+            {
+                "name": "nb",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "tokenId",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenURI_",
+        "outputs": [
+            {
+                "name": "tokenURI_len",
+                "type": "felt"
+            },
+            {
+                "name": "tokenURI",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "tokenId",
+                "type": "Uint256"
+            }
+        ],
+        "name": "tokenURI",
+        "outputs": [
+            {
+                "name": "tokenURI_len",
+                "type": "felt"
+            },
+            {
+                "name": "tokenURI",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     }
 ]
