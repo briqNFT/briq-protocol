@@ -4,22 +4,15 @@
 # then 
 # starknet-devnet --dump-path devnetstate --accounts 0 --lite-mode --dump-on exit --load-path devnetstate
 
-export STARKNET_GATEWAY_URL="http://127.0.0.1:5050"
-export STARKNET_FEEDER_GATEWAY_URL="http://127.0.0.1:5050"
-export STARKNET_NETWORK_ID="localhost"
-
-# export STARKNET_NETWORK="alpha-goerli"
-export STARKNET_CHAIN_ID=SN_GOERLI
+export STARKNET_NETWORK_ID="goerli"
+export STARKNET_NETWORK="alpha-goerli"
 export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
 
-# NB: may need to be done manually changing
-# rm ~/.starknet_accounts/starknet_open_zeppelin_accounts.json
-export ACCOUNT="test"
+export ACCOUNT="test_deployer"
 # info stored in ~/.starknet_accounts/starknet_open_zeppelin_accounts.json
 starknet deploy_account --account $ACCOUNT
-WALLET_ADDRESS="0x03818c75e20513054c2f1f6b44d88061f090a2ea852223bc847d0a70d703d540"
+WALLET_ADDRESS="0x007c129c796c2cca4e29829bd27f5237693595427d06c51dd63e56ab0aa0fd19"
 
-curl -H "Content-Type: application/json"  -d "{ \"address\": \"${WALLET_ADDRESS}\", \"amount\": 5000000000000000000, \"lite\": 1 }" -X POST localhost:5050/mint
 # Hashes
 
 starknet_declare () {
