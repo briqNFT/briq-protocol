@@ -17,19 +17,16 @@ from contracts.briq_erc1155_like.balance_enumerability import (
     _maybeUnsetMaterialByOwner,
 )
 
-## ERC1155 compatibility (without URI - there is none)
+from contracts.ecosystem.to_set import (
+    _set_address,
+    getSetAddress_,
+    setSetAddress_,
+)
 
-# NB: Operator is set to the address of the current contract.
-# I don't really want to forward a semi-arbitrary operator for this.
-# NB2: Mutate does two transfer events & a single Mutate event
-@event
-func TransferSingle(operator_: felt, from_: felt, to_: felt, id_: felt, value_: felt):
-end
+from contracts.library_erc1155.transferability_library import (
+    ERC1155_lib_transfer
+)
 
-
-@storage_var
-func _set_backend_address() -> (address: felt):
-end
 
 ############
 ############
@@ -48,7 +45,7 @@ func _onlySetAnd{
         range_check_ptr
     } (address: felt):
     let (caller) = get_caller_address()
-    let (setaddr) = _set_backend_address.read()
+    let (setaddr) = _set_address.read()
     if caller == setaddr:
         return()
     end
@@ -60,27 +57,6 @@ end
 ############
 ############
 # Admin functions
-
-@external
-func setSetAddress_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } (address: felt):
-    _onlyAdmin()
-    _set_backend_address.write(address)
-    return ()
-end
-
-@view
-func getSetAddress_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr
-    } () -> (address: felt):
-    let (value) = _set_backend_address.read()
-    return (value)
-end
 
 ## TODO -> mint multiple NFT
 
@@ -116,8 +92,7 @@ func transferFT_{
     _setMaterialByOwner(recipient, material, 0)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, sender, recipient, briq_token_id, qty)
-
+    ERC1155_lib_transfer._onTransfer(__addr, sender, recipient, briq_token_id, qty)
     return ()
 end
 
@@ -129,7 +104,6 @@ func transferOneNFT_{
     } (sender: felt, recipient: felt, material: felt, briq_token_id: felt):
     alloc_locals
     local syscall_ptr: felt* = syscall_ptr
-
     _onlySetAnd(sender)
 
     assert_not_zero(sender)
@@ -161,7 +135,7 @@ func transferOneNFT_{
     _setMaterialByOwner(recipient, material, 0)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, sender, recipient, briq_token_id, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, sender, recipient, briq_token_id, 1)
 
     return ()
 end

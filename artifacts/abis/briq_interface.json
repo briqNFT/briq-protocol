@@ -19,6 +19,23 @@
     {
         "members": [
             {
+                "name": "low",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "high",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "Uint256",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
                 "name": "material",
                 "offset": 0,
                 "type": "felt"
@@ -227,29 +244,198 @@
     {
         "data": [
             {
-                "name": "operator_",
+                "name": "_token_id",
+                "type": "Uint256"
+            },
+            {
+                "name": "_owner",
                 "type": "felt"
             },
             {
-                "name": "from_",
+                "name": "_approved_address",
                 "type": "felt"
             },
             {
-                "name": "to_",
+                "name": "_value",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ApprovalFor",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "_owner",
                 "type": "felt"
             },
             {
-                "name": "id_",
+                "name": "_operator",
                 "type": "felt"
             },
             {
-                "name": "value_",
+                "name": "_approved",
                 "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "ApprovalForAll",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "to",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "value",
+                "type": "felt"
+            }
+        ],
+        "name": "approve_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "approved_address",
+                "type": "felt"
+            },
+            {
+                "name": "is_approved",
+                "type": "felt"
+            }
+        ],
+        "name": "setApprovalForAll_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "on_behalf_of",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            },
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "getApproved_",
+        "outputs": [
+            {
+                "name": "approved_value",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "on_behalf_of",
+                "type": "felt"
+            },
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "isApprovedForAll_",
+        "outputs": [
+            {
+                "name": "is_approved",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "_operator",
+                "type": "felt"
+            },
+            {
+                "name": "_from",
+                "type": "felt"
+            },
+            {
+                "name": "_to",
+                "type": "felt"
+            },
+            {
+                "name": "_id",
+                "type": "Uint256"
+            },
+            {
+                "name": "_value",
+                "type": "Uint256"
             }
         ],
         "keys": [],
         "name": "TransferSingle",
         "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "_operator",
+                "type": "felt"
+            },
+            {
+                "name": "_from",
+                "type": "felt"
+            },
+            {
+                "name": "_to",
+                "type": "felt"
+            },
+            {
+                "name": "_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "_ids",
+                "type": "Uint256*"
+            },
+            {
+                "name": "_values_len",
+                "type": "felt"
+            },
+            {
+                "name": "_values",
+                "type": "Uint256*"
+            }
+        ],
+        "keys": [],
+        "name": "TransferBatch",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "getBoxAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "inputs": [
@@ -258,7 +444,45 @@
                 "type": "felt"
             }
         ],
-        "name": "setSetAddress_",
+        "name": "setBoxAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "type": "felt"
+            }
+        ],
+        "name": "mintFT_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "material",
+                "type": "felt"
+            },
+            {
+                "name": "uid",
+                "type": "felt"
+            }
+        ],
+        "name": "mintOneNFT_",
         "outputs": [],
         "type": "function"
     },
@@ -272,6 +496,17 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setSetAddress_",
+        "outputs": [],
         "type": "function"
     },
     {
@@ -344,67 +579,6 @@
             }
         ],
         "name": "transferNFT_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getBoxAddress_",
-        "outputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setBoxAddress_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "material",
-                "type": "felt"
-            },
-            {
-                "name": "qty",
-                "type": "felt"
-            }
-        ],
-        "name": "mintFT_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "material",
-                "type": "felt"
-            },
-            {
-                "name": "uid",
-                "type": "felt"
-            }
-        ],
-        "name": "mintOneNFT_",
         "outputs": [],
         "type": "function"
     },

@@ -24,8 +24,8 @@ from contracts.briq_erc1155_like.balance_enumerability import (
     _maybeUnsetMaterialByOwner,
 )
 
-from contracts.briq_erc1155_like.transferability import (
-    TransferSingle,
+from contracts.library_erc1155.transferability_library import (
+    ERC1155_lib_transfer
 )
 
 # When a NFT is mutated (FT are handled by Transfer)
@@ -79,8 +79,8 @@ func mutateFT_{
     _maybeUnsetMaterialByOwner(owner, source_material)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, owner, 0, source_material, qty)
-    TransferSingle.emit(__addr, 0, owner, target_material, qty)
+    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, source_material, qty)
+    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, target_material, qty)
 
     return ()
 end
@@ -131,8 +131,8 @@ func mutateOneNFT_{
     _setTokenByOwner(owner, target_material, briq_token_id, 0)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, owner, 0, uid * 2**64 + source_material, 1)
-    TransferSingle.emit(__addr, 0, owner, new_uid * 2**64 + target_material, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, uid * 2**64 + source_material, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, new_uid * 2**64 + target_material, 1)
     Mutate.emit(owner, uid * 2**64 + source_material, new_uid * 2**64 + target_material, source_material, target_material)
 
     return ()
@@ -169,8 +169,8 @@ func convertOneToFT_{
     _balance.write(owner, material, balance + 1)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, owner, 0, token_id, 1)
-    TransferSingle.emit(__addr, 0, owner, material, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, token_id, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, material, 1)
     ConvertToFT.emit(owner, material, token_id)
     return ()
 end
@@ -231,8 +231,8 @@ func convertOneToNFT_{
     _balance.write(owner, material, balance - 1)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, owner, 0, material, 1)
-    TransferSingle.emit(__addr, 0, owner, token_id, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, material, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, token_id, 1)
     ConvertToNFT.emit(owner, material, token_id)
 
     return ()

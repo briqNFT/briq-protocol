@@ -322,38 +322,38 @@ async def test_events(starknet, briq_contract):
     events = starknet.state.events
 
     assert briq_contract.event_manager._selector_to_name[events[0].keys[0]] == 'TransferSingle'
-    assert events[0].data == [briq_contract.contract_address, 0, ADDRESS, 1, 50]
+    assert events[0].data == [briq_contract.contract_address, 0, ADDRESS, 1, 0, 50, 0]
     assert briq_contract.event_manager._selector_to_name[events[1].keys[0]] == 'TransferSingle'
-    assert events[1].data == [briq_contract.contract_address, 0, ADDRESS, 1 * 2**64 + 1, 1]
+    assert events[1].data == [briq_contract.contract_address, 0, ADDRESS, 1 * 2**64 + 1, 0, 1, 0]
 
     assert briq_contract.event_manager._selector_to_name[events[2].keys[0]] == 'TransferSingle'
-    assert events[2].data == [briq_contract.contract_address, ADDRESS, OTHER_ADDRESS, 1, 10]
+    assert events[2].data == [briq_contract.contract_address, ADDRESS, OTHER_ADDRESS, 1, 0, 10, 0]
     assert briq_contract.event_manager._selector_to_name[events[3].keys[0]] == 'TransferSingle'
-    assert events[3].data == [briq_contract.contract_address, ADDRESS, OTHER_ADDRESS, 1 * 2**64 + 1, 1]
+    assert events[3].data == [briq_contract.contract_address, ADDRESS, OTHER_ADDRESS, 1 * 2**64 + 1, 0, 1, 0]
 
     assert briq_contract.event_manager._selector_to_name[events[4].keys[0]] == 'TransferSingle'
-    assert events[4].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 1, 5]
+    assert events[4].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 1, 0, 5, 0]
     assert briq_contract.event_manager._selector_to_name[events[5].keys[0]] == 'TransferSingle'
-    assert events[5].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2, 5]
+    assert events[5].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2, 0, 5, 0]
 
     assert briq_contract.event_manager._selector_to_name[events[6].keys[0]] == 'TransferSingle'
-    assert events[6].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 2**64 + 1, 1]
+    assert events[6].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 2**64 + 1, 0, 1, 0]
     assert briq_contract.event_manager._selector_to_name[events[7].keys[0]] == 'TransferSingle'
-    assert events[7].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2**64 + 2, 1]
+    assert events[7].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2**64 + 2, 0, 1, 0]
     assert briq_contract.event_manager._selector_to_name[events[8].keys[0]] == 'Mutate'
     assert events[8].data == [OTHER_ADDRESS, 2**64 + 1, 2**64 + 2, 1, 2]
 
     assert briq_contract.event_manager._selector_to_name[events[9].keys[0]] == 'TransferSingle'
-    assert events[9].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 2**64 + 2, 1]
+    assert events[9].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 2**64 + 2, 0, 1, 0]
     assert briq_contract.event_manager._selector_to_name[events[10].keys[0]] == 'TransferSingle'
-    assert events[10].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2, 1]
+    assert events[10].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2, 0, 1, 0]
     assert briq_contract.event_manager._selector_to_name[events[11].keys[0]] == 'ConvertToFT'
     assert events[11].data == [OTHER_ADDRESS, 2, 2**64 + 2]
 
     assert briq_contract.event_manager._selector_to_name[events[12].keys[0]] == 'TransferSingle'
-    assert events[12].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 2, 1]
+    assert events[12].data == [briq_contract.contract_address, OTHER_ADDRESS, 0, 2, 0, 1, 0]
     assert briq_contract.event_manager._selector_to_name[events[13].keys[0]] == 'TransferSingle'
-    assert events[13].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2**64 + 2, 1]
+    assert events[13].data == [briq_contract.contract_address, 0, OTHER_ADDRESS, 2**64 + 2, 0, 1, 0]
     assert briq_contract.event_manager._selector_to_name[events[14].keys[0]] == 'ConvertToNFT'
     assert events[14].data == [OTHER_ADDRESS, 2, 2**64 + 2]
 

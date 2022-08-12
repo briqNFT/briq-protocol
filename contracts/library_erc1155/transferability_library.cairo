@@ -16,7 +16,7 @@ from contracts.utilities.Uint256_felt_conv import (
 
 from contracts.library_erc1155.approvals import ERC1155_approvals
 
-from contracts.library_erc1155.balance import (
+from contracts.library_erc1155.balance_only import (
     _balance,
 )
 
@@ -31,7 +31,7 @@ func TransferSingle(_operator: felt, _from: felt, _to: felt, _id: Uint256, _valu
 end
 
 @event
-func TransferBatch(_operator: felt, _from: felt, _to: felt, _ids_len: felt, _ids: Uint256, _values_len: felt, _values: Uint256):
+func TransferBatch(_operator: felt, _from: felt, _to: felt, _ids_len: felt, _ids: Uint256*, _values_len: felt, _values: Uint256*):
 end
 
 namespace ERC1155_lib_transfer:

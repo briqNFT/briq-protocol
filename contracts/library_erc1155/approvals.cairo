@@ -9,7 +9,7 @@ from contracts.utilities.Uint256_felt_conv import (
     _felt_to_uint,
 )
 
-from contracts.library_erc1155.balance import (
+from contracts.library_erc1155.balance_only import (
     _balance
 )
 

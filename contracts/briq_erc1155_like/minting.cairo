@@ -16,8 +16,8 @@ from contracts.briq_erc1155_like.balance_enumerability import (
     _maybeUnsetMaterialByOwner,
 )
 
-from contracts.briq_erc1155_like.transferability import (
-    TransferSingle,
+from contracts.library_erc1155.transferability_library import (
+    ERC1155_lib_transfer
 )
 
 from contracts.ecosystem.to_box import _box_address
@@ -70,7 +70,7 @@ func mintFT_{
     _setMaterialByOwner(owner, material, 0)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, 0, owner, briq_token_id, qty)
+    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, briq_token_id, qty)
 
     return ()    
 end
@@ -107,7 +107,7 @@ func mintOneNFT_{
     _setTokenByOwner(owner, material, briq_token_id, 0)
 
     let (__addr) = get_contract_address()
-    TransferSingle.emit(__addr, 0, owner, briq_token_id, 1)
+    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, briq_token_id, 1)
 
     return ()
 end

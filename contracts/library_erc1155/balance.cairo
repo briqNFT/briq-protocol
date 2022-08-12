@@ -6,14 +6,13 @@ from starkware.cairo.common.math import assert_nn_le, assert_lt, assert_le, asse
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
 
+
+from contracts.library_erc1155.balance_only import _balance
+
 ############
 ############
 ############
 # Storage variables.
-
-@storage_var
-func _balance(owner: felt, token_id: felt) -> (balance: felt):
-end
 
 namespace ERC1155_balance:
     @view
