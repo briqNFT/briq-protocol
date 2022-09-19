@@ -1,9 +1,9 @@
 %lang starknet
 
 @event
-func ProxyAdminSet(address: felt):
-end
+func ProxyAdminSet(address: felt) {
+}
 
 @event
-func ProxyImplementationSet(address: felt):
-end
+func ProxyImplementationSet(address: felt) {
+}
