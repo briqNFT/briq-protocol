@@ -208,11 +208,11 @@ func get_auction_data{
     return (nb, res)
 end
 
+# Warning: n skips 0
 func _get_auction_data{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
-    # Warning: n skips 0
     }(n: felt, data: AuctionData*) -> (data_end: AuctionData*):
     if n == 0:
         return(data)
