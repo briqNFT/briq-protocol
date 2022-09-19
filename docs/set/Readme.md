@@ -1,6 +1,6 @@
 # set contract
 
-The set contract can be found at [`contracts/set_interface.cairo`](../../contracts/set_interface.cairo).  
+The set contract can be found at [`contracts/set.cairo`](../../contracts/set.cairo).  
 Implementation is found in the [`contracts/set_erc721_like/`](../../contracts/set_erc721_like/) folder.
 
 ## High-level overview

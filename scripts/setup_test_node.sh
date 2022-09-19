@@ -34,8 +34,8 @@ starknet_declare artifacts/proxy.json proxy_hash
 starknet_declare artifacts/auction.json auction_hash
 starknet_declare artifacts/box.json box_hash
 starknet_declare artifacts/booklet.json booklet_hash
-starknet_declare artifacts/briq_interface.json briq_hash
-starknet_declare artifacts/set_interface.json set_hash
+starknet_declare artifacts/briq.json briq_hash
+starknet_declare artifacts/set.json set_hash
 
 
 # proxy_hash=0x1386b773ca65975b53d30e0ab68f5db05068e26f95641db50ab68abb44a3c2b
@@ -85,11 +85,11 @@ echo $nonce
 invoke $box_addr box setBookletAddress_ $booklet_addr
 invoke $box_addr box setBriqAddress_ $briq_addr
 
-invoke $set_addr set_interface setBookletAddress_ $booklet_addr
-invoke $set_addr set_interface setBriqAddress_ $briq_addr
+invoke $set_addr set setBookletAddress_ $booklet_addr
+invoke $set_addr set setBriqAddress_ $briq_addr
 
-invoke $briq_addr briq_interface setSetAddress_ $set_addr
-invoke $briq_addr briq_interface setBoxAddress_ $box_addr
+invoke $briq_addr briq setSetAddress_ $set_addr
+invoke $briq_addr briq setBoxAddress_ $box_addr
 
 invoke $booklet_addr booklet setSetAddress_ $set_addr
 invoke $booklet_addr booklet setBoxAddress_ $box_addr

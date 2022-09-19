@@ -1,23 +1,51 @@
-// ERC 721 - OZ compatibility
-// The core briq interface is made of felt, but we provide a Uint256-aware interface
-// by default, for easier interoperability.
-
+// Just a proxy for importing from the subfiles.
+// TODO: auto-generate this maybe.
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
 
-from contracts.set_impl import (
-    ERC721_approvals,
-    ERC721_balance,
-    ERC721_enumerability,
-    ERC721_transferability,
-    tokenURI_,
-    tokenURIData_,
+from contracts.upgrades.upgradable_mixin import (
+    getAdmin_,
+    getImplementation_,
+    upgradeImplementation_,
+    setRootAdmin_,
 )
 
-from starkware.cairo.common.uint256 import Uint256
+from contracts.library_erc721.IERC721 import (
+    approve_,
+    setApprovalForAll_,
+    getApproved_,
+    isApprovedForAll_,
+    ownerOf_,
+    balanceOf_,
+    balanceDetailsOf_,
+    tokenOfOwnerByIndex_,
+)
 
+from contracts.library_erc721.IERC721_enumerable import (
+    transferFrom_,
+)
+
+from contracts.set_erc721.token_uri import tokenURI_, tokenURIData_, setTokenURI_, is_realms_set_
+
+from contracts.set_erc721.assembly import assemble_, assemble_with_booklet_, disassemble_, disassemble_with_booklet_
+
+from contracts.types import FTSpec
+
+from starkware.cairo.common.uint256 import Uint256
 from contracts.utilities.Uint256_felt_conv import _uint_to_felt, _felt_to_uint
+
+
+from contracts.ecosystem.to_briq import (
+    getBriqAddress_,
+    setBriqAddress_,
+)
+
+from contracts.ecosystem.to_booklet import (
+    getBookletAddress_,
+    setBookletAddress_,
+)
+
 
 //###############
 // # Metadata extension
@@ -62,7 +90,7 @@ func tokenURIData{
 func tokenOfOwnerByIndex{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     owner: felt, index: felt
 ) -> (token_id: Uint256) {
-    let (token_id) = ERC721_enumerability.tokenOfOwnerByIndex_(owner, index);
+    let (token_id) = tokenOfOwnerByIndex_(owner, index);
     let (t2) = _felt_to_uint(token_id);
     return (t2,);
 }
@@ -75,7 +103,7 @@ func tokenOfOwnerByIndex{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_c
 func balanceOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(owner: felt) -> (
     balance: Uint256
 ) {
-    let (res) = ERC721_balance.balanceOf_(owner);
+    let (res) = balanceOf_(owner);
     let (res2) = _felt_to_uint(res);
     return (res2,);
 }
@@ -85,7 +113,7 @@ func balanceOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 func balanceDetailsOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     owner: felt
 ) -> (tokenIds_len: felt, tokenIds: felt*) {
-    let (i, j) = ERC721_enumerability.balanceDetailsOf_(owner);
+    let (i, j) = balanceDetailsOf_(owner);
     return (i, j);
 }
 
@@ -94,7 +122,7 @@ func ownerOf{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(to
     owner: felt
 ) {
     let (_tok) = _uint_to_felt(tokenId);
-    let (owner) = ERC721_balance.ownerOf_(_tok);
+    let (owner) = ownerOf_(_tok);
     return (owner,);
 }
 
@@ -103,7 +131,7 @@ func transferFrom{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
     from_: felt, to: felt, tokenId: Uint256
 ) {
     let (_tok) = _uint_to_felt(tokenId);
-    ERC721_transferability.transferFrom_(from_, to, _tok);
+    transferFrom_(from_, to, _tok);
     return ();
 }
 
@@ -114,7 +142,7 @@ func approve{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     approved: felt, tokenId: Uint256
 ) {
     let (_tok) = _uint_to_felt(tokenId);
-    ERC721_approvals.approve_(approved, _tok);
+    approve_(approved, _tok);
     return ();
 }
 
@@ -122,7 +150,7 @@ func approve{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 func setApprovalForAll{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     operator: felt, approved: felt
 ) {
-    ERC721_approvals.setApprovalForAll_(approved, operator);
+    setApprovalForAll_(approved, operator);
     return ();
 }
 
@@ -131,7 +159,7 @@ func getApproved{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     tokenId: Uint256
 ) -> (approved: felt) {
     let (_tok) = _uint_to_felt(tokenId);
-    let (res) = ERC721_approvals.getApproved_(_tok);
+    let (res) = getApproved_(_tok);
     return (res,);
 }
 
@@ -139,6 +167,6 @@ func getApproved{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 func isApprovedForAll{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     owner: felt, operator: felt
 ) -> (isApproved: felt) {
-    let (res) = ERC721_approvals.isApprovedForAll_(owner, operator);
+    let (res) = isApprovedForAll_(owner, operator);
     return (res,);
 }

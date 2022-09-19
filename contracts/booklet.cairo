@@ -9,10 +9,36 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.library_erc1155.approvals import ERC1155_approvals
-from contracts.library_erc1155.balance import ERC1155_balance
-from contracts.library_erc1155.transferability import ERC1155_transferability
+from contracts.booklet_erc1155.minting import (
+    mint_
+)
+from contracts.booklet_erc1155.token_uri import (
+    get_shape_contract_,
+    get_shape_,
+)
 
-from contracts.booklet_erc1155.minting import booklet_minting
-from contracts.booklet_erc1155.token_uri import booklet_token_uri
-from contracts.booklet_erc1155.set_factory import booklet_set_factory
+from contracts.booklet_erc1155.set_factory import (
+    wrap_,
+    unwrap_,
+)
+
+from contracts.ecosystem.to_set import (
+    getSetAddress_,
+    setSetAddress_,
+)
+
+from contracts.ecosystem.to_box import (
+    getBoxAddress_,
+    setBoxAddress_,
+)
+
+from contracts.library_erc1155.IERC1155 import (
+    approve_,
+    setApprovalForAll_,
+    getApproved_,
+    isApprovedForAll_,
+    balanceOf_,
+    balanceOfBatch_,
+    safeTransferFrom_,
+    // no URI (yet)
+)

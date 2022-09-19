@@ -8,7 +8,7 @@ from starkware.starknet.testing.starknet import StarknetContract
 
 from starkware.starknet.public.abi import get_selector_from_name
 
-from .conftest import compile, declare_and_deploy, hash_token_id
+from .conftest import compile, declare_and_deploy, declare_and_deploy_proxied, hash_token_id
 
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
@@ -17,25 +17,17 @@ OTHER_ADDRESS = 0x654321
 
 
 @pytest_asyncio.fixture(scope="module")
-async def setup_proxies_initial(compiled_proxy):
+async def setup_proxies_initial():
     starknet = await Starknet.empty()
 
-    [briq_impl, _] = await declare_and_deploy(starknet, "briq_interface.cairo")
-    [set_impl, _] = await declare_and_deploy(starknet, "set_interface.cairo")
-
     compiled_proxy = compile("upgrades/proxy.cairo")
-    await starknet.declare(contract_class=compiled_proxy)
-    briq_proxy = await starknet.deploy(contract_class=compiled_proxy, constructor_calldata=[ADMIN, briq_impl.class_hash])
-    set_proxy = await starknet.deploy(contract_class=compiled_proxy, constructor_calldata=[ADMIN, set_impl.class_hash])
-
-    briq_proxy = briq_proxy.replace_abi(briq_impl.abi)
-    set_proxy = set_proxy.replace_abi(set_impl.abi)
-
+    [briq_proxy, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "briq.cairo", ADMIN)
+    [set_proxy, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "set.cairo", ADMIN)
     [booklet_mock, _] = await declare_and_deploy(starknet, "mocks/booklet_mock.cairo")
 
-    await set_proxy.setBriqAddress_(briq_proxy.contract_address).invoke(ADMIN)
-    await set_proxy.setBookletAddress_(booklet_mock.contract_address).invoke(ADMIN)
-    await briq_proxy.setSetAddress_(set_proxy.contract_address).invoke(ADMIN)
+    await set_proxy.setBriqAddress_(briq_proxy.contract_address).execute(ADMIN)
+    await set_proxy.setBookletAddress_(booklet_mock.contract_address).execute(ADMIN)
+    await briq_proxy.setSetAddress_(set_proxy.contract_address).execute(ADMIN)
 
     return starknet, briq_proxy, set_proxy
 
@@ -47,13 +39,13 @@ async def setup_proxies(setup_proxies_initial):
         state=starknet.state,
         abi=briq_proxy.abi,
         contract_address=briq_proxy.contract_address,
-        deploy_execution_info=briq_proxy.deploy_execution_info,
+        deploy_call_info=briq_proxy.deploy_call_info,
     )
     set_proxy = StarknetContract(
         state=starknet.state,
         abi=set_proxy.abi,
         contract_address=set_proxy.contract_address,
-        deploy_execution_info=set_proxy.deploy_execution_info,
+        deploy_call_info=set_proxy.deploy_call_info,
     )
     return starknet, briq_proxy, set_proxy
 
@@ -64,8 +56,8 @@ async def test_admin_failure_mode(setup_proxies):
     assert (await briq_proxy.getAdmin_().call()).result.admin == ADMIN
     assert (await set_proxy.getAdmin_().call()).result.admin == ADMIN
 
-    await briq_proxy.upgradeImplementation_(0xcafe).invoke(ADMIN)
-    await set_proxy.upgradeImplementation_(0xcafe).invoke(ADMIN)
+    await briq_proxy.upgradeImplementation_(0xcafe).execute(ADMIN)
+    await set_proxy.upgradeImplementation_(0xcafe).execute(ADMIN)
 
     # The new interface doesn't exist, everything dails.
     with pytest.raises(StarkException):
@@ -80,29 +72,29 @@ async def test_admin(setup_proxies):
     assert (await briq_proxy.getAdmin_().call()).result.admin == ADMIN
     assert (await set_proxy.getAdmin_().call()).result.admin == ADMIN
 
-    await briq_proxy.setRootAdmin_(0xdead).invoke(ADMIN)
-    await set_proxy.setRootAdmin_(0xdead).invoke(ADMIN)
+    await briq_proxy.setRootAdmin_(0xdead).execute(ADMIN)
+    await set_proxy.setRootAdmin_(0xdead).execute(ADMIN)
 
     assert (await briq_proxy.getAdmin_().call()).result.admin == 0xdead
     assert (await set_proxy.getAdmin_().call()).result.admin == 0xdead
 
     with pytest.raises(StarkException):
-        await briq_proxy.upgradeImplementation_(0xcafe).invoke(ADMIN)
+        await briq_proxy.upgradeImplementation_(0xcafe).execute(ADMIN)
     with pytest.raises(StarkException):
-        await set_proxy.upgradeImplementation_(0xcafe).invoke(ADMIN)
+        await set_proxy.upgradeImplementation_(0xcafe).execute(ADMIN)
 
-    await briq_proxy.upgradeImplementation_(0xcafe).invoke(0xdead)
-    await set_proxy.upgradeImplementation_(0xcafe).invoke(0xdead)
+    await briq_proxy.upgradeImplementation_(0xcafe).execute(0xdead)
+    await set_proxy.upgradeImplementation_(0xcafe).execute(0xdead)
 
 
 @pytest.mark.asyncio
 async def test_call(setup_proxies):
     [starknet, briq_proxy, set_proxy] = setup_proxies
 
-    await briq_proxy.mintFT(ADMIN, 1, 50).invoke(ADMIN)
-    await set_proxy.assemble_(ADMIN, token_id_hint=0x1, fts=[(1, 5)], nfts=[], uri=[0xcafe]).invoke(ADMIN)
+    await briq_proxy.mintFT(ADMIN, 1, 50).execute(ADMIN)
+    await set_proxy.assemble_(ADMIN, token_id_hint=0x1, fts=[(1, 5)], nfts=[], uri=[0xcafe]).execute(ADMIN)
     with pytest.raises(StarkException):
-        await set_proxy.assemble_(0x12, 0x2, [(1, 5)], [], [0xfade]).invoke(0xcafe)
+        await set_proxy.assemble_(0x12, 0x2, [(1, 5)], [], [0xfade]).execute(0xcafe)
 
 @pytest.fixture(scope="session")
 def compiled_mint():
@@ -159,8 +151,8 @@ async def test_redo_implementation(setup_proxies):
     bimp = (await briq_proxy.getImplementation_().call()).result.implementation
     simp = (await set_proxy.getImplementation_().call()).result.implementation
 
-    await briq_proxy.upgradeImplementation_(simp).invoke(ADMIN)
-    await set_proxy.upgradeImplementation_(bimp).invoke(ADMIN)
+    await briq_proxy.upgradeImplementation_(simp).execute(ADMIN)
+    await set_proxy.upgradeImplementation_(bimp).execute(ADMIN)
 
     with pytest.raises(StarkException):
         await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
@@ -170,8 +162,8 @@ async def test_redo_implementation(setup_proxies):
             max_fee=0,
         )
 
-    await briq_proxy.upgradeImplementation_(bimp).invoke(ADMIN)
-    await set_proxy.upgradeImplementation_(simp).invoke(ADMIN)
+    await briq_proxy.upgradeImplementation_(bimp).execute(ADMIN)
+    await set_proxy.upgradeImplementation_(simp).execute(ADMIN)
 
     tok_id = hash_token_id(ADMIN, 1, uri=[0xcafe])
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,

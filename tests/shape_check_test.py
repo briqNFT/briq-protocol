@@ -35,14 +35,14 @@ async def factory(factory_root):
 async def deploy_shape(starknet, items, nfts=[]):
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     newline = '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
-    const SHAPE_LEN = {len(items)}
+    data = data.replace("// DEFINE_SHAPE", f"""
+    const SHAPE_LEN = {len(items)};
 
     shape_data:
     {newline.join(to_shape_data(*i) for i in items)}
     shape_data_end:
     nft_data:
-    {newline.join('dw ' + hex(nft) for nft in nfts)}
+    {newline.join('dw ' + hex(nft) + ';' for nft in nfts)}
     nft_data_end:
 """)
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True)

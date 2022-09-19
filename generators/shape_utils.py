@@ -47,6 +47,6 @@ def uncompress_shape_item(col_nft_mat: int, x_y_z: int):
 def to_shape_data(color: str, material: int, x: int, y: int, z: int, has_nft: bool = False):
     col_nft_mat, xyz = compress_shape_item(color, material, x, y, z, has_nft)
     return f"""
-    dw {col_nft_mat}
-    dw {xyz}
+    dw {col_nft_mat};
+    dw {xyz};
 """

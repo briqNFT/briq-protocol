@@ -1,35 +1,65 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
-from contracts.briq_impl import (
+
+from contracts.types import BalanceSpec, NFTSpec
+
+from contracts.briq_erc1155_like.balance_enumerability import (
     ownerOf_,
     balanceOfMaterial_,
     balanceOfMaterials_,
-    materialsOf_,
     balanceDetailsOfMaterial_,
+    materialsOf_,
     fullBalanceOf_,
     tokenOfOwnerByIndex_,
     totalSupplyOfMaterial_,
-    setSetAddress_,
-    setBoxAddress_,
+)
+
+from contracts.briq_erc1155_like.minting import mintFT_, mintOneNFT_
+
+from contracts.briq_erc1155_like.transferability import (
     transferFT_,
     transferOneNFT_,
     transferNFT_,
-    mintFT_,
-    mintOneNFT_,
+)
+
+from contracts.briq_erc1155_like.convert_mutate import (
     mutateFT_,
     mutateOneNFT_,
     convertOneToFT_,
     convertToFT_,
     convertOneToNFT_,
-    name_,
-    symbol_,
-    balanceOf_,
-    balanceDetailsOf_,
-    multiBalanceOf_,
-    totalSupply_,
 )
-from contracts.types import BalanceSpec, NFTSpec
+
+from contracts.upgrades.upgradable_mixin import (
+    getAdmin_,
+    getImplementation_,
+    upgradeImplementation_,
+    setRootAdmin_,
+)
+
+
+from contracts.ecosystem.to_set import (
+    getSetAddress_,
+    setSetAddress_,
+)
+from contracts.ecosystem.to_box import (getBoxAddress_, setBoxAddress_)
+
+//
+
+@view
+func name_() -> (name: felt) {
+    // briq
+    return ('briq',);
+}
+
+@view
+func symbol_() -> (symbol: felt) {
+    // briq
+    return ('briq',);
+}
+
+//// OZ-compatible interface
 
 @view
 func ownerOf{
@@ -189,36 +219,4 @@ func symbol{
 }() -> (symbol: felt) {
     let (symbol) = symbol_();
     return (symbol,);
-}
-
-@view
-func balanceOf{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(owner: felt, material: felt) -> (balance: felt) {
-    let (balance) = balanceOf_(owner, material);
-    return (balance,);
-}
-
-@view
-func balanceDetailsOf{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(owner: felt, material: felt) -> (ft_balance: felt, nft_ids_len: felt, nft_ids: felt*) {
-    let (ft_balance, nft_ids_len, nft_ids) = balanceDetailsOf_(owner, material);
-    return (ft_balance, nft_ids_len, nft_ids);
-}
-
-@view
-func multiBalanceOf{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(owner: felt, materials_len: felt, materials: felt*) -> (balances_len: felt, balances: felt*) {
-    let (balances_len, balances) = multiBalanceOf_(owner, materials_len, materials);
-    return (balances_len, balances);
-}
-
-@view
-func totalSupply{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(material: felt) -> (supply: felt) {
-    let (supply) = totalSupply_(material);
-    return (supply,);
 }

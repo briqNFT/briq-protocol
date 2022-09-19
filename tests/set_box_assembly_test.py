@@ -24,19 +24,21 @@ ADDRESS = 0xcafe
 OTHER_ADDRESS = 0xd00d
 MOCK_SHAPE_TOKEN = 0xdeadfade
 
+BOX_ADDRESS = 0x1234
 
 
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
     starknet = await Starknet.empty()
-    [briq_contract, _] = await declare_and_deploy(starknet, "briq_impl.cairo")
-    [set_contract, _] = await declare_and_deploy(starknet, "set_impl.cairo")
+    [briq_contract, _] = await declare_and_deploy(starknet, "briq.cairo")
+    [set_contract, _] = await declare_and_deploy(starknet, "set.cairo")
     [booklet_contract, _] = await declare_and_deploy(starknet, "booklet.cairo")
-    await set_contract.setBriqAddress_(briq_contract.contract_address).invoke()
-    await set_contract.setBookletAddress_(booklet_contract.contract_address).invoke()
-    await briq_contract.setSetAddress_(set_contract.contract_address).invoke()
-    await booklet_contract.setSetAddress_(set_contract.contract_address).invoke()
-    await briq_contract.mintFT_(ADDRESS, 0x1, 50).invoke()
+    await set_contract.setBriqAddress_(briq_contract.contract_address).execute()
+    await set_contract.setBookletAddress_(booklet_contract.contract_address).execute()
+    await briq_contract.setSetAddress_(set_contract.contract_address).execute()
+    await booklet_contract.setSetAddress_(set_contract.contract_address).execute()
+    await booklet_contract.setBoxAddress_(BOX_ADDRESS).execute()
+    await briq_contract.mintFT_(ADDRESS, 0x1, 50).execute()
     return [starknet, set_contract, briq_contract, booklet_contract]
 
 
@@ -45,7 +47,7 @@ def proxy_contract(state, contract):
         state=state.state,
         abi=contract.abi,
         contract_address=contract.contract_address,
-        deploy_execution_info=contract.deploy_execution_info,
+        deploy_call_info=contract.deploy_call_info,
     )
 
 @pytest_asyncio.fixture
@@ -67,8 +69,8 @@ async def test_working(tmp_path, factory):
     BOOKLET_TOKEN_ID = 1234
     SET_TOKEN_ID = hash_token_id(ADDRESS, TOKEN_HINT, TOKEN_URI)
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
-    const SHAPE_LEN = 4
+    data = data.replace("// DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 4;
 
     shape_data:
     {to_shape_data('#ffaaff', 1, 2, -2, -6)}
@@ -82,9 +84,8 @@ async def test_working(tmp_path, factory):
     # write to a file so we can get error messages.
     open(tmp_path / "contract.cairo", "w").write(data)
     test_code = compile_starknet_files(files=[str(tmp_path / "contract.cairo")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_class=test_code)
-
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+    shape_hash = (await state.starknet.declare(contract_class=test_code)).class_hash
+    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_hash).execute(BOX_ADDRESS)
 
     await state.set_contract.assemble_with_booklet_(
         owner=ADDRESS,
@@ -99,10 +100,12 @@ async def test_working(tmp_path, factory):
             compress_shape_item('#aaffaa', 0x1, 5, -2, -6, False),
             compress_shape_item('#aaffaa', 0x1, 6, -2, -6, False),
         ],
-    ).invoke(ADDRESS)
+    ).execute(ADDRESS)
     assert (await state.set_contract.ownerOf_(SET_TOKEN_ID).call()).result.owner == ADDRESS
     assert (await state.briq_contract.balanceOfMaterial_(ADDRESS, 0x1).call()).result.balance == 46
-    assert (await state.booklet_contract.ownerOf_(BOOKLET_TOKEN_ID).call()).result.owner == SET_TOKEN_ID
+    assert (await state.booklet_contract.balanceOf_(ADDRESS, BOOKLET_TOKEN_ID).call()).result.balance == 0
+    assert (await state.booklet_contract.balanceOf_(SET_TOKEN_ID, BOOKLET_TOKEN_ID).call()).result.balance == 1
+
 
     with pytest.raises(StarkException):
         await state.set_contract.disassemble_(
@@ -110,17 +113,18 @@ async def test_working(tmp_path, factory):
             token_id=SET_TOKEN_ID,
             fts=[(0x1, 4)],
             nfts=[],
-        ).invoke(ADDRESS)
+        ).execute(ADDRESS)
     await state.set_contract.disassemble_with_booklet_(
         owner=ADDRESS,
         token_id=SET_TOKEN_ID,
         fts=[(0x1, 4)],
         nfts=[],
         booklet_token_id=BOOKLET_TOKEN_ID
-    ).invoke(ADDRESS)
+    ).execute(ADDRESS)
     assert (await state.set_contract.ownerOf_(SET_TOKEN_ID).call()).result.owner == 0
     assert (await state.briq_contract.balanceOfMaterial_(ADDRESS, 0x1).call()).result.balance == 50
-    assert (await state.booklet_contract.ownerOf_(BOOKLET_TOKEN_ID).call()).result.owner == ADDRESS
+    assert (await state.booklet_contract.balanceOf_(ADDRESS, BOOKLET_TOKEN_ID).call()).result.balance == 1
+    assert (await state.booklet_contract.balanceOf_(SET_TOKEN_ID, BOOKLET_TOKEN_ID).call()).result.balance == 0
 
 
 @pytest.mark.asyncio
@@ -130,8 +134,8 @@ async def test_bad_shape(tmp_path, factory):
     BOOKLET_TOKEN_ID = 1234
 
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
-    const SHAPE_LEN = 4
+    data = data.replace("// DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 4;
 
     shape_data:
     {to_shape_data('#ffaaff', 1, 2, -2, -6)}
@@ -145,9 +149,8 @@ async def test_bad_shape(tmp_path, factory):
     # write to a file so we can get error messages.
     open(tmp_path / "contract.cairo", "w").write(data)
     test_code = compile_starknet_files(files=[str(tmp_path / "contract.cairo")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_class=test_code)
-
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+    shape_hash = (await state.starknet.declare(contract_class=test_code)).class_hash
+    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_hash).execute(BOX_ADDRESS)
 
     with pytest.raises(StarkException, match="Shapes do not match"):
         await state.set_contract.assemble_with_booklet_(
@@ -163,7 +166,7 @@ async def test_bad_shape(tmp_path, factory):
                 compress_shape_item('#aaffaa', 0x1, 4, -2, -6, False),
                 compress_shape_item('#aaffaa', 0x1, 6, -2, -6, False),
             ],
-        ).invoke(ADDRESS)
+        ).execute(ADDRESS)
 
 
 @pytest.mark.asyncio
@@ -173,8 +176,8 @@ async def test_bad_number(tmp_path, factory):
     BOOKLET_TOKEN_ID = 1234
 
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
-    const SHAPE_LEN = 4
+    data = data.replace("// DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 4;
 
     shape_data:
     {to_shape_data('#ffaaff', 1, 2, -2, -6)}
@@ -188,9 +191,8 @@ async def test_bad_number(tmp_path, factory):
     # write to a file so we can get error messages.
     open(tmp_path / "contract.cairo", "w").write(data)
     test_code = compile_starknet_files(files=[str(tmp_path / "contract.cairo")], disable_hint_validation=True, debug_info=True)
-    shape_contract = await state.starknet.deploy(contract_class=test_code)
-
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+    shape_hash = (await state.starknet.declare(contract_class=test_code)).class_hash
+    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_hash).execute(BOX_ADDRESS)
 
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
         await state.set_contract.assemble_with_booklet_(
@@ -206,7 +208,7 @@ async def test_bad_number(tmp_path, factory):
                 compress_shape_item('#aaffaa', 0x1, 5, -2, -6, False),
                 compress_shape_item('#aaffaa', 0x1, 6, -2, -6, False),
             ],
-        ).invoke(ADDRESS)
+        ).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
         await state.set_contract.assemble_with_booklet_(
@@ -222,4 +224,4 @@ async def test_bad_number(tmp_path, factory):
                 compress_shape_item('#aaffaa', 0x1, 5, -2, -6, False),
                 compress_shape_item('#aaffaa', 0x1, 6, -2, -6, False),
             ],
-        ).invoke(ADDRESS)
+        ).execute(ADDRESS)

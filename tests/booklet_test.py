@@ -32,8 +32,8 @@ async def factory_root():
     [booklet_contract, _] = await declare_and_deploy(starknet, "booklet.cairo")
     [set_mock, _] = await declare_and_deploy(starknet, "mocks/set_mock.cairo")
     [shape_mock, _] = await declare_and_deploy(starknet, "mocks/shape_mock.cairo")
-    await booklet_contract.setSetAddress_(set_mock.contract_address).invoke()
-    await booklet_contract.mint_(MOCK_SHAPE_TOKEN, MOCK_SHAPE_TOKEN, shape_mock.contract_address).invoke()
+    await booklet_contract.setSetAddress_(set_mock.contract_address).execute()
+    await booklet_contract.mint_(MOCK_SHAPE_TOKEN, MOCK_SHAPE_TOKEN, shape_mock.contract_address).execute()
     return (starknet, booklet_contract, shape_mock, set_mock)
 
 @pytest_asyncio.fixture
@@ -44,13 +44,13 @@ async def factory(factory_root):
         state=state.state,
         abi=a.abi,
         contract_address=a.contract_address,
-        deploy_execution_info=a.deploy_execution_info,
+        deploy_call_info=a.deploy_call_info,
     )
     b = StarknetContract(
         state=state.state,
         abi=b.abi,
         contract_address=b.contract_address,
-        deploy_execution_info=b.deploy_execution_info,
+        deploy_call_info=b.deploy_call_info,
     )
     return (state, a, b, set_mock)
 
@@ -58,8 +58,8 @@ async def factory(factory_root):
 async def test_mint_transfer(factory):
     [_, booklet_contract, _, _] = factory
     TOKEN = 1
-    await booklet_contract.mint_(ADDRESS, TOKEN, 2).invoke()
-    await booklet_contract.transferFrom_(ADDRESS, OTHER_ADDRESS, TOKEN).invoke()
+    await booklet_contract.mint_(ADDRESS, TOKEN, 2).execute()
+    await booklet_contract.safeTransferFrom_(ADDRESS, OTHER_ADDRESS, TOKEN, 1, []).execute(ADDRESS)
 
 
 @pytest.mark.asyncio
@@ -67,8 +67,8 @@ async def test_shape(factory):
     [starknet, booklet_contract, _, _] = factory
 
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
-    const SHAPE_LEN = 3
+    data = data.replace("// DEFINE_SHAPE", f"""
+    const SHAPE_LEN = 3;
 
     shape_data:
     {to_shape_data('#ffaaff', 1, 4, -2, -6)}
@@ -77,14 +77,15 @@ async def test_shape(factory):
 
     shape_data_end:
     nft_data:
-    dw { 1 * 2 **64 + 1}
+    dw { 1 * 2 **64 + 1};
     nft_data_end:
 """)
     test_code = compile_starknet_codes(codes=[(data, "test_code")])
+    shape_hash = await starknet.declare(contract_class=test_code)
     shape_contract = await starknet.deploy(contract_class=test_code)
 
     TOKEN = 1
-    await booklet_contract.mint_(ADDRESS, TOKEN, shape_contract.contract_address).invoke()
+    await booklet_contract.mint_(ADDRESS, TOKEN, shape_hash.class_hash).execute()
     assert (await booklet_contract.get_shape_(TOKEN).call()).result.shape == [
         shape_contract.ShapeItem(*compress_shape_item(color='#ffaaff', material=1, x=4, y=-2, z=-6)),
         shape_contract.ShapeItem(*compress_shape_item(color='#ffaaff', material=1, x=4, y=0, z=-6)),

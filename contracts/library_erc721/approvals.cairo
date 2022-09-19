@@ -25,7 +25,7 @@ namespace ERC721_approvals {
         return ();
     }
 
-    @external
+    // @external
     func approve_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         to: felt, token_id: felt
     ) {
@@ -47,7 +47,7 @@ namespace ERC721_approvals {
         return ();
     }
 
-    @external
+    // @external
     func setApprovalForAll_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         approved_address: felt, is_approved: felt
     ) {
@@ -80,7 +80,7 @@ namespace ERC721_approvals {
         return ();
     }
 
-    @view
+    // @view
     func getApproved_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         token_id: felt
     ) -> (approved: felt) {
@@ -88,7 +88,7 @@ namespace ERC721_approvals {
         return (addr,);
     }
 
-    @view
+    // @view
     func isApprovedForAll_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         on_behalf_of: felt, address: felt
     ) -> (is_approved: felt) {

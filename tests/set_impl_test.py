@@ -25,12 +25,12 @@ THIRD_ADDRESS = 0x551155
 @pytest_asyncio.fixture(scope="session")
 async def factory_root():
     starknet = await Starknet.empty()
-    [set_contract, _] = await declare_and_deploy(starknet, "set_interface.cairo")
-    [briq_contract, _] = await declare_and_deploy(starknet, "briq_interface.cairo")
+    [set_contract, _] = await declare_and_deploy(starknet, "set.cairo")
+    [briq_contract, _] = await declare_and_deploy(starknet, "briq.cairo")
     [booklet_mock, _] = await declare_and_deploy(starknet, "mocks/booklet_mock.cairo")
-    await set_contract.setBriqAddress_(address=briq_contract.contract_address).invoke(caller_address=ADMIN)
-    await set_contract.setBookletAddress_(address=booklet_mock.contract_address).invoke(caller_address=ADMIN)
-    await briq_contract.setSetAddress_(address=set_contract.contract_address).invoke(caller_address=ADMIN)
+    await set_contract.setBriqAddress_(address=briq_contract.contract_address).execute(caller_address=ADMIN)
+    await set_contract.setBookletAddress_(address=booklet_mock.contract_address).execute(caller_address=ADMIN)
+    await briq_contract.setSetAddress_(address=set_contract.contract_address).execute(caller_address=ADMIN)
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=50))
     return (starknet, set_contract, briq_contract)
 
@@ -47,7 +47,7 @@ async def set_contract(factory: Tuple[Starknet, StarknetContract, StarknetContra
         state=starknet.state,
         abi=sc.abi,
         contract_address=sc.contract_address,
-        deploy_execution_info=sc.deploy_execution_info,
+        deploy_call_info=sc.deploy_call_info,
     )
 
 @pytest_asyncio.fixture
@@ -57,7 +57,7 @@ async def briq_contract(factory: Tuple[Starknet, StarknetContract, StarknetContr
         state=starknet.state,
         abi=bc.abi,
         contract_address=bc.contract_address,
-        deploy_execution_info=bc.deploy_execution_info,
+        deploy_call_info=bc.deploy_call_info,
     )
 
 
@@ -67,7 +67,7 @@ async def starknet(factory: Tuple[Starknet, StarknetContract, StarknetContract])
     return starknet
 
 def invoke_set(call, addr=ADDRESS):
-    return call.invoke(caller_address=addr)
+    return call.execute(caller_address=addr)
 
 @pytest.mark.asyncio
 async def test_minting_compactness(briq_contract, set_contract):
@@ -101,7 +101,7 @@ async def test_minting_and_querying(briq_contract, set_contract):
 
     assert (await set_contract.balanceOf_(owner=ADDRESS).call()).result.balance == 1
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1]
 
     await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=150, fts=[(1, 10)], nfts=[], uri=[1234]))
 
@@ -120,27 +120,27 @@ async def test_minting_and_querying(briq_contract, set_contract):
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50, tok_id_150]
     assert (await set_contract.balanceDetailsOf_(owner=OTHER_ADDRESS).call()).result.token_ids == [tok_id_25]
 
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 16
-    assert (await briq_contract.balanceOf(owner=OTHER_ADDRESS, material=1).call()).result.balance == 40
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 16
+    assert (await briq_contract.balanceOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.balance == 40
 
-    assert (await briq_contract.balanceOf(owner=tok_id_50, material=1).call()).result.balance == 27
-    assert (await briq_contract.balanceOf(owner=tok_id_150, material=1).call()).result.balance == 10
-    assert (await briq_contract.balanceOf(owner=tok_id_25, material=1).call()).result.balance == 10
-    assert (await briq_contract.balanceDetailsOf(owner=tok_id_50, material=1).call()).result.nft_ids == [3 * 2**64 + 1, 1 * 2**64 + 1]
+    assert (await briq_contract.balanceOfMaterial_(owner=tok_id_50, material=1).call()).result.balance == 27
+    assert (await briq_contract.balanceOfMaterial_(owner=tok_id_150, material=1).call()).result.balance == 10
+    assert (await briq_contract.balanceOfMaterial_(owner=tok_id_25, material=1).call()).result.balance == 10
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=tok_id_50, material=1).call()).result.nft_ids == [3 * 2**64 + 1, 1 * 2**64 + 1]
 
     await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id_150, fts=[(1, 10)], nfts=[]))
     assert (await set_contract.balanceOf_(owner=ADDRESS).call()).result.balance == 1
 
     await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id_50, fts=[(1, 25)], nfts=[1 * 2**64 + 1, 3 * 2**64 + 1]))
     assert (await set_contract.balanceOf_(owner=ADDRESS).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=tok_id_50, material=1).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=tok_id_150, material=1).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=tok_id_25, material=1).call()).result.balance == 10
+    assert (await briq_contract.balanceOfMaterial_(owner=tok_id_50, material=1).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=tok_id_150, material=1).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=tok_id_25, material=1).call()).result.balance == 10
     assert (await set_contract.ownerOf_(token_id=tok_id_50).call()).result.owner == 0
     assert (await set_contract.ownerOf_(token_id=tok_id_150).call()).result.owner == 0
     assert (await set_contract.ownerOf_(token_id=tok_id_25).call()).result.owner == OTHER_ADDRESS
 
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 53
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 53
 
     with pytest.raises(StarkException):
         await invoke_set(set_contract.assemble_(owner=OTHER_ADDRESS, token_id_hint=25, fts=[], nfts=[], uri=[1234]), OTHER_ADDRESS)
@@ -298,24 +298,24 @@ async def test_events(starknet, set_contract):
 @pytest.mark.asyncio
 async def test_approval(set_contract):
     tok_id_1 = hash_token_id(ADDRESS, 0x1, uri=[1234])
-    await set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], uri=[1234]).invoke(ADDRESS)
-    await set_contract.setApprovalForAll_(OTHER_ADDRESS, 1).invoke(ADDRESS)
-    await set_contract.approve_(THIRD_ADDRESS, tok_id_1).invoke(OTHER_ADDRESS)
+    await set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], uri=[1234]).execute(ADDRESS)
+    await set_contract.setApprovalForAll_(OTHER_ADDRESS, 1).execute(ADDRESS)
+    await set_contract.approve_(THIRD_ADDRESS, tok_id_1).execute(OTHER_ADDRESS)
     assert (await set_contract.isApprovedForAll_(ADDRESS, OTHER_ADDRESS).call()).result.is_approved == 1
     assert (await set_contract.getApproved_(tok_id_1).call()).result.approved == THIRD_ADDRESS
 
-    await set_contract.transferFrom_(sender=ADDRESS, recipient=OTHER_ADDRESS, token_id=tok_id_1).invoke(THIRD_ADDRESS)
+    await set_contract.transferFrom_(sender=ADDRESS, recipient=OTHER_ADDRESS, token_id=tok_id_1).execute(THIRD_ADDRESS)
     assert (await set_contract.isApprovedForAll_(ADDRESS, OTHER_ADDRESS).call()).result.is_approved == 1
     assert (await set_contract.getApproved_(tok_id_1).call()).result.approved == 0
 
-    await set_contract.transferFrom_(sender=OTHER_ADDRESS, recipient=ADDRESS, token_id=tok_id_1).invoke(OTHER_ADDRESS)
+    await set_contract.transferFrom_(sender=OTHER_ADDRESS, recipient=ADDRESS, token_id=tok_id_1).execute(OTHER_ADDRESS)
     assert (await set_contract.isApprovedForAll_(ADDRESS, OTHER_ADDRESS).call()).result.is_approved == 1
 
     with pytest.raises(StarkException):
-        await set_contract.transferFrom_(sender=OTHER_ADDRESS, recipient=ADDRESS, token_id=tok_id_1).invoke(THIRD_ADDRESS)
+        await set_contract.transferFrom_(sender=OTHER_ADDRESS, recipient=ADDRESS, token_id=tok_id_1).execute(THIRD_ADDRESS)
 
-    await set_contract.transferFrom_(sender=ADDRESS, recipient=OTHER_ADDRESS, token_id=tok_id_1).invoke(OTHER_ADDRESS)
+    await set_contract.transferFrom_(sender=ADDRESS, recipient=OTHER_ADDRESS, token_id=tok_id_1).execute(OTHER_ADDRESS)
     assert (await set_contract.isApprovedForAll_(ADDRESS, OTHER_ADDRESS).call()).result.is_approved == 1
 
     with pytest.raises(StarkException):
-        await set_contract.transferFrom_(sender=OTHER_ADDRESS, recipient=ADDRESS, token_id=tok_id_1).invoke(ADDRESS)
+        await set_contract.transferFrom_(sender=OTHER_ADDRESS, recipient=ADDRESS, token_id=tok_id_1).execute(ADDRESS)

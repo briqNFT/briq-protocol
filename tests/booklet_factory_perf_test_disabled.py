@@ -38,14 +38,14 @@ def compile(path):
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
     starknet = await Starknet.empty()
-    [briq_contract, _] = await declare_and_deploy(starknet, "briq_impl.cairo")
-    [set_contract, _] = await declare_and_deploy(starknet, "set_impl.cairo")
+    [briq_contract, _] = await declare_and_deploy(starknet, "briq.cairo")
+    [set_contract, _] = await declare_and_deploy(starknet, "set.cairo")
     [booklet_contract, _] = await declare_and_deploy(starknet, "booklet.cairo")
-    await set_contract.setBriqAddress_(briq_contract.contract_address).invoke()
-    await set_contract.setBookletAddress_(booklet_contract.contract_address).invoke()
-    await briq_contract.setSetAddress_(set_contract.contract_address).invoke()
-    await booklet_contract.setSetAddress_(set_contract.contract_address).invoke()
-    await briq_contract.mintFT_(ADDRESS, 0x1, 100).invoke()
+    await set_contract.setBriqAddress_(briq_contract.contract_address).execute()
+    await set_contract.setBookletAddress_(booklet_contract.contract_address).execute()
+    await briq_contract.setSetAddress_(set_contract.contract_address).execute()
+    await booklet_contract.setSetAddress_(set_contract.contract_address).execute()
+    await briq_contract.mintFT_(ADDRESS, 0x1, 100).execute()
     return [starknet, set_contract, briq_contract, booklet_contract]
 
 
@@ -54,7 +54,7 @@ def copy_contract(state, contract):
         state=state.state,
         abi=contract.abi,
         contract_address=contract.contract_address,
-        deploy_execution_info=contract.deploy_execution_info,
+        deploy_call_info=contract.deploy_call_info,
     )
 
 @pytest_asyncio.fixture
@@ -89,7 +89,7 @@ async def test_performance_optimal(factory):
     TOKEN_URI = [1234]
     BOOKLET_TOKEN_ID = 1234
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
+    data = data.replace("// DEFINE_SHAPE", f"""
     const SHAPE_LEN = 100
 
     shape_data:
@@ -102,7 +102,7 @@ async def test_performance_optimal(factory):
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
     shape_contract = await state.starknet.deploy(contract_class=test_code)
 
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
 
     tx_info = await state.set_contract.assemble_with_booklet_(
         owner=ADDRESS,
@@ -112,19 +112,19 @@ async def test_performance_optimal(factory):
         nfts=[],
         booklet_token_id=BOOKLET_TOKEN_ID,
         shape=[compress_shape_item('#ffaaff', 0x1, i, 0, 2, False) for i in range(100)],
-    ).invoke(ADDRESS)
+    ).execute(ADDRESS)
     report_performance(tx_info)
 
 
 @pytest.mark.asyncio
 async def test_performance_less_optimal(factory):
     state = factory
-    await state.briq_contract.mintFT_(ADDRESS, 0x2, 100).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x2, 100).execute()
     TOKEN_HINT = 1234
     TOKEN_URI = [1234]
     BOOKLET_TOKEN_ID = 1234
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
+    data = data.replace("// DEFINE_SHAPE", f"""
     const SHAPE_LEN = 100
 
     shape_data:
@@ -138,7 +138,7 @@ async def test_performance_less_optimal(factory):
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
     shape_contract = await state.starknet.deploy(contract_class=test_code)
 
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
 
     tx_info = await state.set_contract.assemble_with_booklet_(
         owner=ADDRESS,
@@ -150,26 +150,26 @@ async def test_performance_less_optimal(factory):
         shape=[compress_shape_item('#ffaaff', 0x1, 0, i, 2, False) for i in range(80)] + [
             compress_shape_item('#ffaaff', 0x2, 1, i, 2, False) for i in range(20)
         ],
-    ).invoke(ADDRESS)
+    ).execute(ADDRESS)
     report_performance(tx_info)
 
 @pytest.mark.asyncio
 async def test_performance_bad(factory):
     state = factory
-    await state.briq_contract.mintFT_(ADDRESS, 0x2, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0x3, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0x4, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0x5, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0x6, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0x7, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0x8, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0x9, 10).invoke()
-    await state.briq_contract.mintFT_(ADDRESS, 0xA, 10).invoke()
+    await state.briq_contract.mintFT_(ADDRESS, 0x2, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0x3, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0x4, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0x5, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0x6, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0x7, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0x8, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0x9, 10).execute()
+    await state.briq_contract.mintFT_(ADDRESS, 0xA, 10).execute()
     TOKEN_HINT = 1234
     TOKEN_URI = [1234]
     BOOKLET_TOKEN_ID = 1234
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    data = data.replace("#DEFINE_SHAPE", f"""
+    data = data.replace("// DEFINE_SHAPE", f"""
     const SHAPE_LEN = 100
 
     shape_data:
@@ -182,7 +182,7 @@ async def test_performance_bad(factory):
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
     shape_contract = await state.starknet.deploy(contract_class=test_code)
 
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).invoke(ADDRESS)
+    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
 
     tx_info = await state.set_contract.assemble_with_booklet_(
         owner=ADDRESS,
@@ -194,5 +194,5 @@ async def test_performance_bad(factory):
         shape=[
             compress_shape_item('#ffaaff', j+1, j, i, 2, False) for j in range(10) for i in range(10)
         ],
-    ).invoke(ADDRESS)
+    ).execute(ADDRESS)
     report_performance(tx_info)

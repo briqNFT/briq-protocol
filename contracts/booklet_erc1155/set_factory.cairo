@@ -10,9 +10,14 @@ from contracts.utilities.authorization import _onlyAdmin
 
 from contracts.types import FTSpec, ShapeItem
 
-from contracts.booklet_erc1155.token_uri import booklet_token_uri
+from contracts.booklet_erc1155.token_uri import get_shape_contract_
 from contracts.library_erc1155.balance import ERC1155_balance
 from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
+
+from contracts.ecosystem.to_set import (
+    getSetAddress_,
+    setSetAddress_,
+)
 
 //###########
 //###########
@@ -43,82 +48,60 @@ namespace IShapeContract {
     ) {
     }
 }
-@storage_var
-func _set_address() -> (address: felt) {
+
+//###########
+//###########
+
+@external
+func wrap_{
+    syscall_ptr: felt*,
+    pedersen_ptr: HashBuiltin*,
+    bitwise_ptr: BitwiseBuiltin*,
+    range_check_ptr,
+}(
+    owner: felt,
+    set_token_id: felt,
+    booklet_token_id: felt,
+    shape_len: felt,
+    shape: ShapeItem*,
+    fts_len: felt,
+    fts: FTSpec*,
+    nfts_len: felt,
+    nfts: felt*,
+) {
+    alloc_locals;
+
+    let (caller) = get_caller_address();
+    let (set_addr) = getSetAddress_();
+    assert caller = set_addr;
+    // TODO: check set is authorized still.
+
+    // Transfer the booklet to the set (wrapping it inside the set).
+    ERC1155_lib_transfer._transfer(owner, set_token_id, booklet_token_id, 1);
+
+    // Check that the shape matches the passed data
+    let (local addr) = get_shape_contract_(booklet_token_id);
+    local pedersen_ptr: HashBuiltin* = pedersen_ptr;
+    IShapeContract.library_call_check_shape_numbers_(
+        addr, shape_len, shape, fts_len, fts, nfts_len, nfts
+    );
+
+    return ();
 }
 
-namespace booklet_set_factory {
-    @view
-    func getSetAddress_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
-        address: felt
-    ) {
-        let (value) = _set_address.read();
-        return (value,);
-    }
+@external
+func unwrap_{
+    syscall_ptr: felt*,
+    pedersen_ptr: HashBuiltin*,
+    bitwise_ptr: BitwiseBuiltin*,
+    range_check_ptr,
+}(owner: felt, set_token_id: felt, booklet_token_id: felt) {
+    let (caller) = get_caller_address();
+    let (set_addr) = getSetAddress_();
+    assert caller = set_addr;
 
-    @external
-    func setSetAddress_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        address: felt
-    ) {
-        _onlyAdmin();
-        _set_address.write(address);
-        return ();
-    }
+    // Transfer the booklet to the set (wrapping it inside the set).
+    ERC1155_lib_transfer._transfer(set_token_id, owner, booklet_token_id, 1);
 
-    //###########
-    //###########
-
-    @external
-    func wrap_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr,
-    }(
-        owner: felt,
-        set_token_id: felt,
-        booklet_token_id: felt,
-        shape_len: felt,
-        shape: ShapeItem*,
-        fts_len: felt,
-        fts: FTSpec*,
-        nfts_len: felt,
-        nfts: felt*,
-    ) {
-        alloc_locals;
-
-        let (caller) = get_caller_address();
-        let (set_addr) = getSetAddress_();
-        assert caller = set_addr;
-        // TODO: check set is authorized still.
-
-        // Transfer the booklet to the set (wrapping it inside the set).
-        ERC1155_lib_transfer._transfer(owner, set_token_id, booklet_token_id, 1);
-
-        // Check that the shape matches the passed data
-        let (local addr) = booklet_token_uri.get_shape_contract_(booklet_token_id);
-        local pedersen_ptr: HashBuiltin* = pedersen_ptr;
-        IShapeContract.library_call_check_shape_numbers_(
-            addr, shape_len, shape, fts_len, fts, nfts_len, nfts
-        );
-
-        return ();
-    }
-
-    @external
-    func unwrap_{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        bitwise_ptr: BitwiseBuiltin*,
-        range_check_ptr,
-    }(owner: felt, set_token_id: felt, booklet_token_id: felt) {
-        let (caller) = get_caller_address();
-        let (set_addr) = getSetAddress_();
-        assert caller = set_addr;
-
-        // Transfer the booklet to the set (wrapping it inside the set).
-        ERC1155_lib_transfer._transfer(set_token_id, owner, booklet_token_id, 1);
-
-        return ();
-    }
+    return ();
 }

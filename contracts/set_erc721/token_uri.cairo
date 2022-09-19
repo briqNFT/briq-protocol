@@ -23,9 +23,16 @@ from contracts.library_erc721.balance import _owner
 
 from contracts.utilities.authorization import _onlyAdmin
 
-from contracts.set_erc721.link_to_ecosystem import IBriqContract, _briq_address
+from contracts.ecosystem.to_briq import _briq_address
 
 from contracts.vendor.caistring.str import Str, str_concat
+
+
+@contract_interface
+namespace IBriqContract {
+    func balanceOfMaterial_(owner: felt, material: felt) -> (balance: felt) {
+    }
+}
 
 //###########
 //###########
@@ -180,11 +187,11 @@ func is_realms_set_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
     token_id: felt
 ) -> (is_realms: felt) {
     let (address) = _briq_address.read();
-    let (nb_normal_briqs) = IBriqContract.balanceOf_(address, token_id, 1);
+    let (nb_normal_briqs) = IBriqContract.balanceOfMaterial_(address, token_id, 1);
     if (nb_normal_briqs != 0) {
         return (0,);
     }
-    let (nb_realms_briqs) = IBriqContract.balanceOf_(address, token_id, 2);
+    let (nb_realms_briqs) = IBriqContract.balanceOfMaterial_(address, token_id, 2);
     if (nb_realms_briqs == 0) {
         return (0,);
     }

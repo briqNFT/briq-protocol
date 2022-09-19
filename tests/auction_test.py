@@ -17,6 +17,7 @@ from generators.generate_auction import generate_auction
 from generators.shape_utils import to_shape_data, compress_shape_item
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
+VENDOR_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts", "vendor")
 
 ADDRESS = 0xcafe
 OTHER_ADDRESS = 0xd00d
@@ -26,6 +27,7 @@ MOCK_SHAPE_TOKEN = 0xdeadfade
 def compile(path):
     return compile_starknet_files(
         files=[os.path.join(CONTRACT_SRC, path)],
+        cairo_path=[CONTRACT_SRC, VENDOR_SRC],
         debug_info=True,
         disable_hint_validation=True
     )
@@ -34,7 +36,7 @@ def compile(path):
 @pytest_asyncio.fixture(scope="module")
 async def factory_root(tmp_path_factory):
     starknet = await Starknet.empty()
-    erc20 = compile("OZ/token/erc20/ERC20_Mintable.cairo")
+    erc20 = compile("vendor/openzeppelin/token/erc20/presets/ERC20Mintable.cairo")
     await starknet.declare(contract_class=erc20)
     token_contract_eth = await starknet.deploy(contract_class=erc20, constructor_calldata=[
         0x1,  # name: felt,
@@ -84,7 +86,7 @@ def proxy_contract(state, contract):
         state=state.state,
         abi=contract.abi,
         contract_address=contract.contract_address,
-        deploy_execution_info=contract.deploy_execution_info,
+        deploy_call_info=contract.deploy_call_info,
     )
 
 @pytest_asyncio.fixture
@@ -114,7 +116,7 @@ async def test_bid(factory):
             auction_index=0,
             box_token_id=0x5,
             bid_amount=300
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="Bid must be greater than 0"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
@@ -122,9 +124,9 @@ async def test_bid(factory):
             auction_index=0,
             box_token_id=0x5,
             bid_amount=0
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
-    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (500, 0)).invoke(ADDRESS)
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (500, 0)).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="Bid greater than allowance"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
@@ -132,7 +134,7 @@ async def test_bid(factory):
             auction_index=0,
             box_token_id=0x5,
             bid_amount=600
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="box_token_id does not match auction_index"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
@@ -140,19 +142,19 @@ async def test_bid(factory):
             auction_index=1,
             box_token_id=0x5,
             bid_amount=200
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
     await factory.auction_contract.make_bid(factory.auction_contract.BidData(
         bidder=ADDRESS,
         auction_index=0,
         box_token_id=0x5,
         bid_amount=500
-    )).invoke(ADDRESS)
+    )).execute(ADDRESS)
 
     events = factory.starknet.state.events
 
-    assert factory.auction_contract.event_manager._selector_to_name[events[1].keys[0]] == 'Bid'
-    assert events[1].data == [
+    assert factory.auction_contract.event_manager._selector_to_name[events[3].keys[0]] == 'Bid'
+    assert events[3].data == [
         ADDRESS,
         0x5,
         500,
@@ -163,7 +165,7 @@ async def test_bid(factory):
 async def test_direct_bid(factory):
 
     # Setup: mint two boxes
-    await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x2, 2).invoke(0)
+    await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x2, 2).execute(0)
 
     with pytest.raises(StarkException, match="Bid greater than allowance"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
@@ -171,7 +173,7 @@ async def test_direct_bid(factory):
             auction_index=1,
             box_token_id=0x2,
             bid_amount=300
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="Bid must be greater than 0"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
@@ -179,9 +181,9 @@ async def test_direct_bid(factory):
             auction_index=1,
             box_token_id=0x2,
             bid_amount=0
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
-    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (500, 0)).invoke(ADDRESS)
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (500, 0)).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="Bid greater than allowance"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
@@ -189,7 +191,7 @@ async def test_direct_bid(factory):
             auction_index=1,
             box_token_id=0x2,
             bid_amount=600
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="box_token_id does not match auction_index"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
@@ -197,7 +199,7 @@ async def test_direct_bid(factory):
             auction_index=0,
             box_token_id=0x2,
             bid_amount=200
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)
 
     assert (await factory.box_contract.balanceOf_(ADDRESS, 0x2).call()).result.balance == 0
     assert (await factory.box_contract.balanceOf_(factory.auction_contract.contract_address, 0x2).call()).result.balance == 2
@@ -208,7 +210,7 @@ async def test_direct_bid(factory):
         auction_index=1,
         box_token_id=0x2,
         bid_amount=100
-    )).invoke(ADDRESS)
+    )).execute(ADDRESS)
 
     assert (await factory.box_contract.balanceOf_(ADDRESS, 0x2).call()).result.balance == 1
     assert (await factory.box_contract.balanceOf_(factory.auction_contract.contract_address, 0x2).call()).result.balance == 1
@@ -218,7 +220,7 @@ async def test_direct_bid(factory):
         auction_index=1,
         box_token_id=0x2,
         bid_amount=100
-    )).invoke(ADDRESS)
+    )).execute(ADDRESS)
 
     assert (await factory.box_contract.balanceOf_(ADDRESS, 0x2).call()).result.balance == 2
     assert (await factory.box_contract.balanceOf_(factory.auction_contract.contract_address, 0x2).call()).result.balance == 0
@@ -230,4 +232,4 @@ async def test_direct_bid(factory):
             auction_index=1,
             box_token_id=0x2,
             bid_amount=100
-        )).invoke(ADDRESS)
+        )).execute(ADDRESS)

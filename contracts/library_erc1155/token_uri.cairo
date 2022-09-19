@@ -1,6 +1,10 @@
 %lang starknet
 
-from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
+from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
+from starkware.cairo.common.uint256 import Uint256
+from starkware.cairo.common.bitwise import bitwise_and
+from starkware.cairo.common.alloc import alloc
+
 
 @event
 func URI(_value_len: felt, _value: felt*, _id: Uint256) {
@@ -21,7 +25,7 @@ func _token_uri_extra(token_id: felt, index: felt) -> (uri_data: felt) {
 
 namespace ERC1155_token_uri {
     @view
-    func uri_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(token_id: felt) -> (
+    func uri_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(token_id: felt) -> (
         uri_len: felt, uri: felt*
     ) {
         let (uri_len, uri) = tokenURI_(token_id);

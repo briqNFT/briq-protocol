@@ -1,6 +1,6 @@
 # briq contract
 
-The briq contract can be found at [`contracts/briq_interface.cairo`](../../contracts/briq_interface.cairo).  
+The briq contract can be found at [`contracts/briq.cairo`](../../contracts/briq.cairo).  
 Implementation is found in the [`contracts/briq_erc1155_like/`](../../contracts/briq_erc1155_like/) folder.
 
 ## High-level overview

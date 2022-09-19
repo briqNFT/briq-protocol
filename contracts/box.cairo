@@ -1,4 +1,5 @@
 %lang starknet
+from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 
 from contracts.upgrades.upgradable_mixin import (
     getAdmin_,
@@ -7,10 +8,37 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.library_erc1155.approvals import ERC1155_approvals
-from contracts.library_erc1155.balance import ERC1155_balance
-from contracts.library_erc1155.transferability import ERC1155_transferability
+from contracts.box_erc1155.minting import (
+    mint_,
+)
+from contracts.box_erc1155.unboxing import (
+    unbox_,
+)
+from contracts.box_erc1155.token_uri import (
+    get_box_data,
+    get_box_nb,
+    tokenURI_,
+    tokenURI,
+)
 
-from contracts.box_erc1155.minting import box_minting
-from contracts.box_erc1155.unboxing import box_unboxing
-from contracts.box_erc1155.token_uri import box_token_uri
+from contracts.library_erc1155.IERC1155 import (
+    approve_,
+    setApprovalForAll_,
+    getApproved_,
+    isApprovedForAll_,
+    balanceOf_,
+    balanceOfBatch_,
+    uri_,
+    safeTransferFrom_,
+)
+
+
+from contracts.ecosystem.to_briq import (
+    getBriqAddress_,
+    setBriqAddress_,
+)
+
+from contracts.ecosystem.to_booklet import (
+    getBookletAddress_,
+    setBookletAddress_,
+)

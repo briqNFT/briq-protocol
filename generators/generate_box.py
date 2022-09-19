@@ -20,8 +20,8 @@ briq_address = 0xdead
 def generate_box(briq_data=briq_data, shape_data=shape_data, booklet_address=booklet_address, briq_address=briq_address):
     lines = []
 
-    lines.append(f"const booklet_address = {booklet_address}")
-    lines.append(f"const briq_address = {briq_address}")
+    lines.append(f"const booklet_address = {booklet_address};")
+    lines.append(f"const briq_address = {briq_address};")
 
     lines.append("briq_data_start:")
     i = 1
@@ -29,11 +29,11 @@ def generate_box(briq_data=briq_data, shape_data=shape_data, booklet_address=boo
         if key != i:
             print("Bad briq_data")
             raise
-        lines.append(f'dw {briq_data[key][0x1] if 0x1 in briq_data[key] else 0}')
-        lines.append(f'dw {briq_data[key][0x3] if 0x3 in briq_data[key] else 0}')
-        lines.append(f'dw {briq_data[key][0x4] if 0x4 in briq_data[key] else 0}')
-        lines.append(f'dw {briq_data[key][0x5] if 0x5 in briq_data[key] else 0}')
-        lines.append(f'dw {briq_data[key][0x6] if 0x6 in briq_data[key] else 0}')
+        lines.append(f'dw {briq_data[key][0x1] if 0x1 in briq_data[key] else 0};')
+        lines.append(f'dw {briq_data[key][0x3] if 0x3 in briq_data[key] else 0};')
+        lines.append(f'dw {briq_data[key][0x4] if 0x4 in briq_data[key] else 0};')
+        lines.append(f'dw {briq_data[key][0x5] if 0x5 in briq_data[key] else 0};')
+        lines.append(f'dw {briq_data[key][0x6] if 0x6 in briq_data[key] else 0};')
         i += 1
     lines.append("briq_data_end:")
     lines.append("shape_data_start:")
@@ -42,7 +42,7 @@ def generate_box(briq_data=briq_data, shape_data=shape_data, booklet_address=boo
         if key != j:
             print("Bad shape_data")
             raise
-        lines.append(f'dw {shape_data[key]}')
+        lines.append(f'dw {shape_data[key]};')
         j += 1
     if j != i:
         print("Bad shape/briq data match")

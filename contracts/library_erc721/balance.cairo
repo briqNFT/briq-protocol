@@ -28,7 +28,7 @@ func _owner(token_id: felt) -> (owner: felt) {
 }
 
 namespace ERC721 {
-    @view
+    // @view
     func ownerOf_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         token_id: felt
     ) -> (owner: felt) {
@@ -37,7 +37,7 @@ namespace ERC721 {
         return (res,);
     }
 
-    @view
+    // @view
     func balanceOf_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         owner: felt
     ) -> (balance: felt) {

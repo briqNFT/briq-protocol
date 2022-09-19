@@ -7,4 +7,13 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.auction.auction_lib import make_bid, close_auction
+from contracts.auction.auction_lib import (
+    make_bid,
+    close_auction,
+    get_auction_data,
+)
+
+from contracts.ecosystem.to_box import (
+    getBoxAddress_,
+    setBoxAddress_,
+)

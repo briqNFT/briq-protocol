@@ -27,12 +27,8 @@ from contracts.library_erc721.enumerability import ERC721_enumerability
 
 from contracts.library_erc721.transferability_library import ERC721_lib_transfer
 
-from contracts.set_erc721.link_to_ecosystem import (
-    _briq_address,
-    _booklet_address,
-    IBriqContract,
-    IBookletContract,
-)
+from contracts.ecosystem.to_briq import (_briq_address,)
+from contracts.ecosystem.to_booklet import (_booklet_address,)
 
 from contracts.types import ShapeItem, FTSpec
 
@@ -42,6 +38,37 @@ from starkware.cairo.common.hash_state import (
     hash_update,
     hash_update_single,
 )
+
+
+@contract_interface
+namespace IBriqContract {
+    func transferFT_(sender: felt, recipient: felt, material: felt, qty: felt) {
+    }
+    func transferOneNFT_(sender: felt, recipient: felt, material: felt, briq_token_id: felt) {
+    }
+    func materialsOf_(owner: felt) -> (materials_len: felt, materials: felt*) {
+    }
+}
+
+@contract_interface
+namespace IBookletContract {
+    func wrap_(
+        owner: felt,
+        set_token_id: felt,
+        booklet_token_id: felt,
+        shape_len: felt,
+        shape: ShapeItem*,
+        fts_len: felt,
+        fts: FTSpec*,
+        nfts_len: felt,
+        nfts: felt*,
+    ) {
+    }
+    func unwrap_(owner: felt, set_token_id: felt, booklet_token_id: felt) {
+    }
+    func balanceOf_(owner: felt, token_id: felt) -> (balance: felt) {
+    }
+}
 
 //###########
 //###########
@@ -226,7 +253,7 @@ func disassemble_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
     let (mat_len, mat) = IBriqContract.materialsOf_(briq_addr, token_id);
     assert mat_len = 0;
     let (booklet_addr) = _booklet_address.read();
-    let (balance) = IBookletContract.balanceOf_(booklet_addr, owner, token_id);
+    let (balance) = IBookletContract.balanceOf_(booklet_addr, token_id, token_id);
     assert balance = 0;
     // TODO: add generic support.
 

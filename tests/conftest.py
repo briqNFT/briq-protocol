@@ -8,6 +8,7 @@ from starkware.starknet.testing.starknet import StarknetContract
 from starkware.cairo.common.hash_state import compute_hash_on_elements
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
+VENDOR_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts", "vendor")
 
 
 @pytest.fixture(scope="session")
@@ -18,6 +19,7 @@ def event_loop():
 def compile(path):
     return compile_starknet_files(
         files=[os.path.join(CONTRACT_SRC, path)],
+        cairo_path=[CONTRACT_SRC, VENDOR_SRC],
         debug_info=True,
         disable_hint_validation=True
     )
@@ -46,5 +48,5 @@ def proxy_contract(state, contract):
         state=state.state,
         abi=contract.abi,
         contract_address=contract.contract_address,
-        deploy_execution_info=contract.deploy_execution_info,
+        deploy_call_info=contract.deploy_call_info,
     )

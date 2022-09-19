@@ -41,7 +41,7 @@ async def factory_root():
     compiled_proxy = compile("upgrades/proxy.cairo")
     await starknet.declare(contract_class=compiled_proxy)
     
-    [token_contract_eth, _] = await declare_and_deploy(starknet, "OZ/token/erc20/ERC20_Mintable.cairo", constructor_calldata=[
+    [token_contract_eth, _] = await declare_and_deploy(starknet, "vendor/openzeppelin/token/erc20/presets/ERC20Mintable.cairo", constructor_calldata=[
         0x1,  # name: felt,
         0x1,  # symbol: felt,
         18,  # decimals: felt,
@@ -53,20 +53,20 @@ async def factory_root():
     [auction_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "auction.cairo", ADMIN_ADDRESS)
     [box_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "box.cairo", ADMIN_ADDRESS)
     [booklet_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "booklet.cairo", ADMIN_ADDRESS)
-    [set_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "set_interface.cairo", ADMIN_ADDRESS)
-    [briq_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "briq_interface.cairo", ADMIN_ADDRESS)
+    [set_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "set.cairo", ADMIN_ADDRESS)
+    [briq_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "briq.cairo", ADMIN_ADDRESS)
 
-    await box_contract.setBookletAddress_(booklet_contract.contract_address).invoke(ADMIN_ADDRESS)
-    await box_contract.setBriqAddress_(briq_contract.contract_address).invoke(ADMIN_ADDRESS)
+    await box_contract.setBookletAddress_(booklet_contract.contract_address).execute(ADMIN_ADDRESS)
+    await box_contract.setBriqAddress_(briq_contract.contract_address).execute(ADMIN_ADDRESS)
 
-    await set_contract.setBriqAddress_(briq_contract.contract_address).invoke(ADMIN_ADDRESS)
-    await set_contract.setBookletAddress_(booklet_contract.contract_address).invoke(ADMIN_ADDRESS)
+    await set_contract.setBriqAddress_(briq_contract.contract_address).execute(ADMIN_ADDRESS)
+    await set_contract.setBookletAddress_(booklet_contract.contract_address).execute(ADMIN_ADDRESS)
 
-    await briq_contract.setSetAddress_(set_contract.contract_address).invoke(ADMIN_ADDRESS)
-    await briq_contract.setBoxAddress_(box_contract.contract_address).invoke(ADMIN_ADDRESS)
+    await briq_contract.setSetAddress_(set_contract.contract_address).execute(ADMIN_ADDRESS)
+    await briq_contract.setBoxAddress_(box_contract.contract_address).execute(ADMIN_ADDRESS)
 
-    await booklet_contract.setSetAddress_(set_contract.contract_address).invoke(ADMIN_ADDRESS)
-    await booklet_contract.setBoxAddress_(box_contract.contract_address).invoke(ADMIN_ADDRESS)
+    await booklet_contract.setSetAddress_(set_contract.contract_address).execute(ADMIN_ADDRESS)
+    await booklet_contract.setBoxAddress_(box_contract.contract_address).execute(ADMIN_ADDRESS)
 
     return [starknet, auction_contract, box_contract, booklet_contract, token_contract_eth, set_contract, briq_contract]
 
@@ -89,8 +89,8 @@ async def factory(factory_root):
 async def deploy_shape(starknet, shape_data):
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     shape_data_str = '\n'.join(shape_data)
-    shape = data.replace("#DEFINE_SHAPE", f"""
-    const SHAPE_LEN = {len(shape_data)}
+    shape = data.replace("// DEFINE_SHAPE", f"""
+    const SHAPE_LEN = {len(shape_data)};
 
     shape_data:
     {shape_data_str}
@@ -124,7 +124,7 @@ async def test_everything(tmp_path, factory):
     auction_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'auction.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path)])
 
     auction_impl_hash = await factory.starknet.declare(contract_class=auction_code)
-    await factory.auction_contract.upgradeImplementation_(auction_impl_hash.class_hash).invoke(ADMIN_ADDRESS)
+    await factory.auction_contract.upgradeImplementation_(auction_impl_hash.class_hash).execute(ADMIN_ADDRESS)
 
     # At this point, we need to match the box token IDs with some box identifiers (e.g. 'starknet_planet/spaceman')
     # and reveal the data.
@@ -133,7 +133,7 @@ async def test_everything(tmp_path, factory):
     ################
 
     # Make a bid on the auction
-    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (5000, 0)).invoke(ADDRESS)
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (5000, 0)).execute(ADDRESS)
     bid_box_1 = factory.auction_contract.BidData(
         payer=ADDRESS,
         payer_erc20_contract=factory.token_contract_eth.contract_address,
@@ -146,8 +146,8 @@ async def test_everything(tmp_path, factory):
         box_token_id=0x2,
         bid_amount=200
     )
-    await factory.auction_contract.make_bid(bid_box_1).invoke(ADDRESS)
-    await factory.auction_contract.make_bid(bid_box_2).invoke(ADDRESS)
+    await factory.auction_contract.make_bid(bid_box_1).execute(ADDRESS)
+    await factory.auction_contract.make_bid(bid_box_2).execute(ADDRESS)
 
     ################
     ################
@@ -182,31 +182,31 @@ async def test_everything(tmp_path, factory):
     box_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'box.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path)])
 
     box_impl_hash = await factory.starknet.declare(contract_class=box_code)
-    await factory.box_contract.upgradeImplementation_(box_impl_hash.class_hash).invoke(ADMIN_ADDRESS)
+    await factory.box_contract.upgradeImplementation_(box_impl_hash.class_hash).execute(ADMIN_ADDRESS)
 
     # Mint the matching boxes (this can actually be done earlier)
-    await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x1, 10).invoke(ADMIN_ADDRESS)
-    await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x2, 4).invoke(ADMIN_ADDRESS)
+    await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x1, 10).execute(ADMIN_ADDRESS)
+    await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x2, 4).execute(ADMIN_ADDRESS)
     with pytest.raises(StarkException):
-        await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x3, 1).invoke(ADMIN_ADDRESS)
+        await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x3, 1).execute(ADMIN_ADDRESS)
 
     # Now end the auction, transferring stuff
 
-    await factory.auction_contract.close_auction([bid_box_1]).invoke(ADMIN_ADDRESS)
-    await factory.auction_contract.close_auction([bid_box_2]).invoke(ADMIN_ADDRESS)
+    await factory.auction_contract.close_auction([bid_box_1]).execute(ADMIN_ADDRESS)
+    await factory.auction_contract.close_auction([bid_box_2]).execute(ADMIN_ADDRESS)
 
     # GOOD TO GO
-    await factory.box_contract.safeTransferFrom_(ADDRESS, OTHER_ADDRESS, 0x1, 1, []).invoke(ADDRESS)
-    await factory.box_contract.safeTransferFrom_(ADDRESS, OTHER_ADDRESS, 0x2, 1, []).invoke(ADDRESS)
+    await factory.box_contract.safeTransferFrom_(ADDRESS, OTHER_ADDRESS, 0x1, 1, []).execute(ADDRESS)
+    await factory.box_contract.safeTransferFrom_(ADDRESS, OTHER_ADDRESS, 0x2, 1, []).execute(ADDRESS)
 
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 0
 
-    await factory.box_contract.unbox_(OTHER_ADDRESS, 0x1).invoke(OTHER_ADDRESS)
+    await factory.box_contract.unbox_(OTHER_ADDRESS, 0x1).execute(OTHER_ADDRESS)
 
     assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, 0x1).call()).result.balance == 1
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 3
 
-    await factory.box_contract.unbox_(OTHER_ADDRESS, 0x2).invoke(OTHER_ADDRESS)
+    await factory.box_contract.unbox_(OTHER_ADDRESS, 0x2).execute(OTHER_ADDRESS)
     assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, 0x2).call()).result.balance == 1
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 5
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x4).call()).result.balance == 1
@@ -225,7 +225,7 @@ async def test_everything(tmp_path, factory):
             compress_shape_item('#ffaaff', 0x1, -1, 0, 2, False),
             compress_shape_item('#ffaaff', 0x1, 0, 0, 2, False),
         ]
-    ).invoke(OTHER_ADDRESS)
+    ).execute(OTHER_ADDRESS)
 
     assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, 0x1).call()).result.balance == 0
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 2

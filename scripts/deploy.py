@@ -11,11 +11,11 @@ def run(nre: NileRuntimeEnvironment):
     #account = nre.get_or_deploy_account("toto")
     #print(f"Deployed deploy account to {account.address}")
 
-    briq_interface_addr, abi = nre.deploy("briq_interface", arguments=[], alias="briq_interface")
-    set_interface_addr, abi = nre.deploy("set_interface", arguments=[], alias="set_interface")
+    briq_addr, abi = nre.deploy("briq", arguments=[], alias="briq")
+    set_addr, abi = nre.deploy("set", arguments=[], alias="set")
 
-    briq_address, abi = nre.deploy("proxy", arguments=[os.getenv("ADMIN"), briq_interface_addr], alias="briq_proxy")
-    set_address, abi = nre.deploy("proxy", arguments=[os.getenv("ADMIN"), set_interface_addr], alias="set_proxy")
+    briq_address, abi = nre.deploy("proxy", arguments=[os.getenv("ADMIN"), briq_addr], alias="briq_proxy")
+    set_address, abi = nre.deploy("proxy", arguments=[os.getenv("ADMIN"), set_addr], alias="set_proxy")
 
     print(f"Deployed briq to {briq_address}")
     print(f"Deployed set to {set_address}")

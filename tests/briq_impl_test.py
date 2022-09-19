@@ -23,7 +23,7 @@ def compile(path):
 
 @pytest.fixture(scope="session")
 def compiled_briq():
-    return compile("briq_interface.cairo")
+    return compile("briq.cairo")
 
 @pytest_asyncio.fixture(scope="session")
 async def empty_starknet():
@@ -41,52 +41,52 @@ async def briq_contract(starknet: Starknet, compiled_briq):
 
 
 def invoke_briq(call, addr=ADMIN):
-    return call.invoke(caller_address=addr)
+    return call.execute(caller_address=addr)
 
 
 @pytest.mark.asyncio
 async def test_minting_and_querying(briq_contract):
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=50))
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 50
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 50
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == []
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 50
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 50
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 50
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == []
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 50
 
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=150))
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=2, qty=50))
     await invoke_briq(briq_contract.mintFT(owner=OTHER_ADDRESS, material=1, qty=50))
 
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 200
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=2).call()).result.balance == 50
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 200
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1, 2]
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 250
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 200
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=2).call()).result.balance == 50
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 200
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1, 2]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 250
 
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1, 2]
-    assert (await briq_contract.multiBalanceOf(owner=ADDRESS, materials=[1, 2]).call()).result.balances == [200, 50]
-    assert (await briq_contract.multiBalanceOf(owner=ADDRESS, materials=[1, 2]).call()).result.balances == [200, 50]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1, 2]
+    assert (await briq_contract.balanceOfMaterials_(owner=ADDRESS, materials=[1, 2]).call()).result.balances == [200, 50]
+    assert (await briq_contract.balanceOfMaterials_(owner=ADDRESS, materials=[1, 2]).call()).result.balances == [200, 50]
 
-    assert (await briq_contract.balanceOf(owner=OTHER_ADDRESS, material=1).call()).result.balance == 50
-    assert (await briq_contract.balanceDetailsOf(owner=OTHER_ADDRESS, material=1).call()).result.ft_balance == 50
-    assert (await briq_contract.materialsOf(owner=OTHER_ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.balanceOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.balance == 50
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.ft_balance == 50
+    assert (await briq_contract.materialsOf_(owner=OTHER_ADDRESS).call()).result.materials == [1]
 
     THIRD_ADDR = 0x13
 
     await invoke_briq(briq_contract.mintOneNFT(owner=THIRD_ADDR, material=3, uid=0x1))
     assert (await briq_contract.ownerOf(1 * 2**64 + 3).call()).result.owner == THIRD_ADDR
-    assert (await briq_contract.balanceDetailsOf(owner=THIRD_ADDR, material=3).call()).result.nft_ids == [2**64 + 3]
-    assert (await briq_contract.materialsOf(owner=THIRD_ADDR).call()).result.materials == [3]
-    assert (await briq_contract.balanceOf(owner=THIRD_ADDR, material=3).call()).result.balance == 1
-    assert (await briq_contract.totalSupply(material=3).call()).result.supply == 1
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=THIRD_ADDR, material=3).call()).result.nft_ids == [2**64 + 3]
+    assert (await briq_contract.materialsOf_(owner=THIRD_ADDR).call()).result.materials == [3]
+    assert (await briq_contract.balanceOfMaterial_(owner=THIRD_ADDR, material=3).call()).result.balance == 1
+    assert (await briq_contract.totalSupplyOfMaterial_(material=3).call()).result.supply == 1
 
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x5))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x2))
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 202
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 200
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [5 * 2**64 + 1, 2 * 2**64 + 1]
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1, 2]
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 252
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 202
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 200
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [5 * 2**64 + 1, 2 * 2**64 + 1]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1, 2]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 252
     assert (await briq_contract.ownerOf(5 * 2**64 + 1).call()).result.owner == ADDRESS
     assert (await briq_contract.ownerOf(2 * 2**64 + 1).call()).result.owner == ADDRESS
 
@@ -97,56 +97,56 @@ async def test_minting_and_querying(briq_contract):
 
 @pytest.mark.asyncio
 async def test_queries(briq_contract):
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=2).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=3).call()).result.balance == 0
-    assert (await briq_contract.multiBalanceOf(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [0, 0, 0]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 0
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == []
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == []
-    assert (await briq_contract.fullBalanceOf(owner=ADDRESS).call()).result.balances == []
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=2).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=3).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterials_(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [0, 0, 0]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 0
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == []
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == []
+    assert (await briq_contract.fullBalanceOf_(owner=ADDRESS).call()).result.balances == []
 
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=50))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x1))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x2))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x3))
 
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 53
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=2).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=3).call()).result.balance == 0
-    assert (await briq_contract.multiBalanceOf(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [0, 53, 0]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 50
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 2 * 2**64 + 1, 3 * 2**64 + 1]
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
-    assert (await briq_contract.fullBalanceOf(owner=ADDRESS).call()).result.balances == [briq_contract.BalanceSpec(1, 53)]
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 53
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=2).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=3).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterials_(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [0, 53, 0]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 50
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 2 * 2**64 + 1, 3 * 2**64 + 1]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.fullBalanceOf_(owner=ADDRESS).call()).result.balances == [briq_contract.BalanceSpec(1, 53)]
 
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=3, qty=30))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=3, uid=0x1))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=3, uid=0x2))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=3, uid=0x3))
 
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 53
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=2).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=3).call()).result.balance == 33
-    assert (await briq_contract.multiBalanceOf(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [33, 53, 0]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=3).call()).result.ft_balance == 30
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=3).call()).result.nft_ids == [1 * 2**64 + 3, 2 * 2**64 + 3, 3 * 2**64 + 3]
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1, 3]
-    assert (await briq_contract.fullBalanceOf(owner=ADDRESS).call()).result.balances == [briq_contract.BalanceSpec(1, 53), briq_contract.BalanceSpec(3, 33)]
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 53
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=2).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=3).call()).result.balance == 33
+    assert (await briq_contract.balanceOfMaterials_(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [33, 53, 0]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=3).call()).result.ft_balance == 30
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=3).call()).result.nft_ids == [1 * 2**64 + 3, 2 * 2**64 + 3, 3 * 2**64 + 3]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1, 3]
+    assert (await briq_contract.fullBalanceOf_(owner=ADDRESS).call()).result.balances == [briq_contract.BalanceSpec(1, 53), briq_contract.BalanceSpec(3, 33)]
 
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=2, qty=40))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=2, uid=0x1))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=2, uid=0x2))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=2, uid=0x3))
 
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 53
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=2).call()).result.balance == 43
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=3).call()).result.balance == 33
-    assert (await briq_contract.multiBalanceOf(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [33, 53, 43]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=2).call()).result.ft_balance == 40
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=2).call()).result.nft_ids == [1 * 2**64 + 2, 2 * 2**64 + 2, 3 * 2**64 + 2]
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1, 3, 2]
-    assert (await briq_contract.fullBalanceOf(owner=ADDRESS).call()).result.balances == [briq_contract.BalanceSpec(1, 53), briq_contract.BalanceSpec(3, 33), briq_contract.BalanceSpec(2, 43)]
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 53
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=2).call()).result.balance == 43
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=3).call()).result.balance == 33
+    assert (await briq_contract.balanceOfMaterials_(owner=ADDRESS, materials=[3, 1, 2]).call()).result.balances == [33, 53, 43]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=2).call()).result.ft_balance == 40
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=2).call()).result.nft_ids == [1 * 2**64 + 2, 2 * 2**64 + 2, 3 * 2**64 + 2]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1, 3, 2]
+    assert (await briq_contract.fullBalanceOf_(owner=ADDRESS).call()).result.balances == [briq_contract.BalanceSpec(1, 53), briq_contract.BalanceSpec(3, 33), briq_contract.BalanceSpec(2, 43)]
 
 
 @pytest.mark.asyncio
@@ -155,44 +155,44 @@ async def test_transfer_ft(briq_contract):
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=50))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x2))
     await invoke_briq(briq_contract.transferFT(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, qty=25))
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 27
-    assert (await briq_contract.balanceOf(owner=OTHER_ADDRESS, material=1).call()).result.balance == 25
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 2 * 2**64 + 1]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 25
-    assert (await briq_contract.balanceDetailsOf(owner=OTHER_ADDRESS, material=1).call()).result.ft_balance == 25
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 27
+    assert (await briq_contract.balanceOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.balance == 25
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 2 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 25
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.ft_balance == 25
     await invoke_briq(briq_contract.transferFT(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, qty=25))
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 2
-    assert (await briq_contract.balanceOf(owner=OTHER_ADDRESS, material=1).call()).result.balance == 50
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 2 * 2**64 + 1]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 0
-    assert (await briq_contract.balanceDetailsOf(owner=OTHER_ADDRESS, material=1).call()).result.ft_balance == 50
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 2
+    assert (await briq_contract.balanceOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.balance == 50
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 2 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 0
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.ft_balance == 50
 
 @pytest.mark.asyncio
 async def test_transfer_nft(briq_contract):
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x1))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x2))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x3))
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 3
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 3
 
     await invoke_briq(briq_contract.transferOneNFT(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, briq_token_id=2 * 2**64 + 1))
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 2
-    assert (await briq_contract.balanceOf(owner=OTHER_ADDRESS, material=1).call()).result.balance == 1
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
-    assert (await briq_contract.materialsOf(owner=OTHER_ADDRESS).call()).result.materials == [1]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 3 * 2**64 + 1]
-    assert (await briq_contract.balanceDetailsOf(owner=OTHER_ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1]
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 2
+    assert (await briq_contract.balanceOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.balance == 1
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.materialsOf_(owner=OTHER_ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1, 3 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1]
     assert (await briq_contract.ownerOf(1 * 2**64 + 1).call()).result.owner == ADDRESS
     assert (await briq_contract.ownerOf(2 * 2**64 + 1).call()).result.owner == OTHER_ADDRESS
     assert (await briq_contract.ownerOf(3 * 2**64 + 1).call()).result.owner == ADDRESS
 
     await invoke_briq(briq_contract.transferOneNFT(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, briq_token_id=3 * 2**64 + 1))
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1]
-    assert (await briq_contract.balanceDetailsOf(owner=OTHER_ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1, 3 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [1 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1, 3 * 2**64 + 1]
     await invoke_briq(briq_contract.transferOneNFT(sender=ADDRESS, recipient=OTHER_ADDRESS, material=1, briq_token_id=1 * 2**64 + 1))
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=OTHER_ADDRESS, material=1).call()).result.balance == 3
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == []
-    assert (await briq_contract.balanceDetailsOf(owner=OTHER_ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1, 3 * 2**64 + 1, 1 * 2**64 + 1]
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.balance == 3
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == []
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=OTHER_ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1, 3 * 2**64 + 1, 1 * 2**64 + 1]
     assert (await briq_contract.ownerOf(1 * 2**64 + 1).call()).result.owner == OTHER_ADDRESS
     assert (await briq_contract.ownerOf(2 * 2**64 + 1).call()).result.owner == OTHER_ADDRESS
     assert (await briq_contract.ownerOf(3 * 2**64 + 1).call()).result.owner == OTHER_ADDRESS
@@ -202,22 +202,22 @@ async def test_mutate(briq_contract):
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x1))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x2))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x3))
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 3
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 3
 
     await invoke_briq(briq_contract.mutateOneNFT(owner=ADDRESS, source_material=1, target_material=2, uid=0x1, new_uid=0x1), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 2
-    assert (await briq_contract.totalSupply(material=2).call()).result.supply == 1
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [3 * 2**64 + 1, 2 * 2**64 + 1]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=2).call()).result.nft_ids == [1 * 2**64 + 2]
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1, 2]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 2
+    assert (await briq_contract.totalSupplyOfMaterial_(material=2).call()).result.supply == 1
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [3 * 2**64 + 1, 2 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=2).call()).result.nft_ids == [1 * 2**64 + 2]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1, 2]
 
     await invoke_briq(briq_contract.mutateOneNFT(owner=ADDRESS, source_material=1, target_material=2, uid=0x2, new_uid=0x5), ADMIN)
     await invoke_briq(briq_contract.mutateOneNFT(owner=ADDRESS, source_material=1, target_material=2, uid=0x3, new_uid=0x3), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 0
-    assert (await briq_contract.totalSupply(material=2).call()).result.supply == 3
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == []
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=2).call()).result.nft_ids == [1 * 2**64 + 2, 5 * 2**64 + 2, 3 * 2**64 + 2]
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [2]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 0
+    assert (await briq_contract.totalSupplyOfMaterial_(material=2).call()).result.supply == 3
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == []
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=2).call()).result.nft_ids == [1 * 2**64 + 2, 5 * 2**64 + 2, 3 * 2**64 + 2]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [2]
 
     assert (await briq_contract.ownerOf(1 * 2**64 + 1).call()).result.owner == 0
     assert (await briq_contract.ownerOf(2 * 2**64 + 1).call()).result.owner == 0
@@ -242,24 +242,24 @@ async def test_mutate(briq_contract):
         await invoke_briq(briq_contract.mutateOneNFT(owner=ADDRESS, source_material=2, target_material=3, uid=0x5, new_uid=0x5), ADMIN)
 
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=1, qty=100))
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 100
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 100
 
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [2, 3, 1]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [2, 3, 1]
     await invoke_briq(briq_contract.mutateOneNFT(owner=ADDRESS, source_material=3, target_material=2, uid=0x5, new_uid=0x4), ADMIN)
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [2, 1]
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [2, 1]
 
     await invoke_briq(briq_contract.mutateFT(owner=ADDRESS, source_material=1, target_material=2, qty=50), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 50
-    assert (await briq_contract.totalSupply(material=2).call()).result.supply == 53
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 50
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=2).call()).result.balance == 53
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [2, 1]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 50
+    assert (await briq_contract.totalSupplyOfMaterial_(material=2).call()).result.supply == 53
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 50
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=2).call()).result.balance == 53
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [2, 1]
     await invoke_briq(briq_contract.mutateFT(owner=ADDRESS, source_material=1, target_material=2, qty=50), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 0
-    assert (await briq_contract.totalSupply(material=2).call()).result.supply == 103
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=1).call()).result.balance == 0
-    assert (await briq_contract.balanceOf(owner=ADDRESS, material=2).call()).result.balance == 103
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [2]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 0
+    assert (await briq_contract.totalSupplyOfMaterial_(material=2).call()).result.supply == 103
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 0
+    assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=2).call()).result.balance == 103
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [2]
 
     with pytest.raises(StarkException):
         await invoke_briq(briq_contract.mutateFT(owner=ADDRESS, source_material=2, target_material=3, qty=0), ADMIN)
@@ -275,27 +275,27 @@ async def test_convert(briq_contract):
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x1))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x2))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=0x3))
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 3
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 3
 
     await invoke_briq(briq_contract.convertOneToFT(owner=ADDRESS, material=1, token_id=1 * 2**64 + 1), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 3
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [3 * 2**64 + 1, 2 * 2**64 + 1]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 1
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 3
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [3 * 2**64 + 1, 2 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 1
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1]
 
     await invoke_briq(briq_contract.convertOneToFT(owner=ADDRESS, material=1, token_id=2 * 2**64 + 1), ADMIN)
     await invoke_briq(briq_contract.convertOneToFT(owner=ADDRESS, material=1, token_id=3 * 2**64 + 1), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 3
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == []
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 3
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 3
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == []
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 3
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1]
 
     await invoke_briq(briq_contract.convertOneToNFT(owner=ADDRESS, material=1, uid=45), ADMIN)
     await invoke_briq(briq_contract.convertOneToNFT(owner=ADDRESS, material=1, uid=1), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 3
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == [45 * 2**64 + 1, 1 * 2**64 + 1]
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 1
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 3
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [45 * 2**64 + 1, 1 * 2**64 + 1]
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 1
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1]
 
     assert (await briq_contract.ownerOf(token_id=45 * 2**64 + 1).call()).result.owner == ADDRESS
 
@@ -303,10 +303,10 @@ async def test_convert(briq_contract):
     #await invoke_briq(briq_contract.convertOneToFT(owner=ADDRESS, material=1, token_id=45 * 2**64 + 1))
 
     await invoke_briq(briq_contract.convertToFT(owner=ADDRESS, token_ids=[(1, 45 * 2**64 + 1), (1, 1 * 2**64 + 1)]), ADMIN)
-    assert (await briq_contract.totalSupply(material=1).call()).result.supply == 3
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.nft_ids == []
-    assert (await briq_contract.balanceDetailsOf(owner=ADDRESS, material=1).call()).result.ft_balance == 3
-    assert (await briq_contract.materialsOf(owner=ADDRESS).call()).result.materials == [1]
+    assert (await briq_contract.totalSupplyOfMaterial_(material=1).call()).result.supply == 3
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == []
+    assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.ft_balance == 3
+    assert (await briq_contract.materialsOf_(owner=ADDRESS).call()).result.materials == [1]
 
 @pytest.mark.asyncio
 async def test_events(starknet, briq_contract):
