@@ -1,22 +1,9 @@
 
-# NB: for now, run the starknet devnet node manually using
-# starknet-devnet --dump-path devnetstate --accounts 0 --lite-mode --dump-on exit
-# then 
-# starknet-devnet --dump-path devnetstate --accounts 0 --lite-mode --dump-on exit --load-path devnetstate
-
-export STARKNET_NETWORK_ID="goerli"
-export STARKNET_NETWORK="alpha-goerli"
-export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
-
-export ACCOUNT="test_deployer"
-# info stored in ~/.starknet_accounts/starknet_open_zeppelin_accounts.json
-starknet deploy_account --account $ACCOUNT
-WALLET_ADDRESS="0x007c129c796c2cca4e29829bd27f5237693595427d06c51dd63e56ab0aa0fd19"
-
 # Hashes
 
 starknet_declare () {
     addr="$(starknet declare --contract $1 --account $ACCOUNT)"
+    echo $addr
     comm=$(echo "$addr" | grep 'Contract class hash' | awk '{gsub("Contract class hash: ", "",$0); print $0}')
     printf -v $2 $comm
     echo "$2=$comm"
@@ -86,3 +73,7 @@ invoke $briq_addr briq_interface setBoxAddress_ $box_addr
 
 invoke $booklet_addr booklet setSetAddress_ $set_addr
 invoke $booklet_addr booklet setBoxAddress_ $box_addr
+
+
+# If you have to upgrade
+invoke $booklet_addr booklet upgradeImplementation_ $booklet_hash
