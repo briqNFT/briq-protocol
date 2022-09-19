@@ -19,8 +19,8 @@ from starkware.starknet.common.syscalls import (
 
 from starkware.cairo.common.registers import get_label_location
 
-from contracts.OZ.token.erc20.interfaces.IERC20 import IERC20
-from contracts.OZ.token.erc721.interfaces.IERC721 import IERC721
+from contracts.vendor.openzeppelin.token.erc20.IERC20 import IERC20
+from contracts.vendor.openzeppelin.token.erc721.IERC721 import IERC721
 from starkware.cairo.common.bool import FALSE, TRUE
 
 from contracts.utilities.Uint256_felt_conv import _felt_to_uint

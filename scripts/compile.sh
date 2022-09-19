@@ -1,6 +1,6 @@
 #!/bin/sh
 
-nile compile \
+nile compile --directory contracts/vendor/ \
     contracts/set_interface.cairo \
     contracts/briq_interface.cairo \
     contracts/booklet.cairo \

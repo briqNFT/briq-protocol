@@ -5,19 +5,13 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
-from contracts.OZ.upgrades.library import (
-    Proxy_get_admin,
-    Proxy_get_implementation,
-    Proxy_set_admin,
-    Proxy_set_implementation,
-)
-from contracts.utilities.authorization import _onlyAdmin
 
-from contracts.upgrades.events import ProxyAdminSet, ProxyImplementationSet
+from contracts.vendor.openzeppelin.upgrades.library import Proxy
+from contracts.utilities.authorization import _onlyAdmin
 
 @view
 func getAdmin_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (admin: felt) {
-    let (admin) = Proxy_get_admin();
+    let (admin) = Proxy.get_admin();
     return (admin,);
 }
 
@@ -25,11 +19,11 @@ func getAdmin_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 func getImplementation_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
     implementation: felt
 ) {
-    let (implementation) = Proxy_get_implementation();
+    let (implementation) = Proxy.get_implementation_hash();
     return (implementation,);
 }
 
-// ### Upgrade
+// Upgrade
 
 @external
 func upgradeImplementation_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -37,8 +31,7 @@ func upgradeImplementation_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, rang
 ) {
     _onlyAdmin();
     assert_not_zero(new_implementation);
-    Proxy_set_implementation(new_implementation);
-    ProxyImplementationSet.emit(new_implementation);
+    Proxy._set_implementation_hash(new_implementation);
     return ();
 }
 
@@ -48,7 +41,6 @@ func setRootAdmin_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
 ) {
     _onlyAdmin();
     assert_not_zero(new_admin);
-    Proxy_set_admin(new_admin);
-    ProxyAdminSet.emit(new_admin);
+    Proxy._set_admin(new_admin);
     return ();
 }

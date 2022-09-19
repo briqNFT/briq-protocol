@@ -25,7 +25,7 @@ from contracts.utilities.authorization import _onlyAdmin
 
 from contracts.set_erc721.link_to_ecosystem import IBriqContract, _briq_address
 
-from contracts.caistring.str import Str, str_concat
+from contracts.vendor.caistring.str import Str, str_concat
 
 //###########
 //###########

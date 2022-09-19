@@ -1,18 +1,13 @@
-// Briq proxy, freely derived from OZ but with a slightly different constructor.
-// (unlike in OZ, I just initialize with an admin directly)
+// Slightly different constructor from OZ - I just initialize with an admin directly.
+// (This would be imported, but I cannot have two constructors...)
 
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
 from starkware.starknet.common.syscalls import library_call_l1_handler, library_call
-from contracts.OZ.upgrades.library import (
-    Proxy_implementation_address,
-    Proxy_initializer,
-    Proxy_set_implementation,
-)
 
-from contracts.upgrades.events import ProxyAdminSet, ProxyImplementationSet
+from contracts.vendor.openzeppelin.upgrades.library import Proxy
 
 //
 // Constructor
@@ -24,10 +19,9 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 ) {
     assert_not_zero(admin);
     assert_not_zero(implentation_hash);
-    Proxy_initializer(admin);
-    Proxy_set_implementation(implentation_hash);
-    ProxyAdminSet.emit(admin);
-    ProxyImplementationSet.emit(implentation_hash);
+
+    Proxy.initializer(admin);
+    Proxy._set_implementation_hash(implentation_hash);
     return ();
 }
 
@@ -41,16 +35,15 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 func __default__{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     selector: felt, calldata_size: felt, calldata: felt*
 ) -> (retdata_size: felt, retdata: felt*) {
-    let (address) = Proxy_implementation_address.read();
+    let (class_hash) = Proxy.get_implementation_hash();
 
     let (retdata_size: felt, retdata: felt*) = library_call(
-        class_hash=address,
+        class_hash=class_hash,
         function_selector=selector,
         calldata_size=calldata_size,
         calldata=calldata,
     );
-
-    return (retdata_size=retdata_size, retdata=retdata);
+    return (retdata_size, retdata);
 }
 
 @l1_handler
@@ -58,14 +51,13 @@ func __default__{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 func __l1_default__{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     selector: felt, calldata_size: felt, calldata: felt*
 ) {
-    let (address) = Proxy_implementation_address.read();
+    let (class_hash) = Proxy.get_implementation_hash();
 
     library_call_l1_handler(
-        class_hash=address,
+        class_hash=class_hash,
         function_selector=selector,
         calldata_size=calldata_size,
         calldata=calldata,
     );
-
     return ();
 }

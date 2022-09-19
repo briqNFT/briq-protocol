@@ -3,7 +3,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 
-from contracts.OZ.upgrades.library import Proxy_only_admin
+from contracts.vendor.openzeppelin.upgrades.library import Proxy
 
 //###################
 //###################
@@ -29,7 +29,7 @@ func _onlyAdmin{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
         return ();
     }
     // Fallback to the proxy admin.
-    Proxy_only_admin();
+    Proxy.assert_only_admin();
     return ();
 }
 

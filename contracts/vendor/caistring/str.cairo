@@ -14,7 +14,7 @@ from starkware.cairo.common.registers import get_label_location
 from starkware.cairo.common.memcpy import memcpy
 from starkware.cairo.common.alloc import alloc
 
-from contracts.caistring.array import array_concat
+from caistring.array import array_concat
 
 //
 // Define the string struct
