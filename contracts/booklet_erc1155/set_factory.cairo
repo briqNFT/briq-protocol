@@ -85,7 +85,7 @@ namespace booklet_set_factory:
         # Check that the shape matches the passed data
         let (local addr) = booklet_token_uri.get_shape_contract_(booklet_token_id)
         local pedersen_ptr: HashBuiltin* = pedersen_ptr
-        IShapeContract.check_shape_numbers_(
+        IShapeContract.library_call_check_shape_numbers_(
             addr, shape_len, shape, fts_len, fts, nfts_len, nfts
         )
 

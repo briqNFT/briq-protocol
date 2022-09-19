@@ -37,7 +37,7 @@ namespace IBookletContract:
     end
     func unwrap_(owner: felt, set_token_id: felt, booklet_token_id: felt):
     end
-    func balanceOf_(owner: felt) -> (balance: felt):
+    func balanceOf_(owner: felt, token_id: felt) -> (balance: felt):
     end
 end
 

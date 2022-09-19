@@ -244,7 +244,7 @@ func disassemble_{
     let (mat_len, mat) = IBriqContract.materialsOf_(briq_addr, token_id)
     assert mat_len = 0
     let (booklet_addr) = _booklet_address.read()
-    let (balance) = IBookletContract.balanceOf_(booklet_addr, token_id)
+    let (balance) = IBookletContract.balanceOf_(booklet_addr, owner, token_id)
     assert balance = 0
     # TODO: add generic support.
 
@@ -272,7 +272,7 @@ func disassemble_with_booklet_{
     let (mat_len, mat) = IBriqContract.materialsOf_(briq_addr, token_id)
     assert mat_len = 0
     let (booklet_addr) = _booklet_address.read()
-    let (balance) = IBookletContract.balanceOf_(booklet_addr, token_id)
+    let (balance) = IBookletContract.balanceOf_(booklet_addr, owner, token_id)
     assert balance = 0
     # TODO: add generic support.
 
