@@ -64,23 +64,16 @@
     {
         "data": [
             {
-                "name": "address",
+                "name": "previousAdmin",
                 "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "ProxyAdminSet",
-        "type": "event"
-    },
-    {
-        "data": [
+            },
             {
-                "name": "address",
+                "name": "newAdmin",
                 "type": "felt"
             }
         ],
         "keys": [],
-        "name": "ProxyImplementationSet",
+        "name": "AdminChanged",
         "type": "event"
     },
     {
@@ -130,84 +123,23 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "getBriqAddress_",
-        "outputs": [
+        "data": [
             {
-                "name": "address",
+                "name": "from_",
                 "type": "felt"
+            },
+            {
+                "name": "to_",
+                "type": "felt"
+            },
+            {
+                "name": "token_id_",
+                "type": "Uint256"
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setBriqAddress_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getBookletAddress_",
-        "outputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setBookletAddress_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "ownerOf_",
-        "outputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            }
-        ],
-        "name": "balanceOf_",
-        "outputs": [
-            {
-                "name": "balance",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+        "keys": [],
+        "name": "Transfer",
+        "type": "event"
     },
     {
         "inputs": [
@@ -280,6 +212,40 @@
     {
         "inputs": [
             {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "ownerOf_",
+        "outputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            }
+        ],
+        "name": "balanceOf_",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "name": "owner",
                 "type": "felt"
             }
@@ -317,6 +283,48 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "sender",
+                "type": "felt"
+            },
+            {
+                "name": "recipient",
+                "type": "felt"
+            },
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "transferFrom_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getBriqAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setBriqAddress_",
+        "outputs": [],
         "type": "function"
     },
     {
@@ -417,40 +425,25 @@
         "type": "function"
     },
     {
-        "data": [
+        "inputs": [],
+        "name": "getBookletAddress_",
+        "outputs": [
             {
-                "name": "from_",
+                "name": "address",
                 "type": "felt"
-            },
-            {
-                "name": "to_",
-                "type": "felt"
-            },
-            {
-                "name": "token_id_",
-                "type": "Uint256"
             }
         ],
-        "keys": [],
-        "name": "Transfer",
-        "type": "event"
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "sender",
-                "type": "felt"
-            },
-            {
-                "name": "recipient",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
+                "name": "address",
                 "type": "felt"
             }
         ],
-        "name": "transferFrom_",
+        "name": "setBookletAddress_",
         "outputs": [],
         "type": "function"
     },
@@ -607,95 +600,6 @@
             }
         ],
         "name": "disassemble_with_booklet_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "token_id_hint",
-                "type": "felt"
-            },
-            {
-                "name": "fts_len",
-                "type": "felt"
-            },
-            {
-                "name": "fts",
-                "type": "FTSpec*"
-            },
-            {
-                "name": "nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "nfts",
-                "type": "felt*"
-            },
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
-                "type": "felt*"
-            }
-        ],
-        "name": "assemble",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "fts_len",
-                "type": "felt"
-            },
-            {
-                "name": "fts",
-                "type": "FTSpec*"
-            },
-            {
-                "name": "nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "nfts",
-                "type": "felt*"
-            }
-        ],
-        "name": "disassemble",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "sender",
-                "type": "felt"
-            },
-            {
-                "name": "recipient",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "transferOneNFT",
         "outputs": [],
         "type": "function"
     },

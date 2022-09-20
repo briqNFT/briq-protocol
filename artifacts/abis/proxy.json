@@ -13,23 +13,16 @@
     {
         "data": [
             {
-                "name": "address",
+                "name": "previousAdmin",
                 "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "ProxyAdminSet",
-        "type": "event"
-    },
-    {
-        "data": [
+            },
             {
-                "name": "address",
+                "name": "newAdmin",
                 "type": "felt"
             }
         ],
         "keys": [],
-        "name": "ProxyImplementationSet",
+        "name": "AdminChanged",
         "type": "event"
     },
     {

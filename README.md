@@ -20,7 +20,7 @@ pip3 install -e . # For the generators utilities.
 
 Compile the target contracts:
 ```sh
-nile compile contracts/set_interface.cairo contracts/briq_interface.cairo contracts/upgrades/proxy.cairo
+nile compile contracts/set.cairo contracts/briq.cairo contracts/upgrades/proxy.cairo
 ```
 ## Tests
 
@@ -38,5 +38,5 @@ ADMIN=0xcafe nile run scripts/deploy.py
 ```
 Or
 ```sh
-nile deploy briq_impl --alias briq_impl --network goerli
+nile deploy briq --alias briq --network goerli
 ```

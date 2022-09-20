@@ -244,6 +244,21 @@
     {
         "data": [
             {
+                "name": "previousAdmin",
+                "type": "felt"
+            },
+            {
+                "name": "newAdmin",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "AdminChanged",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
                 "name": "_token_id",
                 "type": "Uint256"
             },
@@ -282,86 +297,6 @@
         "keys": [],
         "name": "ApprovalForAll",
         "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "name": "to",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "value",
-                "type": "felt"
-            }
-        ],
-        "name": "approve_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "is_approved",
-                "type": "felt"
-            }
-        ],
-        "name": "setApprovalForAll_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "on_behalf_of",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "getApproved_",
-        "outputs": [
-            {
-                "name": "approved_value",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "on_behalf_of",
-                "type": "felt"
-            },
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "isApprovedForAll_",
-        "outputs": [
-            {
-                "name": "is_approved",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
     },
     {
         "data": [
@@ -755,28 +690,6 @@
         "type": "function"
     },
     {
-        "data": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "ProxyAdminSet",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "ProxyImplementationSet",
-        "type": "event"
-    },
-    {
         "inputs": [],
         "name": "getAdmin_",
         "outputs": [
@@ -840,102 +753,6 @@
         "outputs": [
             {
                 "name": "symbol",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "material",
-                "type": "felt"
-            }
-        ],
-        "name": "balanceOf_",
-        "outputs": [
-            {
-                "name": "balance",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "material",
-                "type": "felt"
-            }
-        ],
-        "name": "balanceDetailsOf_",
-        "outputs": [
-            {
-                "name": "ft_balance",
-                "type": "felt"
-            },
-            {
-                "name": "nft_ids_len",
-                "type": "felt"
-            },
-            {
-                "name": "nft_ids",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "materials_len",
-                "type": "felt"
-            },
-            {
-                "name": "materials",
-                "type": "felt*"
-            }
-        ],
-        "name": "multiBalanceOf_",
-        "outputs": [
-            {
-                "name": "balances_len",
-                "type": "felt"
-            },
-            {
-                "name": "balances",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "material",
-                "type": "felt"
-            }
-        ],
-        "name": "totalSupply_",
-        "outputs": [
-            {
-                "name": "supply",
                 "type": "felt"
             }
         ],
@@ -1358,102 +1175,6 @@
         "outputs": [
             {
                 "name": "symbol",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "material",
-                "type": "felt"
-            }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-            {
-                "name": "balance",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "material",
-                "type": "felt"
-            }
-        ],
-        "name": "balanceDetailsOf",
-        "outputs": [
-            {
-                "name": "ft_balance",
-                "type": "felt"
-            },
-            {
-                "name": "nft_ids_len",
-                "type": "felt"
-            },
-            {
-                "name": "nft_ids",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "materials_len",
-                "type": "felt"
-            },
-            {
-                "name": "materials",
-                "type": "felt*"
-            }
-        ],
-        "name": "multiBalanceOf",
-        "outputs": [
-            {
-                "name": "balances_len",
-                "type": "felt"
-            },
-            {
-                "name": "balances",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "material",
-                "type": "felt"
-            }
-        ],
-        "name": "totalSupply",
-        "outputs": [
-            {
-                "name": "supply",
                 "type": "felt"
             }
         ],

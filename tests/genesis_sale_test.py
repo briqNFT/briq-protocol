@@ -99,7 +99,7 @@ async def deploy_shape(starknet, shape_data):
     nft_data_end:
 """)
     test_code = compile_starknet_codes(codes=[(shape, "shape_code")], disable_hint_validation=True)
-    return await starknet.deploy(contract_class=test_code)
+    return await starknet.declare(contract_class=test_code)
 
 
 @pytest.mark.asyncio
@@ -108,17 +108,19 @@ async def test_everything(tmp_path, factory):
     auction_code = generate_auction(auction_data = {
         1: {
             "box_token_id": 0x1,
-            "quantity": 10,
+            "quantity": 1,
             "auction_start": 134,
             "auction_duration": 24 * 60 * 60,
+            "initial_price": 10,
         },
         2: {
             "box_token_id": 0x2,
-            "quantity": 20,
+            "quantity": 1,
             "auction_start": 198,
             "auction_duration": 24 * 60 * 60,
+            "initial_price": 10,
         }
-    }, box_address=factory.box_contract.contract_address)
+    }, box_address=factory.box_contract.contract_address, erc20_address=factory.token_contract_eth.contract_address)
     (tmp_path / 'contracts' / 'auction').mkdir(parents=True, exist_ok=True)
     open(tmp_path / 'contracts' / 'auction' / 'data.cairo', "w").write(auction_code)
     auction_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'auction.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path)])
@@ -135,14 +137,14 @@ async def test_everything(tmp_path, factory):
     # Make a bid on the auction
     await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (5000, 0)).execute(ADDRESS)
     bid_box_1 = factory.auction_contract.BidData(
-        payer=ADDRESS,
-        payer_erc20_contract=factory.token_contract_eth.contract_address,
+        bidder=ADDRESS,
+        auction_index=0,
         box_token_id=0x1,
         bid_amount=100
     )
     bid_box_2 = factory.auction_contract.BidData(
-        payer=ADDRESS,
-        payer_erc20_contract=factory.token_contract_eth.contract_address,
+        bidder=ADDRESS,
+        auction_index=1,
         box_token_id=0x2,
         bid_amount=200
     )
@@ -174,8 +176,8 @@ async def test_everything(tmp_path, factory):
             0x4: 1
         }
     }, shape_data={
-        0x1: shape_basic.contract_address,
-        0x2: shape_bimat.contract_address,
+        0x1: shape_basic.class_hash,
+        0x2: shape_bimat.class_hash,
     }, booklet_address=factory.booklet_contract.contract_address, briq_address=factory.briq_contract.contract_address)
     (tmp_path / 'contracts' / 'box_erc1155').mkdir(parents=True, exist_ok=True)
     open(tmp_path / 'contracts' / 'box_erc1155' / 'data.cairo', "w").write(box_code)
