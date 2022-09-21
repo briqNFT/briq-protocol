@@ -10,7 +10,7 @@ from starkware.cairo.common.math import assert_lt_felt
 
 from contracts.utilities.Uint256_felt_conv import _uint_to_felt, _felt_to_uint
 
-from contracts.box_erc1155.data import briq_data_start, briq_data_end, shape_data_start, shape_data_end
+from contracts.box_nft.data import briq_data_start, briq_data_end, shape_data_start, shape_data_end
 
 struct BoxData {
     briq_1: felt,  // nb of briqs of material 0x1

@@ -13,7 +13,7 @@ from .conftest import declare_and_deploy, proxy_contract
 @pytest_asyncio.fixture(scope="session")
 async def factory_root():
     starknet = await Starknet.empty()
-    [box_contract, _] = await declare_and_deploy(starknet, "box.cairo")
+    [box_contract, _] = await declare_and_deploy(starknet, "box_nft.cairo")
     return (starknet, box_contract)
 
 @pytest_asyncio.fixture

@@ -14,15 +14,17 @@ from starkware.cairo.common.math import (
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
 
-from contracts.library_erc1155.balance_only import _balance
-
 //###########
 //###########
 //###########
 // Storage variables.
 
+@storage_var
+func _balance(owner: felt, token_id: felt) -> (balance: felt) {
+}
+
 namespace ERC1155_balance {
-    @view
+    // @view
     func balanceOf_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         owner: felt, token_id: felt
     ) -> (balance: felt) {
@@ -30,7 +32,7 @@ namespace ERC1155_balance {
         return (balance,);
     }
 
-    @view
+    // @view
     func balanceOfBatch_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         owners_len: felt, owners: felt*, token_ids_len: felt, token_ids: felt*
     ) -> (balances_len: felt, balances: felt*) {

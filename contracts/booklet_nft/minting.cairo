@@ -4,10 +4,10 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.cairo.common.math import assert_lt_felt
 from starkware.starknet.common.syscalls import get_caller_address
 
-from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
+from contracts.library_erc1155.transferability import ERC1155_transferability
 from contracts.library_erc1155.balance import _balance
 
-from contracts.booklet_erc1155.token_uri import _shape_contract
+from contracts.attributes_registry.token_uri import _shape_contract
 
 from contracts.ecosystem.to_box import _box_address
 
@@ -27,7 +27,7 @@ func mint_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     let (caller) = get_caller_address();
     let (box_addr) = _box_address.read();
     assert caller = box_addr;
-    ERC1155_lib_transfer._onTransfer(caller, 0, owner, token_id, 1);
+    ERC1155_transferability._onTransfer(caller, 0, owner, token_id, 1);
 
     return ();
 }

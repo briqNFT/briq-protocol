@@ -4,11 +4,27 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
 
+from contracts.types import FTSpec
+from starkware.cairo.common.uint256 import Uint256
+from contracts.utilities.Uint256_felt_conv import _uint_to_felt, _felt_to_uint
+
+
 from contracts.upgrades.upgradable_mixin import (
     getAdmin_,
     getImplementation_,
     upgradeImplementation_,
     setRootAdmin_,
+)
+
+
+from contracts.ecosystem.to_briq import (
+    getBriqAddress_,
+    setBriqAddress_,
+)
+
+from contracts.ecosystem.to_attributes_registry import (
+    getAttributesRegistryAddress_,
+    setAttributesRegistryAddress_,
 )
 
 from contracts.library_erc721.IERC721 import (
@@ -26,25 +42,8 @@ from contracts.library_erc721.IERC721_enumerable import (
     transferFrom_,
 )
 
-from contracts.set_erc721.token_uri import tokenURI_, tokenURIData_, setTokenURI_, is_realms_set_
-
-from contracts.set_erc721.assembly import assemble_, assemble_with_booklet_, disassemble_, disassemble_with_booklet_
-
-from contracts.types import FTSpec
-
-from starkware.cairo.common.uint256 import Uint256
-from contracts.utilities.Uint256_felt_conv import _uint_to_felt, _felt_to_uint
-
-
-from contracts.ecosystem.to_briq import (
-    getBriqAddress_,
-    setBriqAddress_,
-)
-
-from contracts.ecosystem.to_booklet import (
-    getBookletAddress_,
-    setBookletAddress_,
-)
+from contracts.set_nft.token_uri import tokenURI_, tokenURIData_, setTokenURI_, is_realms_set_
+from contracts.set_nft.assembly import assemble_, assemble_with_attributes_registry_, disassemble_, disassemble_with_attributes_registry_
 
 
 //###############

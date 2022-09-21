@@ -47,7 +47,7 @@ async def factory_root(tmp_path_factory):
         ADDRESS  # owner: felt
     ])
 
-    box_code = compile("box.cairo")
+    box_code = compile("box_nft.cairo")
     await starknet.declare(contract_class=box_code)
     box_contract = await starknet.deploy(contract_class=box_code)
 

@@ -1,5 +1,5 @@
 %lang starknet
-const booklet_address = 51966;
+const attributes_registry_address = 51966;
 const briq_address = 57005;
 
 briq_data_start:

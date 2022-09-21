@@ -1,7 +1,7 @@
 # briq contract
 
 The briq contract can be found at [`contracts/briq.cairo`](../../contracts/briq.cairo).  
-Implementation is found in the [`contracts/briq_erc1155_like/`](../../contracts/briq_erc1155_like/) folder.
+Implementation is found in the [`contracts/briq/`](../../contracts/briq/) folder.
 
 ## High-level overview
 
@@ -10,7 +10,7 @@ The briq contract should be thought of as an ERC-1155 with a slightly tweaked in
 
 The ability to directly transfer briqs is currently partly implemented. You can only directly send briqs to another person, as there is no authorization handling.
 
-The briq contract also contains functions to convert the fungibility of briqs, and to change their material, under [`contracts/briq_erc1155_like/convert_mutate.cairo`](../../contracts/briq_erc1155_like/convert_mutate.cairo). Those functions are currently unused & can only be called by admins of the contract.
+The briq contract also contains functions to convert the fungibility of briqs, and to change their material, under [`contracts/briq/convert_mutate.cairo`](../../contracts/briq/convert_mutate.cairo). Those functions are currently unused & can only be called by admins of the contract.
 
 ## Fungible, non-fungible briq tokens & material support
 

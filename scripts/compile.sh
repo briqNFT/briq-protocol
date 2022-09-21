@@ -1,9 +1,9 @@
 #!/bin/sh
 
 nile compile --directory contracts/vendor/ \
-    contracts/set.cairo \
+    contracts/set_nft.cairo \
     contracts/briq.cairo \
-    contracts/booklet.cairo \
-    contracts/box.cairo \
+    contracts/attributes_registry.cairo \
+    contracts/box_nft.cairo \
     contracts/auction.cairo \
     contracts/upgrades/proxy.cairo

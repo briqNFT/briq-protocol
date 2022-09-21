@@ -17,7 +17,7 @@ from contracts.types import NFTSpec
 
 from contracts.utilities.authorization import _onlyAdmin
 
-from contracts.briq_erc1155_like.balance_enumerability import (
+from contracts.briq.balance_enumerability import (
     _owner,
     _balance,
     _total_supply,
@@ -27,7 +27,7 @@ from contracts.briq_erc1155_like.balance_enumerability import (
     _maybeUnsetMaterialByOwner,
 )
 
-from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
+from contracts.library_erc1155.transferability import ERC1155_transferability
 
 // When a NFT is mutated (FT are handled by Transfer)
 @event
@@ -77,8 +77,8 @@ func mutateFT_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     _maybeUnsetMaterialByOwner(owner, source_material);
 
     let (__addr) = get_contract_address();
-    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, source_material, qty);
-    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, target_material, qty);
+    ERC1155_transferability._onTransfer(__addr, owner, 0, source_material, qty);
+    ERC1155_transferability._onTransfer(__addr, 0, owner, target_material, qty);
 
     return ();
 }
@@ -127,8 +127,8 @@ func mutateOneNFT_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     _setTokenByOwner(owner, target_material, briq_token_id, 0);
 
     let (__addr) = get_contract_address();
-    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, uid * 2 ** 64 + source_material, 1);
-    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, new_uid * 2 ** 64 + target_material, 1);
+    ERC1155_transferability._onTransfer(__addr, owner, 0, uid * 2 ** 64 + source_material, 1);
+    ERC1155_transferability._onTransfer(__addr, 0, owner, new_uid * 2 ** 64 + target_material, 1);
     Mutate.emit(
         owner,
         uid * 2 ** 64 + source_material,
@@ -169,8 +169,8 @@ func convertOneToFT_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     _balance.write(owner, material, balance + 1);
 
     let (__addr) = get_contract_address();
-    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, token_id, 1);
-    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, material, 1);
+    ERC1155_transferability._onTransfer(__addr, owner, 0, token_id, 1);
+    ERC1155_transferability._onTransfer(__addr, 0, owner, material, 1);
     ConvertToFT.emit(owner, material, token_id);
     return ();
 }
@@ -224,8 +224,8 @@ func convertOneToNFT_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
     _balance.write(owner, material, balance - 1);
 
     let (__addr) = get_contract_address();
-    ERC1155_lib_transfer._onTransfer(__addr, owner, 0, material, 1);
-    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, token_id, 1);
+    ERC1155_transferability._onTransfer(__addr, owner, 0, material, 1);
+    ERC1155_transferability._onTransfer(__addr, 0, owner, token_id, 1);
     ConvertToNFT.emit(owner, material, token_id);
 
     return ();

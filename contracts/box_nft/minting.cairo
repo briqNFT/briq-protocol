@@ -6,13 +6,13 @@ from starkware.starknet.common.syscalls import get_caller_address
 
 from starkware.cairo.common.registers import get_label_location
 
-from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
+from contracts.library_erc1155.transferability import ERC1155_transferability
 from contracts.library_erc1155.balance import _balance
 
-from contracts.booklet_erc1155.token_uri import _shape_contract
+from contracts.attributes_registry.token_uri import _shape_contract
 from contracts.utilities.authorization import _onlyAdmin
 
-from contracts.box_erc1155.data import shape_data_start, shape_data_end
+from contracts.box_nft.data import shape_data_start, shape_data_end
 
 @external
 func mint_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -27,7 +27,7 @@ func mint_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     _balance.write(owner, token_id, balance + number);
 
     let (caller) = get_caller_address();
-    ERC1155_lib_transfer._onTransfer(caller, 0, owner, token_id, number);
+    ERC1155_transferability._onTransfer(caller, 0, owner, token_id, number);
 
     // Make sure we have data for that token ID
     let (_shape_data_start) = get_label_location(shape_data_start);

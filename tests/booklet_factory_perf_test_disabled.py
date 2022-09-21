@@ -39,14 +39,14 @@ def compile(path):
 async def factory_root():
     starknet = await Starknet.empty()
     [briq_contract, _] = await declare_and_deploy(starknet, "briq.cairo")
-    [set_contract, _] = await declare_and_deploy(starknet, "set.cairo")
-    [booklet_contract, _] = await declare_and_deploy(starknet, "booklet.cairo")
+    [set_contract, _] = await declare_and_deploy(starknet, "set_nft.cairo")
+    [attributes_registry_contract, _] = await declare_and_deploy(starknet, "attributes_registry.cairo")
     await set_contract.setBriqAddress_(briq_contract.contract_address).execute()
-    await set_contract.setBookletAddress_(booklet_contract.contract_address).execute()
+    await set_contract.setAttributesRegistryAddress_(attributes_registry_contract.contract_address).execute()
     await briq_contract.setSetAddress_(set_contract.contract_address).execute()
-    await booklet_contract.setSetAddress_(set_contract.contract_address).execute()
+    await attributes_registry_contract.setSetAddress_(set_contract.contract_address).execute()
     await briq_contract.mintFT_(ADDRESS, 0x1, 100).execute()
-    return [starknet, set_contract, briq_contract, booklet_contract]
+    return [starknet, set_contract, briq_contract, attributes_registry_contract]
 
 
 def copy_contract(state, contract):
@@ -59,13 +59,13 @@ def copy_contract(state, contract):
 
 @pytest_asyncio.fixture
 async def factory(factory_root):
-    [starknet, set_contract, briq_contract, booklet_contract] = factory_root
+    [starknet, set_contract, briq_contract, attributes_registry_contract] = factory_root
     state = Starknet(state=starknet.state.copy())
-    return namedtuple('State', ['starknet', 'set_contract', 'briq_contract', 'booklet_contract'])(
+    return namedtuple('State', ['starknet', 'set_contract', 'briq_contract', 'attributes_registry_contract'])(
         starknet=state,
         set_contract=copy_contract(state, set_contract),
         briq_contract=copy_contract(state, briq_contract),
-        booklet_contract=copy_contract(state, booklet_contract),
+        attributes_registry_contract=copy_contract(state, attributes_registry_contract),
     )
 
 def report_performance(exc_info: StarknetTransactionExecutionInfo):
@@ -87,7 +87,7 @@ async def test_performance_optimal(factory):
     state = factory
     TOKEN_HINT = 1234
     TOKEN_URI = [1234]
-    BOOKLET_TOKEN_ID = 1234
+    ATTRIBUTES_REGISTRY_TOKEN_ID = 1234
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     data = data.replace("// DEFINE_SHAPE", f"""
     const SHAPE_LEN = 100
@@ -102,15 +102,15 @@ async def test_performance_optimal(factory):
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
     shape_contract = await state.starknet.deploy(contract_class=test_code)
 
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
+    await state.attributes_registry_contract.mint_(ADDRESS, ATTRIBUTES_REGISTRY_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
 
-    tx_info = await state.set_contract.assemble_with_booklet_(
+    tx_info = await state.set_contract.assemble_with_attributes_registry_(
         owner=ADDRESS,
         token_id_hint=TOKEN_HINT,
         uri=TOKEN_URI,
         fts=[(0x1, 100)],
         nfts=[],
-        booklet_token_id=BOOKLET_TOKEN_ID,
+        attributes_registry_token_id=ATTRIBUTES_REGISTRY_TOKEN_ID,
         shape=[compress_shape_item('#ffaaff', 0x1, i, 0, 2, False) for i in range(100)],
     ).execute(ADDRESS)
     report_performance(tx_info)
@@ -122,7 +122,7 @@ async def test_performance_less_optimal(factory):
     await state.briq_contract.mintFT_(ADDRESS, 0x2, 100).execute()
     TOKEN_HINT = 1234
     TOKEN_URI = [1234]
-    BOOKLET_TOKEN_ID = 1234
+    ATTRIBUTES_REGISTRY_TOKEN_ID = 1234
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     data = data.replace("// DEFINE_SHAPE", f"""
     const SHAPE_LEN = 100
@@ -138,15 +138,15 @@ async def test_performance_less_optimal(factory):
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
     shape_contract = await state.starknet.deploy(contract_class=test_code)
 
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
+    await state.attributes_registry_contract.mint_(ADDRESS, ATTRIBUTES_REGISTRY_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
 
-    tx_info = await state.set_contract.assemble_with_booklet_(
+    tx_info = await state.set_contract.assemble_with_attributes_registry_(
         owner=ADDRESS,
         token_id_hint=TOKEN_HINT,
         uri=TOKEN_URI,
         fts=[(0x1, 80), (0x2, 20)],
         nfts=[],
-        booklet_token_id=BOOKLET_TOKEN_ID,
+        attributes_registry_token_id=ATTRIBUTES_REGISTRY_TOKEN_ID,
         shape=[compress_shape_item('#ffaaff', 0x1, 0, i, 2, False) for i in range(80)] + [
             compress_shape_item('#ffaaff', 0x2, 1, i, 2, False) for i in range(20)
         ],
@@ -167,7 +167,7 @@ async def test_performance_bad(factory):
     await state.briq_contract.mintFT_(ADDRESS, 0xA, 10).execute()
     TOKEN_HINT = 1234
     TOKEN_URI = [1234]
-    BOOKLET_TOKEN_ID = 1234
+    ATTRIBUTES_REGISTRY_TOKEN_ID = 1234
     data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
     data = data.replace("// DEFINE_SHAPE", f"""
     const SHAPE_LEN = 100
@@ -182,15 +182,15 @@ async def test_performance_bad(factory):
     test_code = compile_starknet_codes(codes=[(data, "test_code")], disable_hint_validation=True, debug_info=True)
     shape_contract = await state.starknet.deploy(contract_class=test_code)
 
-    await state.booklet_contract.mint_(ADDRESS, BOOKLET_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
+    await state.attributes_registry_contract.mint_(ADDRESS, ATTRIBUTES_REGISTRY_TOKEN_ID, shape_contract.contract_address).execute(ADDRESS)
 
-    tx_info = await state.set_contract.assemble_with_booklet_(
+    tx_info = await state.set_contract.assemble_with_attributes_registry_(
         owner=ADDRESS,
         token_id_hint=TOKEN_HINT,
         uri=TOKEN_URI,
         fts=[(i + 1, 10) for i in range(10)],
         nfts=[],
-        booklet_token_id=BOOKLET_TOKEN_ID,
+        attributes_registry_token_id=ATTRIBUTES_REGISTRY_TOKEN_ID,
         shape=[
             compress_shape_item('#ffaaff', j+1, j, i, 2, False) for j in range(10) for i in range(10)
         ],

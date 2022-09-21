@@ -1,7 +1,7 @@
 # set contract
 
-The set contract can be found at [`contracts/set.cairo`](../../contracts/set.cairo).  
-Implementation is found in the [`contracts/set_erc721_like/`](../../contracts/set_erc721_like/) folder.
+The set contract can be found at [`contracts/set_nft.cairo`](../../contracts/set_nft.cairo).  
+Implementation is found in the [`contracts/set_nft/`](../../contracts/set_nft/) folder.
 
 ## High-level overview
 

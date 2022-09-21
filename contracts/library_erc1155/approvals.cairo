@@ -7,7 +7,7 @@ from starkware.cairo.common.math import assert_not_zero, assert_not_equal, asser
 from starkware.cairo.common.uint256 import Uint256
 from contracts.utilities.Uint256_felt_conv import _felt_to_uint
 
-from contracts.library_erc1155.balance_only import _balance
+from contracts.library_erc1155.balance import _balance
 
 from contracts.utilities.authorization import _only
 

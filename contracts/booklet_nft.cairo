@@ -9,15 +9,15 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.booklet_erc1155.minting import (
+from contracts.booklet_nft.minting import (
     mint_
 )
-from contracts.booklet_erc1155.token_uri import (
+from contracts.booklet_nft.token_uri import (
     get_shape_contract_,
     get_shape_,
 )
 
-from contracts.booklet_erc1155.set_factory import (
+from contracts.booklet_nft.set_factory import (
     wrap_,
     unwrap_,
 )

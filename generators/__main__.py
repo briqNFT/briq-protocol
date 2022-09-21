@@ -11,7 +11,7 @@ parser.add_argument('--source', help='The name of the source contract.')
 args = parser.parse_args()
 
 if args.box:
-    with open('contracts/box_erc1155/data.cairo', 'w') as f:
+    with open('contracts/box_nft/data.cairo', 'w') as f:
         f.write(generate_box())
 
 if args.auction:

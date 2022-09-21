@@ -6,15 +6,15 @@ from starkware.starknet.common.syscalls import get_caller_address
 
 from starkware.cairo.common.registers import get_label_location
 
-from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
+from contracts.library_erc1155.transferability import ERC1155_transferability
 from contracts.library_erc1155.balance import _balance
 
-from contracts.booklet_erc1155.token_uri import _shape_contract
+from contracts.attributes_registry.token_uri import _shape_contract
 
-from contracts.box_erc1155.data import shape_data_start, briq_data_start
+from contracts.box_nft.data import shape_data_start, briq_data_start
 
 from contracts.ecosystem.to_briq import _briq_address
-from contracts.ecosystem.to_booklet import _booklet_address
+from contracts.ecosystem.to_booklet import getBookletAddress_
 
 @contract_interface
 namespace IBookletContract {
@@ -28,7 +28,7 @@ namespace IBriqContract {
     }
 }
 
-// Unbox burns the box NFT, and mints briqs & booklet corresponding to the token URI.
+// Unbox burns the box NFT, and mints briqs & attributes_registry corresponding to the token URI.
 @external
 func unbox_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     owner: felt, token_id: felt
@@ -44,7 +44,7 @@ func unbox_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     let (caller) = get_caller_address();
     // Only the owner may unbox their box.
     assert owner = caller;
-    ERC1155_lib_transfer._onTransfer(caller, owner, 0, token_id, 1);
+    ERC1155_transferability._onTransfer(caller, owner, 0, token_id, 1);
 
     _unbox_mint(owner, token_id);
 
@@ -58,7 +58,7 @@ func _unbox_mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 
     let (_shape_data_start) = get_label_location(shape_data_start);
     let shape_contract = [cast(_shape_data_start, felt*) + token_id - 1];
-    let (booklet_addr) = _booklet_address.read();
+    let (booklet_addr) = getBookletAddress_();
     IBookletContract.mint_(booklet_addr, owner, token_id, shape_contract);
 
     let (_briq_data_start) = get_label_location(briq_data_start);

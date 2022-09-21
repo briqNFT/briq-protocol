@@ -22,11 +22,11 @@ async def setup_proxies_initial():
 
     compiled_proxy = compile("upgrades/proxy.cairo")
     [briq_proxy, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "briq.cairo", ADMIN)
-    [set_proxy, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "set.cairo", ADMIN)
-    [booklet_mock, _] = await declare_and_deploy(starknet, "mocks/booklet_mock.cairo")
+    [set_proxy, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "set_nft.cairo", ADMIN)
+    [attributes_registry_mock, _] = await declare_and_deploy(starknet, "mocks/attributes_registry_mock.cairo")
 
     await set_proxy.setBriqAddress_(briq_proxy.contract_address).execute(ADMIN)
-    await set_proxy.setBookletAddress_(booklet_mock.contract_address).execute(ADMIN)
+    await set_proxy.setAttributesRegistryAddress_(attributes_registry_mock.contract_address).execute(ADMIN)
     await briq_proxy.setSetAddress_(set_proxy.contract_address).execute(ADMIN)
 
     return starknet, briq_proxy, set_proxy

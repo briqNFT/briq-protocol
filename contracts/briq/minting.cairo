@@ -13,7 +13,7 @@ from starkware.cairo.common.math import (
 from starkware.cairo.common.registers import get_fp_and_pc
 from starkware.cairo.common.alloc import alloc
 
-from contracts.briq_erc1155_like.balance_enumerability import (
+from contracts.briq.balance_enumerability import (
     _owner,
     _balance,
     _total_supply,
@@ -23,7 +23,7 @@ from contracts.briq_erc1155_like.balance_enumerability import (
     _maybeUnsetMaterialByOwner,
 )
 
-from contracts.library_erc1155.transferability_library import ERC1155_lib_transfer
+from contracts.library_erc1155.transferability import ERC1155_transferability
 
 from contracts.ecosystem.to_box import _box_address
 
@@ -65,7 +65,7 @@ func mintFT_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     _setMaterialByOwner(owner, material, 0);
 
     let (__addr) = get_contract_address();
-    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, briq_token_id, qty);
+    ERC1155_transferability._onTransfer(__addr, 0, owner, briq_token_id, qty);
 
     return ();
 }
@@ -100,7 +100,7 @@ func mintOneNFT_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     _setTokenByOwner(owner, material, briq_token_id, 0);
 
     let (__addr) = get_contract_address();
-    ERC1155_lib_transfer._onTransfer(__addr, 0, owner, briq_token_id, 1);
+    ERC1155_transferability._onTransfer(__addr, 0, owner, briq_token_id, 1);
 
     return ();
 }

@@ -8,13 +8,13 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.box_erc1155.minting import (
+from contracts.box_nft.minting import (
     mint_,
 )
-from contracts.box_erc1155.unboxing import (
+from contracts.box_nft.unboxing import (
     unbox_,
 )
-from contracts.box_erc1155.token_uri import (
+from contracts.box_nft.token_uri import (
     get_box_data,
     get_box_nb,
     tokenURI_,

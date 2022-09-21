@@ -15,7 +15,7 @@ func _total_supply(material: felt) -> (res: felt) {
 // @storage_var
 // func _balance(owner: felt, token_id: felt) -> (res: felt):
 // end
-from contracts.library_erc1155.balance_only import _balance
+from contracts.library_erc1155.balance import _balance
 
 @storage_var
 func _owner(token_id: felt) -> (owner: felt) {

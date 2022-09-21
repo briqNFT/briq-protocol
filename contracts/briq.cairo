@@ -4,7 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin,
 
 from contracts.types import BalanceSpec, NFTSpec
 
-from contracts.briq_erc1155_like.balance_enumerability import (
+from contracts.briq.balance_enumerability import (
     ownerOf_,
     balanceOfMaterial_,
     balanceOfMaterials_,
@@ -15,15 +15,15 @@ from contracts.briq_erc1155_like.balance_enumerability import (
     totalSupplyOfMaterial_,
 )
 
-from contracts.briq_erc1155_like.minting import mintFT_, mintOneNFT_
+from contracts.briq.minting import mintFT_, mintOneNFT_
 
-from contracts.briq_erc1155_like.transferability import (
+from contracts.briq.transferability import (
     transferFT_,
     transferOneNFT_,
     transferNFT_,
 )
 
-from contracts.briq_erc1155_like.convert_mutate import (
+from contracts.briq.convert_mutate import (
     mutateFT_,
     mutateOneNFT_,
     convertOneToFT_,
