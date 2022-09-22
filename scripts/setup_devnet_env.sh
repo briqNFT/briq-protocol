@@ -17,5 +17,6 @@ export ACCOUNT="test"
 # info stored in ~/.starknet_accounts/starknet_open_zeppelin_accounts.json
 comm=$(starknet deploy_account --account $ACCOUNT)
 comm=$(echo "$comm" | grep 'Contract address' | awk '{gsub("Contract address: ", "",$0); print $0}')
+# Mint some tokens to be able to deploy stuff
 curl -H "Content-Type: application/json"  -d "{ \"address\": \"$WALLET_ADDRESS\", \"amount\": 5000000000000000000, \"lite\": 1 }" -X POST localhost:5050/mint
 export WALLET_ADDRESS=$comm

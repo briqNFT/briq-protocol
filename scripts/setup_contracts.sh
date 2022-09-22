@@ -12,18 +12,12 @@ starknet_declare () {
 
 starknet_declare artifacts/proxy.json proxy_hash
 starknet_declare artifacts/auction.json auction_hash
-starknet_declare artifacts/box.json box_hash
+starknet_declare artifacts/box_nft.json box_hash
+starknet_declare artifacts/booklet_nft.json booklet_hash
 starknet_declare artifacts/attributes_registry.json attributes_registry_hash
 starknet_declare artifacts/briq.json briq_hash
-starknet_declare artifacts/set.json set_hash
+starknet_declare artifacts/set_nft.json set_hash
 
-
-# proxy_hash=0x1386b773ca65975b53d30e0ab68f5db05068e26f95641db50ab68abb44a3c2b
-# auction_hash=0x4083bd66f88a7ca5d9c11bf1300babad06b330d4c4ba00cf5aac27656998324
-# box_hash=0x23fa1847731968ca6d339ae1f96683dab2c0f0e18b8a1ead148f9df89f42885
-# attributes_registry_hash=0x70958c495afd76b01a6019b9ef462e619256bb74326038517c9d91deefb2a1e
-# briq_hash=0x6aae5142b01646373e323d9bedba127217f425feef54d2db2890c358eeb9275
-# set_hash=0x1a5964974c7b0dab5c370932c79c869f3671e9022199c3268f422bd06a99aa6
 
 ### Contracts
 
@@ -39,21 +33,24 @@ deploy_proxy() {
 # Nonces will fail in testet...
 deploy_proxy $auction_hash auction_addr
 deploy_proxy $box_hash box_addr
+deploy_proxy $booklet_hash booklet_addr
 deploy_proxy $attributes_registry_hash attributes_registry_addr
 deploy_proxy $set_hash set_addr
 deploy_proxy $briq_hash briq_addr
 
-# auction_addr=0x061f577a6317df31af6bcc1a55a4dfb2a066e7f8dac0685d17b7ea93dbb18330
-# box_addr=0x01ef4ce33a6a31ce6d01cae3db43d0885e9cb3a51af5d3e28d147fac4a1986c4
-# attributes_registry_addr=0x008c36dfd159194f03315c7fcc8583bc1904ba6d9ebc836a35090231e0f43eba
-# briq_addr=0x051d0fbee758c47d91dd1834e2a2128a6d562398b9b50a8ac72a22976e6f3cc9
-# set_addr=0x068a270a4c2bbf1f1a7ae1f1aaf3de541e61fb99acd2dcd2ce585b7ead20b663
-
 # Setup
+
+invoke () {
+    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT)
+    export tx_hash=$(echo $tx | grep "Transaction hash:" | awk '{gsub("Transaction hash: ", "",$0); print $0}')
+    echo "$2 $3 $tx_hash"
+    ((nonce=$nonce+1))
+}
+
 
 # I have to specify max_fee or it tries to estimate_fee with a bad nonce.
 invoke () {
-    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 --account $ACCOUNT --nonce $nonce --max_fee 100000000000000)
+    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 $8 --account $ACCOUNT --nonce $nonce --max_fee 100000000000000)
     export tx_hash=$(echo $tx | grep "Transaction hash:" | awk '{gsub("Transaction hash: ", "",$0); print $0}')
     echo "$2 $3 $tx_hash"
     ((nonce=$nonce+1))
@@ -62,18 +59,20 @@ invoke () {
 nonce="$(starknet call --address $WALLET_ADDRESS --function get_nonce --no_wallet --abi venv/lib/python3.9/site-packages/starknet_devnet/accounts_artifacts/OpenZeppelin/0.2.1/Account.cairo/Account_abi.json)"
 echo $nonce
 
-invoke $box_addr box setAttributesRegistryAddress_ $attributes_registry_addr
-invoke $box_addr box setBriqAddress_ $briq_addr
+invoke $box_addr box_nft setBookletAddress_ $booklet_addr
+invoke $box_addr box_nft setBriqAddress_ $briq_addr
 
-invoke $set_addr set setAttributesRegistryAddress_ $attributes_registry_addr
-invoke $set_addr set setBriqAddress_ $briq_addr
+invoke $set_addr set_nft setAttributesRegistryAddress_ $attributes_registry_addr
+invoke $set_addr set_nft setBriqAddress_ $briq_addr
 
 invoke $briq_addr briq setSetAddress_ $set_addr
 invoke $briq_addr briq setBoxAddress_ $box_addr
 
-invoke $attributes_registry_addr attributes_registry setSetAddress_ $set_addr
-invoke $attributes_registry_addr attributes_registry setBoxAddress_ $box_addr
+invoke $booklet_addr booklet_nft setAttributesRegistryAddress_ $attributes_registry_addr
+invoke $booklet_addr booklet_nft setBoxAddress_ $box_addr
 
+invoke $attributes_registry_addr attributes_registry setSetAddress_ $set_addr
+invoke $attributes_registry_addr attributes_registry create_collection_ 1 3 $booklet_addr
 
 # If you have to upgrade
-invoke $attributes_registry_addr attributes_registry upgradeImplementation_ $attributes_registry_hash
+# invoke $attributes_registry_addr attributes_registry upgradeImplementation_ $attributes_registry_hash
