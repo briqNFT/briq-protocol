@@ -1,11 +1,15 @@
 import asyncio
 import os
 import pytest
+import pytest_asyncio
 from typing import Any
 
 from starkware.starknet.compiler.compile import compile_starknet_files
 from starkware.starknet.testing.starknet import StarknetContract
 from starkware.cairo.common.hash_state import compute_hash_on_elements
+
+from generators.generate_shape import generate_shape_code
+
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
 VENDOR_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts", "vendor")
@@ -23,6 +27,10 @@ def compile(path):
         debug_info=True,
         disable_hint_validation=True
     )
+
+async def declare(starknet, contract) -> str:
+    code = compile(contract)
+    return (await starknet.declare(contract_class=code)).class_hash
 
 async def declare_and_deploy(starknet, contract, constructor_calldata=[]) -> tuple[StarknetContract, Any]:
     code = compile(contract)
@@ -50,3 +58,39 @@ def proxy_contract(state, contract):
         contract_address=contract.contract_address,
         deploy_call_info=contract.deploy_call_info,
     )
+
+@pytest_asyncio.fixture
+async def deploy_clean_shapes(tmp_path_factory):
+    async def __(starknet, shapes, offset = 1):
+        folder = tmp_path_factory.mktemp('data')
+        (folder / 'contracts' / 'shape').mkdir(parents=True, exist_ok=True)
+        open(folder / 'contracts' / 'shape' / 'data.cairo', "w").write(
+            generate_shape_code(shapes, offset)
+        )
+        shape_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'shape/shape_store.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(folder)])
+        return [await starknet.declare(contract_class=shape_code), await starknet.deploy(contract_class=shape_code)]
+    return __
+
+# For testing, generate a shape contract with some random other things thrown in
+# The interesting data is at offset 3 (2 + index_start of 1)
+@pytest_asyncio.fixture
+def deploy_shape(deploy_clean_shapes):
+    async def __(starknet, items, nfts=[]):
+        return await deploy_clean_shapes(starknet, [
+                ([
+                    ('#ffaaff', 1, 1, 2, 3, True),
+                    ('#ffaaff', 1, 1, 2, 4, True),
+                ], [
+                    1 * 2 ** 64 + 1,
+                    2 * 2 ** 64 + 1
+                ]),
+                ([
+                    ('#ffaaff', 1, 1, 2, 3),
+                ], []),
+                (items, nfts),
+                ([
+                    ('#ffaaff', 1, 1, 2, 3),
+                ], [])
+            ]
+        )
+    return __

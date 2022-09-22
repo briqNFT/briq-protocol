@@ -1,0 +1,2 @@
+
+const GENESIS_COLLECTION = 0x1;

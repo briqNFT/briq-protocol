@@ -9,12 +9,12 @@ from starkware.cairo.common.registers import get_label_location
 from contracts.library_erc1155.transferability import ERC1155_transferability
 from contracts.library_erc1155.balance import _balance
 
-from contracts.attributes_registry.token_uri import _shape_contract
-
 from contracts.box_nft.data import shape_data_start, briq_data_start
 
 from contracts.ecosystem.to_briq import _briq_address
 from contracts.ecosystem.to_booklet import getBookletAddress_
+
+from contracts.ecosystem.genesis_collection import GENESIS_COLLECTION
 
 @contract_interface
 namespace IBookletContract {
@@ -59,7 +59,7 @@ func _unbox_mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     let (_shape_data_start) = get_label_location(shape_data_start);
     let shape_contract = [cast(_shape_data_start, felt*) + token_id - 1];
     let (booklet_addr) = getBookletAddress_();
-    IBookletContract.mint_(booklet_addr, owner, token_id, shape_contract);
+    IBookletContract.mint_(booklet_addr, owner, token_id * 2**192 + GENESIS_COLLECTION, shape_contract);
 
     let (_briq_data_start) = get_label_location(briq_data_start);
     let (briq_addr) = _briq_address.read();

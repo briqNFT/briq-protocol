@@ -63,7 +63,38 @@ namespace ERC1155_transferability {
     func _transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         sender: felt, recipient: felt, token_id: felt, value: felt
     ) {
+        assert_not_zero(sender);
         assert_not_zero(recipient);
+        assert_not_zero(sender - recipient);
+        assert_not_zero(token_id);
+        assert_not_zero(value);
+
+        // Reset approval (0 cost if was 0 before on starknet I believe)
+        // let (caller) = get_caller_address()
+        // let (approved_value) = ERC1155_approvals.getApproved_(sender, token_id, caller)
+        // ERC1155_approvals.approve_nocheck_(0, token_id)
+
+        let (balance) = _balance.read(sender, token_id);
+        with_attr error_message("Insufficient balance") {
+            assert_lt_felt(balance - value, balance);
+        }
+        _balance.write(sender, token_id, balance - value);
+        let (balance) = _balance.read(recipient, token_id);
+        with_attr error_message("Transfer would overflow recipient balance") {
+            assert_lt_felt(balance, balance + value);
+        }
+        _balance.write(recipient, token_id, balance + value);
+
+        // Is caller correct here?
+        let (caller) = get_caller_address();
+        _onTransfer(caller, sender, recipient, token_id, value);
+
+        return ();
+    }
+
+    func _transfer_burnable{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        sender: felt, recipient: felt, token_id: felt, value: felt
+    ) {
         assert_not_zero(sender - recipient);
         assert_not_zero(token_id);
         assert_not_zero(value);

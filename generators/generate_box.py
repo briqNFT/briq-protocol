@@ -14,14 +14,14 @@ shape_data = {
     0x2: "0xdead",
 }
 
-attributes_registry_address = 0xcafe
+booklet_address = 0xcafe
 briq_address = 0xdead
+collection_id = 0xfafa
 
-def generate_box(briq_data=briq_data, shape_data=shape_data, attributes_registry_address=attributes_registry_address, briq_address=briq_address):
+def generate_box(
+        briq_data=briq_data,
+        shape_data=shape_data):
     lines = []
-
-    lines.append(f"const attributes_registry_address = {attributes_registry_address};")
-    lines.append(f"const briq_address = {briq_address};")
 
     lines.append("briq_data_start:")
     i = 1

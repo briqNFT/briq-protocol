@@ -12,8 +12,3 @@ from contracts.auction.auction_lib import (
     close_auction,
     get_auction_data,
 )
-
-from contracts.ecosystem.to_box import (
-    getBoxAddress_,
-    setBoxAddress_,
-)

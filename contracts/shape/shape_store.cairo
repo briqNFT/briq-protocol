@@ -15,6 +15,18 @@ from contracts.shape.construction_guards import (
     _check_nfts_ok,
 )
 
+from contracts.shape.data import (
+    shape_offset_cumulative,
+    shape_offset_cumulative_end,
+    shape_data,
+    shape_data_end,
+    nft_offset_cumulative,
+    nft_offset_cumulative_end,
+    nft_data,
+    nft_data_end,
+    INDEX_START,
+)
+
 // For reference, see also cairo-based uncompression below.
 struct UncompressedShapeItem {
     material: felt,
@@ -25,21 +37,61 @@ struct UncompressedShapeItem {
     nft_token_id: felt,
 }
 
-// DEFINE_SHAPE
+// Returns the number of shapes stored in the contract data. Remove 1 because that's boundaries.
+func _get_nb_shapes{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(
+) -> felt {
+    let (_shape_offset_cumulative_start) = get_label_location(shape_offset_cumulative);
+    let (_shape_offset_cumulative_end) = get_label_location(shape_offset_cumulative_end);
+    return _shape_offset_cumulative_end - _shape_offset_cumulative_start - 1;
+}
+
+// Returns the offsets for the i-th shape (starting from 0). End is exclusive.
+func _get_shape_offsets{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(
+    i: felt
+) -> (
+    start: felt*, end: felt*
+) {
+    let (_shape_offset_cumulative_start) = get_label_location(shape_offset_cumulative);
+    let (loc) = get_label_location(shape_data);
+    return (
+        loc + [_shape_offset_cumulative_start + i] * ShapeItem.SIZE,
+        loc + [_shape_offset_cumulative_start + i + 1] * ShapeItem.SIZE
+    );
+}
+
+// Returns the offset for the i-th nft (starting from 0). End is exclusive.
+func _get_nft_offsets{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(
+    i: felt
+) -> (
+    start: felt*, end: felt*
+) {
+    let (_nft_offset_cumulative_start) = get_label_location(nft_offset_cumulative);
+    let (loc) = get_label_location(nft_data);
+    return (
+        loc + [_nft_offset_cumulative_start + i],
+        loc + [_nft_offset_cumulative_start + i + 1]
+    );
+}
 
 @constructor
 func constructor{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
 }() {
-    alloc_locals;
+    _validate_nth_shape(_get_nb_shapes());
+    return ();
+}
 
-    let (local shape_len, shape, nfts_len, nfts) = _shape();
-    // Validate that SHAPE_LEN is accurate
-    with_attr error_message("SHAPE_LEN constants and shape data length do not match") {
-        let (data_address) = get_label_location(shape_data);
-        let (end_data) = get_label_location(shape_data_end);
-        assert SHAPE_LEN = (end_data - data_address) / ShapeItem.SIZE;
+// N starts at 1.
+func _validate_nth_shape{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(
+    n: felt
+) {
+    alloc_locals;
+    if (n == 0) {
+        return();
     }
+
+    let (local shape_len, shape, nfts_len, nfts) = _shape(n - 1);
+
     // Validate that the shape has no NFT/position duplicates
     with_attr error_message("Shape items contains duplicate position or NFTs") {
         _check_for_duplicates(shape_len, shape, nfts_len, nfts);
@@ -50,18 +102,17 @@ func constructor{
     }
     // Validate that there are the right number/material of NFTs
     _check_nfts_ok(shape_len, shape, nfts_len, nfts);
-    return ();
+
+    return _validate_nth_shape(n - 1);
 }
 
-@view
-func _shape{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
+func _shape{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(
+    i: felt,
+) -> (
     shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*
 ) {
-    let (_shape_data_start) = get_label_location(shape_data);
-    let (_shape_data_end) = get_label_location(shape_data_end);
-
-    let (_nft_data_start) = get_label_location(nft_data);
-    let (_nft_data_end) = get_label_location(nft_data_end);
+    let (_shape_data_start, _shape_data_end) = _get_shape_offsets(i);
+    let (_nft_data_start, _nft_data_end) = _get_nft_offsets(i);
 
     return (
         (_shape_data_end - _shape_data_start) / ShapeItem.SIZE,
@@ -69,6 +120,15 @@ func _shape{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -
         (_nft_data_end - _nft_data_start),
         cast(_nft_data_start, felt*),
     );
+}
+
+@view
+func shape_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(
+    global_index: felt,
+) -> (
+    shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*
+) {
+    return _shape(global_index - INDEX_START);
 }
 
 // @view
@@ -81,24 +141,24 @@ func compute_shape_hash{
 // Iterate through positions until we find the right one, incrementing the NFT counter so we return the correct ID.
 func _find_nft{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(x_y_z: felt, current_item: ShapeItem*, nft_index: felt) -> (token_id: felt) {
+}(x_y_z: felt, current_item: ShapeItem*, nft_ptr: felt*) -> (token_id: felt) {
     if (current_item.x_y_z == x_y_z) {
-        let (data_address) = get_label_location(nft_data);
-        let value = [data_address + nft_index];
+        let value = [nft_ptr];
         return (value,);
     }
     let (nft) = bitwise_and(current_item.color_nft_material, 2 ** 128);
     if (nft == 2 ** 128) {
-        return _find_nft(x_y_z, current_item + ShapeItem.SIZE, nft_index + 1);
+        return _find_nft(x_y_z, current_item + ShapeItem.SIZE, nft_ptr + 1);
     } else {
-        return _find_nft(x_y_z, current_item + ShapeItem.SIZE, nft_index);
+        return _find_nft(x_y_z, current_item + ShapeItem.SIZE, nft_ptr);
     }
 }
 
+// Intended as mostly a 'debug' function, thus the use of local_index
 @view
 func decompress_data{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(data: ShapeItem) -> (data: UncompressedShapeItem) {
+}(data: ShapeItem, local_index: felt) -> (data: UncompressedShapeItem) {
     let (nft) = bitwise_and(data.color_nft_material, 2 ** 128);
     if (nft != 2 ** 128) {
         let (color) = bitwise_and(data.color_nft_material, 2 ** 251 - 1 - 2 ** 136 + 1);
@@ -109,8 +169,10 @@ func decompress_data{
         tempvar out = UncompressedShapeItem(material, color / 2 ** 136, x / 2 ** 128 - 0x8000000000000000, y / 2 ** 64 - 0x8000000000000000, z - 0x8000000000000000, nft);
         return (out,);
     }
-    let (data_address) = get_label_location(shape_data);
-    let (token_id) = _find_nft(data.x_y_z, cast(data_address, ShapeItem*), 0);
+    let (data_address, _) = _get_shape_offsets(local_index);
+    let (nft_offset, _) = _get_nft_offsets(local_index);
+    let (token_id) = _find_nft(data.x_y_z, cast(data_address, ShapeItem*), nft_offset);
+
     let (color) = bitwise_and(data.color_nft_material, 2 ** 251 - 1 - 2 ** 136 + 1);
     let (material) = bitwise_and(data.color_nft_material, 2 ** 64 - 1);
     let (x) = bitwise_and(data.x_y_z, 2 ** 251 - 1 - 2 ** 128 + 1);
@@ -125,15 +187,15 @@ func decompress_data{
 @view
 func check_shape_numbers_{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(shape_len: felt, shape: ShapeItem*, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*) {
+}(global_index: felt, shape_len: felt, shape: ShapeItem*, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*) {
     with_attr error_message("Wrong number of shape items") {
-        assert shape_len = SHAPE_LEN;
+        let (start, end) = _get_shape_offsets(global_index - INDEX_START);
+        assert shape_len = (end - start) / ShapeItem.SIZE;
     }
 
     with_attr error_message("Wrong number of NFTs") {
-        let (nft_start) = get_label_location(nft_data);
-        let (nft_end) = get_label_location(nft_data_end);
-        assert nfts_len = nft_end - nft_start;
+        let (start, end) = _get_nft_offsets(global_index - INDEX_START);
+        assert nfts_len = end - start;
     }
 
     // NB:
@@ -148,8 +210,8 @@ func check_shape_numbers_{
     let (qty: felt*) = alloc();
     let (qty_end) = _initialize_qty(fts_len, fts, qty);
 
-    let (nft_start) = get_label_location(nft_data);
-    let (data_address) = get_label_location(shape_data);
+    let (nft_start, _) = _get_nft_offsets(global_index - INDEX_START);
+    let (data_address, __) = _get_shape_offsets(global_index - INDEX_START);
     _check_shape_numbers_impl_(
         cast(data_address, ShapeItem*),
         cast(nft_start, felt*),

@@ -15,7 +15,7 @@ from generators.shape_utils import to_shape_data, compress_shape_item
 
 from generators.generate_box import generate_box
 
-from .conftest import declare_and_deploy, declare_and_deploy_proxied, hash_token_id, proxy_contract
+from .conftest import declare_and_deploy, declare_and_deploy_proxied, hash_token_id, proxy_contract, deploy_clean_shapes
 
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
@@ -25,6 +25,12 @@ ADMIN_ADDRESS=0xf00d
 ADDRESS = 0xcafe
 OTHER_ADDRESS = 0xd00d
 THIRD_ADDRESS = 0xfade
+
+# ! Hardcoded in Cairo
+COLLECTION_ID = 0x1
+
+def to_booklet_id(id):
+    return id * 2**192 + COLLECTION_ID
 
 def compile(path):
     return compile_starknet_files(
@@ -52,12 +58,16 @@ async def factory_root():
 
     [auction_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "auction.cairo", ADMIN_ADDRESS)
     [box_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "box_nft.cairo", ADMIN_ADDRESS)
-    [attributes_registry_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "attributes_registry.cairo", ADMIN_ADDRESS)
+    [booklet_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "booklet_nft.cairo", ADMIN_ADDRESS)
     [set_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "set_nft.cairo", ADMIN_ADDRESS)
     [briq_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "briq.cairo", ADMIN_ADDRESS)
+    [attributes_registry_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "attributes_registry.cairo", ADMIN_ADDRESS)
 
-    await box_contract.setAttributesRegistryAddress_(attributes_registry_contract.contract_address).execute(ADMIN_ADDRESS)
+    await box_contract.setBookletAddress_(booklet_contract.contract_address).execute(ADMIN_ADDRESS)
     await box_contract.setBriqAddress_(briq_contract.contract_address).execute(ADMIN_ADDRESS)
+
+    await booklet_contract.setAttributesRegistryAddress_(attributes_registry_contract.contract_address).execute(ADMIN_ADDRESS)
+    await booklet_contract.setBoxAddress_(box_contract.contract_address).execute(ADMIN_ADDRESS)
 
     await set_contract.setBriqAddress_(briq_contract.contract_address).execute(ADMIN_ADDRESS)
     await set_contract.setAttributesRegistryAddress_(attributes_registry_contract.contract_address).execute(ADMIN_ADDRESS)
@@ -66,44 +76,28 @@ async def factory_root():
     await briq_contract.setBoxAddress_(box_contract.contract_address).execute(ADMIN_ADDRESS)
 
     await attributes_registry_contract.setSetAddress_(set_contract.contract_address).execute(ADMIN_ADDRESS)
-    await attributes_registry_contract.setBoxAddress_(box_contract.contract_address).execute(ADMIN_ADDRESS)
+    await attributes_registry_contract.create_collection_(COLLECTION_ID, 2, booklet_contract.contract_address).execute(ADMIN_ADDRESS)
 
-    return [starknet, auction_contract, box_contract, attributes_registry_contract, token_contract_eth, set_contract, briq_contract]
+    return [starknet, auction_contract, box_contract, booklet_contract, attributes_registry_contract, token_contract_eth, set_contract, briq_contract]
 
 
 @pytest_asyncio.fixture
 async def factory(factory_root):
-    [starknet, auction_contract, box_contract, attributes_registry_contract, token_contract_eth, set_contract, briq_contract] = factory_root
+    [starknet, auction_contract, box_contract, booklet_contract, attributes_registry_contract, token_contract_eth, set_contract, briq_contract] = factory_root
     state = Starknet(state=starknet.state.copy())
-    return namedtuple('State', ['starknet', 'auction_contract', 'box_contract', 'attributes_registry_contract', 'token_contract_eth', 'set_contract', 'briq_contract'])(
-        starknet=state,
-        auction_contract=proxy_contract(state, auction_contract),
-        box_contract=proxy_contract(state, box_contract),
-        attributes_registry_contract=proxy_contract(state, attributes_registry_contract),
-        token_contract_eth=proxy_contract(state, token_contract_eth),
-        set_contract=proxy_contract(state, set_contract),
-        briq_contract=proxy_contract(state, briq_contract),
+    return namedtuple('State', ['starknet', 'auction_contract', 'box_contract', 'booklet_contract', 'attributes_registry_contract', 'token_contract_eth', 'set_contract', 'briq_contract'])(
+        state,
+        proxy_contract(state, auction_contract),
+        proxy_contract(state, box_contract),
+        proxy_contract(state, booklet_contract),
+        proxy_contract(state, attributes_registry_contract),
+        proxy_contract(state, token_contract_eth),
+        proxy_contract(state, set_contract),
+        proxy_contract(state, briq_contract),
     )
 
-
-async def deploy_shape(starknet, shape_data):
-    data = open(os.path.join(CONTRACT_SRC, "shape/shape_store.cairo"), "r").read() + '\n'
-    shape_data_str = '\n'.join(shape_data)
-    shape = data.replace("// DEFINE_SHAPE", f"""
-    const SHAPE_LEN = {len(shape_data)};
-
-    shape_data:
-    {shape_data_str}
-    shape_data_end:
-    nft_data:
-    nft_data_end:
-""")
-    test_code = compile_starknet_codes(codes=[(shape, "shape_code")], disable_hint_validation=True)
-    return await starknet.declare(contract_class=test_code)
-
-
 @pytest.mark.asyncio
-async def test_everything(tmp_path, factory):
+async def test_everything(tmp_path, factory, deploy_clean_shapes):
     # Declare the auction ready by upgrading the auction contract.
     auction_code = generate_auction(auction_data = {
         1: {
@@ -155,30 +149,36 @@ async def test_everything(tmp_path, factory):
     ################
 
     # In the meantime, deploy two shape contracts
-    shape_basic = await deploy_shape(factory.starknet, [
-        to_shape_data('#ffaaff', 0x1, -2, 0, 2),
-        to_shape_data('#ffaaff', 0x1, -1, 0, 2),
-        to_shape_data('#ffaaff', 0x1, 0, 0, 2),
-    ])
-    shape_bimat = await deploy_shape(factory.starknet, [
-        to_shape_data('#ffaaff', 0x1, -2, 1, 2),
-        to_shape_data('#ffaaff', 0x4, -1, 1, 2),
-        to_shape_data('#ffaaff', 0x1, 0, 1, 2),
-    ])
+    [shape_basic, _] = await deploy_clean_shapes(factory.starknet, [
+        ([
+            ('#ffaaff', 0x1, -2, 0, 2),
+            ('#ffaaff', 0x1, -1, 0, 2),
+            ('#ffaaff', 0x1, 0, 0, 2),
+        ], [])
+    ], offset = 1)
+    [shape_bimat, _] = await deploy_clean_shapes(factory.starknet, [
+        ([
+            ('#ffaaff', 0x1, -2, 1, 2),
+            ('#ffaaff', 0x4, -1, 1, 2),
+            ('#ffaaff', 0x1, 0, 1, 2),
+        ], [])
+    ], offset = 2)
 
     # Upgrade the box contract before the auction starts.
-    box_code = generate_box(briq_data={
-        1: {
-            0x1: 3
+    box_code = generate_box(
+        briq_data={
+            1: {
+                0x1: 3
+            },
+            2: {
+                0x1: 2,
+                0x4: 1
+            }
+        }, shape_data={
+            0x1: shape_basic.class_hash,
+            0x2: shape_bimat.class_hash,
         },
-        2: {
-            0x1: 2,
-            0x4: 1
-        }
-    }, shape_data={
-        0x1: shape_basic.class_hash,
-        0x2: shape_bimat.class_hash,
-    }, attributes_registry_address=factory.attributes_registry_contract.contract_address, briq_address=factory.briq_contract.contract_address)
+    )
     (tmp_path / 'contracts' / 'box_nft').mkdir(parents=True, exist_ok=True)
     open(tmp_path / 'contracts' / 'box_nft' / 'data.cairo', "w").write(box_code)
     box_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'box_nft.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path)])
@@ -205,23 +205,23 @@ async def test_everything(tmp_path, factory):
 
     await factory.box_contract.unbox_(OTHER_ADDRESS, 0x1).execute(OTHER_ADDRESS)
 
-    assert (await factory.attributes_registry_contract.balanceOf_(OTHER_ADDRESS, 0x1).call()).result.balance == 1
+    assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, to_booklet_id(0x1)).call()).result.balance == 1
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 3
 
     await factory.box_contract.unbox_(OTHER_ADDRESS, 0x2).execute(OTHER_ADDRESS)
-    assert (await factory.attributes_registry_contract.balanceOf_(OTHER_ADDRESS, 0x2).call()).result.balance == 1
+    assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, to_booklet_id(0x2)).call()).result.balance == 1
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 5
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x4).call()).result.balance == 1
 
     set_token_id_a = hash_token_id(OTHER_ADDRESS, 0x1234, [1234])
 
-    await factory.set_contract.assemble_with_attributes_registry_(
+    await factory.set_contract.assemble_with_attribute_(
         owner=OTHER_ADDRESS,
         token_id_hint=0x1234,
         uri=[1234],
         fts=[(0x1, 3)],
         nfts=[],
-        attributes_registry_token_id=0x1,
+        attribute_id=to_booklet_id(0x1),
         shape=[
             compress_shape_item('#ffaaff', 0x1, -2, 0, 2, False),
             compress_shape_item('#ffaaff', 0x1, -1, 0, 2, False),
@@ -229,9 +229,9 @@ async def test_everything(tmp_path, factory):
         ]
     ).execute(OTHER_ADDRESS)
 
-    assert (await factory.attributes_registry_contract.balanceOf_(OTHER_ADDRESS, 0x1).call()).result.balance == 0
+    assert (await factory.booklet_contract.balanceOf_(OTHER_ADDRESS, to_booklet_id(0x1)).call()).result.balance == 0
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x1).call()).result.balance == 2
     assert (await factory.briq_contract.balanceOfMaterial_(OTHER_ADDRESS, 0x4).call()).result.balance == 1
 
-    assert (await factory.attributes_registry_contract.balanceOf_(set_token_id_a, 0x1).call()).result.balance == 1
+    assert (await factory.booklet_contract.balanceOf_(set_token_id_a, to_booklet_id(0x1)).call()).result.balance == 1
     assert (await factory.briq_contract.balanceOfMaterial_(set_token_id_a, 0x1).call()).result.balance == 3

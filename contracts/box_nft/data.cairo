@@ -1,6 +1,4 @@
 %lang starknet
-const attributes_registry_address = 51966;
-const briq_address = 57005;
 
 briq_data_start:
 dw 54;

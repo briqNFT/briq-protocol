@@ -43,7 +43,7 @@ from contracts.library_erc721.IERC721_enumerable import (
 )
 
 from contracts.set_nft.token_uri import tokenURI_, tokenURIData_, setTokenURI_, is_realms_set_
-from contracts.set_nft.assembly import assemble_, assemble_with_attributes_registry_, disassemble_, disassemble_with_attributes_registry_
+from contracts.set_nft.assembly import assemble_, assemble_with_attribute_, disassemble_, disassemble_with_attribute_
 
 
 //###############

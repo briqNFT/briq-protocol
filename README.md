@@ -2,10 +2,15 @@
 
 This repository contains the Cairo code for briq StarkNet contracts.
 
-## Core contracts:
+## High-level overview of contracts:
 
- - briq contract: ERC1155-like. Handles briq tokens. briqs have a material, and fungible & NFT briqs may have the same material. The interface is material-based instead of token-id based.
- - set contract: ERC721-like. Handles sets. Essentially a regular ERC721, but handles assembly/disassembly. When assembling, it becomes the owner of the underlying briq tokens, and vice-versa.
+ - briq contract: ERC1155-like. Handles briq tokens. briqs have a material, and fungible & NFT briqs may have the same material. The interface is material-based instead of token-id based in an ERC1155.
+ - set NFT contract: ERC721-like. Handles sets. Essentially a regular ERC721, but handles assembly/disassembly. When assembling, it becomes the owner of the underlying briq tokens, and vice-versa.
+ - box NFT contract: ERC1155 for Genesis boxes. Can be unboxed, granting some briqs and a booklet.
+ - booklet NFT contract: ERC1155 for booklets. Acts as an attribute, refers to shapes.
+ - Shape contracts: define 3D shapes for set NFTs.
+ - Attribute registry: handles additional on-chain metadata for sets
+ - Auction contract: for the Genesis Sale, sells boxes.
 
 See [docs/](docs/) for more information.
 
@@ -20,7 +25,7 @@ pip3 install -e . # For the generators utilities.
 
 Compile the target contracts:
 ```sh
-nile compile contracts/set.cairo contracts/briq.cairo contracts/upgrades/proxy.cairo
+scripts/compile.sh
 ```
 ## Tests
 
@@ -28,7 +33,7 @@ nile compile contracts/set.cairo contracts/briq.cairo contracts/upgrades/proxy.c
 pytest
 
 # Gas-efficiency tests for the assembly with shape.
-pytest -s -k booklet_factory_perf_test
+pytest -s -k attributes_registry_factory_perf_test
 ```
 
 ## Deployment

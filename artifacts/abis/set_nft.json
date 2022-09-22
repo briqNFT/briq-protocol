@@ -123,6 +123,52 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getBriqAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setBriqAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getAttributesRegistryAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setAttributesRegistryAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
         "data": [
             {
                 "name": "from_",
@@ -305,29 +351,6 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "getBriqAddress_",
-        "outputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setBriqAddress_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
         "data": [
             {
                 "name": "value__len",
@@ -425,29 +448,6 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "getBookletAddress_",
-        "outputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setBookletAddress_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "name": "owner",
@@ -456,6 +456,14 @@
             {
                 "name": "token_id_hint",
                 "type": "felt"
+            },
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
             },
             {
                 "name": "fts_len",
@@ -471,14 +479,6 @@
             },
             {
                 "name": "nfts",
-                "type": "felt*"
-            },
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
                 "type": "felt*"
             }
         ],
@@ -521,19 +521,19 @@
                 "type": "felt*"
             },
             {
-                "name": "booklet_token_id",
-                "type": "felt"
-            },
-            {
                 "name": "shape_len",
                 "type": "felt"
             },
             {
                 "name": "shape",
                 "type": "ShapeItem*"
+            },
+            {
+                "name": "attribute_id",
+                "type": "felt"
             }
         ],
-        "name": "assemble_with_booklet_",
+        "name": "assemble_with_attribute_",
         "outputs": [],
         "type": "function"
     },
@@ -595,11 +595,11 @@
                 "type": "felt*"
             },
             {
-                "name": "booklet_token_id",
+                "name": "attribute_id",
                 "type": "felt"
             }
         ],
-        "name": "disassemble_with_booklet_",
+        "name": "disassemble_with_attribute_",
         "outputs": [],
         "type": "function"
     },

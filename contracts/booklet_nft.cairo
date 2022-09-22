@@ -9,22 +9,9 @@ from contracts.upgrades.upgradable_mixin import (
     setRootAdmin_,
 )
 
-from contracts.booklet_nft.minting import (
-    mint_
-)
-from contracts.booklet_nft.token_uri import (
-    get_shape_contract_,
-    get_shape_,
-)
-
-from contracts.booklet_nft.set_factory import (
-    wrap_,
-    unwrap_,
-)
-
-from contracts.ecosystem.to_set import (
-    getSetAddress_,
-    setSetAddress_,
+from contracts.ecosystem.to_attributes_registry import (
+    getAttributesRegistryAddress_,
+    setAttributesRegistryAddress_,
 )
 
 from contracts.ecosystem.to_box import (
@@ -41,4 +28,17 @@ from contracts.library_erc1155.IERC1155 import (
     balanceOfBatch_,
     safeTransferFrom_,
     // no URI (yet)
+)
+
+from contracts.booklet_nft.minting import (
+    mint_
+)
+from contracts.booklet_nft.token_uri import (
+    get_shape_contract_,
+    get_shape_,
+)
+
+from contracts.booklet_nft.attribute import (
+    assign_attribute,
+    remove_attribute,
 )

@@ -10,9 +10,11 @@ from contracts.utilities.authorization import _onlyAdmin
 
 from contracts.types import FTSpec, ShapeItem
 
-from contracts.attributes_registry.token_uri import get_shape_contract_
+from contracts.booklet_nft.token_uri import get_shape_contract_
 from contracts.library_erc1155.balance import ERC1155_balance
 from contracts.library_erc1155.transferability import ERC1155_transferability
+
+from contracts.ecosystem.genesis_collection import GENESIS_COLLECTION
 
 from contracts.ecosystem.to_attributes_registry import (
     _onlyAttributesRegistry
@@ -24,14 +26,16 @@ namespace IShapeContract {
     }
 
     func check_shape_numbers_(
-        shape_len: felt, shape: ShapeItem*, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*
+        index: felt, shape_len: felt, shape: ShapeItem*, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*
     ) {
     }
 }
 
+
 //###########
 //###########
 
+@external
 func assign_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(
     owner: felt,
@@ -41,13 +45,15 @@ func assign_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
     fts_len: felt, fts: FTSpec*,
     nfts_len: felt, nfts: felt*,
 ) {
+    alloc_locals;
+    
     _onlyAttributesRegistry();
 
     // Check that the shape matches the passed data
     let (local addr) = get_shape_contract_(attribute_id);
     local pedersen_ptr: HashBuiltin* = pedersen_ptr;
     IShapeContract.library_call_check_shape_numbers_(
-        addr, shape_len, shape, fts_len, fts, nfts_len, nfts
+        addr, (attribute_id - GENESIS_COLLECTION) / 2**192, shape_len, shape, fts_len, fts, nfts_len, nfts
     );
 
     // Transfer the booklet to the set.

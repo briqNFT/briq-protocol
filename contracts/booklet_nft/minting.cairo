@@ -7,7 +7,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 from contracts.library_erc1155.transferability import ERC1155_transferability
 from contracts.library_erc1155.balance import _balance
 
-from contracts.attributes_registry.token_uri import _shape_contract
+from contracts.booklet_nft.token_uri import _shape_contract
 
 from contracts.ecosystem.to_box import _box_address
 

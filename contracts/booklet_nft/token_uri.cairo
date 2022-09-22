@@ -4,9 +4,11 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin,
 
 from contracts.types import ShapeItem
 
+from contracts.ecosystem.genesis_collection import GENESIS_COLLECTION
+
 @contract_interface
 namespace IShapeContract {
-    func _shape() -> (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*) {
+    func shape_(global_index: felt) -> (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*) {
     }
 }
 
@@ -27,6 +29,6 @@ func get_shape_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     token_id: felt
 ) -> (shape_len: felt, shape: ShapeItem*, nfts_len: felt, nfts: felt*) {
     let (addr) = _shape_contract.read(token_id);
-    let (a, b, c, d) = IShapeContract.library_call__shape(addr);
+    let (a, b, c, d) = IShapeContract.library_call_shape_(addr, (token_id - GENESIS_COLLECTION) / 2**192);
     return (a, b, c, d);
 }

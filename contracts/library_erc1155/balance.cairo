@@ -24,6 +24,29 @@ func _balance(owner: felt, token_id: felt) -> (balance: felt) {
 }
 
 namespace ERC1155_balance {
+
+    func _increaseBalance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        owner: felt, token_id: felt, number: felt,
+    ) {
+        let (balance) = _balance.read(owner, token_id);
+        with_attr error_message("Mint would overflow balance") {
+            assert_lt_felt(balance, balance + number);
+        }
+        _balance.write(owner, token_id, balance + number);
+        return ();
+    }
+
+    func _decreaseBalance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        owner: felt, token_id: felt, number: felt,
+    ) {
+        let (balance) = _balance.read(owner, token_id);
+        with_attr error_message("Insufficient balance") {
+            assert_lt_felt(balance - number, balance);
+        }
+        _balance.write(owner, token_id, balance - number);
+        return ();
+    }
+
     // @view
     func balanceOf_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         owner: felt, token_id: felt

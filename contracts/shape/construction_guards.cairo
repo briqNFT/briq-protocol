@@ -1,7 +1,6 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
-from starkware.cairo.common.registers import get_label_location
 from starkware.cairo.common.math import assert_le_felt, assert_lt_felt, assert_not_zero
 
 from starkware.cairo.common.bitwise import bitwise_and

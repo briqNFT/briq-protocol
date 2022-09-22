@@ -52,21 +52,24 @@ namespace IBriqContract {
 
 @contract_interface
 namespace IAttributesRegistryContract {
-    func wrap_(
+    func total_balance(owner: felt) -> (balance: felt) {
+    }
+
+    func assign_attribute(
         owner: felt,
         set_token_id: felt,
-        attributes_registry_token_id: felt,
-        shape_len: felt,
-        shape: ShapeItem*,
-        fts_len: felt,
-        fts: FTSpec*,
-        nfts_len: felt,
-        nfts: felt*,
+        attribute_id: felt,
+        shape_len: felt, shape: ShapeItem*,
+        fts_len: felt, fts: FTSpec*,
+        nfts_len: felt, nfts: felt*
     ) {
     }
-    func unwrap_(owner: felt, set_token_id: felt, attributes_registry_token_id: felt) {
-    }
-    func balanceOf_(owner: felt, token_id: felt) -> (balance: felt) {
+
+    func remove_attribute(
+        owner: felt,
+        set_token_id: felt,
+        attribute_id: felt,
+    ) {
     }
 }
 
@@ -207,6 +210,7 @@ func _check_briqs_and_attributes_are_zero{syscall_ptr: felt*, pedersen_ptr: Hash
     let (attributes_registry_addr) = _attributes_registry_address.read();
     let (balance) = IAttributesRegistryContract.total_balance(attributes_registry_addr, token_id);
     assert balance = 0;
+    return ();
 }
 
 // The simple assembly function takes a list of briq tokens and transfers them to the set.
