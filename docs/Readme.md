@@ -1,11 +1,11 @@
 # briq protocol
 
-## High-level overwiew
+## High-level overview
 
 The briq protocol is a token-backed, customisable NFT system.
 
 It has three core components:
-- `briqs`, or `briq tokens`, are the fundamental unit. They are either fungible or non-fungible tokens. They have one on-chain characteristic: their _material_ (an arbitrary identifier).
+- `briqs`, or `briq tokens`, are the fundamental unit. They are the underlying token of the ecosystem, and can be either fungible or non-fungible. They have one on-chain characteristic: their _material_ (an arbitrary identifier).
 - `sets` are the NFTs of the briq ecosystem. They are made of `briqs`, and can be minted, transferred, burned at-will by their owner. Sets are defined by a 3D matrix of briqs, and contain data such as briq position, briq colors, etc. The full shape is not stored on-chain, but a hash is.
 - the `Attribute Registry` is a contract handling additional metadata for sets, such as 'This set is an official Genesis Collection set'.
 

@@ -36,7 +36,7 @@ Attributes come in 3 main categories:
 - Contract-backed attributes are delegated to an external contract. The `booklet` contract, an ERC1155, is an example of such a contract in the native briq ecosystem. These contracts can be arbitrarily complex and extensible themselves.
 
 For security reasons, contract-backed attributes must be whitelisted.
-For practical reasons, creating collections is also permissionned at the moment.
+For practical reasons, creating collections is also permissioned at the moment.
 Finally, functional attributes may only work on data present on-chain, and thus are currently limited.
 
 ### Abilities for collection
