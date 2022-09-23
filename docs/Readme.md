@@ -15,6 +15,8 @@ Additional components include:
 - The `Auction` contract handles the Genesis auction sale.
 - `Shape` contracts deal with 3D shapes and are used by booklets to verify that the user is constructing the correct shapes.
 
+![Genesis Sale Overview](./GenesisSale.png)
+
 ### Detailed contracts
 
 Contracts are upgradable for the foreseeable future. See [`contracts/upgrades/proxy.cairo`](../contracts/upgrades/proxy.cairo) for the core proxy contract.

@@ -14,6 +14,8 @@ Attributes can be granted to sets based on set properties, such as their 3D shap
 
 The `Attributes Registry` contract does the bookeeping of set attributes.
 
+![Attributes Registry Overview](./AttributeRegistry.png)
+
 ## Collections
 
 Attributes are grouped under 'collection', to make it possible to have different qualities as part of a single, recognizable group.
