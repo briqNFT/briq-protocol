@@ -162,6 +162,9 @@ func _create_token_{
     _owner.write(token_id, owner);
 
     let (balance) = _balance.read(owner);
+    with_attr error_message("Mint would overflow balance") {
+        assert_lt_felt(balance, balance + 1);
+    }
     _balance.write(owner, balance + 1);
 
     ERC721_enumerability._setTokenByOwner(owner, token_id, 0);

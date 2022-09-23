@@ -22,7 +22,7 @@ from contracts.utilities.Uint256_felt_conv import _felt_to_uint
 
 from contracts.library_erc1155.approvals import ERC1155_approvals
 
-from contracts.library_erc1155.balance import _balance
+from contracts.library_erc1155.balance import ERC1155_balance
 
 //###########
 //###########
@@ -74,16 +74,8 @@ namespace ERC1155_transferability {
         // let (approved_value) = ERC1155_approvals.getApproved_(sender, token_id, caller)
         // ERC1155_approvals.approve_nocheck_(0, token_id)
 
-        let (balance) = _balance.read(sender, token_id);
-        with_attr error_message("Insufficient balance") {
-            assert_lt_felt(balance - value, balance);
-        }
-        _balance.write(sender, token_id, balance - value);
-        let (balance) = _balance.read(recipient, token_id);
-        with_attr error_message("Transfer would overflow recipient balance") {
-            assert_lt_felt(balance, balance + value);
-        }
-        _balance.write(recipient, token_id, balance + value);
+        ERC1155_balance._decreaseBalance(sender, token_id, value);
+        ERC1155_balance._increaseBalance(recipient, token_id, value);
 
         // Is caller correct here?
         let (caller) = get_caller_address();
@@ -104,16 +96,8 @@ namespace ERC1155_transferability {
         // let (approved_value) = ERC1155_approvals.getApproved_(sender, token_id, caller)
         // ERC1155_approvals.approve_nocheck_(0, token_id)
 
-        let (balance) = _balance.read(sender, token_id);
-        with_attr error_message("Insufficient balance") {
-            assert_lt_felt(balance - value, balance);
-        }
-        _balance.write(sender, token_id, balance - value);
-        let (balance) = _balance.read(recipient, token_id);
-        with_attr error_message("Transfer would overflow recipient balance") {
-            assert_lt_felt(balance, balance + value);
-        }
-        _balance.write(recipient, token_id, balance + value);
+        ERC1155_balance._decreaseBalance(sender, token_id, value);
+        ERC1155_balance._increaseBalance(recipient, token_id, value);
 
         // Is caller correct here?
         let (caller) = get_caller_address();

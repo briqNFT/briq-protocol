@@ -7,7 +7,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.registers import get_label_location
 
 from contracts.library_erc1155.transferability import ERC1155_transferability
-from contracts.library_erc1155.balance import _balance
+from contracts.library_erc1155.balance import ERC1155_balance
 
 from contracts.utilities.authorization import _onlyAdmin
 
@@ -19,11 +19,7 @@ func mint_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 ) {
     _onlyAdmin();
 
-    let (balance) = _balance.read(owner, token_id);
-    with_attr error_message("Mint would overflow balance") {
-        assert_lt_felt(balance, balance + number);
-    }
-    _balance.write(owner, token_id, balance + number);
+    ERC1155_balance._increaseBalance(owner, token_id, number);
 
     let (caller) = get_caller_address();
     ERC1155_transferability._onTransfer(caller, 0, owner, token_id, number);
