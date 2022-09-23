@@ -56,8 +56,8 @@ invoke () {
     ((nonce=$nonce+1))
 }
 
-nonce="$(starknet call --address $WALLET_ADDRESS --function get_nonce --no_wallet --abi venv/lib/python3.9/site-packages/starknet_devnet/accounts_artifacts/OpenZeppelin/0.2.1/Account.cairo/Account_abi.json)"
-echo $nonce
+#nonce="$(starknet call --address $WALLET_ADDRESS --function get_nonce --no_wallet --abi venv/lib/python3.9/site-packages/starknet_devnet/accounts_artifacts/OpenZeppelin/0.2.1/Account.cairo/Account_abi.json)"
+#echo $nonce
 
 invoke $box_addr box_nft setBookletAddress_ $booklet_addr
 invoke $box_addr box_nft setBriqAddress_ $briq_addr
