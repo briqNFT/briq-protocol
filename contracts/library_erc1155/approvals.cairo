@@ -12,55 +12,15 @@ from contracts.library_erc1155.balance import _balance
 from contracts.utilities.authorization import _only
 
 @event
-func ApprovalFor(_token_id: Uint256, _owner: felt, _approved_address: felt, _value: felt) {
-}
-
-@event
 func ApprovalForAll(_owner: felt, _operator: felt, _approved: felt) {
 }
 
-@storage_var
-func _approval_n(token_id: felt, owner: felt, approved_address: felt) -> (value: felt) {
-}
-
-// # approved_address aka 'operator'
+// # approved_address is 'operator' in the spec, but I find that name rather unclear.
 @storage_var
 func _approval_all(on_behalf_of: felt, approved_address: felt) -> (is_approved: felt) {
 }
 
 namespace ERC1155_approvals {
-    func approve_nocheck_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        caller: felt, to: felt, token_id: felt, value: felt
-    ) {
-        _approval_n.write(token_id, caller, to, value);
-        let (tk) = _felt_to_uint(token_id);
-        ApprovalFor.emit(tk, caller, to, value);
-        return ();
-    }
-
-    @external
-    func approve_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        to: felt, token_id: felt, value: felt
-    ) {
-        alloc_locals;
-        let (caller) = get_caller_address();
-
-        with_attr error_message("Cannot approve from the zero address") {
-            assert_not_zero(caller);
-        }
-
-        with_attr error_message("Approval to current caller") {
-            assert_not_equal(caller, to);
-        }
-
-        // Checks that either approving for yourself or
-        // caller isApprovedForAll on behalf of caller
-        _onlyApprovedAll(on_behalf_of=caller);
-
-        approve_nocheck_(caller, to, token_id, value);
-        return ();
-    }
-
     @external
     func setApprovalForAll_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         approved_address: felt, is_approved: felt
@@ -96,14 +56,6 @@ namespace ERC1155_approvals {
     }
 
     @view
-    func getApproved_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        on_behalf_of: felt, token_id: felt, address: felt
-    ) -> (approved_value: felt) {
-        let (value) = _approval_n.read(token_id, on_behalf_of, address);
-        return (value,);
-    }
-
-    @view
     func isApprovedForAll_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         on_behalf_of: felt, address: felt
     ) -> (is_approved: felt) {
@@ -112,25 +64,6 @@ namespace ERC1155_approvals {
     }
 
     // ## Auth
-
-    func _onlyApproved{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        on_behalf_of: felt, token_id: felt, value: felt
-    ) {
-        let (caller) = get_caller_address();
-        // You can always approve on behalf of yourself.
-        if (on_behalf_of == caller) {
-            return ();
-        }
-        let (isOperator) = isApprovedForAll_(on_behalf_of, caller);
-        if (isOperator == 1) {
-            return ();
-        }
-        let (approved_value) = getApproved_(on_behalf_of, token_id, caller);
-        with_attr error_message("Insufficient approval balance") {
-            assert_le_felt(value, approved_value);
-        }
-        return ();
-    }
 
     func _onlyApprovedAll{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         on_behalf_of: felt

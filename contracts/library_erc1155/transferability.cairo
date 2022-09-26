@@ -69,6 +69,7 @@ namespace ERC1155_transferability {
         assert_not_zero(token_id);
         assert_not_zero(value);
 
+        // TODO: implement detailled approval?
         // Reset approval (0 cost if was 0 before on starknet I believe)
         // let (caller) = get_caller_address()
         // let (approved_value) = ERC1155_approvals.getApproved_(sender, token_id, caller)
@@ -91,6 +92,7 @@ namespace ERC1155_transferability {
         assert_not_zero(token_id);
         assert_not_zero(value);
 
+        // TODO: implement detailled approval?
         // Reset approval (0 cost if was 0 before on starknet I believe)
         // let (caller) = get_caller_address()
         // let (approved_value) = ERC1155_approvals.getApproved_(sender, token_id, caller)
