@@ -8,6 +8,8 @@ from starkware.cairo.common.memcpy import memcpy
 from starkware.cairo.common.uint256 import Uint256
 from starkware.cairo.common.math import assert_lt_felt
 
+from contracts.utilities.token_uri import TokenURIHelpers
+
 from contracts.utilities.Uint256_felt_conv import _uint_to_felt, _felt_to_uint
 
 from contracts.box_nft.data import briq_data_start, briq_data_end, shape_data_start, shape_data_end
@@ -44,27 +46,16 @@ func get_box_nb{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     return (res,);
 }
 
-@view
-func tokenURI_{
-    syscall_ptr: felt*,
-    pedersen_ptr: HashBuiltin*,
-    bitwise_ptr: BitwiseBuiltin*,
-    range_check_ptr,
-}(tokenId: felt) -> (tokenURI_len: felt, tokenURI: felt*) {
-    alloc_locals;
-    tempvar toto = 'unknown';
-    return (0, &[toto]);
-}
 
-// OZ-like version, though this returns a list of felt.
+data_uri_start:
+dw 'https://api.briq.construction';
+dw '/v1/uri/box/';
+dw 'starknet-testnet/';
+dw '.json';
+
 @view
-func tokenURI{
-    syscall_ptr: felt*,
-    pedersen_ptr: HashBuiltin*,
-    bitwise_ptr: BitwiseBuiltin*,
-    range_check_ptr,
-}(tokenId: Uint256) -> (tokenURI_len: felt, tokenURI: felt*) {
-    let (_tok) = _uint_to_felt(tokenId);
-    let (l, u) = tokenURI_(_tok);
-    return (l, u);
+func tokenURI_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    token_id: felt
+) -> (uri_len: felt, uri: felt*) {
+    return TokenURIHelpers._getUrl(token_id, data_uri_start);
 }

@@ -22,6 +22,8 @@ from contracts.attributes_registry.collections import (
 from contracts.attributes_registry.attributes import (
     assign_attribute,
     remove_attribute,
+    assign_attributes,
+    remove_attributes,
     has_attribute,
     total_balance,
     token_uri,

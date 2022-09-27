@@ -80,13 +80,12 @@ async def test_working(tmp_path, factory, deploy_clean_shapes):
     assert (await state.booklet_contract.balanceOf_(ADDRESS, BOOKLET_ID).call()).result.balance == 1
     assert (await state.booklet_contract.balanceOf_(SET_TOKEN_ID, BOOKLET_ID).call()).result.balance == 0
 
-    await state.set_contract.assemble_with_attribute_(
+    await state.set_contract.assemble_(
         owner=ADDRESS,
         token_id_hint=TOKEN_HINT,
-        uri=TOKEN_URI,
         fts=[(0x1, 4)],
         nfts=[],
-        attribute_id=BOOKLET_ID,
+        attributes=[BOOKLET_ID],
         shape=[
             compress_shape_item('#ffaaff', 0x1, 2, -2, -6, False),
             compress_shape_item('#aaffaa', 0x1, 4, -2, -6, False),
@@ -108,12 +107,12 @@ async def test_working(tmp_path, factory, deploy_clean_shapes):
             fts=[(0x1, 4)],
             nfts=[],
         ).execute(ADDRESS)
-    await state.set_contract.disassemble_with_attribute_(
+    await state.set_contract.disassemble_(
         owner=ADDRESS,
         token_id=SET_TOKEN_ID,
         fts=[(0x1, 4)],
         nfts=[],
-        attribute_id=BOOKLET_ID
+        attributes=[BOOKLET_ID]
     ).execute(ADDRESS)
     assert (await state.set_contract.ownerOf_(SET_TOKEN_ID).call()).result.owner == 0
     assert (await state.briq_contract.balanceOfMaterial_(ADDRESS, 0x1).call()).result.balance == 50
@@ -137,13 +136,12 @@ async def test_bad_shape(tmp_path, factory, deploy_clean_shapes):
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_ID, shape_hash.class_hash).execute(BOX_ADDRESS)
 
     with pytest.raises(StarkException, match="Shapes do not match"):
-        await state.set_contract.assemble_with_attribute_(
+        await state.set_contract.assemble_(
             owner=ADDRESS,
             token_id_hint=TOKEN_HINT,
-            uri=[1234],
             fts=[(0x1, 4)],
             nfts=[],
-            attribute_id=BOOKLET_ID,
+            attributes=[BOOKLET_ID],
             shape=[
                 compress_shape_item('#ffaaff', 0x1, 2, -2, -6, False),
                 compress_shape_item('#aaffaa', 0x1, 5, -2, -6, False),
@@ -169,13 +167,12 @@ async def test_bad_number(tmp_path, factory, deploy_clean_shapes):
     await state.booklet_contract.mint_(ADDRESS, BOOKLET_ID, shape_hash.class_hash).execute(BOX_ADDRESS)
 
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
-        await state.set_contract.assemble_with_attribute_(
+        await state.set_contract.assemble_(
             owner=ADDRESS,
             token_id_hint=TOKEN_HINT,
-            uri=[1234],
             fts=[(0x1, 3)],
             nfts=[],
-            attribute_id=BOOKLET_ID,
+            attributes=[BOOKLET_ID],
             shape=[
                 compress_shape_item('#ffaaff', 0x1, 2, -2, -6, False),
                 compress_shape_item('#aaffaa', 0x1, 4, -2, -6, False),
@@ -185,13 +182,12 @@ async def test_bad_number(tmp_path, factory, deploy_clean_shapes):
         ).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="Wrong number of briqs in shape"):
-        await state.set_contract.assemble_with_attribute_(
+        await state.set_contract.assemble_(
             owner=ADDRESS,
             token_id_hint=TOKEN_HINT,
-            uri=[1234],
             fts=[(0x1, 5)],
             nfts=[],
-            attribute_id=BOOKLET_ID,
+            attributes=[BOOKLET_ID],
             shape=[
                 compress_shape_item('#ffaaff', 0x1, 2, -2, -6, False),
                 compress_shape_item('#aaffaa', 0x1, 4, -2, -6, False),

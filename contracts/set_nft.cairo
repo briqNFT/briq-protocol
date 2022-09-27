@@ -42,8 +42,8 @@ from contracts.library_erc721.IERC721_enumerable import (
     transferFrom_,
 )
 
-from contracts.set_nft.token_uri import tokenURI_, tokenURIData_, setTokenURI_, is_realms_set_
-from contracts.set_nft.assembly import assemble_, assemble_with_attribute_, disassemble_, disassemble_with_attribute_
+from contracts.set_nft.token_uri import tokenURI_
+from contracts.set_nft.assembly import assemble_, disassemble_
 
 
 //###############
@@ -62,24 +62,20 @@ func symbol() -> (symbol: felt) {
     return ('briq',);
 }
 
-// NB: unlike OZ, this returns a list of felt
+
+// OZ-like version, though this returns a list of felt.
 @view
 func tokenURI{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
+    syscall_ptr: felt*,
+    pedersen_ptr: HashBuiltin*,
+    bitwise_ptr: BitwiseBuiltin*,
+    range_check_ptr,
 }(tokenId: Uint256) -> (tokenURI_len: felt, tokenURI: felt*) {
     let (_tok) = _uint_to_felt(tokenId);
     let (l, u) = tokenURI_(_tok);
     return (l, u);
 }
 
-@view
-func tokenURIData{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(tokenId: Uint256) -> (tokenURI_len: felt, tokenURI: felt*) {
-    let (_tok) = _uint_to_felt(tokenId);
-    let (l, u) = tokenURIData_(_tok);
-    return (l, u);
-}
 
 //###############
 // # Partial enumerability extension

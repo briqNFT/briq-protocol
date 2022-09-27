@@ -77,6 +77,22 @@ namespace IDelegateContract {
 }
 
 
+@external
+func assign_attributes{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
+}(
+    set_owner: felt,
+    set_token_id: felt,
+    attributes_len: felt, attributes: felt*,
+    shape_len: felt, shape: ShapeItem*,
+    fts_len: felt, fts: FTSpec*,
+    nfts_len: felt, nfts: felt*,
+) {
+    if (attributes_len == 0) {
+        return ();
+    }
+    assign_attribute(set_owner, set_token_id, attributes[0], shape_len, shape, fts_len, fts, nfts_len, nfts);
+    return assign_attributes(set_owner, set_token_id, attributes_len - 1, attributes + 1, shape_len, shape, fts_len, fts, nfts_len, nfts);
+}
 
 @external
 func assign_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
@@ -125,6 +141,22 @@ func assign_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_pt
     _cumulative_balance.write(set_token_id, balance + 1);
     return ();
 }
+
+
+@external
+func remove_attributes{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
+}(
+    set_owner: felt,
+    set_token_id: felt,
+    attributes_len: felt, attributes: felt*
+) {
+    if (attributes_len == 0) {
+        return ();
+    }
+    remove_attribute(set_owner, set_token_id, attributes[0]);
+    return remove_attributes(set_owner, set_token_id, attributes_len - 1, attributes + 1);
+}
+
 
 @external
 func remove_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr

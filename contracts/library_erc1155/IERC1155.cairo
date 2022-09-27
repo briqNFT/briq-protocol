@@ -9,12 +9,12 @@ from contracts.library_erc1155.balance import ERC1155_balance
 from contracts.library_erc1155.token_uri import ERC1155_token_uri
 from contracts.library_erc1155.transferability import ERC1155_transferability
 
-@external
-func approve_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    to: felt, token_id: felt, value: felt
-) {
-    return ERC1155_approvals.approve_(to, token_id, value);
-}
+//@external
+//func approve_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+//    to: felt, token_id: felt, value: felt
+//) {
+//    return ERC1155_approvals.approve_(to, token_id, value);
+//}
 
 @external
 func setApprovalForAll_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -23,12 +23,12 @@ func setApprovalForAll_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     return ERC1155_approvals.setApprovalForAll_(approved_address, is_approved);
 }
 
-@view
-func getApproved_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    on_behalf_of: felt, token_id: felt, address: felt
-) -> (approved_value: felt) {
-    return ERC1155_approvals.getApproved_(on_behalf_of, token_id, address);
-}
+//@view
+//func getApproved_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+//    on_behalf_of: felt, token_id: felt, address: felt
+//) -> (approved_value: felt) {
+//    return ERC1155_approvals.getApproved_(on_behalf_of, token_id, address);
+//}
 
 @view
 func isApprovedForAll_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(

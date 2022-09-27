@@ -15,7 +15,7 @@ from generators.shape_utils import to_shape_data, compress_shape_item
 
 from generators.generate_box import generate_box
 
-from .conftest import declare_and_deploy, declare_and_deploy_proxied, hash_token_id, proxy_contract, deploy_clean_shapes
+from .conftest import compile, VENDOR_SRC, declare_and_deploy, declare_and_deploy_proxied, hash_token_id, proxy_contract, deploy_clean_shapes
 
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")
@@ -31,14 +31,6 @@ COLLECTION_ID = 0x1
 
 def to_booklet_id(id):
     return id * 2**192 + COLLECTION_ID
-
-def compile(path):
-    return compile_starknet_files(
-        files=[os.path.join(CONTRACT_SRC, path)],
-        debug_info=True,
-        disable_hint_validation=True
-    )
-
 
 @pytest_asyncio.fixture(scope="module")
 async def factory_root():
@@ -117,7 +109,7 @@ async def test_everything(tmp_path, factory, deploy_clean_shapes):
     }, box_address=factory.box_contract.contract_address, erc20_address=factory.token_contract_eth.contract_address)
     (tmp_path / 'contracts' / 'auction').mkdir(parents=True, exist_ok=True)
     open(tmp_path / 'contracts' / 'auction' / 'data.cairo', "w").write(auction_code)
-    auction_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'auction.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path)])
+    auction_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'auction.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path), VENDOR_SRC])
 
     auction_impl_hash = await factory.starknet.declare(contract_class=auction_code)
     await factory.auction_contract.upgradeImplementation_(auction_impl_hash.class_hash).execute(ADMIN_ADDRESS)
@@ -181,7 +173,7 @@ async def test_everything(tmp_path, factory, deploy_clean_shapes):
     )
     (tmp_path / 'contracts' / 'box_nft').mkdir(parents=True, exist_ok=True)
     open(tmp_path / 'contracts' / 'box_nft' / 'data.cairo', "w").write(box_code)
-    box_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'box_nft.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path)])
+    box_code = compile_starknet_files(files=[os.path.join(CONTRACT_SRC, 'box_nft.cairo')], disable_hint_validation=True, debug_info=True, cairo_path=[str(tmp_path), VENDOR_SRC])
 
     box_impl_hash = await factory.starknet.declare(contract_class=box_code)
     await factory.box_contract.upgradeImplementation_(box_impl_hash.class_hash).execute(ADMIN_ADDRESS)
@@ -215,13 +207,12 @@ async def test_everything(tmp_path, factory, deploy_clean_shapes):
 
     set_token_id_a = hash_token_id(OTHER_ADDRESS, 0x1234, [1234])
 
-    await factory.set_contract.assemble_with_attribute_(
+    await factory.set_contract.assemble_(
         owner=OTHER_ADDRESS,
         token_id_hint=0x1234,
-        uri=[1234],
         fts=[(0x1, 3)],
         nfts=[],
-        attribute_id=to_booklet_id(0x1),
+        attributes=[to_booklet_id(0x1)],
         shape=[
             compress_shape_item('#ffaaff', 0x1, -2, 0, 2, False),
             compress_shape_item('#ffaaff', 0x1, -1, 0, 2, False),

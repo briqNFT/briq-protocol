@@ -92,7 +92,7 @@ async def test_call(setup_proxies):
     [starknet, briq_proxy, set_proxy] = setup_proxies
 
     await briq_proxy.mintFT(ADMIN, 1, 50).execute(ADMIN)
-    await set_proxy.assemble_(ADMIN, token_id_hint=0x1, fts=[(1, 5)], nfts=[], uri=[0xcafe]).execute(ADMIN)
+    await set_proxy.assemble_(ADMIN, token_id_hint=0x1, fts=[(1, 5)], nfts=[], attributes=[]).execute(ADMIN)
     with pytest.raises(StarkException):
         await set_proxy.assemble_(0x12, 0x2, [(1, 5)], [], [0xfade]).execute(0xcafe)
 
@@ -165,7 +165,7 @@ async def test_redo_implementation(setup_proxies):
     await briq_proxy.upgradeImplementation_(bimp).execute(ADMIN)
     await set_proxy.upgradeImplementation_(simp).execute(ADMIN)
 
-    tok_id = hash_token_id(ADMIN, 1, uri=[0xcafe])
+    tok_id = hash_token_id(ADMIN, 1)
     await starknet.state.invoke_raw(contract_address=set_proxy.contract_address,
         selector=get_selector_from_name("disassemble"),
         calldata=[ADMIN, tok_id, 1, 1, 5, 0],

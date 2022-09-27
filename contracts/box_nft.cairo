@@ -18,13 +18,10 @@ from contracts.box_nft.token_uri import (
     get_box_data,
     get_box_nb,
     tokenURI_,
-    tokenURI,
 )
 
 from contracts.library_erc1155.IERC1155 import (
-    approve_,
     setApprovalForAll_,
-    getApproved_,
     isApprovedForAll_,
     balanceOf_,
     balanceOfBatch_,

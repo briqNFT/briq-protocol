@@ -19,10 +19,18 @@ from contracts.ecosystem.to_box import (
     setBoxAddress_,
 )
 
+from contracts.booklet_nft.minting import (
+    mint_
+)
+from contracts.booklet_nft.token_uri import (
+    get_shape_contract_,
+    get_shape_,
+    tokenURI_,
+)
+
+
 from contracts.library_erc1155.IERC1155 import (
-    approve_,
     setApprovalForAll_,
-    getApproved_,
     isApprovedForAll_,
     balanceOf_,
     balanceOfBatch_,
@@ -30,15 +38,13 @@ from contracts.library_erc1155.IERC1155 import (
     // no URI (yet)
 )
 
-from contracts.booklet_nft.minting import (
-    mint_
-)
-from contracts.booklet_nft.token_uri import (
-    get_shape_contract_,
-    get_shape_,
-)
-
 from contracts.booklet_nft.attribute import (
     assign_attribute,
     remove_attribute,
 )
+
+//from contracts.booklet_nft.attribute_variant import (
+//    assign_attribute,
+//    remove_attribute,
+//    safeTransferFrom_,
+//)

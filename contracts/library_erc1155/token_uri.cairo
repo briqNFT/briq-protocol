@@ -5,6 +5,8 @@ from starkware.cairo.common.uint256 import Uint256
 from starkware.cairo.common.bitwise import bitwise_and
 from starkware.cairo.common.alloc import alloc
 
+from contracts.utilities.Uint256_felt_conv import _uint_to_felt, _felt_to_uint
+
 
 @event
 func URI(_value_len: felt, _value: felt*, _id: Uint256) {
@@ -24,6 +26,17 @@ func _token_uri_extra(token_id: felt, index: felt) -> (uri_data: felt) {
 }
 
 namespace ERC1155_token_uri {
+
+    func _onUriChange{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        token_id: felt, new_uri_len: felt, new_uri: felt*
+    ) {
+        let (tk) = _felt_to_uint(token_id);
+        URI.emit(new_uri_len, new_uri, token_id);
+        return ();
+    }
+
+    // The rest here is an extension
+
     @view
     func uri_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(token_id: felt) -> (
         uri_len: felt, uri: felt*

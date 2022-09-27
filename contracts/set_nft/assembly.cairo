@@ -20,7 +20,7 @@ from starkware.cairo.common.bitwise import bitwise_and
 
 from contracts.utilities.authorization import _only, _onlyAdmin
 
-from contracts.set_nft.token_uri import tokenURI_, _setTokenURI, URI
+from contracts.set_nft.token_uri import TokenURIHelpers, tokenURI_
 
 from contracts.library_erc721.balance import _owner, _balance
 from contracts.library_erc721.enumerability import ERC721_enumerability
@@ -55,20 +55,20 @@ namespace IAttributesRegistryContract {
     func total_balance(owner: felt) -> (balance: felt) {
     }
 
-    func assign_attribute(
+    func assign_attributes(
         owner: felt,
         set_token_id: felt,
-        attribute_id: felt,
+        attributes_len: felt, attributes: felt*,
         shape_len: felt, shape: ShapeItem*,
         fts_len: felt, fts: FTSpec*,
         nfts_len: felt, nfts: felt*
     ) {
     }
 
-    func remove_attribute(
+    func remove_attributes(
         owner: felt,
         set_token_id: felt,
-        attribute_id: felt,
+        attributes_len: felt, attributes: felt*,
     ) {
     }
 }
@@ -107,9 +107,14 @@ func _transferNFT{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
 // The solution adopted is to hash a hint. Our security becomes the chain hash security.
 // To be able to store e.g. sha-256 IPFS data in the tokenURI, we reserve a few bits
 // off the end for extra-URI storage when minting.
+// NB: the Token URI functionality is currently off.
 func _hashTokenId{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(owner: felt, token_id_hint: felt, uri_len: felt, uri: felt*) -> (token_id: felt) {
+}(
+    owner: felt,
+    token_id_hint: felt,
+    // uri_len: felt, uri: felt*
+) -> (token_id: felt) {
     let hash_ptr = pedersen_ptr;
     with hash_ptr {
         let (hash_state_ptr) = hash_init();
@@ -122,7 +127,7 @@ func _hashTokenId{
         );
     }
     let pedersen_ptr = hash_ptr;
-    let (token_id) = _maybeAddPartOfTokenUri(token_id, uri_len, uri);
+    // let (token_id) = _maybeAddPartOfTokenUri(token_id, uri_len, uri);
     return (token_id,);
 }
 
@@ -147,7 +152,7 @@ func _maybeAddPartOfTokenUri{
 
 func _create_token_{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(owner: felt, token_id_hint: felt, uri_len: felt, uri: felt*) -> (token_id: felt) {
+} (owner: felt, token_id_hint: felt) -> (token_id: felt) {
     alloc_locals;
 
     // TODO: consider allowing approved operators?
@@ -155,7 +160,7 @@ func _create_token_{
 
     assert_not_zero(owner);
 
-    let (local token_id: felt) = _hashTokenId(owner, token_id_hint, uri_len, uri);
+    let (local token_id: felt) = _hashTokenId(owner, token_id_hint);
 
     let (curr_owner) = _owner.read(token_id);
     assert curr_owner = 0;
@@ -169,10 +174,10 @@ func _create_token_{
 
     ERC721_enumerability._setTokenByOwner(owner, token_id, 0);
 
-    _setTokenURI(TRUE, token_id, uri_len, uri);
-
     ERC721_transferability._onTransfer(0, owner, token_id);
-    URI.emit(uri_len, uri, token_id);
+
+    let (uri_len, uri) = tokenURI_(token_id);
+    TokenURIHelpers._onUriChange(token_id, uri_len, uri);
 
     return (token_id,);
 }
@@ -216,66 +221,39 @@ func _check_briqs_and_attributes_are_zero{syscall_ptr: felt*, pedersen_ptr: Hash
     return ();
 }
 
-// The simple assembly function takes a list of briq tokens and transfers them to the set.
-// The set then acts as a smart wallet.
+// Assembly takes a list of attribute IDs and attempts to assign these attributes to the set.
+// This might fail if the set doesn't fit the attribute rules (see attributes_registry).
+// To allow fancier rules, this variant takes a full 3D shape description.
+// NB: we don't recreate the fts/nfts vector here, for efficiency.
+// However, the code MUST check that the shape vector matches the fts/nfts passed, if used.
+// briq's booklet contract does this via the shape contract.
 @external
 func assemble_{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
 }(
     owner: felt,
     token_id_hint: felt,
-    uri_len: felt, uri: felt*,
-    fts_len: felt, fts: FTSpec*,
-    nfts_len: felt, nfts: felt*,
-) {
-    alloc_locals;
-
-    let (token_id) = _create_token_(owner, token_id_hint, uri_len, uri);
-
-    _transferFT(owner, token_id, fts_len, fts);
-    _transferNFT(owner, token_id, nfts_len, nfts);
-
-    return ();
-}
-
-// This assembly variant takes an attribute ID and attempts to assign this attribute to the set.
-// This might fail if the set doesn't fit the attribute rules (see attributes_registry).
-// To allow fancier rules, this variant takes a full 3D shape description.
-// NB: we don't recreate the fts/nfts vector here, for efficiency.
-// However, the code MUST check that the shape vector matches the fts/nfts passed.
-// briq's booklet contract does this via the shape contract.
-@external
-func assemble_with_attribute_{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, range_check_ptr
-}(
-    owner: felt,
-    token_id_hint: felt,
-    uri_len: felt, uri: felt*,
+    // uri_len: felt, uri: felt*,
     fts_len: felt, fts: FTSpec*,
     nfts_len: felt, nfts: felt*,
     shape_len: felt, shape: ShapeItem*,
-    attribute_id: felt,
+    attributes_len: felt, attributes: felt*,
 ) {
     alloc_locals;
-    let (token_id) = _create_token_(owner, token_id_hint, uri_len, uri);
+    let (token_id) = _create_token_(owner, token_id_hint);
 
     _transferFT(owner, token_id, fts_len, fts);
     _transferNFT(owner, token_id, nfts_len, nfts);
 
-    local pedersen_ptr: HashBuiltin* = pedersen_ptr;
-
     let (attributes_registry_address) = _attributes_registry_address.read();
-    IAttributesRegistryContract.assign_attribute(
+    IAttributesRegistryContract.assign_attributes(
         attributes_registry_address,
         owner,
         token_id,
-        attribute_id,
-        shape_len,
-        shape,
-        fts_len,
-        fts,
-        nfts_len,
-        nfts,
+        attributes_len, attributes,
+        shape_len, shape,
+        fts_len, fts,
+        nfts_len, nfts,
     );
 
     return ();
@@ -283,34 +261,24 @@ func assemble_with_attribute_{
 
 @external
 func disassemble_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    owner: felt, token_id: felt, fts_len: felt, fts: FTSpec*, nfts_len: felt, nfts: felt*
-) {
-    _destroy_token(owner, token_id);
-
-    _transferFT(token_id, owner, fts_len, fts);
-    _transferNFT(token_id, owner, nfts_len, nfts);
-
-    _check_briqs_and_attributes_are_zero(token_id);
-    return ();
-}
-
-@external
-func disassemble_with_attribute_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     owner: felt,
     token_id: felt,
-    fts_len: felt,
-    fts: FTSpec*,
-    nfts_len: felt,
-    nfts: felt*,
-    attribute_id: felt,
+    fts_len: felt, fts: FTSpec*,
+    nfts_len: felt, nfts: felt*,
+    attributes_len: felt, attributes: felt*,
 ) {
+    alloc_locals;
     _destroy_token(owner, token_id);
 
     _transferFT(token_id, owner, fts_len, fts);
     _transferNFT(token_id, owner, nfts_len, nfts);
 
     let (attributes_registry_address) = _attributes_registry_address.read();
-    IAttributesRegistryContract.remove_attribute(attributes_registry_address, owner, token_id, attribute_id);
+    IAttributesRegistryContract.remove_attributes(
+        attributes_registry_address,
+        owner,
+        token_id,
+        attributes_len, attributes);
 
     _check_briqs_and_attributes_are_zero(token_id);
 
