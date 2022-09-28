@@ -2,14 +2,16 @@
 # Hashes
 
 starknet_declare () {
-    addr="$(starknet declare --contract $1 --account $ACCOUNT)"
+    addr="$(starknet declare --contract $1 --account $ACCOUNT --nonce $nonce --max_fee 73215999380800)"
     echo $addr
     comm=$(echo "$addr" | grep 'Contract class hash' | awk '{gsub("Contract class hash: ", "",$0); print $0}')
     printf -v $2 $comm
     echo "$2=$comm"
     echo "$2=$comm" >> "$STARKNET_NETWORK_ID.test_node.txt"
+    ((nonce=$nonce+1))
 }
 
+nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
 starknet_declare artifacts/proxy.json proxy_hash
 starknet_declare artifacts/auction.json auction_hash
 starknet_declare artifacts/box_nft.json box_hash
@@ -22,7 +24,7 @@ starknet_declare artifacts/set_nft.json set_hash
 ### Contracts
 
 deploy_proxy() {
-    addr="$(starknet deploy --class_hash $proxy_hash --inputs $WALLET_ADDRESS $1 --account $ACCOUNT --max_fee 20475245258)"
+    addr="$(starknet deploy --class_hash $proxy_hash --inputs $WALLET_ADDRESS $1 --account $ACCOUNT --max_fee 20277007180367)"
     echo $addr
     comm=$(echo "$addr" | grep "Contract address: " | awk '{gsub("Contract address: ", "",$0); print $0}')
     printf -v $2 $comm
@@ -41,10 +43,16 @@ deploy_proxy $briq_hash briq_addr
 # Setup
 
 invoke () {
-    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT)
+    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT --max_fee 1618293576158800)
     export tx_hash=$(echo $tx | grep "Transaction hash:" | awk '{gsub("Transaction hash: ", "",$0); print $0}')
-    echo "$2 $3 $tx_hash"
-    ((nonce=$nonce+1))
+    echo "$2 $3"
+    echo "starknet get_transaction --hash $tx_hash"
+}
+
+
+call () {
+    tx=$(starknet call --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT)
+    echo $tx
 }
 
 
@@ -58,6 +66,20 @@ invoke () {
 
 #nonce="$(starknet call --address $WALLET_ADDRESS --function get_nonce --no_wallet --abi venv/lib/python3.9/site-packages/starknet_devnet/accounts_artifacts/OpenZeppelin/0.2.1/Account.cairo/Account_abi.json)"
 #echo $nonce
+
+call $auction_addr box_nft getImplementation_
+call $box_addr box_nft getImplementation_
+call $booklet_addr box_nft getImplementation_
+call $attributes_registry_addr box_nft getImplementation_
+call $set_addr box_nft getImplementation_
+call $briq_addr box_nft getImplementation_
+
+invoke $box_addr box_nft upgradeImplementation_ $box_hash
+invoke $booklet_addr box_nft upgradeImplementation_ $booklet_hash
+invoke $attributes_registry_addr box_nft upgradeImplementation_ $attributes_registry_hash
+invoke $set_addr box_nft upgradeImplementation_ $set_hash
+invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
+
 
 invoke $box_addr box_nft setBookletAddress_ $booklet_addr
 invoke $box_addr box_nft setBriqAddress_ $briq_addr
