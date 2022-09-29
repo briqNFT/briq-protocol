@@ -96,7 +96,7 @@ func _check_nfts_ok{
 
     // Shift to the left - if the item is an NFT (indicated by 1 in the 128th bit),
     // then the right * 2*122 is necessarily bigger than 2**251 (the new left-most bit).
-    let nft = is_le_felt(2 ** 250, shape[0].color_nft_material * (2 ** (122)));
+    let nft = is_le_felt(2 ** 250 + 2**249, ((2**129-1) / 2**130) - (shape[0].color_nft_material / 2**130));
     if (nft == 1) {
         with_attr error_message("Shape does not have the right number of NFTs") {
             assert_not_zero(nfts_len);

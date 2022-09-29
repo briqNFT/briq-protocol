@@ -277,7 +277,7 @@ func _check_shape_numbers_impl_{
     // Algorithm:
     // If the shape item is an nft, compare with the next nft in the list, if match, carry on.
     // Otherwise, decrement the corresponding FT quantity. This is O(n) because we must copy the whole vector.
-    let nft = is_le_felt(2 ** 250, shape[0].color_nft_material * (2 ** (122)));
+    let nft = is_le_felt(2 ** 250 + 2**249, ((2**129-1) / 2**130) - (shape[0].color_nft_material / 2**130));
     if (nft == 1) {
         // assert_non_zero nfts_len  ?
         // Check that the material matches.
