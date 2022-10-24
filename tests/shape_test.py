@@ -1,4 +1,5 @@
 import os
+from random import randrange
 import pytest
 import pytest_asyncio
 
@@ -222,3 +223,8 @@ async def test_good_nft_random_order(starknet: Starknet, deploy_shape):
         1 * 2**64 + 1,
         1 * 2**64 + 2,
     ])
+
+
+
+def to_shape_items(shape_contract, items):
+    return [shape_contract.ShapeItem(*compress_shape_item(*i)) for i in items]

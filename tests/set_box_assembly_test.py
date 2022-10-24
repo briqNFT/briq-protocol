@@ -83,6 +83,7 @@ async def test_working(tmp_path, factory, deploy_clean_shapes):
     await state.set_contract.assemble_(
         owner=ADDRESS,
         token_id_hint=TOKEN_HINT,
+        name=[0x12], description=[0x34],
         fts=[(0x1, 4)],
         nfts=[],
         attributes=[BOOKLET_ID],
@@ -106,6 +107,7 @@ async def test_working(tmp_path, factory, deploy_clean_shapes):
             token_id=SET_TOKEN_ID,
             fts=[(0x1, 4)],
             nfts=[],
+            attributes=[],
         ).execute(ADDRESS)
     await state.set_contract.disassemble_(
         owner=ADDRESS,
@@ -139,6 +141,7 @@ async def test_bad_shape(tmp_path, factory, deploy_clean_shapes):
         await state.set_contract.assemble_(
             owner=ADDRESS,
             token_id_hint=TOKEN_HINT,
+            name=[0x12], description=[0x34],
             fts=[(0x1, 4)],
             nfts=[],
             attributes=[BOOKLET_ID],
@@ -170,6 +173,7 @@ async def test_bad_number(tmp_path, factory, deploy_clean_shapes):
         await state.set_contract.assemble_(
             owner=ADDRESS,
             token_id_hint=TOKEN_HINT,
+            name=[0x12], description=[0x34],
             fts=[(0x1, 3)],
             nfts=[],
             attributes=[BOOKLET_ID],
@@ -185,6 +189,7 @@ async def test_bad_number(tmp_path, factory, deploy_clean_shapes):
         await state.set_contract.assemble_(
             owner=ADDRESS,
             token_id_hint=TOKEN_HINT,
+            name=[0x12], description=[0x34],
             fts=[(0x1, 5)],
             nfts=[],
             attributes=[BOOKLET_ID],

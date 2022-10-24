@@ -4,7 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin,
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.bitwise import bitwise_and
 from starkware.cairo.common.uint256 import Uint256
-from starkware.cairo.common.math import assert_lt_felt
+from starkware.cairo.common.math import assert_lt_felt, assert_not_zero
 from contracts.utilities.Uint256_felt_conv import _felt_to_uint
 
 from contracts.types import FTSpec, ShapeItem
@@ -105,6 +105,9 @@ func assign_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_pt
     nfts_len: felt, nfts: felt*,
 ) {
     alloc_locals;
+    assert_not_zero(set_owner);
+    assert_not_zero(set_token_id);
+    assert_not_zero(attribute_id);
     let (caller) = get_caller_address();
     let (set_addr) = getSetAddress_();
     // TODO: Set permissions on the collection (owner / set) ? 
@@ -166,6 +169,9 @@ func remove_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, bitwise_pt
     attribute_id: felt,
 ) {
     alloc_locals;
+    assert_not_zero(set_owner);
+    assert_not_zero(set_token_id);
+    assert_not_zero(attribute_id);
     let (caller) = get_caller_address();
     let (set_addr) = getSetAddress_();
     assert caller = set_addr;

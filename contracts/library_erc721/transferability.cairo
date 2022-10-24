@@ -59,7 +59,11 @@ namespace ERC721_transferability {
         _owner.write(token_id, recipient);
 
         let (balance) = _balance.read(sender);
+        with_attr error_message("Insufficient balance") {
+            assert_lt_felt(balance - 1, balance);
+        }
         _balance.write(sender, balance - 1);
+
         let (balance) = _balance.read(recipient);
         with_attr error_message("Transfer would overflow recipient balance") {
             assert_lt_felt(balance, balance + 1);

@@ -2,7 +2,7 @@
 # Hashes
 
 starknet_declare () {
-    addr="$(starknet declare --contract $1 --account $ACCOUNT --nonce $nonce --max_fee 73215999380800)"
+    addr="$(starknet declare --contract $1 --account $ACCOUNT --nonce $nonce --max_fee 993215999380800)"
     echo $addr
     comm=$(echo "$addr" | grep 'Contract class hash' | awk '{gsub("Contract class hash: ", "",$0); print $0}')
     printf -v $2 $comm
@@ -74,13 +74,6 @@ call $attributes_registry_addr box_nft getImplementation_
 call $set_addr box_nft getImplementation_
 call $briq_addr box_nft getImplementation_
 
-invoke $box_addr box_nft upgradeImplementation_ $box_hash
-invoke $booklet_addr box_nft upgradeImplementation_ $booklet_hash
-invoke $attributes_registry_addr box_nft upgradeImplementation_ $attributes_registry_hash
-invoke $set_addr box_nft upgradeImplementation_ $set_hash
-invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
-
-
 invoke $box_addr box_nft setBookletAddress_ $booklet_addr
 invoke $box_addr box_nft setBriqAddress_ $briq_addr
 
@@ -98,3 +91,11 @@ invoke $attributes_registry_addr attributes_registry create_collection_ 1 3 $boo
 
 # If you have to upgrade
 # invoke $attributes_registry_addr attributes_registry upgradeImplementation_ $attributes_registry_hash
+
+invoke $box_addr box_nft upgradeImplementation_ $box_hash
+invoke $booklet_addr box_nft upgradeImplementation_ $booklet_hash
+invoke $attributes_registry_addr box_nft upgradeImplementation_ $attributes_registry_hash
+invoke $set_addr box_nft upgradeImplementation_ $set_hash
+invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
+
+call $booklet_addr booklet_nft get_shape_ 0x13000000000000000000000000000000000000000000000001

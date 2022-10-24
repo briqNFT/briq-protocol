@@ -233,7 +233,8 @@ func assemble_{
 }(
     owner: felt,
     token_id_hint: felt,
-    // uri_len: felt, uri: felt*,
+    name_len: felt, name: felt*,
+    description_len: felt, description: felt*,
     fts_len: felt, fts: FTSpec*,
     nfts_len: felt, nfts: felt*,
     shape_len: felt, shape: ShapeItem*,

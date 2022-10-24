@@ -71,7 +71,7 @@ def invoke_set(call, addr=ADDRESS):
 
 @pytest.mark.asyncio
 async def disabled_test_minting_compactness(briq_contract, set_contract):
-    res = await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, fts=[(1, 25)], nfts=[], shape=[], attributes=[]))
+    res = await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, name=[0x12], description=[0x34], fts=[(1, 25)], nfts=[], shape=[], attributes=[]))
 
     tok_id_50 = hash_token_id(ADDRESS, 50, uri=[])
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50]
@@ -96,17 +96,17 @@ async def test_minting_and_querying(briq_contract, set_contract):
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=1))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=2))
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=3))
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, fts=[(1, 25)], nfts=[1 * 2**64 + 1, 3 * 2**64 + 1], shape=[], attributes=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, name=[0x12], description=[0x34], fts=[(1, 25)], nfts=[1 * 2**64 + 1, 3 * 2**64 + 1], shape=[], attributes=[]))
     tok_id_50 = hash_token_id(ADDRESS, 50, uri=[])
 
     assert (await set_contract.balanceOf_(owner=ADDRESS).call()).result.balance == 1
     assert (await set_contract.balanceDetailsOf_(owner=ADDRESS).call()).result.token_ids == [tok_id_50]
     assert (await briq_contract.balanceDetailsOfMaterial_(owner=ADDRESS, material=1).call()).result.nft_ids == [2 * 2**64 + 1]
 
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=150, fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=150, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
 
     await invoke_briq(briq_contract.mintFT(owner=OTHER_ADDRESS, material=1, qty=50))
-    await invoke_set(set_contract.assemble_(owner=OTHER_ADDRESS, token_id_hint=25, fts=[(1, 10)], nfts=[], shape=[], attributes=[]), OTHER_ADDRESS)
+    await invoke_set(set_contract.assemble_(owner=OTHER_ADDRESS, token_id_hint=25, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]), OTHER_ADDRESS)
 
     tok_id_150 = hash_token_id(ADDRESS, 150, uri=[])
     tok_id_25 = hash_token_id(OTHER_ADDRESS, 25, uri=[])
@@ -143,18 +143,18 @@ async def test_minting_and_querying(briq_contract, set_contract):
     assert (await briq_contract.balanceOfMaterial_(owner=ADDRESS, material=1).call()).result.balance == 53
 
     with pytest.raises(StarkException):
-        await invoke_set(set_contract.assemble_(owner=OTHER_ADDRESS, token_id_hint=25, fts=[], nfts=[], shape=[], attributes=[]), OTHER_ADDRESS)
+        await invoke_set(set_contract.assemble_(owner=OTHER_ADDRESS, token_id_hint=25, name=[0x12], description=[0x34], fts=[], nfts=[], shape=[], attributes=[]), OTHER_ADDRESS)
 
 @pytest.mark.asyncio
 async def test_minting_bad_duplicate_nft(briq_contract, set_contract):
     await invoke_briq(briq_contract.mintOneNFT(owner=ADDRESS, material=1, uid=1))
     with pytest.raises(StarkException):
-        await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, fts=[(1, 25)], nfts=[1 * 2**64 + 1, 1 * 2**64 + 1], shape=[], attributes=[]))
+        await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=50, name=[0x12], description=[0x34], fts=[(1, 25)], nfts=[1 * 2**64 + 1, 1 * 2**64 + 1], shape=[], attributes=[]))
 
 @pytest.mark.asyncio
 async def test_minting_bad_disassembly(briq_contract, set_contract):
     tok_id = hash_token_id(ADDRESS, 150, uri=[])
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=150, fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=150, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
     with pytest.raises(StarkException):
         await invoke_set(set_contract.disassemble_(owner=ADDRESS, token_id=tok_id, fts=[], nfts=[], attributes=[]))
     with pytest.raises(StarkException):
@@ -168,9 +168,9 @@ async def test_minting_bad_disassembly(briq_contract, set_contract):
 
 @pytest.mark.asyncio
 async def test_transfer_nft(set_contract):
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x2, fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x3, fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x2, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x3, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
 
     tok_id_1 = hash_token_id(ADDRESS, 0x1, uri=[])
     tok_id_2 = hash_token_id(ADDRESS, 0x2, uri=[])
@@ -203,7 +203,7 @@ import math
 
 @pytest.mark.asyncio
 async def disabled_test_token_uri(set_contract):
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[]))
     token_id = hash_token_id(ADDRESS, 0x1, uri=[])
 
     assert (await set_contract.balanceOf_(owner=ADDRESS).call()).result.balance == 1
@@ -250,9 +250,9 @@ async def disabled_test_token_uri(set_contract):
 @pytest.mark.asyncio
 async def disabled_test_token_uri_realms(briq_contract, set_contract):
     await invoke_briq(briq_contract.mintFT(owner=ADDRESS, material=2, qty=50))
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x2, fts=[(2, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x3, fts=[(1, 5), (2, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x2, name=[0x12], description=[0x34], fts=[(2, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x3, name=[0x12], description=[0x34], fts=[(1, 5), (2, 10)], nfts=[], uri=[int.from_bytes('1234'.encode('ascii'), 'big')]))
     token_id_1 = hash_token_id(ADDRESS, 0x1, uri=[1234])
     token_id_2 = hash_token_id(ADDRESS, 0x2, uri=[1234])
     token_id_3 = hash_token_id(ADDRESS, 0x3, uri=[1234])
@@ -276,7 +276,7 @@ async def test_events(starknet, set_contract):
 
     tok_id_1_as_uint = [tok_id_1 & (2**128 - 1), tok_id_1 >> 128]
 
-    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
+    await invoke_set(set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]))
     #await invoke_set(set_contract.setTokenURI_(token_id=tok_id_1, uri=[4321]), ADMIN)
     await invoke_set(set_contract.transferFrom_(sender=ADDRESS, recipient=OTHER_ADDRESS, token_id=tok_id_1))
     await invoke_set(set_contract.disassemble_(owner=OTHER_ADDRESS, token_id=tok_id_1, fts=[(1, 10)], nfts=[], attributes=[]), OTHER_ADDRESS)
@@ -297,7 +297,7 @@ async def test_events(starknet, set_contract):
 @pytest.mark.asyncio
 async def test_approval(set_contract):
     tok_id_1 = hash_token_id(ADDRESS, 0x1, uri=[])
-    await set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, fts=[(1, 10)], nfts=[], shape=[], attributes=[]).execute(ADDRESS)
+    await set_contract.assemble_(owner=ADDRESS, token_id_hint=0x1, name=[0x12], description=[0x34], fts=[(1, 10)], nfts=[], shape=[], attributes=[]).execute(ADDRESS)
     await set_contract.setApprovalForAll_(OTHER_ADDRESS, 1).execute(ADDRESS)
     await set_contract.approve_(THIRD_ADDRESS, tok_id_1).execute(OTHER_ADDRESS)
     assert (await set_contract.isApprovedForAll_(ADDRESS, OTHER_ADDRESS).call()).result.is_approved == 1

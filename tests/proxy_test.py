@@ -92,9 +92,9 @@ async def test_call(setup_proxies):
     [starknet, briq_proxy, set_proxy] = setup_proxies
 
     await briq_proxy.mintFT(ADMIN, 1, 50).execute(ADMIN)
-    await set_proxy.assemble_(ADMIN, token_id_hint=0x1, fts=[(1, 5)], nfts=[], attributes=[]).execute(ADMIN)
+    await set_proxy.assemble_(ADMIN, token_id_hint=0x1, name=[0x12], description=[0x34], fts=[(1, 5)], nfts=[], attributes=[]).execute(ADMIN)
     with pytest.raises(StarkException):
-        await set_proxy.assemble_(0x12, 0x2, [(1, 5)], [], [0xfade]).execute(0xcafe)
+        await set_proxy.assemble_(0x12, 0x2, [0x12], [0x34], [(1, 5)], [], [0xfade]).execute(0xcafe)
 
 @pytest.fixture(scope="session")
 def compiled_mint():

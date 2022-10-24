@@ -63,7 +63,6 @@ func make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(b
         assert_not_zero(bid.bid_amount);
     }
 
-    // TODO: assert box exists and is up for grabs.
     // TODO: we are in the correct time range for auction
     let (auction_data_start_label) = get_label_location(auction_data_start);
     let data = cast(auction_data_start_label + AuctionData.SIZE * bid.auction_index, AuctionData*)[0];

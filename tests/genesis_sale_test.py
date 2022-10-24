@@ -210,6 +210,7 @@ async def test_everything(tmp_path, factory, deploy_clean_shapes):
     await factory.set_contract.assemble_(
         owner=OTHER_ADDRESS,
         token_id_hint=0x1234,
+        name=[0x12], description=[0x34],
         fts=[(0x1, 3)],
         nfts=[],
         attributes=[to_booklet_id(0x1)],
