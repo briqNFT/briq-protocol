@@ -87,7 +87,10 @@ invoke $booklet_addr booklet_nft setAttributesRegistryAddress_ $attributes_regis
 invoke $booklet_addr booklet_nft setBoxAddress_ $box_addr
 
 invoke $attributes_registry_addr attributes_registry setSetAddress_ $set_addr
-invoke $attributes_registry_addr attributes_registry create_collection_ 1 3 $booklet_addr
+# Collection 1 is GENESIS, supported by contract (thus params = 2)
+invoke $attributes_registry_addr attributes_registry create_collection_ 1 2 $booklet_addr
+# Collection 2 is shape hashes, supported by contract (thus params = 2)
+invoke $attributes_registry_addr attributes_registry create_collection_ 2 2 $booklet_addr
 
 # If you have to upgrade
 # invoke $attributes_registry_addr attributes_registry upgradeImplementation_ $attributes_registry_hash

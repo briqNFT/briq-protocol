@@ -77,130 +77,23 @@
         "type": "event"
     },
     {
-        "inputs": [],
-        "name": "getAdmin_",
-        "outputs": [
-            {
-                "name": "admin",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getImplementation_",
-        "outputs": [
-            {
-                "name": "implementation",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "new_implementation",
-                "type": "felt"
-            }
-        ],
-        "name": "upgradeImplementation_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "new_admin",
-                "type": "felt"
-            }
-        ],
-        "name": "setRootAdmin_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getSetAddress_",
-        "outputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "setSetAddress_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
         "data": [
             {
-                "name": "collection_id",
+                "name": "_value_len",
                 "type": "felt"
             },
             {
-                "name": "contract",
-                "type": "felt"
+                "name": "_value",
+                "type": "felt*"
             },
             {
-                "name": "admin",
-                "type": "felt"
-            },
-            {
-                "name": "params",
-                "type": "felt"
+                "name": "_id",
+                "type": "Uint256"
             }
         ],
         "keys": [],
-        "name": "CollectionCreated",
+        "name": "URI",
         "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "name": "collection_id",
-                "type": "felt"
-            },
-            {
-                "name": "params",
-                "type": "felt"
-            },
-            {
-                "name": "admin_or_contract",
-                "type": "felt"
-            }
-        ],
-        "name": "create_collection_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "attribute_id",
-                "type": "felt"
-            },
-            {
-                "name": "initial_balance",
-                "type": "felt"
-            }
-        ],
-        "name": "increase_attribute_balance_",
-        "outputs": [],
-        "type": "function"
     },
     {
         "data": [
@@ -284,86 +177,32 @@
         "type": "event"
     },
     {
-        "data": [
+        "inputs": [],
+        "name": "getAttributesRegistryAddress_",
+        "outputs": [
             {
-                "name": "set_token_id",
-                "type": "Uint256"
-            },
-            {
-                "name": "attribute_id",
+                "name": "address",
                 "type": "felt"
             }
         ],
-        "keys": [],
-        "name": "AttributeAssigned",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
-                "name": "set_token_id",
-                "type": "Uint256"
-            },
-            {
-                "name": "attribute_id",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "AttributeRemoved",
-        "type": "event"
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "set_owner",
+                "name": "address",
                 "type": "felt"
-            },
-            {
-                "name": "set_token_id",
-                "type": "felt"
-            },
-            {
-                "name": "attributes_len",
-                "type": "felt"
-            },
-            {
-                "name": "attributes",
-                "type": "felt*"
-            },
-            {
-                "name": "shape_len",
-                "type": "felt"
-            },
-            {
-                "name": "shape",
-                "type": "ShapeItem*"
-            },
-            {
-                "name": "fts_len",
-                "type": "felt"
-            },
-            {
-                "name": "fts",
-                "type": "FTSpec*"
-            },
-            {
-                "name": "nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "nfts",
-                "type": "felt*"
             }
         ],
-        "name": "assign_attributes",
+        "name": "setAttributesRegistryAddress_",
         "outputs": [],
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "set_owner",
+                "name": "owner",
                 "type": "felt"
             },
             {
@@ -406,30 +245,7 @@
     {
         "inputs": [
             {
-                "name": "set_owner",
-                "type": "felt"
-            },
-            {
-                "name": "set_token_id",
-                "type": "felt"
-            },
-            {
-                "name": "attributes_len",
-                "type": "felt"
-            },
-            {
-                "name": "attributes",
-                "type": "felt*"
-            }
-        ],
-        "name": "remove_attributes",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "set_owner",
+                "name": "owner",
                 "type": "felt"
             },
             {
@@ -448,7 +264,7 @@
     {
         "inputs": [
             {
-                "name": "set_token_id",
+                "name": "token_id",
                 "type": "felt"
             },
             {
@@ -456,10 +272,10 @@
                 "type": "felt"
             }
         ],
-        "name": "has_attribute",
+        "name": "balanceOf_",
         "outputs": [
             {
-                "name": "has_attribute",
+                "name": "balance",
                 "type": "felt"
             }
         ],
@@ -469,14 +285,14 @@
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "token_id",
                 "type": "felt"
             }
         ],
-        "name": "total_balance",
+        "name": "getShapeHash_",
         "outputs": [
             {
-                "name": "total_balance",
+                "name": "shape_hash",
                 "type": "felt"
             }
         ],
@@ -486,16 +302,25 @@
     {
         "inputs": [
             {
-                "name": "set_token_id",
+                "name": "token_id",
                 "type": "felt"
             },
             {
-                "name": "attribute_id",
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            }
+        ],
+        "name": "checkShape_",
+        "outputs": [
+            {
+                "name": "shape_matches",
                 "type": "felt"
             }
         ],
-        "name": "token_uri",
-        "outputs": [],
         "stateMutability": "view",
         "type": "function"
     }

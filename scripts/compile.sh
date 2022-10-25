@@ -7,4 +7,5 @@ nile compile --directory contracts/vendor/ \
     contracts/box_nft.cairo \
     contracts/booklet_nft.cairo \
     contracts/auction.cairo \
+    contracts/shape_attribute.cairo \
     contracts/upgrades/proxy.cairo

@@ -353,16 +353,16 @@
     {
         "data": [
             {
-                "name": "value__len",
+                "name": "_value_len",
                 "type": "felt"
             },
             {
-                "name": "value_",
+                "name": "_value",
                 "type": "felt*"
             },
             {
-                "name": "id_",
-                "type": "felt"
+                "name": "_id",
+                "type": "Uint256"
             }
         ],
         "keys": [],
@@ -393,63 +393,6 @@
     {
         "inputs": [
             {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
-                "type": "felt*"
-            }
-        ],
-        "name": "setTokenURI_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "is_realms_set_",
-        "outputs": [
-            {
-                "name": "is_realms",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "token_id",
-                "type": "felt"
-            }
-        ],
-        "name": "tokenURIData_",
-        "outputs": [
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "name": "owner",
                 "type": "felt"
             },
@@ -458,50 +401,19 @@
                 "type": "felt"
             },
             {
-                "name": "uri_len",
+                "name": "name_len",
                 "type": "felt"
             },
             {
-                "name": "uri",
+                "name": "name",
                 "type": "felt*"
             },
             {
-                "name": "fts_len",
+                "name": "description_len",
                 "type": "felt"
             },
             {
-                "name": "fts",
-                "type": "FTSpec*"
-            },
-            {
-                "name": "nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "nfts",
-                "type": "felt*"
-            }
-        ],
-        "name": "assemble_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "token_id_hint",
-                "type": "felt"
-            },
-            {
-                "name": "uri_len",
-                "type": "felt"
-            },
-            {
-                "name": "uri",
+                "name": "description",
                 "type": "felt*"
             },
             {
@@ -529,11 +441,15 @@
                 "type": "ShapeItem*"
             },
             {
-                "name": "attribute_id",
+                "name": "attributes_len",
                 "type": "felt"
+            },
+            {
+                "name": "attributes",
+                "type": "felt*"
             }
         ],
-        "name": "assemble_with_attribute_",
+        "name": "assemble_",
         "outputs": [],
         "type": "function"
     },
@@ -561,45 +477,18 @@
             },
             {
                 "name": "nfts",
+                "type": "felt*"
+            },
+            {
+                "name": "attributes_len",
+                "type": "felt"
+            },
+            {
+                "name": "attributes",
                 "type": "felt*"
             }
         ],
         "name": "disassemble_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "fts_len",
-                "type": "felt"
-            },
-            {
-                "name": "fts",
-                "type": "FTSpec*"
-            },
-            {
-                "name": "nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "nfts",
-                "type": "felt*"
-            },
-            {
-                "name": "attribute_id",
-                "type": "felt"
-            }
-        ],
-        "name": "disassemble_with_attribute_",
         "outputs": [],
         "type": "function"
     },
@@ -635,27 +524,6 @@
             }
         ],
         "name": "tokenURI",
-        "outputs": [
-            {
-                "name": "tokenURI_len",
-                "type": "felt"
-            },
-            {
-                "name": "tokenURI",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "tokenId",
-                "type": "Uint256"
-            }
-        ],
-        "name": "tokenURIData",
         "outputs": [
             {
                 "name": "tokenURI_len",

@@ -259,29 +259,6 @@
     {
         "data": [
             {
-                "name": "_token_id",
-                "type": "Uint256"
-            },
-            {
-                "name": "_owner",
-                "type": "felt"
-            },
-            {
-                "name": "_approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "_value",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "ApprovalFor",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
                 "name": "_owner",
                 "type": "felt"
             },

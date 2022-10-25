@@ -128,29 +128,6 @@
     {
         "data": [
             {
-                "name": "_token_id",
-                "type": "Uint256"
-            },
-            {
-                "name": "_owner",
-                "type": "felt"
-            },
-            {
-                "name": "_approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "_value",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "ApprovalFor",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
                 "name": "_owner",
                 "type": "felt"
             },
@@ -310,6 +287,25 @@
         "type": "function"
     },
     {
+        "data": [
+            {
+                "name": "_value_len",
+                "type": "felt"
+            },
+            {
+                "name": "_value",
+                "type": "felt*"
+            },
+            {
+                "name": "_id",
+                "type": "Uint256"
+            }
+        ],
+        "keys": [],
+        "name": "URI",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "name": "token_id",
@@ -341,39 +337,18 @@
     {
         "inputs": [
             {
-                "name": "tokenId",
+                "name": "token_id",
                 "type": "felt"
             }
         ],
         "name": "tokenURI_",
         "outputs": [
             {
-                "name": "tokenURI_len",
+                "name": "uri_len",
                 "type": "felt"
             },
             {
-                "name": "tokenURI",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "tokenId",
-                "type": "Uint256"
-            }
-        ],
-        "name": "tokenURI",
-        "outputs": [
-            {
-                "name": "tokenURI_len",
-                "type": "felt"
-            },
-            {
-                "name": "tokenURI",
+                "name": "uri",
                 "type": "felt*"
             }
         ],
@@ -402,25 +377,6 @@
     {
         "inputs": [
             {
-                "name": "to",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "value",
-                "type": "felt"
-            }
-        ],
-        "name": "approve_",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "name": "approved_address",
                 "type": "felt"
             },
@@ -431,31 +387,6 @@
         ],
         "name": "setApprovalForAll_",
         "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "on_behalf_of",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "getApproved_",
-        "outputs": [
-            {
-                "name": "approved_value",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
