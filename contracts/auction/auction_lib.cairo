@@ -59,10 +59,6 @@ func make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(b
     assert_not_zero(bid.bidder);
     assert_not_zero(bid.box_token_id);
 
-    with_attr error_message("Bid must be greater than 0") {
-        assert_not_zero(bid.bid_amount);
-    }
-
     // TODO: we are in the correct time range for auction
     let (auction_data_start_label) = get_label_location(auction_data_start);
     let data = cast(auction_data_start_label + AuctionData.SIZE * bid.auction_index, AuctionData*)[0];
@@ -92,6 +88,11 @@ func make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(b
         return _make_direct_bid(bid, data);
     }
 
+    // Direct purchases can go down to free mints.
+    with_attr error_message("Bid must be greater than 0") {
+        assert_not_zero(bid.bid_amount);
+    }
+
     Bid.emit(bid.bidder, bid.box_token_id, bid.bid_amount);
 
     return ();
@@ -103,10 +104,18 @@ func _make_direct_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
     // TODO: compute the price of the box.
     tempvar price = Uint256(50, 0);
     let (contract_address) = get_contract_address();
-    IERC20.transferFrom(erc20_address, bid.bidder, contract_address, price);
-    IBoxContract.safeTransferFrom_(
-        box_address, contract_address, bid.bidder, bid.box_token_id, 1, 0, cast(0, felt*)
-    );
+    if (bid.bid_amount != 0) {
+        with_attr error_message("Failed to transfer ETH funds") {
+            IERC20.transferFrom(erc20_address, bid.bidder, contract_address, price);
+        }
+        IBoxContract.safeTransferFrom_(
+            box_address, contract_address, bid.bidder, bid.box_token_id, 1, 0, cast(0, felt*)
+        );
+    } else {
+        IBoxContract.safeTransferFrom_(
+            box_address, contract_address, bid.bidder, bid.box_token_id, 1, 0, cast(0, felt*)
+        );
+    }
 
     return ();
 }

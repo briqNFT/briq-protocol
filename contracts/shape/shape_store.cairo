@@ -27,6 +27,8 @@ from contracts.shape.data import (
     INDEX_START,
 )
 
+const ANY_MATERIAL_ANY_COLOR = 0;
+
 // For reference, see also cairo-based uncompression below.
 struct UncompressedShapeItem {
     material: felt,
@@ -270,7 +272,9 @@ func _check_shape_numbers_impl_{
 
     // Shape length has been asserted identical, so we just need to check that the data is identical.
     with_attr error_message("Shapes do not match") {
-        assert stored_shape[0].color_nft_material = shape[0].color_nft_material;
+        if (stored_shape[0].color_nft_material != ANY_MATERIAL_ANY_COLOR) {
+            assert stored_shape[0].color_nft_material = shape[0].color_nft_material;
+        }
         assert stored_shape[0].x_y_z = shape[0].x_y_z;
     }
 

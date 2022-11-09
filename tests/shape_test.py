@@ -114,6 +114,19 @@ async def test_long(starknet: Starknet, deploy_shape):
     ]
 
 @pytest.mark.asyncio
+async def test_any_color_any_material(starknet: Starknet, deploy_shape):
+    [_, contract] = await deploy_shape(starknet, [
+        ('#ffaaff', 1, 4, -2, -6),
+        ('any_color_any_material', 1, 4, 2, -6),
+        ('#ffaaff', 1, 5, 2, -4),
+    ])
+    assert (await contract.shape_(OFFSET).call()).result.shape == [
+        contract.ShapeItem(*compress_shape_item('#ffaaff', 1, 4, -2, -6)),
+        contract.ShapeItem(0, compress_shape_item('#ffaaff', 1, 4, 2, -6)[1]),
+        contract.ShapeItem(*compress_shape_item('#ffaaff', 1, 5, 2, -4)),
+    ]
+
+@pytest.mark.asyncio
 async def test_bad_sort_0(starknet: Starknet, deploy_shape):
     with pytest.raises(StarkException, match="Shape items are not properly sorted"):
         [_, contract] = await deploy_shape(starknet, [

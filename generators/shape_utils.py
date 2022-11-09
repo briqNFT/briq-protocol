@@ -3,29 +3,19 @@ from starkware.cairo.lang.compiler.test_utils import short_string_to_felt
 def compress_shape_item(color: str, material: int, x: int, y: int, z: int, has_token_id: bool = False):
     if material < 0 or material >= 2 ** 64:
         raise Exception("Material must be between 0 and 2^64")
-    if len(color) != 7:
-        raise Exception("Color must be formatted like '#001122'")
-    color_nft_material = short_string_to_felt(color) * (2 ** 136) + (has_token_id) * (2 ** 128) + material
+
+    if color == 'any_color_any_material':
+        color_nft_material = 0
+    else:
+        if len(color) != 7:
+            raise Exception("Color must be formatted like '#001122'")
+        color_nft_material = short_string_to_felt(color) * (2 ** 136) + (has_token_id) * (2 ** 128) + material
 
     if x <= -2**63 or x >= 2**63 or y <= -2**63 or y >= 2**63 or z <= -2**63 or z >= 2**63:
         raise Exception("The shape contract currently cannot support positions beyond 2^63 in any direction")
 
     x_y_z = to_storage_form(x) * 2 ** 128 + to_storage_form(y) * 2 ** 64 + to_storage_form(z)
     return (color_nft_material, x_y_z)
-
-def compress_long_shape_item(color: str, material: int, x: int, y: int, z: int, has_token_id: bool = False):
-    if material < 0 or material >= 2 ** 64:
-        raise Exception("Material must be between 0 and 2^64")
-    if len(color) != 7:
-        raise Exception("Color must be formatted like '#001122'")
-    nft_material = (has_token_id) * (2 ** 128) + material
-    col = short_string_to_felt(color)
-
-    if x <= -2**63 or x >= 2**63 or y <= -2**63 or y >= 2**63 or z <= -2**63 or z >= 2**63:
-        raise Exception("The shape contract currently cannot support positions beyond 2^63 in any direction")
-
-    x_y_z = to_storage_form(x) * 2 ** 128 + to_storage_form(y) * 2 ** 64 + to_storage_form(z)
-    return (nft_material, col, x_y_z)
 
 # I want to preserve ordering in felt, so just add 2**63. 0 becomes -2**63 + 1, 2**64 - 1 becomes 2**63 - 1
 def to_storage_form(v):

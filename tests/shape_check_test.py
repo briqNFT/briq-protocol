@@ -57,6 +57,28 @@ async def test_simple(deploy_shape, factory):
 
 
 @pytest.mark.asyncio
+async def test_any_color_any_material(deploy_shape, factory):
+    [starknet] = factory
+
+    proper_shape = [("#ffaaff", 0x1, 0, 4, -2), ("any_color_any_material", 0x1, 1, 4, -2), ("#ffaaff", 0x1, 2, 4, 0)]
+    [_, shape] = await deploy_shape(starknet, proper_shape)
+    with pytest.raises(StarkException):
+        await shape.check_shape_numbers_(global_index=OFFSET, shape=[], fts=[], nfts=[]).call()
+    with pytest.raises(StarkException, match="Material not found in FT list"):
+        await shape.check_shape_numbers_(global_index=OFFSET, shape=to_shape_items(shape, proper_shape), fts=[], nfts=[]).call()
+    with pytest.raises(StarkException, match="Material not found in FT list"):
+        await shape.check_shape_numbers_(global_index=OFFSET, shape=to_shape_items(shape, proper_shape), fts=[(0x2, 1)], nfts=[]).call()
+
+    with pytest.raises(StarkException):
+        # Fails cause material is 0
+        await shape.check_shape_numbers_(global_index=OFFSET, shape=to_shape_items(shape, proper_shape), fts=[(0x1, 1)], nfts=[]).call()
+    await shape.check_shape_numbers_(global_index=OFFSET, shape=to_shape_items(shape, [("#ffaaff", 0x1, 0, 4, -2), ("#ffaaff", 0x1, 1, 4, -2), ("#ffaaff", 0x1, 2, 4, 0)]), fts=[(0x1, 3)], nfts=[]).call()
+    await shape.check_shape_numbers_(global_index=OFFSET, shape=to_shape_items(shape, [("#ffaaff", 0x1, 0, 4, -2), ("#aaffaa", 0x2, 1, 4, -2), ("#ffaaff", 0x1, 2, 4, 0)]), fts=[(0x1, 2), (0x2, 1)], nfts=[]).call()
+    await shape.check_shape_numbers_(global_index=OFFSET, shape=to_shape_items(shape, [("#ffaaff", 0x1, 0, 4, -2), ("#00ff00", 0x54, 1, 4, -2), ("#ffaaff", 0x1, 2, 4, 0)]), fts=[(0x1, 2), (0x54, 1)], nfts=[]).call()
+    await shape.check_shape_numbers_(global_index=OFFSET, shape=to_shape_items(shape, [("#ffaaff", 0x1, 0, 4, -2), ("#00ff00", 0x1, 1, 4, -2), ("#ffaaff", 0x1, 2, 4, 0)]), fts=[(0x1, 3)], nfts=[]).call()
+
+
+@pytest.mark.asyncio
 async def test_simple_nft(deploy_shape, factory):
     [starknet] = factory
 
