@@ -7,6 +7,7 @@ from starkware.starknet.testing.starknet import Starknet
 from starkware.starknet.testing.starknet import StarknetContract
 from starkware.starknet.testing.contract import StarknetContractFunctionInvocation
 from starkware.starkware_utils.error_handling import StarkException
+from starkware.starknet.business_logic.state.state_api_objects import BlockInfo
 
 from starkware.starknet.compiler.compile import compile_starknet_files, compile_starknet_codes
 from generators.generate_auction import generate_auction
@@ -36,6 +37,14 @@ def to_booklet_id(id):
 async def factory_root():
     starknet = await Starknet.empty()
 
+    # Set starting block time.
+    starknet.state.state.update_block_info(
+        BlockInfo.create_for_testing(
+            block_number=3,
+            block_timestamp=200
+            )
+    )
+
     compiled_proxy = compile("upgrades/proxy.cairo")
     await starknet.declare(contract_class=compiled_proxy)
     
@@ -55,6 +64,8 @@ async def factory_root():
     [briq_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "briq.cairo", ADMIN_ADDRESS)
     [attributes_registry_contract, _] = await declare_and_deploy_proxied(starknet, compiled_proxy, "attributes_registry.cairo", ADMIN_ADDRESS)
 
+    await auction_contract.setBoxAddress_(box_contract.contract_address).execute(ADMIN_ADDRESS)
+    
     await box_contract.setBookletAddress_(booklet_contract.contract_address).execute(ADMIN_ADDRESS)
     await box_contract.setBriqAddress_(briq_contract.contract_address).execute(ADMIN_ADDRESS)
 

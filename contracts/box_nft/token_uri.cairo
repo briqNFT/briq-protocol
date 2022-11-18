@@ -50,7 +50,7 @@ func get_box_nb{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
 data_uri_start:
 dw 'https://api.briq.construction';
 dw '/v1/uri/box/';
-dw 'starknet-testnet/';
+dw 'starknet-mainnet/';
 dw '.json';
 
 @view

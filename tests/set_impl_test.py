@@ -286,7 +286,7 @@ async def test_events(starknet, set_contract):
     assert set_contract.event_manager._selector_to_name[events[1].keys[0]] == 'Transfer'
     assert events[1].data == [0, ADDRESS, *tok_id_1_as_uint]
     assert set_contract.event_manager._selector_to_name[events[2].keys[0]] == 'URI'
-    assert (''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in events[2].data[1:-2]])) == f"https://api.briq.construction/v1/uri/set/starknet-testnet/{int(tok_id_1)}.json"
+    assert (''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in events[2].data[1:-2]])) == f"https://api.briq.construction/v1/uri/set/starknet-mainnet/{int(tok_id_1)}.json"
     assert events[2].data[-2:] == tok_id_1_as_uint
     assert set_contract.event_manager._selector_to_name[events[4].keys[0]] == 'Transfer'
     assert events[4].data == [ADDRESS, OTHER_ADDRESS, *tok_id_1_as_uint]

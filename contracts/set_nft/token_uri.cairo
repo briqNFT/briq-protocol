@@ -7,7 +7,7 @@ from contracts.utilities.token_uri import TokenURIHelpers
 data_uri_start:
 dw 'https://api.briq.construction';
 dw '/v1/uri/set/';
-dw 'starknet-testnet/';
+dw 'starknet-mainnet/';
 dw '.json';
 
 @view

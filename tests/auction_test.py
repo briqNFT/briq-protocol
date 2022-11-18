@@ -9,6 +9,7 @@ from starkware.starknet.testing.contract import StarknetContractFunctionInvocati
 from starkware.starkware_utils.error_handling import StarkException
 from starkware.cairo.common.hash_state import compute_hash_on_elements
 from starkware.starknet.public.abi import get_selector_from_name
+from starkware.starknet.business_logic.state.state_api_objects import BlockInfo
 
 from starkware.starknet.utils.api_utils import cast_to_felts
 from starkware.starknet.compiler.compile import compile_starknet_files, compile_starknet_codes
@@ -36,6 +37,15 @@ def compile(path):
 @pytest_asyncio.fixture(scope="module")
 async def factory_root(tmp_path_factory):
     starknet = await Starknet.empty()
+    
+    # Set starting block time.
+    starknet.state.state.update_block_info(
+        BlockInfo.create_for_testing(
+            block_number=3,
+            block_timestamp=200
+            )
+    )
+
     erc20 = compile("vendor/openzeppelin/token/erc20/presets/ERC20Mintable.cairo")
     await starknet.declare(contract_class=erc20)
     token_contract_eth = await starknet.deploy(contract_class=erc20, constructor_calldata=[
@@ -59,15 +69,15 @@ async def factory_root(tmp_path_factory):
             "box_token_id": 0x5,
             "quantity": 1,
             "auction_start": 134,
-            "auction_duration": 24 * 60 * 60,
-            "initial_price": 2000,
+            "auction_duration": 80,
+            "initial_price": 0,
         },
         2: {
             "box_token_id": 0x2,
             "quantity": 2,
             "auction_start": 198,
-            "auction_duration": 24 * 60 * 60,
-            "initial_price": 2000,
+            "auction_duration": 50,
+            "initial_price": 5500,
         }
     })
     folder = tmp_path_factory.mktemp('data')
@@ -77,6 +87,8 @@ async def factory_root(tmp_path_factory):
 
     auction_impl_hash = await starknet.declare(contract_class=auction_code)
     auction_contract = await starknet.deploy(contract_class=auction_code)
+
+    await auction_contract.setBoxAddress_(box_contract.contract_address).execute()
 
     return [starknet, auction_contract, box_contract, token_contract_eth]
 
@@ -104,9 +116,11 @@ async def factory(factory_root):
 async def test_view(factory):
     # Reversed order but that's OK
     assert (await factory.auction_contract.get_auction_data().call()).result.data == [
-        factory.auction_contract.AuctionData(box_token_id=0x2, total_supply=2, auction_start=198, auction_duration=86400, initial_price=2000),
-        factory.auction_contract.AuctionData(box_token_id=0x5, total_supply=1, auction_start=134, auction_duration=86400, initial_price=2000)
+        factory.auction_contract.AuctionData(box_token_id=0x2, total_supply=2, auction_start=198, auction_duration=50, initial_price=5500),
+        factory.auction_contract.AuctionData(box_token_id=0x5, total_supply=1, auction_start=134, auction_duration=80, initial_price=0)
     ]
+    assert (await factory.auction_contract.get_price(0).call()).result.price == 0
+    assert (await factory.auction_contract.get_price(1).call()).result.price == 5500
 
 @pytest.mark.asyncio
 async def test_bid(factory):
@@ -167,30 +181,33 @@ async def test_direct_bid(factory):
     # Setup: mint two boxes
     await factory.box_contract.mint_(factory.auction_contract.contract_address, 0x2, 2).execute(0)
 
-    with pytest.raises(StarkException, match="Bid greater than allowance"):
+    # Failure on the ERC20 side
+    with pytest.raises(StarkException, match="ERC20: insufficient allowance"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
             bidder=ADDRESS,
             auction_index=1,
             box_token_id=0x2,
-            bid_amount=300
+            bid_amount=6000
         )).execute(ADDRESS)
 
-    with pytest.raises(StarkException, match="Bid must be greater than 0"):
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (13000, 0)).execute(ADDRESS)
+
+    #assert (await factory.token_contract_eth.allowance(ADDRESS, factory.auction_contract.contract_address).call()).result.remaining == factory.token_contract_eth.Uint256(high=0, low=13000)
+
+    with pytest.raises(StarkException, match="Bid lower than price"):
+        await factory.auction_contract.make_bid(factory.auction_contract.BidData(
+            bidder=ADDRESS,
+            auction_index=1,
+            box_token_id=0x2,
+            bid_amount=4000
+        )).execute(ADDRESS)
+
+    with pytest.raises(StarkException, match="Bid lower than price"):
         await factory.auction_contract.make_bid(factory.auction_contract.BidData(
             bidder=ADDRESS,
             auction_index=1,
             box_token_id=0x2,
             bid_amount=0
-        )).execute(ADDRESS)
-
-    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (500, 0)).execute(ADDRESS)
-
-    with pytest.raises(StarkException, match="Bid greater than allowance"):
-        await factory.auction_contract.make_bid(factory.auction_contract.BidData(
-            bidder=ADDRESS,
-            auction_index=1,
-            box_token_id=0x2,
-            bid_amount=600
         )).execute(ADDRESS)
 
     with pytest.raises(StarkException, match="box_token_id does not match auction_index"):
@@ -201,27 +218,67 @@ async def test_direct_bid(factory):
             bid_amount=200
         )).execute(ADDRESS)
 
+    assert (await factory.token_contract_eth.balanceOf(ADDRESS).call()).result.balance == factory.token_contract_eth.Uint256(high=128, low=0)
     assert (await factory.box_contract.balanceOf_(ADDRESS, 0x2).call()).result.balance == 0
     assert (await factory.box_contract.balanceOf_(factory.auction_contract.contract_address, 0x2).call()).result.balance == 2
 
-
+    # Actually through, we are only taken the price.
     await factory.auction_contract.make_bid(factory.auction_contract.BidData(
         bidder=ADDRESS,
         auction_index=1,
         box_token_id=0x2,
-        bid_amount=100
+        bid_amount=8000
     )).execute(ADDRESS)
 
+    assert (await factory.token_contract_eth.balanceOf(ADDRESS).call()).result.balance == factory.token_contract_eth.Uint256(high=127, low=2**128-5500)
     assert (await factory.box_contract.balanceOf_(ADDRESS, 0x2).call()).result.balance == 1
     assert (await factory.box_contract.balanceOf_(factory.auction_contract.contract_address, 0x2).call()).result.balance == 1
 
+
+    ### Now some time-related failures
+    factory.starknet.state.state.update_block_info(
+        BlockInfo.create_for_testing(
+            block_number=3,
+            block_timestamp=100
+            )
+    )
+    with pytest.raises(StarkException, match="Bid is too early"):
+        await factory.auction_contract.make_bid(factory.auction_contract.BidData(
+            bidder=ADDRESS,
+            auction_index=1,
+            box_token_id=0x2,
+            bid_amount=8000
+        )).execute(ADDRESS)
+
+    factory.starknet.state.state.update_block_info(
+        BlockInfo.create_for_testing(
+            block_number=3,
+            block_timestamp=500
+            )
+    )
+    with pytest.raises(StarkException, match="Bid is too late"):
+        await factory.auction_contract.make_bid(factory.auction_contract.BidData(
+            bidder=ADDRESS,
+            auction_index=1,
+            box_token_id=0x2,
+            bid_amount=8000
+        )).execute(ADDRESS)
+
+    factory.starknet.state.state.update_block_info(
+        BlockInfo.create_for_testing(
+            block_number=3,
+            block_timestamp=200
+            )
+    )
+    
     await factory.auction_contract.make_bid(factory.auction_contract.BidData(
         bidder=ADDRESS,
         auction_index=1,
         box_token_id=0x2,
-        bid_amount=100
+        bid_amount=8000
     )).execute(ADDRESS)
 
+    assert (await factory.token_contract_eth.balanceOf(ADDRESS).call()).result.balance == factory.token_contract_eth.Uint256(high=127, low=2**128-5500*2)
     assert (await factory.box_contract.balanceOf_(ADDRESS, 0x2).call()).result.balance == 2
     assert (await factory.box_contract.balanceOf_(factory.auction_contract.contract_address, 0x2).call()).result.balance == 0
 

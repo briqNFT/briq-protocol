@@ -8,6 +8,7 @@ from contracts.library_erc721.balance import ERC721
 from contracts.library_erc721.enumerability import ERC721_enumerability
 from contracts.library_erc721.transferability import ERC721_transferability
 
+from contracts.utilities.IERC165 import (TRUE, FALSE, IERC165_ID, IERC721_ID, IERC721_METADATA_ID)
 
 @external
 func approve_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -70,4 +71,20 @@ func transferFrom_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     sender: felt, recipient: felt, token_id: felt
 ) {
     return ERC721_transferability.transferFrom_(sender, recipient, token_id);
+}
+
+@view
+func supportsInterface{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    interfaceId: felt
+) -> (success: felt) {
+    if (interfaceId == IERC165_ID) {
+        return (success=TRUE);
+    }
+    if (interfaceId == IERC721_ID) {
+        return (success=TRUE);
+    }
+    if (interfaceId == IERC721_METADATA_ID) {
+        return (success=TRUE);
+    }
+    return (success=FALSE);
 }

@@ -3,11 +3,12 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin, BitwiseBuiltin
 from starkware.cairo.common.uint256 import Uint256
 
-
 from contracts.library_erc1155.approvals import ERC1155_approvals
 from contracts.library_erc1155.balance import ERC1155_balance
 from contracts.library_erc1155.token_uri import ERC1155_token_uri
 from contracts.library_erc1155.transferability import ERC1155_transferability
+
+from contracts.utilities.IERC165 import (TRUE, FALSE, IERC165_ID, IERC1155_ID, IERC1155_METADATA_ID)
 
 //@external
 //func approve_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -63,4 +64,20 @@ func safeTransferFrom_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     sender: felt, recipient: felt, token_id: felt, value: felt, data_len: felt, data: felt*
 ) {
     return ERC1155_transferability.safeTransferFrom_(sender, recipient, token_id, value, data_len, data);
+}
+
+@view
+func supportsInterface{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    interfaceId: felt
+) -> (success: felt) {
+    if (interfaceId == IERC165_ID) {
+        return (success=TRUE);
+    }
+    if (interfaceId == IERC1155_ID) {
+        return (success=TRUE);
+    }
+    if (interfaceId == IERC1155_METADATA_ID) {
+        return (success=TRUE);
+    }
+    return (success=FALSE);
 }

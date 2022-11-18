@@ -1,5 +1,12 @@
 %lang starknet
 
+from contracts.upgrades.upgradable_mixin import (
+    getAdmin_,
+    getImplementation_,
+    upgradeImplementation_,
+    setRootAdmin_,
+)
+
 from contracts.shape.attribute import (
     assign_attribute,
     remove_attribute,

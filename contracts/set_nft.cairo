@@ -36,6 +36,7 @@ from contracts.library_erc721.IERC721 import (
     balanceOf_,
     balanceDetailsOf_,
     tokenOfOwnerByIndex_,
+    supportsInterface,
 )
 
 from contracts.library_erc721.IERC721_enumerable import (

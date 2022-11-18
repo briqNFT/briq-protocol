@@ -87,22 +87,22 @@ async def test_uri(factory):
     [_, booklet_contract, _] = factory
 
     uri_data = (await booklet_contract.tokenURI_(1245).call()).result.uri
-    assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == "https://api.briq.construction/v1/uri/booklet/starknet-testnet/1245.json"
+    assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == "https://api.briq.construction/v1/uri/booklet/starknet-mainnet/1245.json"
     for i in range(2, 255, 16):
         uri_data = (await booklet_contract.tokenURI_(2**i).call()).result.uri
-        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{2**i}.json")
-        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{2**i}.json"
+        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{2**i}.json")
+        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{2**i}.json"
         uri_data = (await booklet_contract.tokenURI_(2**i - 1).call()).result.uri
-        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{2**i-1}.json")
-        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{2**i-1}.json"
+        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{2**i-1}.json")
+        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{2**i-1}.json"
 
     for i in range(2, 60, 2):
         uri_data = (await booklet_contract.tokenURI_(int(10**i + 10** (i-30))).call()).result.uri
-        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{int(10**i + 10** (i-30))}.json")
-        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{int(10**i + 10** (i-30))}.json"
+        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{int(10**i + 10** (i-30))}.json")
+        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{int(10**i + 10** (i-30))}.json"
         uri_data = (await booklet_contract.tokenURI_(10**i - 1).call()).result.uri
-        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{10**i - 1}.json")
-        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{10**i - 1}.json"
+        print(''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]), f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{10**i - 1}.json")
+        assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{10**i - 1}.json"
 
     uri_data = (await booklet_contract.tokenURI_(FIELD_PRIME - 1).call()).result.uri
-    assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-testnet/{FIELD_PRIME - 1}.json"
+    assert ''.join([x.to_bytes(math.ceil(x.bit_length() / 8), 'big').decode('ascii') for x in uri_data]) == f"https://api.briq.construction/v1/uri/booklet/starknet-mainnet/{FIELD_PRIME - 1}.json"
