@@ -1,16 +1,17 @@
-*.pytest_cache
-*.mypy_cache
-*.pyc
-__pycache__
-*.egg-info/
-venv/
+/*
 
-artifacts/*.json
-!artifacts/abi
+__pycache__/
 
-*.deployments.txt
-*.declarations.txt
-*.test_node.txt
-*.accounts.json
-devnetstate
-node.json
+!.gitignore
+!README.md
+!requirements.txt
+!setup.py
+!tox.ini
+
+!.github/
+!artifacts/
+!contracts/
+!scripts/
+!generators/
+!docs/
+!tests/
