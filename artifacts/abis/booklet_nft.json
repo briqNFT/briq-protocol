@@ -171,29 +171,6 @@
     {
         "data": [
             {
-                "name": "_token_id",
-                "type": "Uint256"
-            },
-            {
-                "name": "_owner",
-                "type": "felt"
-            },
-            {
-                "name": "_approved_address",
-                "type": "felt"
-            },
-            {
-                "name": "_value",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "ApprovalFor",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
                 "name": "_owner",
                 "type": "felt"
             },
@@ -208,25 +185,6 @@
         ],
         "keys": [],
         "name": "ApprovalForAll",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
-                "name": "_value_len",
-                "type": "felt"
-            },
-            {
-                "name": "_value",
-                "type": "felt*"
-            },
-            {
-                "name": "_id",
-                "type": "Uint256"
-            }
-        ],
-        "keys": [],
-        "name": "URI",
         "type": "event"
     },
     {
@@ -292,9 +250,95 @@
         "type": "event"
     },
     {
+        "data": [
+            {
+                "name": "_value_len",
+                "type": "felt"
+            },
+            {
+                "name": "_value",
+                "type": "felt*"
+            },
+            {
+                "name": "_id",
+                "type": "Uint256"
+            }
+        ],
+        "keys": [],
+        "name": "URI",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
-                "name": "to",
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_shape_contract_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_shape_",
+        "outputs": [
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "token_id",
+                "type": "felt"
+            }
+        ],
+        "name": "tokenURI_",
+        "outputs": [
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
                 "type": "felt"
             },
             {
@@ -302,13 +346,94 @@
                 "type": "felt"
             },
             {
-                "name": "value",
+                "name": "shape_contract",
                 "type": "felt"
             }
         ],
-        "name": "approve_",
+        "name": "mint_",
         "outputs": [],
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "set_token_id",
+                "type": "felt"
+            },
+            {
+                "name": "attribute_id",
+                "type": "felt"
+            },
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            },
+            {
+                "name": "fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            }
+        ],
+        "name": "assign_attribute",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "set_token_id",
+                "type": "felt"
+            },
+            {
+                "name": "attribute_id",
+                "type": "felt"
+            }
+        ],
+        "name": "remove_attribute",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "_value_len",
+                "type": "felt"
+            },
+            {
+                "name": "_value",
+                "type": "felt*"
+            },
+            {
+                "name": "_id",
+                "type": "Uint256"
+            }
+        ],
+        "keys": [],
+        "name": "URI",
+        "type": "event"
     },
     {
         "inputs": [
@@ -323,31 +448,6 @@
         ],
         "name": "setApprovalForAll_",
         "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "on_behalf_of",
-                "type": "felt"
-            },
-            {
-                "name": "token_id",
-                "type": "felt"
-            },
-            {
-                "name": "address",
-                "type": "felt"
-            }
-        ],
-        "name": "getApproved_",
-        "outputs": [
-            {
-                "name": "approved_value",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -459,14 +559,14 @@
     {
         "inputs": [
             {
-                "name": "token_id",
+                "name": "interfaceId",
                 "type": "felt"
             }
         ],
-        "name": "get_shape_contract_",
+        "name": "supportsInterface",
         "outputs": [
             {
-                "name": "address",
+                "name": "success",
                 "type": "felt"
             }
         ],
@@ -476,27 +576,19 @@
     {
         "inputs": [
             {
-                "name": "token_id",
+                "name": "account",
                 "type": "felt"
+            },
+            {
+                "name": "id",
+                "type": "Uint256"
             }
         ],
-        "name": "get_shape_",
+        "name": "balanceOf",
         "outputs": [
             {
-                "name": "shape_len",
-                "type": "felt"
-            },
-            {
-                "name": "shape",
-                "type": "ShapeItem*"
-            },
-            {
-                "name": "nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "nfts",
-                "type": "felt*"
+                "name": "balance",
+                "type": "Uint256"
             }
         ],
         "stateMutability": "view",
@@ -505,82 +597,122 @@
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "accounts_len",
                 "type": "felt"
             },
             {
-                "name": "token_id",
+                "name": "accounts",
+                "type": "felt*"
+            },
+            {
+                "name": "ids_len",
                 "type": "felt"
             },
             {
-                "name": "shape_contract",
+                "name": "ids",
+                "type": "Uint256*"
+            }
+        ],
+        "name": "balanceOfBatch",
+        "outputs": [
+            {
+                "name": "balances_len",
+                "type": "felt"
+            },
+            {
+                "name": "balances",
+                "type": "Uint256*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "operator",
+                "type": "felt"
+            },
+            {
+                "name": "approved",
                 "type": "felt"
             }
         ],
-        "name": "mint_",
+        "name": "setApprovalForAll",
         "outputs": [],
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "owner",
+                "name": "account",
                 "type": "felt"
             },
             {
-                "name": "set_token_id",
+                "name": "operator",
+                "type": "felt"
+            }
+        ],
+        "name": "isApprovedForAll",
+        "outputs": [
+            {
+                "name": "isApproved",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "from_",
                 "type": "felt"
             },
             {
-                "name": "attribute_id",
+                "name": "to",
                 "type": "felt"
             },
             {
-                "name": "shape_len",
+                "name": "id",
+                "type": "Uint256"
+            },
+            {
+                "name": "amount",
+                "type": "Uint256"
+            },
+            {
+                "name": "data_len",
                 "type": "felt"
             },
             {
-                "name": "shape",
-                "type": "ShapeItem*"
-            },
-            {
-                "name": "fts_len",
-                "type": "felt"
-            },
-            {
-                "name": "fts",
-                "type": "FTSpec*"
-            },
-            {
-                "name": "nfts_len",
-                "type": "felt"
-            },
-            {
-                "name": "nfts",
+                "name": "data",
                 "type": "felt*"
             }
         ],
-        "name": "assign_attribute",
+        "name": "safeTransferFrom",
         "outputs": [],
         "type": "function"
     },
     {
         "inputs": [
             {
-                "name": "owner",
-                "type": "felt"
-            },
-            {
-                "name": "set_token_id",
-                "type": "felt"
-            },
-            {
-                "name": "attribute_id",
-                "type": "felt"
+                "name": "id",
+                "type": "Uint256"
             }
         ],
-        "name": "remove_attribute",
-        "outputs": [],
+        "name": "uri",
+        "outputs": [
+            {
+                "name": "uri_len",
+                "type": "felt"
+            },
+            {
+                "name": "uri",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     }
 ]

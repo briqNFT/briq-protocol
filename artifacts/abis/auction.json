@@ -131,6 +131,29 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getBoxAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setBoxAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
         "data": [
             {
                 "name": "bidder",
@@ -173,6 +196,38 @@
         ],
         "name": "close_auction",
         "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "receiver",
+                "type": "felt"
+            },
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "transfer_funds",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "auction_index",
+                "type": "felt"
+            }
+        ],
+        "name": "get_price",
+        "outputs": [
+            {
+                "name": "price",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
