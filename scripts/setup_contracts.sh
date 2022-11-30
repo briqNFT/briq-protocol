@@ -1,8 +1,9 @@
+set -e -o pipefail
 
 # Hashes
 
 starknet_declare () {
-    addr="$(starknet declare --contract $1 --account $ACCOUNT --nonce $nonce --max_fee 993215999380800)"
+    addr="$(starknet declare --contract $1 --account $ACCOUNT --nonce $nonce --max_fee 993215999380800 --token $TOKEN)"
     echo $addr
     comm=$(echo "$addr" | grep 'Contract class hash' | awk '{gsub("Contract class hash: ", "",$0); print $0}')
     printf -v $2 $comm
@@ -13,40 +14,46 @@ starknet_declare () {
 
 nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
 starknet_declare artifacts/proxy.json proxy_hash
-starknet_declare artifacts/auction.json auction_hash
-starknet_declare artifacts/box_nft.json box_hash
 starknet_declare artifacts/booklet_nft.json booklet_hash
 starknet_declare artifacts/attributes_registry.json attributes_registry_hash
 starknet_declare artifacts/briq.json briq_hash
 starknet_declare artifacts/set_nft.json set_hash
+starknet_declare artifacts/shape_attribute.json shape_attribute_hash
+starknet_declare artifacts/auction.json auction_hash
+starknet_declare artifacts/box_nft.json box_hash
+starknet_declare artifacts/shape_store.json shape_store_hash
 
 
 ### Contracts
 
 deploy_proxy() {
-    addr="$(starknet deploy --class_hash $proxy_hash --inputs $WALLET_ADDRESS $1 --account $ACCOUNT --max_fee 20277007180367)"
+    addr="$(starknet deploy --class_hash $proxy_hash --inputs $WALLET_ADDRESS $1 --account $ACCOUNT --nonce $nonce --max_fee 2220277007180367 --token $TOKEN)"
     echo $addr
     comm=$(echo "$addr" | grep "Contract address: " | awk '{gsub("Contract address: ", "",$0); print $0}')
     printf -v $2 $comm
     echo "$2=$comm"
     echo "$2=$comm" >> "$STARKNET_NETWORK_ID.test_node.txt"
+    ((nonce=$nonce+1))
 }
 
 # In testnet, nonces will fail to deploy several at one time
+nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
 deploy_proxy $auction_hash auction_addr
 deploy_proxy $box_hash box_addr
 deploy_proxy $booklet_hash booklet_addr
 deploy_proxy $attributes_registry_hash attributes_registry_addr
 deploy_proxy $set_hash set_addr
 deploy_proxy $briq_hash briq_addr
+deploy_proxy $shape_attribute_hash shape_attribute_addr
 
 # Setup
 
 invoke () {
-    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT --max_fee 1618293576158800)
+    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT  --nonce $nonce --max_fee 12618293576158800)
     export tx_hash=$(echo $tx | grep "Transaction hash:" | awk '{gsub("Transaction hash: ", "",$0); print $0}')
     echo "$2 $3"
     echo "starknet get_transaction --hash $tx_hash"
+    ((nonce=$nonce+1))
 }
 
 
@@ -73,6 +80,11 @@ call $booklet_addr box_nft getImplementation_
 call $attributes_registry_addr box_nft getImplementation_
 call $set_addr box_nft getImplementation_
 call $briq_addr box_nft getImplementation_
+call $shape_attribute_hash box_nft getImplementation_
+
+nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
+
+invoke $auction_addr auction setBoxAddress_ $box_addr
 
 invoke $box_addr box_nft setBookletAddress_ $booklet_addr
 invoke $box_addr box_nft setBriqAddress_ $briq_addr
@@ -86,15 +98,19 @@ invoke $briq_addr briq setBoxAddress_ $box_addr
 invoke $booklet_addr booklet_nft setAttributesRegistryAddress_ $attributes_registry_addr
 invoke $booklet_addr booklet_nft setBoxAddress_ $box_addr
 
+invoke $shape_attribute_addr shape_attribute setAttributesRegistryAddress_ $attributes_registry_addr
+##
 invoke $attributes_registry_addr attributes_registry setSetAddress_ $set_addr
 # Collection 1 is GENESIS, supported by contract (thus params = 2)
 invoke $attributes_registry_addr attributes_registry create_collection_ 1 2 $booklet_addr
 # Collection 2 is shape hashes, supported by contract (thus params = 2)
-invoke $attributes_registry_addr attributes_registry create_collection_ 2 2 $booklet_addr
+invoke $attributes_registry_addr attributes_registry create_collection_ 2 2 $shape_attribute_addr
+
 
 # If you have to upgrade
 # invoke $attributes_registry_addr attributes_registry upgradeImplementation_ $attributes_registry_hash
 
+invoke $auction_addr box_nft upgradeImplementation_ $auction_hash
 invoke $box_addr box_nft upgradeImplementation_ $box_hash
 invoke $booklet_addr box_nft upgradeImplementation_ $booklet_hash
 invoke $attributes_registry_addr box_nft upgradeImplementation_ $attributes_registry_hash

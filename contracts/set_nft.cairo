@@ -146,7 +146,7 @@ func approve{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 func setApprovalForAll{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     operator: felt, approved: felt
 ) {
-    setApprovalForAll_(approved, operator);
+    setApprovalForAll_(approved_address=operator, is_approved=approved);
     return ();
 }
 
