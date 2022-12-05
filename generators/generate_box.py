@@ -26,10 +26,7 @@ def generate_box(
     lines.append("briq_data_start:")
     i = 1
     for key in briq_data:
-        if key != i:
-            print("Bad briq_data")
-            raise
-        lines.append(f'dw {briq_data[key][0x1] if 0x1 in briq_data[key] else 0};')
+        lines.append(f'dw {briq_data[key][0x1] if 0x1 in briq_data[key] else 0}; // Box {key} at index {i}')
         lines.append(f'dw {briq_data[key][0x3] if 0x3 in briq_data[key] else 0};')
         lines.append(f'dw {briq_data[key][0x4] if 0x4 in briq_data[key] else 0};')
         lines.append(f'dw {briq_data[key][0x5] if 0x5 in briq_data[key] else 0};')
@@ -39,10 +36,7 @@ def generate_box(
     lines.append("shape_data_start:")
     j = 1
     for key in shape_data:
-        if key != j:
-            print("Bad shape_data")
-            raise
-        lines.append(f'dw {shape_data[key]};')
+        lines.append(f'dw {shape_data[key]}; // Box {key} at index {j}')
         j += 1
     if j != i:
         print("Bad shape/briq data match")
