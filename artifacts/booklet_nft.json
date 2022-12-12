@@ -1012,7 +1012,7 @@
             "range_check",
             "bitwise"
         ],
-        "compiler_version": "0.10.0",
+        "compiler_version": "0.10.3",
         "data": [
             "0x40780017fff7fff",
             "0x1",

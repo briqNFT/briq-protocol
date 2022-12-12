@@ -3,7 +3,7 @@ set -e -o pipefail
 # Hashes
 
 starknet_declare () {
-    addr="$(starknet declare --contract $1 --account $ACCOUNT --nonce $nonce --max_fee 993215999380800 --token $TOKEN)"
+    addr="$(starknet declare --contract $1 --nonce $nonce --max_fee 993215999380800 --token $TOKEN)"
     echo $addr
     comm=$(echo "$addr" | grep 'Contract class hash' | awk '{gsub("Contract class hash: ", "",$0); print $0}')
     printf -v $2 $comm
@@ -13,6 +13,7 @@ starknet_declare () {
 }
 
 nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
+
 starknet_declare artifacts/proxy.json proxy_hash
 starknet_declare artifacts/booklet_nft.json booklet_hash
 starknet_declare artifacts/attributes_registry.json attributes_registry_hash
@@ -49,7 +50,7 @@ deploy_proxy $shape_attribute_hash shape_attribute_addr
 # Setup
 
 invoke () {
-    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT  --nonce $nonce --max_fee 12618293576158800)
+    tx=$(starknet invoke --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7  --nonce $nonce --max_fee 12618293576158800)
     export tx_hash=$(echo $tx | grep "Transaction hash:" | awk '{gsub("Transaction hash: ", "",$0); print $0}')
     echo "$2 $3"
     echo "starknet get_transaction --hash $tx_hash"
@@ -58,7 +59,7 @@ invoke () {
 
 
 call () {
-    tx=$(starknet call --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7 --account $ACCOUNT)
+    tx=$(starknet call --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7)
     echo $tx
 }
 

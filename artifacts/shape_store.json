@@ -231,13 +231,13 @@
     "entry_points_by_type": {
         "CONSTRUCTOR": [
             {
-                "offset": "0x1336",
+                "offset": "0x13b0",
                 "selector": "0x28ffe4ff0f226a9107253e17a904099aa4f63a02a5621de0576e5aa71bc5194"
             }
         ],
         "EXTERNAL": [
             {
-                "offset": "0x13ba",
+                "offset": "0x1434",
                 "selector": "0x222cde1c893f24fb4bf6beb830c54e83e32650f5a9cd0f56fa025872c60bdb"
             },
             {
@@ -245,7 +245,7 @@
                 "selector": "0x17c87e93a46af58ee4925fef032a3b895cc0753bc73103ffe06c0a36ad24643"
             },
             {
-                "offset": "0x14f7",
+                "offset": "0x1571",
                 "selector": "0x2265e9cb4d0ca5983c569b39e7a1a523d6ea342207bb700f558a588f6922f38"
             },
             {
@@ -253,7 +253,7 @@
                 "selector": "0x252a680fd5c4d1d8bb0ac1fcd579a4f1278b01e7163b2d8fb21f309c6b4588a"
             },
             {
-                "offset": "0x14a2",
+                "offset": "0x151c",
                 "selector": "0x36a11a8f2996c62518d0ed7e540cf0e445da69073c946f36b290ccc85ece26c"
             },
             {
@@ -324,16 +324,16 @@
                     "__main__",
                     "__main__._validate_nth_shape"
                 ],
-                "end_pc": 4966,
+                "end_pc": 5088,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4451,
+                        "group": 4573,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 4956,
+                "start_pc": 5078,
                 "value": "Shape items contains duplicate position or NFTs"
             },
             {
@@ -341,16 +341,16 @@
                     "__main__",
                     "__main__._validate_nth_shape"
                 ],
-                "end_pc": 4970,
+                "end_pc": 5092,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4452,
+                        "group": 4574,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 4966,
+                "start_pc": 5088,
                 "value": "Shape items are not properly sorted (increasing X/Y/Z)"
             },
             {
@@ -359,16 +359,16 @@
                     "__main__",
                     "__main__.check_shape_numbers_"
                 ],
-                "end_pc": 5315,
+                "end_pc": 5437,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4472,
+                        "group": 4594,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 5304,
+                "start_pc": 5426,
                 "value": "Wrong number of shape items"
             },
             {
@@ -377,16 +377,16 @@
                     "__main__",
                     "__main__.check_shape_numbers_"
                 ],
-                "end_pc": 5324,
+                "end_pc": 5446,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4472,
+                        "group": 4594,
                         "offset": 35
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 5315,
+                "start_pc": 5437,
                 "value": "Wrong number of NFTs"
             },
             {
@@ -394,16 +394,16 @@
                     "__main__",
                     "__main__._check_shape_numbers_impl_"
                 ],
-                "end_pc": 5477,
+                "end_pc": 5599,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4481,
+                        "group": 4603,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 5467,
+                "start_pc": 5589,
                 "value": "Wrong number of briqs in shape"
             },
             {
@@ -411,16 +411,16 @@
                     "__main__",
                     "__main__._check_shape_numbers_impl_"
                 ],
-                "end_pc": 5487,
+                "end_pc": 5609,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4481,
+                        "group": 4603,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 5478,
+                "start_pc": 5600,
                 "value": "Shapes do not match"
             },
             {
@@ -428,16 +428,16 @@
                     "__main__",
                     "__main__._check_shape_numbers_impl_"
                 ],
-                "end_pc": 5516,
+                "end_pc": 5638,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4483,
+                        "group": 4605,
                         "offset": 38
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 5502,
+                "start_pc": 5624,
                 "value": "Incorrect NFT"
             },
             {
@@ -445,16 +445,16 @@
                     "__main__",
                     "__main__._decrement_ft_qty"
                 ],
-                "end_pc": 5576,
+                "end_pc": 5698,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 4487,
+                        "group": 4609,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 5574,
+                "start_pc": 5696,
                 "value": "Material not found in FT list"
             }
         ],
@@ -463,7 +463,7 @@
             "range_check",
             "bitwise"
         ],
-        "compiler_version": "0.10.0",
+        "compiler_version": "0.10.3",
         "data": [
             "0x40780017fff7fff",
             "0x1",
@@ -912,6 +912,7 @@
             "0x5ed",
             "0x70b",
             "0x893",
+            "0x8cf",
             "0x233030303030300000000000000000000000000000000001",
             "0x7fffffffffffffff80000000000000028000000000000001",
             "0x236335633563350000000000000000000000000000000001",
@@ -5303,6 +5304,127 @@
             "0x0",
             "0x800000000000000980000000000000028000000000000003",
             "0x0",
+            "0x7ffffffffffffffc80000000000000028000000000000001",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000027fffffffffffffff",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000028000000000000000",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000028000000000000001",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000028000000000000002",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000028000000000000003",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000038000000000000000",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000038000000000000001",
+            "0x0",
+            "0x7ffffffffffffffd80000000000000038000000000000002",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000008000000000000001",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000027fffffffffffffff",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000028000000000000000",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000028000000000000001",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000028000000000000002",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000028000000000000003",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000037fffffffffffffff",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000038000000000000003",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000048000000000000000",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000048000000000000001",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000048000000000000002",
+            "0x0",
+            "0x7ffffffffffffffe80000000000000058000000000000001",
+            "0x0",
+            "0x7fffffffffffffff80000000000000008000000000000000",
+            "0x0",
+            "0x7fffffffffffffff80000000000000008000000000000001",
+            "0x0",
+            "0x7fffffffffffffff80000000000000008000000000000002",
+            "0x0",
+            "0x7fffffffffffffff80000000000000018000000000000001",
+            "0x0",
+            "0x7fffffffffffffff80000000000000027ffffffffffffffe",
+            "0x0",
+            "0x7fffffffffffffff80000000000000027fffffffffffffff",
+            "0x0",
+            "0x7fffffffffffffff80000000000000028000000000000000",
+            "0x0",
+            "0x7fffffffffffffff80000000000000028000000000000002",
+            "0x0",
+            "0x7fffffffffffffff80000000000000028000000000000003",
+            "0x0",
+            "0x7fffffffffffffff80000000000000028000000000000004",
+            "0x0",
+            "0x7fffffffffffffff80000000000000037fffffffffffffff",
+            "0x0",
+            "0x7fffffffffffffff80000000000000038000000000000003",
+            "0x0",
+            "0x7fffffffffffffff80000000000000048000000000000000",
+            "0x0",
+            "0x7fffffffffffffff80000000000000048000000000000002",
+            "0x0",
+            "0x7fffffffffffffff80000000000000058000000000000000",
+            "0x0",
+            "0x7fffffffffffffff80000000000000058000000000000002",
+            "0x0",
+            "0x7fffffffffffffff80000000000000068000000000000001",
+            "0x0",
+            "0x7fffffffffffffff80000000000000078000000000000001",
+            "0x0",
+            "0x800000000000000080000000000000008000000000000001",
+            "0x0",
+            "0x800000000000000080000000000000027fffffffffffffff",
+            "0x0",
+            "0x800000000000000080000000000000028000000000000000",
+            "0x0",
+            "0x800000000000000080000000000000028000000000000001",
+            "0x0",
+            "0x800000000000000080000000000000028000000000000002",
+            "0x0",
+            "0x800000000000000080000000000000028000000000000003",
+            "0x0",
+            "0x800000000000000080000000000000037fffffffffffffff",
+            "0x0",
+            "0x800000000000000080000000000000038000000000000003",
+            "0x0",
+            "0x800000000000000080000000000000048000000000000000",
+            "0x0",
+            "0x800000000000000080000000000000048000000000000001",
+            "0x0",
+            "0x800000000000000080000000000000048000000000000002",
+            "0x0",
+            "0x800000000000000080000000000000058000000000000001",
+            "0x0",
+            "0x800000000000000180000000000000027fffffffffffffff",
+            "0x0",
+            "0x800000000000000180000000000000028000000000000000",
+            "0x0",
+            "0x800000000000000180000000000000028000000000000001",
+            "0x0",
+            "0x800000000000000180000000000000028000000000000002",
+            "0x0",
+            "0x800000000000000180000000000000028000000000000003",
+            "0x0",
+            "0x800000000000000180000000000000038000000000000000",
+            "0x0",
+            "0x800000000000000180000000000000038000000000000001",
+            "0x0",
+            "0x800000000000000180000000000000038000000000000002",
+            "0x0",
+            "0x800000000000000280000000000000028000000000000001",
+            "0x0",
+            "0x0",
             "0x0",
             "0x0",
             "0x0",
@@ -5315,11 +5437,11 @@
             "0x480680017fff8000",
             "0x1b5",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed60",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffece6",
             "0x480680017fff8000",
-            "0x1bf",
+            "0x1c0",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed5c",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffece2",
             "0x482480017ff88000",
             "0x1",
             "0x480a7ffa7fff8000",
@@ -5331,11 +5453,11 @@
             "0x480680017fff8000",
             "0x1b5",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed50",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffecd6",
             "0x480680017fff8000",
-            "0x1bf",
+            "0x1c0",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed4c",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffecd2",
             "0x48287ffd7ff88000",
             "0x480080007fff8000",
             "0x484480017fff8000",
@@ -5354,13 +5476,13 @@
             "0x48307ffa7ff38000",
             "0x208b7fff7fff7ffe",
             "0x480680017fff8000",
-            "0x12e5",
+            "0x135e",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed37",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffecbd",
             "0x480680017fff8000",
-            "0x12ef",
+            "0x1369",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed33",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffecb9",
             "0x48287ffd7ff88000",
             "0x480080007fff8000",
             "0x482680017ffd8000",
@@ -5430,17 +5552,17 @@
             "0x480a80027fff8000",
             "0x480a80037fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed55",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffecdb",
             "0x480a80007fff8000",
             "0x480a80017fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed09",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec8f",
             "0x480a80007fff8000",
             "0x480a80017fff8000",
             "0x480a80027fff8000",
             "0x480a80037fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeddc",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffed62",
             "0x482680017ffd8000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x1104800180018000",
@@ -5497,7 +5619,7 @@
             "0x484680017ff98000",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec5d",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebe3",
             "0x4003800080027ffb",
             "0x4003800080017ffb",
             "0x4027800180018003",
@@ -5510,7 +5632,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec50",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebd6",
             "0x480a80037fff8000",
             "0x4829800080008004",
             "0x480a80007fff8000",
@@ -5560,7 +5682,7 @@
             "0x480680017fff8000",
             "0x100000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec85",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec0b",
             "0x482480017fff8000",
             "0x800000000000010ffffffffffffffff00000000000000000000000000000001",
             "0x20680017fff7fff",
@@ -5593,7 +5715,7 @@
             "0x480680017fff8000",
             "0x100000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec64",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebea",
             "0x482480017fff8000",
             "0x800000000000010ffffffffffffffff00000000000000000000000000000001",
             "0x20680017fff7fff",
@@ -5605,31 +5727,31 @@
             "0x480680017fff8000",
             "0x7ffffffffffffffffffffffffffff0000000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec58",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebde",
             "0x48127ffe7fff8000",
             "0x480a7ffb7fff8000",
             "0x480680017fff8000",
             "0xffffffffffffffff",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec52",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebd8",
             "0x48127ffe7fff8000",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0x7ffffffffffffffffffffffffffffff00000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec4c",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebd2",
             "0x48127ffe7fff8000",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0xffffffffffffffff0000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec46",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebcc",
             "0x48127ffe7fff8000",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0xffffffffffffffff",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec40",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebc6",
             "0x484480017ff18000",
             "0x800000000000010fffffffffffffffff7ffffffffffffef0000000000000001",
             "0x484480017ff78000",
@@ -5683,31 +5805,31 @@
             "0x480680017fff8000",
             "0x7ffffffffffffffffffffffffffff0000000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec0a",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeb90",
             "0x48127ffe7fff8000",
             "0x480a7ffb7fff8000",
             "0x480680017fff8000",
             "0xffffffffffffffff",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffec04",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeb8a",
             "0x48127ffe7fff8000",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0x7ffffffffffffffffffffffffffffff00000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebfe",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeb84",
             "0x48127ffe7fff8000",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0xffffffffffffffff0000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebf8",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeb7e",
             "0x48127ffe7fff8000",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0xffffffffffffffff",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffebf2",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeb78",
             "0x484480017ff18000",
             "0x800000000000010fffffffffffffffff7ffffffffffffef0000000000000001",
             "0x484480017ff78000",
@@ -5790,7 +5912,7 @@
             "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe50",
             "0x40327ffe7ffc7fff",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeb35",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeabb",
             "0x48127ff77fff8000",
             "0x48127ff77fff8000",
             "0x48127ff77fff8000",
@@ -5962,7 +6084,7 @@
             "0x600000000000000000000000000000000000000000000000000000000000000",
             "0x48307ffd80007ffb",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeadf",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffea65",
             "0x482480017fff8000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x20680017fff7fff",
@@ -5978,7 +6100,7 @@
             "0x480680017fff8000",
             "0x80000000000000000000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeacf",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffea55",
             "0x400680017fff7fff",
             "0x1",
             "0x480a7ff17fff8000",
@@ -6008,9 +6130,9 @@
             "0x480680017fff8000",
             "0xffffffffffffffff",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffeac5",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffea4b",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffea6c",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffe9f2",
             "0x480a7ff17fff8000",
             "0x480a7ff27fff8000",
             "0x48127ffa7fff8000",
@@ -6337,7 +6459,7 @@
                     }
                 }
             ],
-            "4925": [
+            "5047": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -6348,14 +6470,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 4449,
+                            "group": 4571,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "5015": [
+            "5137": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -6366,14 +6488,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 4458,
+                            "group": 4580,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "5268": [
+            "5390": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -6384,14 +6506,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 4469,
+                            "group": 4591,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "5411": [
+            "5533": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -6402,7 +6524,7 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 4476,
+                            "group": 4598,
                             "offset": 0
                         },
                         "reference_ids": {}
@@ -6484,7 +6606,7 @@
             },
             "__main__._check_qty_are_correct": {
                 "decorators": [],
-                "pc": 5444,
+                "pc": 5566,
                 "type": "function"
             },
             "__main__._check_qty_are_correct.Args": {
@@ -6535,7 +6657,7 @@
             },
             "__main__._check_shape_numbers_impl_": {
                 "decorators": [],
-                "pc": 5465,
+                "pc": 5587,
                 "type": "function"
             },
             "__main__._check_shape_numbers_impl_.Args": {
@@ -6614,7 +6736,7 @@
             },
             "__main__._decrement_ft_qty": {
                 "decorators": [],
-                "pc": 5572,
+                "pc": 5694,
                 "type": "function"
             },
             "__main__._decrement_ft_qty.Args": {
@@ -6677,7 +6799,7 @@
             },
             "__main__._find_nft": {
                 "decorators": [],
-                "pc": 5080,
+                "pc": 5202,
                 "type": "function"
             },
             "__main__._find_nft.Args": {
@@ -6732,7 +6854,7 @@
             },
             "__main__._get_nb_shapes": {
                 "decorators": [],
-                "pc": 4847,
+                "pc": 4969,
                 "type": "function"
             },
             "__main__._get_nb_shapes.Args": {
@@ -6774,7 +6896,7 @@
             },
             "__main__._get_nft_offsets": {
                 "decorators": [],
-                "pc": 4888,
+                "pc": 5010,
                 "type": "function"
             },
             "__main__._get_nft_offsets.Args": {
@@ -6821,7 +6943,7 @@
             },
             "__main__._get_shape_offsets": {
                 "decorators": [],
-                "pc": 4863,
+                "pc": 4985,
                 "type": "function"
             },
             "__main__._get_shape_offsets.Args": {
@@ -6868,7 +6990,7 @@
             },
             "__main__._initialize_qty": {
                 "decorators": [],
-                "pc": 5421,
+                "pc": 5543,
                 "type": "function"
             },
             "__main__._initialize_qty.Args": {
@@ -6923,7 +7045,7 @@
             },
             "__main__._shape": {
                 "decorators": [],
-                "pc": 4981,
+                "pc": 5103,
                 "type": "function"
             },
             "__main__._shape.Args": {
@@ -6970,7 +7092,7 @@
             },
             "__main__._validate_nth_shape": {
                 "decorators": [],
-                "pc": 4935,
+                "pc": 5057,
                 "type": "function"
             },
             "__main__._validate_nth_shape.Args": {
@@ -7035,7 +7157,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 5304,
+                "pc": 5426,
                 "type": "function"
             },
             "__main__.check_shape_numbers_.Args": {
@@ -7106,7 +7228,7 @@
             },
             "__main__.compute_shape_hash": {
                 "decorators": [],
-                "pc": 5075,
+                "pc": 5197,
                 "type": "function"
             },
             "__main__.compute_shape_hash.Args": {
@@ -7150,7 +7272,7 @@
                 "decorators": [
                     "constructor"
                 ],
-                "pc": 4909,
+                "pc": 5031,
                 "type": "function"
             },
             "__main__.constructor.Args": {
@@ -7194,7 +7316,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 5123,
+                "pc": 5245,
                 "type": "function"
             },
             "__main__.decompress_data.Args": {
@@ -7271,7 +7393,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 5006,
+                "pc": 5128,
                 "type": "function"
             },
             "__main__.shape_.Args": {
@@ -7441,7 +7563,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 5367,
+                "pc": 5489,
                 "type": "function"
             },
             "__wrappers__.check_shape_numbers_.Args": {
@@ -7476,7 +7598,7 @@
                 "decorators": [
                     "constructor"
                 ],
-                "pc": 4918,
+                "pc": 5040,
                 "type": "function"
             },
             "__wrappers__.constructor.Args": {
@@ -7511,7 +7633,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 5282,
+                "pc": 5404,
                 "type": "function"
             },
             "__wrappers__.decompress_data.Args": {
@@ -7540,7 +7662,7 @@
             },
             "__wrappers__.decompress_data_encode_return": {
                 "decorators": [],
-                "pc": 5268,
+                "pc": 5390,
                 "type": "function"
             },
             "__wrappers__.decompress_data_encode_return.Args": {
@@ -7580,7 +7702,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 5050,
+                "pc": 5172,
                 "type": "function"
             },
             "__wrappers__.shape_.Args": {
@@ -7609,7 +7731,7 @@
             },
             "__wrappers__.shape__encode_return": {
                 "decorators": [],
-                "pc": 5015,
+                "pc": 5137,
                 "type": "function"
             },
             "__wrappers__.shape__encode_return.Args": {
@@ -8069,27 +8191,27 @@
                 "value": 1
             },
             "contracts.shape.data.nft_data": {
-                "pc": 4847,
+                "pc": 4969,
                 "type": "label"
             },
             "contracts.shape.data.nft_data_end": {
-                "pc": 4847,
+                "pc": 4969,
                 "type": "label"
             },
             "contracts.shape.data.nft_offset_cumulative": {
-                "pc": 4837,
+                "pc": 4958,
                 "type": "label"
             },
             "contracts.shape.data.nft_offset_cumulative_end": {
-                "pc": 4847,
+                "pc": 4969,
                 "type": "label"
             },
             "contracts.shape.data.shape_data": {
-                "pc": 447,
+                "pc": 448,
                 "type": "label"
             },
             "contracts.shape.data.shape_data_end": {
-                "pc": 4837,
+                "pc": 4958,
                 "type": "label"
             },
             "contracts.shape.data.shape_offset_cumulative": {
@@ -8097,7 +8219,7 @@
                 "type": "label"
             },
             "contracts.shape.data.shape_offset_cumulative_end": {
-                "pc": 447,
+                "pc": 448,
                 "type": "label"
             },
             "contracts.types.BalanceSpec": {
