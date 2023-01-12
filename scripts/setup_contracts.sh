@@ -3,7 +3,7 @@ set -e -o pipefail
 # Hashes
 
 starknet_declare () {
-    addr="$(starknet declare --contract $1 --nonce $nonce --max_fee 993215999380800 --token $TOKEN)"
+    addr="$(starknet declare --contract $1 --nonce $nonce --max_fee 993215999380800)"
     echo $addr
     comm=$(echo "$addr" | grep 'Contract class hash' | awk '{gsub("Contract class hash: ", "",$0); print $0}')
     printf -v $2 $comm
@@ -28,7 +28,7 @@ starknet_declare artifacts/shape_store.json shape_store_hash
 ### Contracts
 
 deploy_proxy() {
-    addr="$(starknet deploy --class_hash $proxy_hash --inputs $WALLET_ADDRESS $1 --account $ACCOUNT --nonce $nonce --max_fee 2220277007180367 --token $TOKEN)"
+    addr="$(starknet deploy --class_hash $proxy_hash --inputs $WALLET_ADDRESS $1 --nonce $nonce --max_fee 2220277007180367)"
     echo $addr
     comm=$(echo "$addr" | grep "Contract address: " | awk '{gsub("Contract address: ", "",$0); print $0}')
     printf -v $2 $comm
@@ -81,7 +81,7 @@ call $booklet_addr box_nft getImplementation_
 call $attributes_registry_addr box_nft getImplementation_
 call $set_addr box_nft getImplementation_
 call $briq_addr box_nft getImplementation_
-call $shape_attribute_hash box_nft getImplementation_
+call $shape_attribute_addr box_nft getImplementation_
 
 nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
 

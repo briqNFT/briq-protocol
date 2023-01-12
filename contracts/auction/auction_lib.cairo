@@ -136,19 +136,6 @@ func _make_direct_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
 }
 
 @external
-func close_auction{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    bids_len: felt, bids: BidData*
-) {
-    _onlyAdmin();
-
-    assert_not_zero(bids_len);
-
-    try_bid(bids_len, bids, bids[0]);
-
-    return ();
-}
-
-@external
 func transfer_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     receiver: felt, amount: felt
 ) {
@@ -174,6 +161,19 @@ namespace IBoxContract {
         sender: felt, recipient: felt, token_id: felt, value: felt, data_len: felt, data: felt*
     ) {
     }
+}
+
+@external
+func close_auction{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    bids_len: felt, bids: BidData*
+) {
+    _onlyAdmin();
+
+    assert_not_zero(bids_len);
+
+    try_bid(bids_len, bids, bids[0]);
+
+    return ();
 }
 
 func try_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(

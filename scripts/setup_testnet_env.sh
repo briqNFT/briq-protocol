@@ -3,19 +3,9 @@
 # then 
 # starknet-devnet --dump-path devnetstate --accounts 0 --lite-mode --dump-on exit --load-path devnetstate
 
+export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
 export STARKNET_NETWORK_ID="goerli"
 export STARKNET_NETWORK="alpha-goerli"
-export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
-export TOKEN='0'
-
-export ACCOUNT="test_deployer_0_10"
-# info stored in ~/.starknet_accounts/starknet_open_zeppelin_accounts.json
-comm=$(starknet deploy_account --account $ACCOUNT)
-comm=$(echo "$comm" | grep 'Contract address' | awk '{gsub("Contract address: ", "",$0); print $0}')
-export WALLET_ADDRESS=$comm
-
-## Already deployed
-export ACCOUNT="test_deployer_0_10"
 export WALLET_ADDRESS="0x22030445da671e4f5bdab7802a061ca0c55754d9703c5390266fd8b814de880"
 
 
@@ -53,7 +43,8 @@ by invoking the 'starknet deploy_account' command.
 NOTE: This is a modified version of the OpenZeppelin account contract. The signature is computed
 differently.
 
+export STARKNET_NETWORK_ID="goerli-2"
 export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
-export WALLET_ADDRESS="0x33d820bae2318e0e0f93e6d68e36de7ba70de850a6c367eca64f3a9aa74e4f4"
 export STARKNET_NETWORK="alpha-goerli2"
+export WALLET_ADDRESS="0x33d820bae2318e0e0f93e6d68e36de7ba70de850a6c367eca64f3a9aa74e4f4"
 source goerli-2.test_node.txt
