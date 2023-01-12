@@ -24,7 +24,6 @@ ADDRESS = 0xcafe
 OTHER_ADDRESS = 0xd00d
 MOCK_SHAPE_TOKEN = 0xdeadfade
 
-
 def compile(path):
     return compile_starknet_files(
         files=[os.path.join(CONTRACT_SRC, path)],
