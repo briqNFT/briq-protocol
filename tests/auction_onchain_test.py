@@ -7,7 +7,7 @@ from starkware.starknet.testing.starknet import Starknet
 from starkware.starkware_utils.error_handling import StarkException
 from starkware.starknet.business_logic.state.state_api_objects import BlockInfo
 
-from .conftest import declare_and_deploy, proxy_contract, compile
+from .conftest import declare, declare_and_deploy, proxy_contract, compile
 
 ADDRESS = 0xcafe
 OTHER_ADDRESS = 0xbabe
@@ -18,6 +18,8 @@ async def factory_root():
     starknet = await Starknet.empty()
 
     [auction_contract, _] = await declare_and_deploy(starknet, "auction_onchain.cairo")
+    data_hash = await declare(starknet, "auction_onchain/data_test.cairo")
+    await auction_contract.setDataHash_(data_hash).execute()
 
     erc20 = compile("vendor/openzeppelin/token/erc20/presets/ERC20Mintable.cairo")
     await starknet.declare(contract_class=erc20)
@@ -110,3 +112,44 @@ async def test_bids_amounts(factory):
     assert (await factory.token_contract_eth.balanceOf(ADDRESS).call()).result.balance == (2**128 - 100000 - 2000, 127)
     # For other, bids for 1-2-4
     assert (await factory.token_contract_eth.balanceOf(OTHER_ADDRESS).call()).result.balance == (100000 - 5050 - 3500 - 3500, 0)
+
+@pytest.mark.asyncio
+async def test_settlement(factory):
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (50000, 0)).execute(ADDRESS)
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (50000, 0)).execute(OTHER_ADDRESS)
+
+    await factory.auction_contract.make_bids([1, 2, 0, 0, 0], [2000, 2000, 2000, 2000, 2000]).execute(ADDRESS)
+    await factory.auction_contract.make_bids([3, 2, 0, 0, 0], [2000, 2500, 2000, 2000, 2000]).execute(OTHER_ADDRESS)
+
+    [set_mock, _] = await declare_and_deploy(factory.starknet, "mocks/set_mock.cairo")
+    await factory.auction_contract.setSetAddress_(set_mock.contract_address).execute()
+
+    # mint
+    await set_mock.transferFrom_(0, factory.auction_contract.contract_address, 1).execute()
+    await set_mock.transferFrom_(0, factory.auction_contract.contract_address, 2).execute()
+
+
+    # Fails, auction isn't done.
+    with pytest.raises(StarkException):
+        await factory.auction_contract.settle_auctions([1, 2, 3]).execute()
+
+    factory.starknet.state.state.update_block_info(
+        BlockInfo.create_for_testing(
+            block_number=4,
+            block_timestamp=250
+        )
+    )
+
+    # Fails, 3 isn't minted
+    with pytest.raises(StarkException):
+        await factory.auction_contract.settle_auctions([1, 2, 3]).execute()
+
+    await set_mock.transferFrom_(0, factory.auction_contract.contract_address, 3).execute()
+    await set_mock.transferFrom_(0, factory.auction_contract.contract_address, 4).execute()
+
+    await factory.auction_contract.settle_auctions([1, 2, 3]).execute()
+
+    assert (await set_mock.ownerOf_(1).call()).result.owner == ADDRESS
+    assert (await set_mock.ownerOf_(2).call()).result.owner == OTHER_ADDRESS
+    assert (await set_mock.ownerOf_(3).call()).result.owner == OTHER_ADDRESS
+    assert (await set_mock.ownerOf_(4).call()).result.owner == factory.auction_contract.contract_address

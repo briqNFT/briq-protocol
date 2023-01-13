@@ -12,8 +12,18 @@ from contracts.auction_onchain.payment_token import (
     setPaymentAddress_,
 )
 
-from contracts.auction_onchain.bid import (
-    get_auction_data,
-    make_bids
+from contracts.auction_onchain.data_link import (
+    getDataHash_,
+    setDataHash_,
 )
 
+from contracts.auction_onchain.bid import (
+    get_auction_data,
+    make_bids,
+    settle_auctions,
+)
+
+from contracts.ecosystem.to_set import (
+    getSetAddress_,
+    setSetAddress_,
+)

@@ -4,7 +4,9 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.math import (
+    assert_not_zero,
     assert_le_felt,
+    assert_lt_felt,
     split_int,
     unsigned_div_rem
 )
@@ -16,34 +18,39 @@ from starkware.starknet.common.syscalls import (
     get_block_timestamp,
 )
 
+from contracts.auction_onchain.payment_token import getPaymentAddress_
+from contracts.auction_onchain.data_link import AuctionData, IDataContract, getDataHash_
+
+from contracts.ecosystem.to_set import getSetAddress_
+
 from contracts.vendor.openzeppelin.token.erc20.IERC20 import IERC20
 
 from contracts.utilities.Uint256_felt_conv import _felt_to_uint
+from contracts.utilities.authorization import _onlyAdmin
 
-from contracts.auction_onchain.payment_token import getPaymentAddress_
-
-struct Bid {
+struct BidData {
     account: felt,
     amount: felt,
 }
 
-struct AuctionData {
-    token_id: felt, // ?
-    minimum_bid: felt,
-    bid_growth_factor: felt, // Or maybe absolute value?
-    auction_start_date: felt,
-    auction_duration: felt,
-}
-
 const MAXIMUM_CONCURRENT_BIDS = 5;
 
+@event
+func Bid(bidder: felt, bid_amount: felt, token_id: felt) {
+}
+
+@event
+func AuctionComplete(token_id: felt, winner: felt) {
+}
+
 @storage_var
-func current_best_bid(token_id: felt) -> (bid: Bid) {
+func current_best_bid(token_id: felt) -> (bid: BidData) {
 }
 
 @storage_var
 func account_bids(account: felt) -> (bids: felt) {
 }
+
 
 @view
 func get_auction_data{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -51,13 +58,8 @@ func get_auction_data{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
 ) -> (
     data: AuctionData,
 ){
-    let data = AuctionData(
-        token_id=token_id,
-        minimum_bid=1210,
-        bid_growth_factor=10,
-        auction_start_date=100,
-        auction_duration=100,
-    );
+    let (hash) = getDataHash_();
+    let (data) = IDataContract.library_call_get_auction_data(hash, token_id);
     return (data,);
 }
 
@@ -152,7 +154,6 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 
     let (auction_data) = get_auction_data(token_id);
     let (current_bid) = current_best_bid.read(token_id);
-    let t = current_bid.amount;
 
     // Must clear min bid
     assert_le_felt(auction_data.minimum_bid, amount);
@@ -183,12 +184,16 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     _pay_back_funds(current_bid);
 
     // Then store new current bid.
-    current_best_bid.write(token_id, Bid(account=bidder, amount=amount));
+    current_best_bid.write(token_id, BidData(account=bidder, amount=amount));
+
+    // Then emit event
+    Bid.emit(bidder, amount, token_id);
+
     return ();
 }
 
 func _pay_back_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    current_bid: Bid
+    current_bid: BidData
 ) {
     alloc_locals;
     if (current_bid.amount != 0) {
@@ -205,7 +210,66 @@ func _pay_back_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
 }
 
 @external
-func settle_auction{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func settle_auctions{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    token_ids_len: felt,
+    token_ids: felt*
 ) {
+    _onlyAdmin();
+
+    if (token_ids_len == 0) {
+        return ();
+    }
+
+    assert_not_zero(token_ids[0]);
+
+    // Make sure the auction is over.
+    let (auction_data) = get_auction_data(token_ids[0]);
+    let (block_timestamp) = get_block_timestamp();
+    assert_lt_felt(auction_data.auction_start_date + auction_data.auction_duration, block_timestamp);
+
+    // Perform the auction.
+    let (bid) = current_best_bid.read(token_ids[0]);
+    _settle_token(token_ids[0], bid.account);
+
+    return settle_auctions(token_ids_len - 1, token_ids + 1);
+}
+
+@contract_interface
+namespace ISetContract {
+    func transferFrom_(
+        sender: felt, recipient: felt, token_id: felt
+    ) {
+    }
+}
+
+func _settle_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    token_id: felt,
+    owner: felt,
+) {
+    // Do nothing if there was no bid.
+    if (owner == 0) {
+        return ();
+    }
+
+    let (set_address) = getSetAddress_();
+    let (contract_address) = get_contract_address();
+    ISetContract.transferFrom_(set_address, contract_address, owner, token_id);
+    return ();
+}
+
+
+@external
+func transfer_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    receiver: felt, amount: felt
+) {
+    _onlyAdmin();
+    assert_not_zero(receiver);
+
+    let (amnt) = _felt_to_uint(amount);
+
+    let (erc20_address) = getPaymentAddress_();
+    with_attr error_message("Failed to transfer ETH funds") {
+        IERC20.transfer(erc20_address, receiver, amnt);
+    }
     return ();
 }

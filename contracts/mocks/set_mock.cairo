@@ -1,6 +1,7 @@
 %lang starknet
 
-from contracts.types import FTSpec
+from starkware.cairo.common.cairo_builtins import HashBuiltin
+from contracts.types import FTSpec, ShapeItem
 
 @external
 func assemble_(
@@ -14,4 +15,32 @@ func assemble_(
     attributes_len: felt, attributes: felt*,
 ) {
     return ();
+}
+
+// Very basic implem
+
+@storage_var
+func __balance(token_id: felt) -> (owner: felt) {
+}
+
+@external
+func transferFrom_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    sender: felt,
+    receiver: felt,
+    token_id: felt,
+) {
+    alloc_locals;
+
+    let (owner) = __balance.read(token_id);
+    assert sender = owner;
+    __balance.write(token_id, receiver);
+    return ();
+}
+
+@view
+func ownerOf_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    token_id: felt
+) -> (owner: felt) {
+    let (owner) = __balance.read(token_id);
+    return (owner,);
 }
