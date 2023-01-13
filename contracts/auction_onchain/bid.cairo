@@ -36,15 +36,15 @@ struct BidData {
 const MAXIMUM_CONCURRENT_BIDS = 5;
 
 @event
-func Bid(bidder: felt, bid_amount: felt, token_id: felt) {
+func Bid(bidder: felt, bid_amount: felt, auction_id: felt) {
 }
 
 @event
-func AuctionComplete(token_id: felt, winner: felt) {
+func AuctionComplete(auction_id: felt, winner: felt) {
 }
 
 @storage_var
-func current_best_bid(token_id: felt) -> (bid: BidData) {
+func current_best_bid(auction_id: felt) -> (bid: BidData) {
 }
 
 @storage_var
@@ -54,34 +54,36 @@ func account_bids(account: felt) -> (bids: felt) {
 
 @view
 func get_auction_data{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    token_id: felt,
+    auction_id: felt,
 ) -> (
     data: AuctionData,
 ){
+    assert_not_zero(auction_id);
+
     let (hash) = getDataHash_();
-    let (data) = IDataContract.library_call_get_auction_data(hash, token_id);
+    let (data) = IDataContract.library_call_get_auction_data(hash, auction_id);
     return (data,);
 }
 
 @external
 func make_bids{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    token_ids_len: felt,
-    token_ids: felt*,
+    auction_ids_len: felt,
+    auction_ids: felt*,
     amounts_len: felt,
     amounts: felt*,
 ) {
     alloc_locals;
     let (bidder) = get_caller_address();
 
-    assert token_ids_len = amounts_len;
-    assert token_ids_len = MAXIMUM_CONCURRENT_BIDS;
+    assert auction_ids_len = amounts_len;
+    assert auction_ids_len = MAXIMUM_CONCURRENT_BIDS;
 
     let (bids) = alloc();
     let (abids) = account_bids.read(bidder);
     split_int(abids, 5, 2**8, 2**8, bids);
 
     let (out_bids) = alloc();
-    _make_bids(bidder, MAXIMUM_CONCURRENT_BIDS, token_ids, amounts, bids, out_bids, 1);
+    _make_bids(bidder, MAXIMUM_CONCURRENT_BIDS, auction_ids, amounts, bids, out_bids, 1);
 
     // update bids.
     account_bids.write(bidder,
@@ -99,7 +101,7 @@ func make_bids{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 func _make_bids{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     bidder: felt,
     i: felt,
-    token_ids: felt*,
+    auction_ids: felt*,
     amounts: felt*,
     bids: felt*,
     out_bids: felt*,
@@ -110,17 +112,17 @@ func _make_bids{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
         return ();
     }
 
-    _make_bid(bidder, token_ids[0], amounts[0], bids[0], out_bids, allow_new);
+    _make_bid(bidder, auction_ids[0], amounts[0], bids[0], out_bids, allow_new);
 
-    if (bids[0] == 0 and token_ids[0] == 0) {
-        return _make_bids(bidder, i - 1, token_ids + 1, amounts + 1, bids + 1, out_bids + 1, 0);
+    if (bids[0] == 0 and auction_ids[0] == 0) {
+        return _make_bids(bidder, i - 1, auction_ids + 1, amounts + 1, bids + 1, out_bids + 1, 0);
     }
-    return _make_bids(bidder, i - 1, token_ids + 1, amounts + 1, bids + 1, out_bids + 1, allow_new);
+    return _make_bids(bidder, i - 1, auction_ids + 1, amounts + 1, bids + 1, out_bids + 1, allow_new);
 }
 
 func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     bidder: felt,
-    token_id: felt,
+    auction_id: felt,
     amount: felt,
     bid: felt,
     out_bid: felt*,
@@ -129,7 +131,7 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     alloc_locals;
 
     // First, check if this bid is a bid or a placeholder.
-    if (token_id == 0) {
+    if (auction_id == 0) {
         assert out_bid[0] = bid;
         return ();
     }
@@ -137,11 +139,11 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     // If it's a bid, make sure it's the correct one (so that we limit the concurrent bids).
     // This means we're either overwriting or writing a new bid ( == 0 )
     if (bid != 0) {
-        assert token_id = bid;
+        assert auction_id = bid;
     } else {
         assert allow_new = 1;
     }
-    assert out_bid[0] = token_id;
+    assert out_bid[0] = auction_id;
 
     // For each bid.
     // Validate bid:
@@ -152,8 +154,10 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     // Then we reimburse the current bid.
     // Then we update the current bid storage variable.
 
-    let (auction_data) = get_auction_data(token_id);
-    let (current_bid) = current_best_bid.read(token_id);
+    let (auction_data) = get_auction_data(auction_id);
+    let (current_bid) = current_best_bid.read(auction_id);
+
+    assert_not_zero(auction_data.token_id);
 
     // Must clear min bid
     assert_le_felt(auction_data.minimum_bid, amount);
@@ -184,10 +188,10 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     _pay_back_funds(current_bid);
 
     // Then store new current bid.
-    current_best_bid.write(token_id, BidData(account=bidder, amount=amount));
+    current_best_bid.write(auction_id, BidData(account=bidder, amount=amount));
 
     // Then emit event
-    Bid.emit(bidder, amount, token_id);
+    Bid.emit(bidder, amount, auction_id);
 
     return ();
 }
@@ -211,27 +215,27 @@ func _pay_back_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
 
 @external
 func settle_auctions{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    token_ids_len: felt,
-    token_ids: felt*
+    auction_ids_len: felt,
+    auction_ids: felt*
 ) {
     _onlyAdmin();
 
-    if (token_ids_len == 0) {
+    if (auction_ids_len == 0) {
         return ();
     }
 
-    assert_not_zero(token_ids[0]);
+    assert_not_zero(auction_ids[0]);
 
     // Make sure the auction is over.
-    let (auction_data) = get_auction_data(token_ids[0]);
+    let (auction_data) = get_auction_data(auction_ids[0]);
     let (block_timestamp) = get_block_timestamp();
     assert_lt_felt(auction_data.auction_start_date + auction_data.auction_duration, block_timestamp);
 
     // Perform the auction.
-    let (bid) = current_best_bid.read(token_ids[0]);
-    _settle_token(token_ids[0], bid.account);
+    let (bid) = current_best_bid.read(auction_ids[0]);
+    _settle_token(auction_data.token_id, bid.account);
 
-    return settle_auctions(token_ids_len - 1, token_ids + 1);
+    return settle_auctions(auction_ids_len - 1, auction_ids + 1);
 }
 
 @contract_interface

@@ -186,21 +186,6 @@
     {
         "inputs": [
             {
-                "name": "bids_len",
-                "type": "felt"
-            },
-            {
-                "name": "bids",
-                "type": "BidData*"
-            }
-        ],
-        "name": "close_auction",
-        "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "name": "receiver",
                 "type": "felt"
             },
@@ -210,6 +195,21 @@
             }
         ],
         "name": "transfer_funds",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "bids_len",
+                "type": "felt"
+            },
+            {
+                "name": "bids",
+                "type": "BidData*"
+            }
+        ],
+        "name": "close_auction",
         "outputs": [],
         "type": "function"
     },

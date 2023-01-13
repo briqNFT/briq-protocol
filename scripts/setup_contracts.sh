@@ -24,6 +24,9 @@ starknet_declare artifacts/auction.json auction_hash
 starknet_declare artifacts/box_nft.json box_hash
 starknet_declare artifacts/shape_store.json shape_store_hash
 
+starknet_declare artifacts/auction_onchain.json auction_onchain_hash
+starknet_declare "artifacts/auction_onchain_data_${STARKNET_NETWORK_ID}.json" auction_onchain_data_hash
+
 
 ### Contracts
 
@@ -46,6 +49,7 @@ deploy_proxy $attributes_registry_hash attributes_registry_addr
 deploy_proxy $set_hash set_addr
 deploy_proxy $briq_hash briq_addr
 deploy_proxy $shape_attribute_hash shape_attribute_addr
+deploy_proxy $auction_onchain_hash auction_onchain_addr
 
 # Setup
 
@@ -99,6 +103,10 @@ invoke $briq_addr briq setBoxAddress_ $box_addr
 invoke $booklet_addr booklet_nft setAttributesRegistryAddress_ $attributes_registry_addr
 invoke $booklet_addr booklet_nft setBoxAddress_ $box_addr
 
+invoke $auction_onchain_addr auction_onchain setPaymentAddress_ 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
+invoke $auction_onchain_addr auction_onchain setDataHash_ $auction_onchain_data_hash
+invoke $auction_onchain_addr auction_onchain setSetAddress_ $set_addr
+
 invoke $shape_attribute_addr shape_attribute setAttributesRegistryAddress_ $attributes_registry_addr
 ##
 invoke $attributes_registry_addr attributes_registry setSetAddress_ $set_addr
@@ -117,5 +125,8 @@ invoke $booklet_addr box_nft upgradeImplementation_ $booklet_hash
 invoke $attributes_registry_addr box_nft upgradeImplementation_ $attributes_registry_hash
 invoke $set_addr box_nft upgradeImplementation_ $set_hash
 invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
+invoke $auction_onchain_addr box_nft upgradeImplementation_ $auction_onchain_hash
 
 call $booklet_addr booklet_nft get_shape_ 0x13000000000000000000000000000000000000000000000001
+
+call $auction_onchain_addr auction_onchain get_auction_data 1

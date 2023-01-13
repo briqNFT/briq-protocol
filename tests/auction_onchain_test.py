@@ -95,8 +95,12 @@ async def test_bids_amounts(factory):
     await factory.auction_contract.make_bids([4, 1, 2, 0, 0], [3000, 3000, 2000, 0, 0]).execute(OTHER_ADDRESS)
 
     await factory.auction_contract.make_bids([4, 1, 2, 0, 0], [3500, 3500, 2500, 0, 0]).execute(OTHER_ADDRESS)
-    
+
     await factory.auction_contract.make_bids([0, 2, 0, 0, 0], [0, 5000, 0, 0, 0]).execute(ADDRESS)
+
+    # Doesn't exist in test, fails
+    with pytest.raises(StarkException):
+        await factory.auction_contract.make_bids([0, 0, 0, 20, 0], [0, 5000, 0, 0, 0]).execute(ADDRESS)
 
     # Fail: bid too low compared to existing
     with pytest.raises(StarkException):

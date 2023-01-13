@@ -1,12 +1,13 @@
-# NB: for now, run the starknet devnet node manually using
-# starknet-devnet --dump-path devnetstate --accounts 0 --lite-mode --dump-on exit
-# then 
-# starknet-devnet --dump-path devnetstate --accounts 0 --lite-mode --dump-on exit --load-path devnetstate
-
 export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
 export STARKNET_NETWORK_ID="goerli"
 export STARKNET_NETWORK="alpha-goerli"
 export WALLET_ADDRESS="0x22030445da671e4f5bdab7802a061ca0c55754d9703c5390266fd8b814de880"
+
+
+
+
+
+# Below is old
 
 
 #####

@@ -1,0 +1,264 @@
+[
+    {
+        "members": [
+            {
+                "name": "token_id",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "minimum_bid",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "bid_growth_factor",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "auction_start_date",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "auction_duration",
+                "offset": 4,
+                "type": "felt"
+            }
+        ],
+        "name": "AuctionData",
+        "size": 5,
+        "type": "struct"
+    },
+    {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "previousAdmin",
+                "type": "felt"
+            },
+            {
+                "name": "newAdmin",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "AdminChanged",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "getAdmin_",
+        "outputs": [
+            {
+                "name": "admin",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getImplementation_",
+        "outputs": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_implementation",
+                "type": "felt"
+            }
+        ],
+        "name": "upgradeImplementation_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_admin",
+                "type": "felt"
+            }
+        ],
+        "name": "setRootAdmin_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getPaymentAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setPaymentAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getDataHash_",
+        "outputs": [
+            {
+                "name": "hash",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "hash",
+                "type": "felt"
+            }
+        ],
+        "name": "setDataHash_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getSetAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setSetAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "bidder",
+                "type": "felt"
+            },
+            {
+                "name": "bid_amount",
+                "type": "felt"
+            },
+            {
+                "name": "auction_id",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Bid",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "auction_id",
+                "type": "felt"
+            },
+            {
+                "name": "winner",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "AuctionComplete",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "auction_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_auction_data",
+        "outputs": [
+            {
+                "name": "data",
+                "type": "AuctionData"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "auction_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "auction_ids",
+                "type": "felt*"
+            },
+            {
+                "name": "amounts_len",
+                "type": "felt"
+            },
+            {
+                "name": "amounts",
+                "type": "felt*"
+            }
+        ],
+        "name": "make_bids",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "auction_ids_len",
+                "type": "felt"
+            },
+            {
+                "name": "auction_ids",
+                "type": "felt*"
+            }
+        ],
+        "name": "settle_auctions",
+        "outputs": [],
+        "type": "function"
+    }
+]
