@@ -78,6 +78,47 @@ async def test_bids(factory):
 
 
 @pytest.mark.asyncio
+async def test_single_bids_1(factory):
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (50000, 0)).execute(ADDRESS)
+    await factory.auction_contract.make_bids([2, 3, 6, 0, 0], [2000, 2000, 2000, 2000, 2000]).execute(ADDRESS)
+
+    await factory.auction_contract.make_bid(4, 2500).execute(ADDRESS)
+    await factory.auction_contract.make_bid(5, 2500).execute(ADDRESS)
+
+    # Fails: already 5 bids
+    with pytest.raises(StarkException):
+        await factory.auction_contract.make_bid(8, 2500).execute(ADDRESS)
+
+    # Fails: too low
+    with pytest.raises(StarkException):
+        await factory.auction_contract.make_bid(6, 1500).execute(ADDRESS)
+    await factory.auction_contract.make_bid(6, 2500).execute(ADDRESS)
+
+
+@pytest.mark.asyncio
+async def test_single_bids_2(factory):
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (50000, 0)).execute(ADDRESS)
+    await factory.auction_contract.make_bid(4, 2500).execute(ADDRESS)
+    await factory.auction_contract.make_bid(5, 2500).execute(ADDRESS)
+
+    # Fails: too low
+    with pytest.raises(StarkException):
+        await factory.auction_contract.make_bid(4, 1500).execute(ADDRESS)
+
+    await factory.auction_contract.make_bid(4, 4000).execute(ADDRESS)
+
+
+@pytest.mark.asyncio
+async def test_single_bids_3(factory):
+    await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (50000, 0)).execute(ADDRESS)
+    await factory.auction_contract.make_bids([2, 3, 6, 4, 1], [2000, 2000, 2000, 2000, 2000]).execute(ADDRESS)
+
+    # Fails: already 5 bids
+    with pytest.raises(StarkException):
+        await factory.auction_contract.make_bid(8, 2500).execute(ADDRESS)
+
+
+@pytest.mark.asyncio
 async def test_bids_amounts(factory):
     await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (50000, 0)).execute(ADDRESS)
     await factory.token_contract_eth.approve(factory.auction_contract.contract_address, (50000, 0)).execute(OTHER_ADDRESS)

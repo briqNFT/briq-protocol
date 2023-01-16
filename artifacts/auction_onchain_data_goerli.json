@@ -80,7 +80,7 @@
         "CONSTRUCTOR": [],
         "EXTERNAL": [
             {
-                "offset": "0x91",
+                "offset": "0x96",
                 "selector": "0x22c2588b4d9cccb5d134343c37cc7ee5e8191ef50a2b2a7a17f6ede5726e10d"
             }
         ],
@@ -151,34 +151,39 @@
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffcc",
             "0x48307fff7ffe8000",
             "0x208b7fff7fff7ffe",
-            "0x210343a6ce65eaf6818b9fc8e744930e363d9a263918e94000000000000000",
-            "0x4ba",
-            "0xa",
-            "0x63c1344c",
-            "0xd2f00",
             "0x7d180b4de0656c2d58237be7a77cf1403be2226f42e63a7b800000000000000",
             "0x3e8",
             "0xa",
-            "0x63dfb8bb",
+            "0x63c1344c",
+            "0xd2f00",
+            "0x210343a6ce65eaf6818b9fc8e744930e363d9a263918e94000000000000000",
+            "0x4ba",
+            "0xa",
+            "0x64f2614c",
+            "0xd2f00",
+            "0x23cb46e7f35efcb6c22c76b60dc23ffaf0bd324c43534bfb000000000000000",
+            "0x2710",
+            "0xa",
+            "0x63c1344c",
             "0xd2f00",
             "0x480680017fff8000",
             "0x39",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffef",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffea",
             "0x480680017fff8000",
-            "0x43",
+            "0x48",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffeb",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffe6",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffb6",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffb1",
             "0x48307ff580007ffc",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x484480017ffd8000",
             "0x666666666666674000000000000000000000000000000000000000000000001",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffb4",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffaf",
             "0x480680017fff8000",
             "0x5",
             "0x482680017ffd8000",
@@ -346,7 +351,7 @@
                     }
                 }
             ],
-            "132": [
+            "137": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -357,7 +362,7 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 15,
+                            "group": 20,
                             "offset": 0
                         },
                         "reference_ids": {}
@@ -383,7 +388,7 @@
                 "type": "alias"
             },
             "__main__.auction_data_end": {
-                "pc": 67,
+                "pc": 72,
                 "type": "label"
             },
             "__main__.auction_data_start": {
@@ -394,7 +399,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 67,
+                "pc": 72,
                 "type": "function"
             },
             "__main__.get_auction_data.Args": {
@@ -443,7 +448,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 145,
+                "pc": 150,
                 "type": "function"
             },
             "__wrappers__.get_auction_data.Args": {
@@ -472,7 +477,7 @@
             },
             "__wrappers__.get_auction_data_encode_return": {
                 "decorators": [],
-                "pc": 132,
+                "pc": 137,
                 "type": "function"
             },
             "__wrappers__.get_auction_data_encode_return.Args": {

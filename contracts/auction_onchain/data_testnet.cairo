@@ -12,18 +12,27 @@ from starkware.cairo.common.registers import get_label_location
 from contracts.auction_onchain.data_link import AuctionData
 
 auction_data_start:
-dw 0x210343a6ce65eaf6818b9fc8e744930e363d9a263918e94000000000000000; // token ID
-dw 1210; // minimum bid (wei)
-dw 10; // growth factor (in per mil)
-dw 1673606220; // start date
-dw 864000; // duration
-
 dw 0x7d180b4de0656c2d58237be7a77cf1403be2226f42e63a7b800000000000000; // token ID
 dw 1000;
 dw 10;
-dw 1675606203;
+dw 1673606220;
+dw 864000; // duration
+
+dw 0x210343a6ce65eaf6818b9fc8e744930e363d9a263918e94000000000000000; // token ID
+dw 1210; // minimum bid (wei)
+dw 10; // growth factor (in per mil)
+dw 1693606220; // start date
+dw 864000; // duration
+
+dw 0x23cb46e7f35efcb6c22c76b60dc23ffaf0bd324c43534bfb000000000000000; // token ID
+dw 10000; // minimum bid (wei)
+dw 10; // growth factor (in per mil)
+dw 1673606220; // start date
 dw 864000; // duration
 auction_data_end:
+
+
+
 
 @view
 func get_auction_data{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(

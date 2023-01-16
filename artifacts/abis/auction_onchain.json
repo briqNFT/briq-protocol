@@ -249,6 +249,21 @@
     {
         "inputs": [
             {
+                "name": "auction_id",
+                "type": "felt"
+            },
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "make_bid",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "name": "auction_ids_len",
                 "type": "felt"
             },

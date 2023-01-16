@@ -97,6 +97,87 @@ func make_bids{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     return ();
 }
 
+@external
+func make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    auction_id: felt,
+    amount: felt,
+) {
+    alloc_locals;
+    let (bidder) = get_caller_address();
+
+    let (bids) = alloc();
+    let (abids) = account_bids.read(bidder);
+    split_int(abids, 5, 2**8, 2**8, bids);
+
+    let (out_bids) = alloc();
+    with_attr error_message("Too many bids") {
+        let (crafted_indices, crafted_amounts) = _craft_payload_for_index(bids, auction_id, amount);
+    }
+    _make_bids(bidder, MAXIMUM_CONCURRENT_BIDS, crafted_indices, crafted_amounts, bids, out_bids, 1);
+
+    // update bids.
+    account_bids.write(bidder,
+        out_bids[0] +
+        out_bids[1] * 2**8 +
+        out_bids[2] * 2**16 +
+        out_bids[3] * 2**24 +
+        out_bids[4] * 2**32
+    );
+
+    return ();
+}
+
+// This returns a complete N-item array to bid on a specific product.
+// If the user has not yet bid on a specific item, it fills a new slot.
+// Otherwise it fails.
+func _craft_payload_for_index{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    stored_bids: felt*,
+    auction_id: felt,
+    amount: felt,
+) -> (indices: felt*, amounts: felt*) {
+    alloc_locals;
+    let (i) = alloc();
+    let (b) = alloc();
+    _craft_payload_for_index_inner(stored_bids, i, b, MAXIMUM_CONCURRENT_BIDS, auction_id, amount);
+    return (i, b);
+}
+
+func _craft_payload_for_index_inner{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    stored_bids: felt*,
+    indices: felt*,
+    bids: felt*,
+    i: felt,
+    auction_id: felt,
+    amount: felt,
+) {
+    if (i == 0) {
+        // If we didn't find a slot, fail.
+        assert auction_id = 0;
+        return ();
+    }
+    // If auction_id is 0, then it means we've already slotted the item so just carry on placing 0s.
+    if (auction_id == 0) {
+        assert indices[0] = 0;
+        assert bids[0] = 0;
+        return _craft_payload_for_index_inner(stored_bids + 1, indices + 1, bids + 1, i - 1, 0, 0);
+    }
+    // Either we'll run into the correct ID or there is a placeholder or we'll fail.
+    if (stored_bids[0] == auction_id) {
+        assert indices[0] = auction_id;
+        assert bids[0] = amount;
+        return _craft_payload_for_index_inner(stored_bids + 1, indices + 1, bids + 1, i - 1, 0, 0);
+    }
+    if (stored_bids[0] == 0) {
+        assert indices[0] = auction_id;
+        assert bids[0] = amount;
+        return _craft_payload_for_index_inner(stored_bids + 1, indices + 1, bids + 1, i - 1, 0, 0);
+    }
+    // Here carry auction_id over.
+    assert indices[0] = 0;
+    assert bids[0] = 0;
+    return _craft_payload_for_index_inner(stored_bids + 1, indices + 1, bids + 1, i - 1, auction_id, amount);
+}
+
 
 func _make_bids{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     bidder: felt,
@@ -132,17 +213,24 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
 
     // First, check if this bid is a bid or a placeholder.
     if (auction_id == 0) {
-        assert out_bid[0] = bid;
+        with_attr error_message("Cannot bid on auction ID 0") {
+            assert out_bid[0] = bid;
+        }
         return ();
     }
 
     // If it's a bid, make sure it's the correct one (so that we limit the concurrent bids).
     // This means we're either overwriting or writing a new bid ( == 0 )
     if (bid != 0) {
-        assert auction_id = bid;
+        with_attr error_message("Incorrect bid order") {
+            assert auction_id = bid;
+        }
     } else {
-        assert allow_new = 1;
+        with_attr error_message("Incorrect bid order") {
+            assert allow_new = 1;
+        }
     }
+    // This updates the out_bid array.
     assert out_bid[0] = auction_id;
 
     // For each bid.
@@ -157,24 +245,34 @@ func _make_bid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     let (auction_data) = get_auction_data(auction_id);
     let (current_bid) = current_best_bid.read(auction_id);
 
-    assert_not_zero(auction_data.token_id);
+    with_attr error_message("Auction does not exist") {
+        assert_not_zero(auction_data.token_id);
+    }
 
+    // Auction must have started (won't work before some timestamp)
+    let (block_timestamp) = get_block_timestamp();
+    with_attr error_message("Auction has not started yet") {
+        assert_le_felt(auction_data.auction_start_date, block_timestamp);
+    }
+
+    // Auction must not have completed (there will be a final block to send auctions)
+    let (block_timestamp) = get_block_timestamp();
+    with_attr error_message("Auction is completed") {
+        assert_le_felt(block_timestamp, auction_data.auction_start_date + auction_data.auction_duration);
+    }
+    
     // Must clear min bid
-    assert_le_felt(auction_data.minimum_bid, amount);
+    with_attr error_message("Bid below minimum bid") {
+        assert_le_felt(auction_data.minimum_bid, amount);
+    }
 
     // Must be x% higher than last bid.
     // (this returns 0 for 0, which is fine).
     // (This assumes the minimum bid is at least 1000 wei)
     let (hike_permil, _) = unsigned_div_rem(current_bid.amount, 1000);
-    assert_le_felt(current_bid.amount + hike_permil * auction_data.bid_growth_factor, amount);
-
-    // Auction must not have completed (there will be a final block to send auctions)
-    let (block_timestamp) = get_block_timestamp();
-    assert_le_felt(block_timestamp, auction_data.auction_start_date + auction_data.auction_duration);
-
-    // Auction must have started (won't work before some timestamp)
-    let (block_timestamp) = get_block_timestamp();
-    assert_le_felt(auction_data.auction_start_date, block_timestamp);
+    with_attr error_message("Bid is not big enough compared to current bid") {
+        assert_le_felt(current_bid.amount + hike_permil * auction_data.bid_growth_factor, amount);
+    }
 
     // Done with verifications, now transfer funds.
     with_attr error_message("Failed to transfer ETH funds") {

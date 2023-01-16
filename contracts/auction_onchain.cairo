@@ -20,6 +20,7 @@ from contracts.auction_onchain.data_link import (
 from contracts.auction_onchain.bid import (
     get_auction_data,
     make_bids,
+    make_bid,
     settle_auctions,
 )
 
