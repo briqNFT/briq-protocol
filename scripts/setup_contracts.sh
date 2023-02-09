@@ -1,6 +1,7 @@
 set -e -o pipefail
 
 # Hashes
+source "$STARKNET_NETWORK_ID.test_node.txt"
 
 starknet_declare () {
     addr="$(starknet declare --contract $1 --nonce $nonce --max_fee 993215999380800)"
@@ -104,8 +105,8 @@ invoke $booklet_addr booklet_nft setAttributesRegistryAddress_ $attributes_regis
 invoke $booklet_addr booklet_nft setBoxAddress_ $box_addr
 
 invoke $auction_onchain_addr auction_onchain setPaymentAddress_ 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
-invoke $auction_onchain_addr auction_onchain setDataHash_ $auction_onchain_data_hash
 invoke $auction_onchain_addr auction_onchain setSetAddress_ $set_addr
+invoke $auction_onchain_addr auction_onchain setDataHash_ $auction_onchain_data_hash
 
 invoke $shape_attribute_addr shape_attribute setAttributesRegistryAddress_ $attributes_registry_addr
 ##
@@ -126,6 +127,7 @@ invoke $attributes_registry_addr box_nft upgradeImplementation_ $attributes_regi
 invoke $set_addr box_nft upgradeImplementation_ $set_hash
 invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
 invoke $auction_onchain_addr box_nft upgradeImplementation_ $auction_onchain_hash
+# Don't forget data hash
 
 call $booklet_addr booklet_nft get_shape_ 0x13000000000000000000000000000000000000000000000001
 
