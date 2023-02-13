@@ -37051,6 +37051,10 @@
                 "pc": 590,
                 "type": "label"
             },
+            "contracts.ecosystem.genesis_collection.DUCKS_COLLECTION": {
+                "type": "const",
+                "value": 3
+            },
             "contracts.ecosystem.genesis_collection.GENESIS_COLLECTION": {
                 "type": "const",
                 "value": 1

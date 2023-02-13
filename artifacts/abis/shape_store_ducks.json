@@ -1,0 +1,229 @@
+[
+    {
+        "members": [
+            {
+                "name": "color_nft_material",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "x_y_z",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "ShapeItem",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "material",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "color",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "x",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "y",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "z",
+                "offset": 4,
+                "type": "felt"
+            },
+            {
+                "name": "nft_token_id",
+                "offset": 5,
+                "type": "felt"
+            }
+        ],
+        "name": "UncompressedShapeItem",
+        "size": 6,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "token_id",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "qty",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "FTSpec",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            }
+        ],
+        "name": "_check_properly_sorted",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            }
+        ],
+        "name": "_check_for_duplicates",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            }
+        ],
+        "name": "_check_nfts_ok",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "name": "global_index",
+                "type": "felt"
+            }
+        ],
+        "name": "shape_",
+        "outputs": [
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "data",
+                "type": "ShapeItem"
+            },
+            {
+                "name": "local_index",
+                "type": "felt"
+            }
+        ],
+        "name": "decompress_data",
+        "outputs": [
+            {
+                "name": "data",
+                "type": "UncompressedShapeItem"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "global_index",
+                "type": "felt"
+            },
+            {
+                "name": "shape_len",
+                "type": "felt"
+            },
+            {
+                "name": "shape",
+                "type": "ShapeItem*"
+            },
+            {
+                "name": "fts_len",
+                "type": "felt"
+            },
+            {
+                "name": "fts",
+                "type": "FTSpec*"
+            },
+            {
+                "name": "nfts_len",
+                "type": "felt"
+            },
+            {
+                "name": "nfts",
+                "type": "felt*"
+            }
+        ],
+        "name": "check_shape_numbers_",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

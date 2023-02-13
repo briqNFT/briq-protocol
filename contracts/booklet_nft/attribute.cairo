@@ -35,6 +35,34 @@ namespace IShapeContract {
 //###########
 //###########
 
+func _check_shape{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(
+    attribute_id: felt,
+    shape_len: felt, shape: ShapeItem*,
+    fts_len: felt, fts: FTSpec*,
+    nfts_len: felt, nfts: felt*,
+) {
+    alloc_locals;
+
+    // Check that the shape matches the passed data
+    let (local addr) = get_shape_contract_(attribute_id);
+    local pedersen_ptr: HashBuiltin* = pedersen_ptr;
+    // TEMP HACK because my original code hardcoded GENESIS_COLLECTION here.
+    // Need to update the shape contracts that the booklets point to.
+    let coll = (attribute_id - GENESIS_COLLECTION) / 2**192;
+    let is_genesis = is_le_felt(coll, 2**63);
+    if (is_genesis == 1) {
+        IShapeContract.library_call_check_shape_numbers_(
+            addr, (attribute_id - GENESIS_COLLECTION) / 2**192, shape_len, shape, fts_len, fts, nfts_len, nfts
+        );
+    } else {
+        IShapeContract.library_call_check_shape_numbers_(
+            addr, attribute_id, shape_len, shape, fts_len, fts, nfts_len, nfts
+        );
+    }
+    return ();
+}
+
 @external
 func assign_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(
@@ -44,17 +72,10 @@ func assign_attribute{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
     shape_len: felt, shape: ShapeItem*,
     fts_len: felt, fts: FTSpec*,
     nfts_len: felt, nfts: felt*,
-) {
-    alloc_locals;
-    
+) {    
     _onlyAttributesRegistry();
 
-    // Check that the shape matches the passed data
-    let (local addr) = get_shape_contract_(attribute_id);
-    local pedersen_ptr: HashBuiltin* = pedersen_ptr;
-    IShapeContract.library_call_check_shape_numbers_(
-        addr, (attribute_id - GENESIS_COLLECTION) / 2**192, shape_len, shape, fts_len, fts, nfts_len, nfts
-    );
+    _check_shape(attribute_id, shape_len, shape, fts_len, fts, nfts_len, nfts);
 
     // Transfer the booklet to the set.
     // The owner of the set must also be the owner of the booklet.

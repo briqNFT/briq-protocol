@@ -11,7 +11,7 @@ from starkware.cairo.common.registers import get_label_location
 
 from contracts.auction_onchain.data_link import AuctionData
 
-from contracts.auction_onchain.allowlist_test import _onlyAllowed
+from contracts.auction_onchain.allowlist_testnet import _onlyAllowed
 
 @view
 func get_auction_data{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -38,1405 +38,1404 @@ func get_auction_data{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
 
 auction_data_start:
 
-
 // 80sGymDuck.json
-dw 0x20431ff348589bd51d035db2fd27c1f3de48839e0339d290000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x8c03f1eba81afa437bcb45027aaf2ecbfa6e02a1f3bcc64800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // AdventurerDuck.json
-dw 0x4904c8a1e0e2a9cbe86a2db3fe735064208b927fd1864fa1000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x476b634e1b2b2f1358c54e174a023c0d9ac8e93d6702cafc000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // AirplaneDuck.json
-dw 0x26d5aae9a6176a10a969db14fa1741549c36e41c851ff994000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5e351d3c56af402b041131199c5ebf85e711fa6006169231000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // AltruisticDuck.json
-dw 0x5fd064cd0020087f6122e6567d4b5383c19c9d653913ad4f800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x711e7621e6f12873b4be1d3bc4dedae813c1908321485f70000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // AmericanFootballDuck.json
-dw 0x1c1be1ef314d5a859d14c39d727c4b31f8194d17cb13960e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x7951f12e483e89e08ec146c9842900c2df5a0bf1f39fbf75000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // AngelDuck.json
-dw 0x4e025ebb16e05d862b43de0f40286342864d7e3afc640ad4000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x69977e5bb5ca7055e739e32431b52c99c35ea303af87851b800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // AsylumDuck.json
-dw 0x44e37f1563e0184d32e285d0e2163c02edfc2a1763e7efe9000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x332c1cf0dcd8627645158f01675a00f11b7fbd0f23fab536800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // AthenaDuck.json
-dw 0xfa00c1d3d55669e33782a8ac959898577859523378f6ae1800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x41a4b3e4f5dc4dc499887653b477fd67860b8a4ae9c455df000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // AuctioneerDuck.json
-dw 0x161e62a342d51964868553c0875e3cd47d0b368699442580800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3ce4b7670940c19e6dac0b49aa2f834b92664a9b9e9e81c1000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // BDSMDuck.json
-dw 0x54d3cca9380ca58eeaa025c1a15edecee5abaab96040c3ce800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1c2ed67db5b4d2e399a790d08ed7a6bea0fc80a4eaf8e23b000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // BalletDancerDuck.json
-dw 0x7247418bf1a46965906d4309d6738f75543d39d9e9706615000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x56f04a789084ddfb70d1bcac1b65619c8018bc9bbd88d1b4000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // BananaDuck.json
-dw 0x1e229d5db1eaa86a07ac79f0c1722719eb95f7256c9085e9800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4ad5bee0faede9d885cb66f22cfdf2092d477ac766e72139800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // BaoziDuck.json
-dw 0x52747a19c6e8387fab66f3d48101319f45c924dac37b69e6000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6062933c8e64a55fee7f5f43769cf1cf150df2ae6279cda9000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // BarberDuck.json
-dw 0x2c125da0dc68519f56e5d352ac258593d1d64302f9bd7fb9000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x74824799da877375f863380952fefb4e4dcf0f7ebedd1df0800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // BeeDuck.json
-dw 0x75ee79f861fcf8351f74b63a4a16e748d4aac1f7820337000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x77e166e45c0eddf3c7fff4bf273780c40b53b39513578cfa800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
-// BeekeeperDuck.json
-dw 0x4da9a25e87dee6da87f4154a0b742c96abd29e4986f44503800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+// BeeKeeperDuck.json
+dw 0x655b66e9bf86a026b9123376813cc3cde5845516fa9d10d2000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // BikerDuck.json
-dw 0x66003d26dbaa0897cbb53545b735cf6652a956e47d140579800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x75ce12bc8fa572172e9faff249e56b992b19b555f42ca07b000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // BloodsDuck.json
-dw 0x37e8f46442e5be83b7eb065f232c12f2cecd5d250c527042800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2edd6cf2801b05c442cbec70f2a849d8a17fd5c625914f42000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // BrazilianDuck.json
-dw 0x3d295d9dc712e5084b8cd81a9d84b6dd9f135f5f6b18a154800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2c0569ca4a577328acedf3db463ec1757aa60e7c21ae29f9800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // BriqsDuck.json
-dw 0x9f4f8c58be2ad474cba518d29044fe7d2e118dcc8a20c10000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5aedfc4286badce5fa6833463c836f1dbccce244034be121000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // BuffoonDuck.json
-dw 0x18b1a3cf0df77c98841bf4bc880b2a535c350e6c7bc3d16800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x22807c32fb8707e3548e5566b65d8691fb78062d6925bd7d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ButcherDuck.json
-dw 0x638b52a0ea9c5057ec0b8b92f0b8769d74b6ff9e40d3022e800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1e064ea1607a60cfa09b050799cb2e4948a4121204037818000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // CR7Duck.json
-dw 0x3a4bcf9c2bc908664b29416098c6768443a9965b6fc54045800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x42999d674932d13216da8ed2d101ae582c866964cb9700c6000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CactusDucks.json
-dw 0x24c289ac0886e2d9b7bfffaa114b97677809ada001a6b177800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x69b24a7c740fe8593bbbe40604b1ea2ebf567fcfd057d6ed000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CaesarDuck.json
-dw 0x361f165883e26b80b1519cc2b785c62eada6e544fd703011800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4ca44a49b4ba5752f5f685be67c6181429730ff528b7a33e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // CarrotDuck.json
-dw 0x70c3f34a501fb68b8d5310cb15684fbb57b1f67bf9892aa1800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6132b9fa02f80457d84b785ed6044ebf3249ebf6cec36a69000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // ChaplinDuck.json
-dw 0x151a63997c3969c295764a60989d36bf22572a36f5f81e8c800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x290ab92837509a90738567be476cca31a5af502c2950aa32800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ChemistDuck.json
-dw 0x2e0fc5c40a31d182d77b33c332e9ed82bf0c3f45f680c838800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x52f53d372c6a702edc5b4a0e963af17b8696654ddc59104000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ChimeraDuck.json
-dw 0x12305d5356f27a21426e652f08b53a031f05b464e8b7364c800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x58b170da1a7ced3998fbee1c212a8a872f759ff8e1f0c450800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ClayTennisDuck.json
-dw 0x69f7ce9eef3f5a13e4ebf855266b888256080240232c31bd800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2d828a8d2efe00d8148a0311da72443f9989452351c34850000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CleaningDuck.json
-dw 0x2b392fa2a92736555fd234dda72e320eeb0cbfec547fe9b5000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x61b3c56725aab9f26f453c04a3327dad2535e0eb37dc61e8000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CleopatraDuck.json
-dw 0x73209f7c5b19bfdc11d85d904eeeaa564a44bfb284547a2e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5d5d843270391e6d3bc0c1a9207dd7fb2a9432cec137c5f1800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // CoffeeWaiterDuck.json
-dw 0x338a5344fa22e9b156d2409b611e9cd70d255c8b49b0e000000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xbedbf79175e209c39fc49cf56e2b842985db28a4baa22eb000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ColaCanDuck.json
-dw 0x1909482b73a5fdc7a454ac23a3ea169eb51f94f0200afa03800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x28b3a0c208da5b11226272a169436882287e1e87ae710f73000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ColdDuck.json
-dw 0x354d18d84689c2bf84ea0e559800e5278d6f43e585d12b42000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x43476cd40435fe6973de4ce7dc5b197720379d715d3a159f800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // ColvertDuck.json
-dw 0x612b47a282c413c4272c9174420100c09e85f5958f2bbdcc800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1ed31461b8320205e535f3ea7981c52de4d840b9b3d9947f800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CosplayDuck.json
-dw 0x5737ee331632e53e3c84018488274e86130780f846176c9a000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x57a9aef0a3afbf1aa08245a1c707c0a0272e397abf2d0a80000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CowboyDuck.json
-dw 0x498f3cb496a78cc109a4aadf5953094d6b2ce4eda42a4953800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x273a12d308fb76d7fd82fb153bfe4c5f28c09b6e9e009445000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CreepyClownDuck.json
-dw 0x323004fea0c220311007495476058ce457dce0673770e73e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x67bc8f050e8db3cfbae88e5774b312c56279e70cc06352b8000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CripsDuck.json
-dw 0x4505b9074197eaef07202a4438d1640d30bf09a71bbc8f0b000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x445047900f2a10ece5471e40fa56775b9065540ae0d59fed800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // CruyffOfTheBalkansDuck.json
-dw 0x58565fd931ec73bab8cd6880e600c149ee51d58417e5b688800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4d54638ac6e7278cde1899923f223f38fd06cabcc2633cb1000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DeliveryDuck.json
-dw 0x79e044aee3ece241c72ceedef98eceebf14d1bf7abbe39ad800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x32e8d3d17fd408432e888326c1fb3d54b71f43e96fe29880800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DevilDuck.json
-dw 0x2ca3eb8f0f3bcea5303fd9c726b65e6a61fc20cd02a682ad800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x60e152d682be23e7afd2e9bd74f596a034271e1353f981f2000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DiscoDuck.json
-dw 0x28046e946948363aaea7d7f1127113ab07f287b20d2be377000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1b4ac023f216ca45736b561ed57e399467be04bac9695994800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // DjDuck.json
-dw 0x46c4a61f549397afaf972fdfb6e4e30617012df9a3a0dd6a000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5a048bb9597ec8dcb077ed311725060da0b139a3f8c91509000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DonutDuck.json
-dw 0x5e9416ab30289378b95d6dbc296101d6b9669d0bb5078664000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x489abbc11c41daab631f3169f806356fd3d8efa41f218950800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DriverDuck.json
-dw 0x58de274a8d86f60567be0ef2a91b49a02a6bce483f318050800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1cd427e2f365ecd795f790fc91090e1ac3126de5aea7e4f6000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DruidDuck.json
-dw 0x49abbfe483cf93a9855c388ad7b03e494f197f13ef294d22800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3740af51ed70fc0edf675837558c4dd2d693fef9ff1c042e000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DrumstickDuck.json
-dw 0x5cacd735b6137b45ba11036dde616898ccda14feafa759e6800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x560472269e4a3033470676c80345c77a55c98f297988af3a000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // DrunkDuck.json
-dw 0x7f01ef771e5c74ff1ad23341107fc5d7518f530872de7f8b800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2723d856faffeedbecb39e9a344e2041ef01adc49caf9756800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DuckjovicDuck.json
-dw 0x6c712f57ddf66ab72bba68ad20b24e88af3212018ec286cb000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x46b2dab80757e4bfc5579a5f427be8537244025bcb2429fe800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DuckmanDuck.json
-dw 0x4ab19e8dcba88b1a1c20e349a2102597fef5882e959e49ef800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x58430274bd1840bbfa9832c9d53a1ac7fd195b81e45527d3800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // DucksInBlackDuck.json
-dw 0x599938dafac2c03b4dd82b9706b699bef0f5a2a974f47c05000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2217c9e630e96b243e9597e9fe4c50876467f0db5342856e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // DwarfDuck.json
-dw 0x743e7545aabb0b95a50589645cfac697f895d7744930871e800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x62796fef89fc638562ce1923801e9d3a4026302551ff369c800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // EagleDuck.json
-dw 0x2c19214f19f35eb59d7fe6529889a0370ae06efdc37ae275000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5ae41ccaa6311de8febc980d579958a1b6499e22dfd78df4000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // EctoplasmDuck.json
-dw 0x29c6de383e2539ae867e24f8f3b7477b2557530db741cb01800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x438cfc63731ce505b94d4c217c0ae663137191fdd650f9d6000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // EggDuck.json
-dw 0x2a5ef6d348cb39ddaf05853f1003e7f848b5a8bfec1dad36800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x50de198e49ed7e941fc6cf6796841d53b1ef7e5f238a1585000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // EgyptianDuck.json
-dw 0x22223fddd235d545c8efe939da603f428087b866427cce01000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4c18be56db7c6c54629615240927531b65b2fb79b85a9979000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ElFenomenoDuck.json
-dw 0x77656b0727f3ad0478d185b057077f4ac7df14b25eaa0905800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x385e70ba8a81cb2b4c4b66622d1c3c78ca8ac95f2002562f000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ElPibeDeOroDuck.json
-dw 0x62261c4cc6b5f84480f800ed7780c1dc22a333bc1c4e969e800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4a821b6abbe415add886625a56a27436db3b7c591a6358a3000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ElfDuck.json
-dw 0x10b0a667324304023afb64c164bf1566e76a3d0dee3f927f000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4bf2c78940950eec1866f9daf1a62de109072e220eb606fd000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // FarmerDuck.json
-dw 0x5bda925546382885e7b826a56018884d2674d1083f18eba1800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2b5e16a7eb2629de92f8bdcbd14160bf9fa50b759554614c800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FencilDuck.json
-dw 0x481fa788b86bb33901a1e1f5b0d6994d27069bd3a08c0649800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x7676c7a9d7292042f30fbaeee6f030a11094a19e1a265e0d800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FireDuck.json
-dw 0x45a7c8282e66be2a65c11a699fa8e7023a0adc89ebe930ec000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5f83d73c6df3d33033b00481871ebfaf62c36a50c1b659b1000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // FirefighterDuck.json
-dw 0x7834e678ca0f6be43bd57880624278452e4482daaff9cee5800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x601136471b3debbea2b36d70eb0a720a2c039a7499d72850000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // FirstMatePirate.json
-dw 0x657fc615c24c94fc7090e0874e07b0388a2a4d8509f07dcc000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1744f54e63532c09f67ee7e283feecb76438d928e54afc11000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FishermanDuck.json
-dw 0x3e5a9070dd5136055eab22f731104fa47c5eca37fa26d07a000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4d80e763b5af55821b7587235acaf680820b0b399f213ded000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FlamingoDuck.json
-dw 0x7c2b5575a30a6b7861caec0fd1dbdaae43cbbb6e2e1a752f800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5b54850da0dff05a8be584471915167dff95c6fea4a0d142800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FlyingLadyDuck.json
-dw 0x3d828e89849768b00dd4bddb8a36ee9d9a8a1ef178c9e31b800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2ba130d96187ad29c256259acc47a84ccf14629b8af3a5ff000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FoolDuck.json
-dw 0x109961c28c1c765309b042f6f0a1663dad1c8fa4708df1f5000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xf6479f77ad089b6bc425557ec67acaf8e7c1f2c3be041a0800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FrankensteinDuck.json
-dw 0x323bd4f3a0fd62111ec85cb4a81ad39e35c5d4c3e683ff45000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x26db66b8e1156d59f2361c024cfd1050871488459ea08d3e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FrenchDuck.json
-dw 0x698dcc17e0b322deb694c01fedb6947c51e335c7b8a7e546800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x63c9bdce61b17afcb13904fdd6c5dd1b022c660936574a9e000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FrenchMayorDuck.json
-dw 0x58691267b149a4463caef39ef36c2810010aa6502e09fd60800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x51836e42c4562d5a04e4cd35594051fb6b6bf3a0c72232c3800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // FrenchPoliceDuck.json
-dw 0x54e386395d98fae312e9180063fa7fdcb6ce76a2e68f44dd000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x41117a77d25e64c410ab06987d8ea4290816952c94534d2e000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FunDuck.json
-dw 0x75dfe8a36f708126f2313edbf3bf0d163e0f083854e794f2800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x28960db6b9eda9273db7653574c26ed07d896feb317d5c5f800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // FunnyClownDuck.json
-dw 0x20d2c738725218f058755fa3bf5e5b92073519ba5acb194e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x335d3d089e2e77e2275ac68e8eb7af03ddbb7b8e631c6808000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // GardenerDuck.json
-dw 0x7603e03083cffbdd61a36ad88e1076d4ff4287a307a66245000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1ed8c421a32df151f0a9757f181cb46a1b72935d1e58166800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // GasMaskDuck.json
-dw 0x36632d462b9845646475691c9c6c177840c1d927c6266c3e800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6fb65fda28d8992661216b368f875a4b81ed6732696f6a7c800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // GaulChefDuck.json
-dw 0x743ecb69dbb9cdb795353f94caf7ccaa07642d2988f8bb0800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x22f99365e4e8c4b60b4cbe2ec9efb3c246f9f910c6fb356800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // GaulChefessDuck.json
-dw 0x133583159f011a51db2200440260e819974b0c8a97c3b08e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1f4bf3aa33524969b99321d0cd6bd81c13e94c498a3dc279800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // GhostDuck.json
-dw 0xa80c784011351af8d66f4bb6262425d8870fa18096ff697800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6bcc619b12b222b7ada4b542fd1367c89cea6cd14ba87810000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // GnomeDuck.json
-dw 0xdec4d627aa6e8db94c8f84b7b5fc138e00369f89d8384d2800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2bd163965963f414ad9f6e1491ba85b78a6ab122bdc1c2e1000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // GondolierDuck.json
-dw 0x7a894304f470dae958e06e5affb360e8eeb43df87c195a7a800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xbf778377be6b81a5ebaf70114877c612357d937d3a372be000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // GraduatedDuck.json
-dw 0x2b786f6f5c566b883d74137e4213db9dbd19cd8f7d713c0a000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x31949b9d95c1ceb86b2ab46885667a1a4583cc5d1c0dc731800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // GrandpaDuck.json
-dw 0x5b0c6ba7dfd2273fdb723cbb455c0bded6d341362394a5a4800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x76be0c84a767df1613d3632c3aa7a9c35520b8f3d0df3c0e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // HeadKnifeDuck.json
-dw 0x36cd8716cf52326c7c6afa52eb7255438b1ab133fbed9525000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x47af166c2da3648461219f75f39a1d26e015500e8597fbc1800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // HeartDressedDuck.json
-dw 0x7e934e256a66f1405baccb049a4ce9850a77a735dd4c187b800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x788d845cbf0fefb3d58ed19aec4fee2bfc743dcd70bda90d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // HidingDuck.json
-dw 0x6da80fe7736e8fc0d9898ce3e22b12ab4cda58519de3a4a8800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x532ca41e46863c98d71c85deb6429b1e12cff59fbdf4476b800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // HighlighterDuck.json
-dw 0x239606460d252a88c59e7a71520845eccffad48843af278b800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x51788c6d0c9bd15a173c8931197c9d75a1b4ebec3c85238f000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // HonduranDuck.json
-dw 0x3262b1df298fb4385e6018bb2a7d19ae3be78908048fc092800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5e55aa6ceab4d5751f46a8ee9a640db2cc38b495009f132f000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // HorseRidingDuck.json
-dw 0xcbebe8650e02b8ad6646b6ca272e7a3c4703a13510e321e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x64190f65c3565521dd1babe1c6795a8bfc9abf9dbc407281000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // HotDuck.json
-dw 0x67e890bf718a8fba598fbd53a2f8d52c6e2096f72563610b800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4c5293e7e522c94feb138d1c445208758a122567d4bc070e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // HunterDuck.json
-dw 0x19a0afec34e603e7f4ff07b242d043ae4658457e9d90dea8000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x522b74e149d94ec189f947819b1de1c79f3bda88dbe04d3000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // IceCreamDuck.json
-dw 0x607b955cd4d39814dfb55e07644e06d46aeacb0af0710b6f800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x71a4421898b3845c58a191950c8c1359ab9e4cbcfbcec6a1000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // IncaDuck.json
-dw 0x6c40d249e0c61cb561d95ff83da9f6df844ab32d83444d9a800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2967fe366281ee5fdb31ef9e4aa1cb6d806e6be29dddcd9d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // InvisibleDuck.json
-dw 0x39dd86aaabf2643c1316f2edeb7323cf1395dceaaf952ec9800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x548ace1ee625f62b9d4a108bbe989d7a9d97c15820bd14ba800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // IrishDuck.json
-dw 0x2a27bbad84b4441fbe177a6f7e07843dc13a691293331578000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x47fc7069fae27326d34347d379c1f6ede45089e5d6db0fb8800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ItalianDuck.json
-dw 0x1feef858b9355ada0202cf93a3aa1c4daa963ed6e17b97ef800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2e877f4ba19e5d8dfb5c9cd618003a18ba6e2af0afbd113000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // JediDuck.json
-dw 0x5bf25a56ae2c9ad3716caf210a8f1925e37607f74478504e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x110fe925a1642272e2f63cdbba0c9a24ab64f6ce73cfd55a800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // JesusDuck.json
-dw 0x4fea57b7b779bf320c230f9fffd901d5b42261419f04b85e800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x54c5236fd550b8ae7ea4487f9eb842b8434e1ba336d9fb72000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // KarateDuck.json
-dw 0x1400ee758abb7a281de5936aa4833ac5304bfb1b0a4a4565000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x799fdafe616f59df963f36ab5cd05df7c0d2d96c2abaa59a800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // KingArthurDuck.json
-dw 0x452ce557fbca406933b54af9abb81748147cfacbee77c3c7000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x59a2585c32a91d8d74503c2282bd1b24ef55626d85a74f12800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // KnightDuck.json
-dw 0x656a79b361e87c6559e91e852fb5d92a41bd7d99a9ea8c13800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6a1f35717990e1a35f49b16a22a463da5f04fca2d9fb490b000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // LadyOfTheNightDuck.json
-dw 0x1778f27253f9161ef648361b0fad922d67237ed64c9b7c87000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x14ee924125be6bd9eeb9ea07443667b8dd854b3d264db43e000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // LaserEyesDuck.json
-dw 0x1e9386bf0b88bee256995a964b35b7f387e5404fceb938c8800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xa8d317769960a0011efaacbfc985df9c61db14b53288936800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // LeprechaunDuck.json
-dw 0x63dfb54e7baab0fd9a8ffe9eaf4174a386adcfe869e9b31e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x21dbe16dc6dd38318f81085d6ec9f2054c3058f18641e961000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // LittleRedDuck.json
-dw 0x4717e0008905d29bf45ca5fdaee469ed956bdff5827ba0bb800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xb75dca83f1160ebed084bb4d1c450d06990d8d5f05c5224800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // LouisXIVDuck.json
-dw 0x3b7e9aec1ae27c976b06fdb430bdc2a8eed4f387c18283c6000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x79073c93968a11bd243b324a1f433140e884f8427a204716800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // LumberjackDuck.json
-dw 0x504398f388e5a5edfeffa71389fcd7583c38ee40fea968ee800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5208f096cdf65d3f0e7db5bd0c6a0e10659ffb864b7edffa800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // MagicianDuck.json
-dw 0x155c296d795effa8f2a0b7f25e5a7ac7771df37cc8c50a3f800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xc25ea2b4c57e99e8ce2845e43555177fdb11667be3bcaaa000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // MailmanDuck.json
-dw 0x45b1e5cbe43a2cae290be639b9b94fc4bf4d8ebf82a3f0ef000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6e00ac28ded63f9bbde943f6994ec6d7f14f235650544d94000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // MangosteenDuck.json
-dw 0x2693dc7a765cf61f7b889888f1abe9844a0e426b00a3ea43800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xbbb17d2def4fba90605ec3b04a5d652ef87a86ceee9e801800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // MergedDuck.json
-dw 0x418be4895de7e3347269611f128a6047643f2438a83b20ed800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1e54efbeb776332e0139ed5dc7d0bc02e482716c2813c06c800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // MermaidDuck.json
-dw 0x40bafb2c9ea7cceffd3cf5cc0b8a2f34ae6e44585d9c802f800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x41610a8b095ccf815d095e7ba602ab7437dc9c7677a931e8800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // MillipedeDuck.json
-dw 0x24a7fea1a0948effdcd2bd41887a88bb27521c5b3f07708b000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x17a840b5484ad375e229115d45399612ff55a271f0cdf02b000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // MimeDuck.json
-dw 0x5d6c1deb2d804e3c106051b7924b7b77c9cfde1acb37ab5e800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x676373043412a7368cca1ede5117082fd87d64d72cdf896c000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // MinerDuck.json
-dw 0x77eabf3e6a42cd43402490060f8830cba5e68acccbd685e8800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x23a4f60346d4c2a8a408ae5e09cfe586720f7b481f91b4ed800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // MissDuck.json
-dw 0x328bbf167f01ced484e6f5c5add4d068f8196f1f3a4d85b8800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x40d80a8375c122275b408aa227f0e6b7117c8ceec46f1091800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // MonkDuck.json
-dw 0x5f232221899e3976db76d44ac1cd1a73bc49b680a24702ed000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3beab9597f9b5310195a15328a33b783239c276ea0c093e3800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // NapoleonDuck.json
-dw 0x452a03d99e21704aec6618c4710f1df934e2e920b6a74868800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1f3a8f13df0ddb743741ffe0da7be6aa49c18b7ae47cfdc7000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // NunDuck.json
-dw 0xe51b05345fca8c336b345126a52d999c92c096c2ca78c68000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x76742ced02128685ca38f830be1d463dd204469824a90024800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // NurseDuck.json
-dw 0x131df1ab1589f63651b58256b429874cfab27f3a9ff75db2800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1153884fa1d48fc8556e0bcd19ce9f22c984ade6ab95f648800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // NyanDuck.json
-dw 0x642abebce0f3f549a1b43637d06a6762412628ba90a9a668800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x172e79f26cf7b6e8dd6ba60d12ecf36b3b3765fd79abc9af800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PartyDuck.json
-dw 0x60f4e511d6d3bbb89c48571efdf9803142645bf77d06e606000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x470d04f921936d80ab695084149f9647a3a2bcd9ac25fe94000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PastryChefDuck.json
-dw 0x3f4dd64d3dba20d58ef7c6849ad60c9996689b59f7e61984000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2a54a76872d5e8886d4d8d8b68f4efcc26ae31dd34703fa9000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // PenguinDuck.json
-dw 0x4691985eb33e968eabd42b8353c402d6f56ed510dfba6051800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3b3fe710f29b95f76d1ec097675a96d0eec89b3402124f3d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // PharmacistDuck.json
-dw 0x6f818c766fce3abade6960ba853c0375b8f0f54c9eb80cac000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x119265800f67fbd182845b7e28fa4636c88ddc3a3c17b643800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PianoDuck.json
-dw 0x3ce04c64d36087d65718c4d04e937350de5fc88d6e408456800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x557198c6f402026a165bc8ce4c205aa0ac5972980a2cde5b000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PigeonDuck.json
-dw 0x2f288b165181115fe531bc41af8e8a7fda0465ca640a4091000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6d0bd48de59b3916c4dc3288ce58724d0a61cb2df1661a22800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PineTreeDuck.json
-dw 0x310cdcf20d954c90f5861d0ea91a94502edd5bebfd42ec65000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x22b19b16c601a1b4c35d10e99761d35c7a2c0863ccf574a7800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // PirateDuck.json
-dw 0x5b65fab79ff53b77337416672bf2e14537d4f4de332eb9ae800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3b80e96123204f966e661364cc4cd9664069a33a4ca19bab000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PizzaDuck.json
-dw 0x417367f8fcf8dd3ff7b535e74fb48fd90b00e31d491cfb8b800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x270864d1c2553ab7713897505467a3d7219cf0275f49bfc4800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PlagueDoctorDuck.json
-dw 0x25b3778308323285ffc25cc30aa5af49f8221b55c11d9851800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x161440197fd60da2da2751ad2a19bb7a70d57ed0271264da800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PlantDressedDuck.json
-dw 0x5b8b4c2ed2221d3314c55eb9f5aa426b50a131c825924bc8000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6ce520fb787cd26db5962db816f1cef5b3a6aff601e6a373000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PlungerDuck.json
-dw 0x4868b542aa4a047b660047dfa9b5bbb8c342e71d426d0f4a000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x334cef7aff02495265ef5a938e16532ef92e9b4c1ea42ad8000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PopeDuck.json
-dw 0x17323eec4ba3bf6d4130c212759ddde50764b28a89541ac7000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x65e692bcc856010ca079171ee9ea8b0f5cf6fe6e7306d7f0000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PoseidonDuck.json
-dw 0x68cb4e68b87c31af9bbd74f81132003ed723254ce7a5928f800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3a19772b776b2e9a74016d867ecb9d0a7ff51e1135606fb4800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PrehistoricDuck.json
-dw 0x3ca03060b3949f76ceaa574ad1adfd8a3474e1ad3e8283ef800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3d3130048e8cbac5c90bbf619efc9d62dab521101443e638000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // PrinceDuck.json
-dw 0xd2750af6e2c9366dc005195d081fbf90fc6153d3f33d384000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5708263ccb7e2e8451dee61b331182bafc9f36997eed4757000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PrincessDuck.json
-dw 0x72212ba766d5dc267bbfa887bc1a5786d89bd919043ab49800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2f7425371647c77ab3d24f484fe01f2f311b8e4b0c1dfbb8800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PrisonerDuck.json
-dw 0x513a4c14373df0bfefd29c93c0cd641be47a91eacf26ac21800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5215693578c139c568faedd63f214da3a059a302ba20c258800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // PumpkinDuck.json
-dw 0x647fa924763498149b6b87f4364c0517acf11bb8f1165788800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1bd4015caf88a405644b25939064f2772076bf36f47d08a0000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // QueensGuardDuck.json
-dw 0x316d15c37a1c7823095d7a24326732fa92a99ac09ed64243000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1c45aed2586cbd909bf11835be74a52c82535c9ea3d7e7b5000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // RailroaderDuck.json
-dw 0x569ac9e51d60971667a18e0dcaed8744a7888fdde08e76f4800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x9d0e05f08c822b95d0dca8ca27e2117a64be1dd015ed3c0800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ReaperDuck.json
-dw 0x25a99133d9143323112ff0aae3da4b645ce8ab315b3159b800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x617c203c6a9232cf20308a1d3c651cc895b3b409a56169b4000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // RedTelephoneBoxDuck.json
-dw 0x67aef28e1c1bac80fb055ee1416d29125ed9184fe0766631000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5778a145ce69ceb7111078056bdda70b212cb382b8ca194c800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ReindeerDressedDuck.json
-dw 0x2d5cec634253e2dde80e509c247bea063b34741e6ae75159800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x20e27815e9b25dcb84d4ba64eb72edcc594180ff32580edd000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // RepairManDuck.json
-dw 0x18cc7d4ecdfd4d37ab678611ce263b0e064e67baa637f694800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x691787dd0144ff4d3aca32d6dd4015d2b44df914ef8ff04d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // RoadSafetyDuck.json
-dw 0x9b58157c1b99d299bd72a72c6ca20eaeab9075141e298ae000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x767850b6791ff09def36860f3a196a07f759aeb7736456fe800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // RobinHoodDuck.json
-dw 0x68b703d611d2cc89ddea818fece6e66c8c8f14935d4016f4800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x7eb8ce1238156c526fdfde486de12f983a3faba344bf305000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // RocketShipDuck.json
-dw 0x2b25b5c1166a9fc20118312f12f2e62dd48891cbcd046206800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4bfebef6d1ea7337425651ff998209852469283434433757000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // RollerDuck.json
-dw 0x37071a74c041c9bbf30e9120109a8f5fb317b1b98ee78bf7000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x32155d67852347aa56551fa1db92cf9c18066ad522e9f955800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // RomanDuck.json
-dw 0x74eeecc590bcea4c6280ccc8fbf0b3f0e1b2f0fc83c62f72000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x329f4a59bfbbd1d867794e8752d56ae0c15540c0ef60cc76000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // RunningDuck.json
-dw 0xe793253b66faf4f178d12ad8b088a229eb6933c19fe6376800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x568247b4584725248317a3ef307b40ca19efc0b8625895cb000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SailorDuck.json
-dw 0x5050c7debbbc346081aebd2781d56cb158aceaa4f8f0465c000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x142b24d4afc2dee27923398b829de8db7726063ed582f09a000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SaintPatrickDuck.json
-dw 0x10370fc9a0dfd258209880d45c0e5f5a52a4166c82382985800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x11f78453cc8967ec2d0d9b6948e12040513b45f90ec10cc1800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // SandCastleDuck.json
-dw 0xd5f374ce16696294538504db76502efc32bee6b36443624000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x25850deb362e4fa57acb02afaebe000a849c4d3813e60640000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ScarecrowDuck.json
-dw 0xc89b24e96e3adda975c7ec2cb644a402afbc0b216822bf1800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6e9fe49f1368c0e26bec51715c557fb9afde9c50eff9626d800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ScoutDuck.json
-dw 0x238a3f7f03adf5a91b3d642cbb4007764d3298e947566bd7800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3574fe15d1b32bd8cba02de852b7a7023d6e1427a208c544800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // SerialKillerDuck.json
-dw 0x471bae63eb7b31c2b1cdc9b9a2632499f049ffb8f4922178000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x60835d0824f72579407f1b4e272af500fa38640634d9001b800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // SheriffDuck.json
-dw 0x8417d0f183653bbc3338a0acc9d0b9f38092ddb49b71e29800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x124781a7cb9a13c7cbf56642681e84bef6876fe26d8a722b000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SherlockDuck.json
-dw 0x954e88f61247c8353f2f37a73c797b3f27b93d5a1549835000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xe5f7decc4a14f996cce54c753581b4b7ec4c92600b0385e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SiamesesDuck.json
-dw 0x2e2d9533b486395800a0cc26d296e1bab2532e9e56b55963000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4c6776975179f727451541c236f65e5f23abd6b20d4d5aa7800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SickDuck.json
-dw 0x46529a63fe79cbc4a1f9f4cf517a66e8d44ffe0182997995000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x67664071a9a65347202f5ff2b4ad63457d68002882ba1c8d800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SnailDuck.json
-dw 0x2285acb827e9cba931ded25082881e9f5c30675b510dc8ab800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5e9d6ad75e5890f5aff39821e71756651a23690291228404000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SnowboardDuck.json
-dw 0x63eab38a5c985ae42b266b0f1861b109c8e8a7e48788cd14800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x25737fed7fb3e911dbf13d81de16a6941d69675093ac41ed000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SpacemanDuck.json
-dw 0x5b4bab3a4b1a5fece447ad7af9b20216e9c14236d8ecbd9e000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2066301b713809fce599830e5e8ff549a2820bcb41cf2f8d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SpanishDuck.json
-dw 0x7ab040826a900f4a484c6c40e957e52829ef3edc143f9f1d800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2385e55f8541d7ee8bdd836c7f0f0e0a63a92382aa4b2b2b800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SpecialForcesDuck.json
-dw 0x91902c6f1f41ce73f8be595414720289c43d015ffc21e1c000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x237ccea67384b8c5e99e21855617b721ed0d04ec774045a000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SpeleologistDuck.json
-dw 0x32f076113fde04ee3947daae757ac940ff89baa4e9e2a9ed000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x51d0cb7c1fd916d1d383dc358cc8c0b2522ad96027fbfe9e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // StarkNetCCDuck.json
-dw 0x25afd0d107291e873c2139e7910d75155e86b1d50f0ac32a800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x20cfa42d172b318801dcfd83a41ae39cb688fd6fff0ffa8d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // StewardessDuck.json
-dw 0x1eb9d4fdbcdf05d83f8236aaf77a98d6954b5a58edc46edf800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4eff9ec234d1fa52b6d31f2a5b7145de744a802a099316ee000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // Stopduck.json
-dw 0x781350eaac855c3be4b03b510d5bb05fc64d2d834944f119000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4bbea36c0ae4f3e26f870972f35eb1ea30fa5d15e8b0b56c800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SumoDuck.json
-dw 0x5069701919d340c79df5be6232a3cc1cc5fd60773fac748a800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xd484556cb1db261ff029ff862e47127aa1444f3d881e4bc800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // SurgeonDuck.json
-dw 0xe9d28f5aa0e73e8d559061ebb3a3ce0f120d5ba0a12eff4800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1440df99f9c753a798994dacbcef22629735d9229ec6d7f0800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SwagDuck.json
-dw 0x6949e78b137ac26afe1f22d960ab778ad8f8e554ab1d5f6e800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x31751a83c1863d522358cbd65264776e4c5edc3d9478e739800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // SwimmerDuck.json
-dw 0x2ba95461e3cc110fe13e03c96acf6ba91bcc0f3d8ef00b67000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4ca9909102d7a1bff3ca6a080f72a8bfb233d6056ae2c4d9000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // TaekwenDuck.json
-dw 0x1dbf50687f5d32d5e5b9f76b63888265defcd388597d38ac000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x47e8ed1843e854ee508f17b42280ab4850a8dc60812bdf7e000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ThaiDuck.json
-dw 0x3c6e87ce723c02fddc6b3e2f1855c944934a9a8d21056e64000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x56031bc5c61aa673376e1e93b135407e2cafcc3595192f71000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ToucanDuck.json
-dw 0x4ef4294a2ca065f827c760255cdc89ee597d41e2bd86bebd800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1408d60893ffc0db4a2544ad97c09f34ac537e079ef2ba5e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // TrickOrTreatDuck.json
-dw 0x53ddb02d9b4a7c9ddedc5b16cdf0fcd7c45c66ed509bd5b5000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x896abf16f174275e17c7579fa0879dd685dcc9bd8d16f3c000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // TurkishDuck.json
-dw 0x32ead81eed1f90785a96d4fb10b6330741f7035582ec5da8800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x31560aba0fd5add99f14887c5b1a35f65f7f3b0e73be58cb000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // TwirlerDuck.json
-dw 0x7eae386f36780dbc6a1c7097816b4f6f25c45efe516810bc800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x21af93240486f0e4d830bea0b8dae421ddda86a81aec9e19000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // UFODuck.json
-dw 0xdfcfa6b14de714b4156356e89f6b21197e2bfb79ea924cb800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x3635bc46e39b15e59ed7576f1a48bb11f7db7de797c49aea800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // USADuck.json
-dw 0x2039aa07add24dff555d79b96bdf5219049a5311b2539745800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x5787a25d2a026a421065dbf445c23ee105bc71c2001daed1800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // UnicycleDuck.json
-dw 0x3ccaa6be5014aa3acb6b409321ddb8147010070c5d40dc3a000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x533a450035823dc1db5cf9dc382c4ad73d7a6c8411042442800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // UpperClassDuck.json
-dw 0x35a7ffcd25a06984b744d85673cec691e34ad736edce2316800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x1f43c2ff3867fa52b8e47dc3b95aea7a08f0062df3373586800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // UpsideDownDuck.json
-dw 0x612aea3a1708d78812edc57c125f0c26cc96b3d143bf5dc7800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x2e25cc31e3f325082e5f36c18fe5ca85904792581fb2dd8d000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // VRDuck.json
-dw 0x575ffc18a461aea55c7daf3ccb411ce322181a91edbcd69000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x15b72a5dc4edfaee458587a93f941ad5a8e800f000c2aa78000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // VampireDuck.json
-dw 0x390da0f37dfa1ee606349afe9c715285ddeea40053fce5bd800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x7ee1369e4620134f712dc4357899dc5be016a0522d24c860800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // VeteranDuck.json
-dw 0x14332ae29b44688e330edb1fd017dd4a95b070d995a54de7000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x46fad4f575367a3a5cceef3f983fbb2e693580e07fb32506800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // VietDuck.json
-dw 0x6ea88a30eb4cff666dc92d31fd115573407ac5cbe2c94f37800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x162fad70804c9dc35117a1b7d3469c540e9e3a49c591cd78000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // WarriorDuck.json
-dw 0x11ef6771c92cacd2a08cb8da606dbe31517037c0ad5573a4000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xf4fbaf04f0e78b498c8e84aa42d3054172be224614a866e800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // WaterJetDuck.json
-dw 0xa91451830916cf510a296765e97878b1d8916e341761f7d000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0xd852f2964f2266d55852e35a20c933a591885a417f7cbbb800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // WetDuck.json
-dw 0x1050a80450005f160886f816fec663551b2eb4beb7a44e1c000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6404efad2e195bafa59560016c65baf4214703948eec82de000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // WitchDuck.json
-dw 0x51b70f3c7470353b9eb7845bc6af325aa11574ac90f7fd19800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x301b9f75e01637a5275e330500364f6f74a2a15fe71d22bd000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // WorkerDuck.json
-dw 0x9e3f2a3fc7c4d169adfd16db3bc95076ce1b87715698098000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x6e5eb1871c4f5173e531ccc0638300270eeea88c90758839000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // YoungDuck.json
-dw 0x449b18ed3936e3cbd451556b5c49a59fd4ce74090296e528800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x167447cde14f9df583c5038266401d60fbd1e72c5a4757a5800000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 // ZombieDuck.json
-dw 0x4a2553d6e33c66d9187604cbce9159bbe8038c0c0162f3b2800000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x40419fb6722b3676c5c738b96477f09b1c6d53a95b8bcc95000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676116600; // start date
+dw 86400; // duration
 
 // ZorroDuck.json
-dw 0x1d9a3261e467c6396b408ee4e66c6e6cd3222d320f8af89f000000000000000; // token ID
-dw 10000000000000; // minimum bid (wei)
+dw 0x4696201940cd6cbe8c160def469f0f8cda157c8f5d0cfdd3000000000000000; // token ID
+dw 50000000000000000; // minimum bid (wei)
 dw 50; // growth factor (in per mil)
-dw 1674483098; // start date
-dw 864000; // duration
+dw 1676023000; // start date
+dw 86400; // duration
 
 auction_data_end:

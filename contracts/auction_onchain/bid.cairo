@@ -218,6 +218,11 @@ func settle_auctions{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
 
 @contract_interface
 namespace ISetContract {
+    func ownerOf_(
+        token_id: felt
+    ) -> (owner: felt) {
+    }
+
     func transferFrom_(
         sender: felt, recipient: felt, token_id: felt
     ) {
@@ -226,16 +231,22 @@ namespace ISetContract {
 
 func _settle_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     token_id: felt,
-    owner: felt,
+    new_owner: felt,
 ) {
     // Do nothing if there was no bid.
-    if (owner == 0) {
+    if (new_owner == 0) {
         return ();
     }
 
     let (set_address) = getSetAddress_();
-    let (contract_address) = get_contract_address();
-    ISetContract.transferFrom_(set_address, contract_address, owner, token_id);
+    let (current_owner) = ISetContract.ownerOf_(set_address, token_id);
+
+    with_attr error_message("Set being settled does not exist") {
+        // Sanity check
+        assert_not_zero(current_owner);
+    }
+
+    ISetContract.transferFrom_(set_address, current_owner, new_owner, token_id);
     return ();
 }
 
