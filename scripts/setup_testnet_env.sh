@@ -2,7 +2,7 @@ export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAcco
 export STARKNET_NETWORK_ID="goerli"
 export STARKNET_NETWORK="alpha-goerli"
 export WALLET_ADDRESS="0x22030445da671e4f5bdab7802a061ca0c55754d9703c5390266fd8b814de880"
-
+PROMPT='%F{green}TESTNET%f %1~ %# '
 
 
 

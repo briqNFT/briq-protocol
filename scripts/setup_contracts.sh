@@ -15,6 +15,7 @@ starknet_declare () {
 
 nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
 
+
 starknet_declare artifacts/proxy.json proxy_hash
 starknet_declare artifacts/booklet_nft.json booklet_hash
 starknet_declare artifacts/attributes_registry.json attributes_registry_hash
@@ -115,6 +116,8 @@ invoke $attributes_registry_addr attributes_registry setSetAddress_ $set_addr
 invoke $attributes_registry_addr attributes_registry create_collection_ 1 2 $booklet_addr
 # Collection 2 is shape hashes, supported by contract (thus params = 2)
 invoke $attributes_registry_addr attributes_registry create_collection_ 2 2 $shape_attribute_addr
+# Collection 3 is ducks everywhere, same booklet as the genesis collection.
+invoke $attributes_registry_addr attributes_registry create_collection_ 3 2 $booklet_addr
 
 
 # If you have to upgrade

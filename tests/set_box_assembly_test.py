@@ -122,6 +122,39 @@ async def test_working(tmp_path, factory, deploy_clean_shapes):
     assert (await state.booklet_contract.balanceOf_(SET_TOKEN_ID, BOOKLET_ID).call()).result.balance == 0
 
 
+
+@pytest.mark.asyncio
+async def test_other_collection(tmp_path, factory, deploy_clean_shapes):
+    state = factory
+    TOKEN_HINT = 1234
+    BOOKLET_ID = 1234 * 2**192 + 5
+
+    [shape_hash, _] = await deploy_clean_shapes(factory.starknet, shapes=[(
+        [('#ffaaff', 1, 2, -2, -6),
+        ('#aaffaa', 1, 4, -2, -6),
+        ('#aaffaa', 1, 5, -2, -6),
+        ('#aaffaa', 1, 6, -2, -6)],
+        []
+    )], offset = 1234 * 2**192 + 5) # Offset specifically crafted here to offset the above booklet ID, won't work in general.
+    await state.attributes_registry_contract.create_collection_(5, 2, state.booklet_contract.contract_address).execute()
+    await state.booklet_contract.mint_(ADDRESS, BOOKLET_ID, shape_hash.class_hash).execute(BOX_ADDRESS)
+
+    await state.set_contract.assemble_(
+        owner=ADDRESS,
+        token_id_hint=TOKEN_HINT,
+        name=[0x12], description=[0x34],
+        fts=[(0x1, 4)],
+        nfts=[],
+        attributes=[BOOKLET_ID],
+        shape=[
+            compress_shape_item('#ffaaff', 0x1, 2, -2, -6, False),
+            compress_shape_item('#aaffaa', 0x1, 4, -2, -6, False),
+            compress_shape_item('#aaffaa', 0x1, 5, -2, -6, False),
+            compress_shape_item('#aaffaa', 0x1, 6, -2, -6, False),
+        ],
+    ).execute(ADDRESS)
+
+
 @pytest.mark.asyncio
 async def test_bad_shape(tmp_path, factory, deploy_clean_shapes):
     state = factory
