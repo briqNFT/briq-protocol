@@ -11,7 +11,7 @@ from starkware.crypto.signature.signature import FIELD_PRIME
 
 from starkware.starknet.compiler.compile import compile_starknet_files, compile_starknet_codes
 
-from generators.shape_utils import to_shape_data, compress_shape_item
+from briq_protocol.shape_utils import to_shape_data, compress_shape_item
 
 from .conftest import declare_and_deploy, deploy_shape
 

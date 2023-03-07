@@ -10,11 +10,11 @@ from starkware.starkware_utils.error_handling import StarkException
 from starkware.starknet.business_logic.state.state_api_objects import BlockInfo
 
 from starkware.starknet.compiler.compile import compile_starknet_files, compile_starknet_codes
-from generators.generate_auction import generate_auction
+from briq_protocol.generate_auction import generate_auction
 
-from generators.shape_utils import to_shape_data, compress_shape_item
+from briq_protocol.shape_utils import to_shape_data, compress_shape_item
 
-from generators.generate_box import generate_box
+from briq_protocol.generate_box import generate_box
 
 from .conftest import compile, VENDOR_SRC, declare_and_deploy, declare_and_deploy_proxied, hash_token_id, proxy_contract, deploy_clean_shapes
 

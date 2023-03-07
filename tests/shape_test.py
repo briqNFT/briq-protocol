@@ -38,7 +38,7 @@ async def starknet(empty_starknet):
 
 
 ## Test compress
-from generators.shape_utils import to_shape_data, compress_shape_item, uncompress_shape_item
+from briq_protocol.shape_utils import to_shape_data, compress_shape_item, uncompress_shape_item
 
 def test_compression():
     col_nft_mat, xyz = compress_shape_item("#ffffff", 2, 5, -1, 4)

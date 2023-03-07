@@ -2,6 +2,7 @@ from typing import Tuple
 from .shape_utils import to_shape_data
 
 # Index_start is usually 1 because the token 0 generally doesn't exist and this makes things neater.
+# Warning: shapes isn't sorted (because tests pass broken inputs on purpose)
 def generate_shape_code(shapes: list[Tuple[list, list]], index_start: int = 1):
     newline = '\n'
     shape_offsets = ["dw 0;"]

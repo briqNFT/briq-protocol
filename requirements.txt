@@ -1,3 +1,0 @@
-pytest>=6
-pytest-asyncio>=0
-cairo-lang~=0.10.3

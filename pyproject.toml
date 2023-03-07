@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "briq-protocol"
+description = "briq NFT protocol contracts & python helpers"
+version = "0.1.0"
+readme = "README.md"
+requires-python = "~=3.9"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "briq", email = "founders@sltech.company" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "cairo-lang>=0.10.3,<0.11.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/briqNFT/briq-protocol#readme"
+Issues = "https://github.com/briqNFT/briq-protocol/issues"
+Source = "https://github.com/briqNFT/briq-protocol"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-asyncio",
+  "flake8",
+]
+[tool.hatch.envs.default.scripts]
+test = "pytest"

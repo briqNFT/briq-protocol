@@ -11,11 +11,11 @@ from starkware.starkware_utils.error_handling import StarkException
 from starkware.cairo.common.hash_state import compute_hash_on_elements
 
 from starkware.starknet.compiler.compile import compile_starknet_files, compile_starknet_codes
-from generators.generate_auction import generate_auction
+from briq_protocol.generate_auction import generate_auction
 
-from generators.shape_utils import to_shape_data, compress_shape_item
+from briq_protocol.shape_utils import to_shape_data, compress_shape_item
 
-from generators.generate_box import generate_box
+from briq_protocol.generate_box import generate_box
 from tests.booklet_test import MOCK_SHAPE_TOKEN
 from tests.genesis_sale_test import OTHER_ADDRESS
 

@@ -13,7 +13,7 @@ from starkware.starknet.public.abi import get_selector_from_name
 from starkware.starknet.utils.api_utils import cast_to_felts
 from starkware.starknet.compiler.compile import compile_starknet_files, compile_starknet_codes
 
-from generators.shape_utils import to_shape_data, compress_shape_item
+from briq_protocol.shape_utils import to_shape_data, compress_shape_item
 
 from .conftest import declare_and_deploy, hash_token_id, proxy_contract, deploy_clean_shapes
 

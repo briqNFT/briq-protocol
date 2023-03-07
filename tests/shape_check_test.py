@@ -8,7 +8,7 @@ from starkware.starknet.testing.starknet import StarknetContract
 from starkware.starkware_utils.error_handling import StarkException
 from starkware.starknet.compiler.compile import compile_starknet_codes, compile_starknet_files
 
-from generators.shape_utils import to_shape_data, compress_shape_item
+from briq_protocol.shape_utils import to_shape_data, compress_shape_item
 
 from .conftest import deploy_shape
 

@@ -8,7 +8,7 @@ from starkware.starknet.compiler.compile import compile_starknet_files
 from starkware.starknet.testing.starknet import StarknetContract
 from starkware.cairo.common.hash_state import compute_hash_on_elements
 
-from generators.generate_shape import generate_shape_code
+from briq_protocol.generate_shape import generate_shape_code
 
 
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contracts")

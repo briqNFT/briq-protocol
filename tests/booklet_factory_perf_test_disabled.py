@@ -13,7 +13,7 @@ from starkware.starknet.compiler.compile import compile_starknet_files, compile_
 
 from starkware.starknet.public.abi import get_selector_from_name
 
-from generators.shape_utils import to_shape_data, compress_shape_item
+from briq_protocol.shape_utils import to_shape_data, compress_shape_item
 
 from .briq_impl_test import FAKE_BRIQ_PROXY_ADDRESS, compiled_briq, invoke_briq
 from starkware.starknet.testing.objects import StarknetTransactionExecutionInfo

@@ -12,6 +12,8 @@ __pycache__/
 !artifacts/
 !contracts/
 !scripts/
-!generators/
+!briq_protocol/
 !docs/
 !tests/
+
+!pyproject.toml
