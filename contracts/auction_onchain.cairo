@@ -22,6 +22,7 @@ from contracts.auction_onchain.bid import (
     make_bids,
     make_bid,
     settle_auctions,
+    transfer_funds,
 )
 
 from contracts.ecosystem.to_set import (

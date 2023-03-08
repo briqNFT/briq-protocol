@@ -1,5 +1,3 @@
-set -e -o pipefail
-
 # Hashes
 source "$STARKNET_NETWORK_ID.test_node.txt"
 
@@ -88,6 +86,7 @@ call $attributes_registry_addr box_nft getImplementation_
 call $set_addr box_nft getImplementation_
 call $briq_addr box_nft getImplementation_
 call $shape_attribute_addr box_nft getImplementation_
+call $auction_onchain_addr box_nft getImplementation_
 
 nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
 

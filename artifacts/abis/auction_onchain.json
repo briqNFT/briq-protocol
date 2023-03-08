@@ -275,5 +275,20 @@
         "name": "settle_auctions",
         "outputs": [],
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "receiver",
+                "type": "felt"
+            },
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "transfer_funds",
+        "outputs": [],
+        "type": "function"
     }
 ]
