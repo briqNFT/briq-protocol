@@ -1,9 +1,22 @@
-%lang starknet
+#[contract]
+mod Auth {
+    use starknet::get_caller_address;
+    use starknet::ContractAddress;
 
-from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.starknet.common.syscalls import get_caller_address
+    #[view]
+    fn _only(address: ContractAddress) {
+        let caller = get_caller_address();
+        if caller != address {
+            assert(false, 'Not authorized');
+        }
+    }
+}
 
-from contracts.vendor.openzeppelin.upgrades.library import Proxy
+//%lang starknet
+
+//from starkware.cairo.common.cairo_builtins import HashBuiltin
+//from starkware.starknet.common.syscalls import get_caller_address
+//from contracts.vendor.openzeppelin.upgrades.library import Proxy
 
 //###################
 //###################
