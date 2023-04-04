@@ -63,6 +63,27 @@ async def test_mint_transfer(factory):
 
 
 @pytest.mark.asyncio
+async def test_mint_authorization(factory):
+    [_, booklet_contract, _] = factory
+    TOKEN = 1
+    await booklet_contract.mint_(ADDRESS, TOKEN, 2).execute()
+    with pytest.raises(StarkException, match="caller is not admin"):
+        await booklet_contract.mint_(ADDRESS, TOKEN+1, 2).execute(ADDRESS)
+    with pytest.raises(StarkException, match="caller is not admin"):
+        await booklet_contract.mint_(ADDRESS, TOKEN+1, 2).execute(OTHER_ADDRESS)
+    # OutSmth
+    with pytest.raises(StarkException):
+        await booklet_contract.mint_(ADDRESS, TOKEN+1, 2).execute(0x02ef9325a17d3ef302369fd049474bc30bfeb60f59cca149daa0a0b7bcc278f8)
+    with pytest.raises(StarkException):
+        await booklet_contract.mint_(ADDRESS, 2 + 2**192, 2).execute(0x02ef9325a17d3ef302369fd049474bc30bfeb60f59cca149daa0a0b7bcc278f8)
+
+    with pytest.raises(StarkException):
+        await booklet_contract.mint_(ADDRESS, 3 + 43434343 * 2**192, 2).execute(0x02ef9325a17d3ef302369fd049474bc30bfeb60f59cca149daa0a0b7bcc278f8)
+
+    await booklet_contract.mint_(ADDRESS, 3 + 2 * 2**192, 2).execute(0x02ef9325a17d3ef302369fd049474bc30bfeb60f59cca149daa0a0b7bcc278f8)
+
+
+@pytest.mark.asyncio
 async def test_shape(factory, deploy_shape):
     [starknet, booklet_contract, _] = factory
     [shape_hash, shape_contract] = await deploy_shape(starknet, [
