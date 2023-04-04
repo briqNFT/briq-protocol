@@ -23,5 +23,3 @@ __pycache__/
 !.gitmodules
 !Cargo.lock
 !Cargo.toml
-!src/
-!contract_c1/

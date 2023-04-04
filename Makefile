@@ -2,7 +2,7 @@
 
 .PHONY: compile
 
-SOURCE_FOLDER=./contracts
+SOURCE_FOLDER=./contract_c1
 last_folder=$(basename $(dirname $(dir)))
 
 init-submodules:
@@ -35,7 +35,7 @@ check-format:
 
 starknet-compile:
 	mkdir -p out && \
-	  cargo run --bin starknet-compile -- ${file} out/$(shell basename $(file) .cairo).json
+	  cargo run --bin starknet-compile -- $(SOURCE_FOLDER)/${file} out/$(shell basename $(file) .cairo).json
 
 language-server:
 	cargo build --bin cairo-language-server --release
