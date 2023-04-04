@@ -13,5 +13,6 @@ nile compile --directory contracts/vendor/ \
     contracts/upgrades/proxy.cairo
 
 starknet-compile --no_debug_info --output artifacts/shape_store_ducks.json contracts/shape/shape_store_ducks.cairo
+starknet-compile --no_debug_info --output artifacts/shape_store_zenducks.json contracts/shape/shape_store_zenducks.cairo
 starknet-compile --no_debug_info --output artifacts/auction_onchain_data_goerli.json contracts/auction_onchain/data_testnet.cairo
 starknet-compile --no_debug_info --output artifacts/auction_onchain_data_mainnet.json contracts/auction_onchain/data_mainnet.cairo

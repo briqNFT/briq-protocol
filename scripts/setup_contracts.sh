@@ -27,6 +27,8 @@ starknet_declare artifacts/shape_store.json shape_store_hash
 starknet_declare artifacts/auction_onchain.json auction_onchain_hash
 starknet_declare "artifacts/auction_onchain_data_${STARKNET_NETWORK_ID}.json" auction_onchain_data_hash
 
+starknet_declare artifacts/shape_store_zenducks.json shape_store_zenducks_hash
+
 
 ### Contracts
 
@@ -117,7 +119,8 @@ invoke $attributes_registry_addr attributes_registry create_collection_ 1 2 $boo
 invoke $attributes_registry_addr attributes_registry create_collection_ 2 2 $shape_attribute_addr
 # Collection 3 is ducks everywhere, same booklet as the genesis collection.
 invoke $attributes_registry_addr attributes_registry create_collection_ 3 2 $booklet_addr
-
+# Collection 4 is zenducks, idem
+invoke $attributes_registry_addr attributes_registry create_collection_ 4 2 $booklet_addr
 
 # If you have to upgrade
 # invoke $attributes_registry_addr attributes_registry upgradeImplementation_ $attributes_registry_hash
