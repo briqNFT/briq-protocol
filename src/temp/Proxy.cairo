@@ -1,0 +1,4 @@
+mod Proxy {
+    mod toto {
+    }
+}
