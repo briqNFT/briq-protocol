@@ -17,3 +17,10 @@ __pycache__/
 !tests/
 
 !pyproject.toml
+
+!Makefile
+!cairo
+!.gitmodules
+!Cargo.lock
+!Cargo.toml
+!src/
