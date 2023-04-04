@@ -18,8 +18,10 @@ __pycache__/
 
 !pyproject.toml
 
+!Scarb.toml
 !Makefile
 !cairo
 !.gitmodules
 !Cargo.lock
 !Cargo.toml
+!src
