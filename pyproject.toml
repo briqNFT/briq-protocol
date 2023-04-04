@@ -21,7 +21,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "cairo-lang>=0.10.3,<0.11.0",
+  "cairo-lang>=0.11.0",
   "cairo-nile",
 ]
 
