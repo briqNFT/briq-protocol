@@ -1,0 +1,3 @@
+[crate_roots]
+briq_protocol = "../src"
+tests = "."

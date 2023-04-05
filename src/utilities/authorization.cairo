@@ -1,4 +1,3 @@
-#[contract]
 mod Auth {
 
     use starknet::get_caller_address;
@@ -6,7 +5,7 @@ mod Auth {
     use starknet::ContractAddressIntoFelt252;
     use traits::Into;
 
-    //use contract_c1::temp::Proxy::toto;
+    use briq_protocol::temp::Proxy::Proxy;
 
     #[view]
     fn _only(address: ContractAddress) {
@@ -25,7 +24,7 @@ mod Auth {
         if caller == 0x059dF66aF2E0E350842b11EA6B5a903b94640C4ff0418b04CceDcC320F531A08 {
             return ();
         }
-        assert(false, 'Not authorized'); //    Proxy.assert_only_admin();
+        Proxy::assert_only_admin();
     }
 
     #[view]
@@ -34,7 +33,6 @@ mod Auth {
             return ();
         }
         _onlyAdmin();
-        assert(false, 'Not authorized'); //    Proxy.assert_only_admin();
     }
 }
 

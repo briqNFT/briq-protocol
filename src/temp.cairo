@@ -1,4 +1,1 @@
-mod temp {
-    mod Proxy {
-    }
-}
+mod Proxy;
