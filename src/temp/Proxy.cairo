@@ -1,4 +1,5 @@
 mod Proxy {
-    mod toto {
+    fn assert_only_admin() {
+        assert(false, 'Not authorized');
     }
 }

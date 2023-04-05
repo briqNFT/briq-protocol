@@ -25,13 +25,16 @@ build:
 
 test: dir = ./tests
 test:
-	cargo run --bin cairo-test -- --starknet --path $(dir)
+	cargo run --bin cairo-test -- $(dir) --starknet 
 
 format:
 	cargo run --bin cairo-format -- --recursive $(SOURCE_FOLDER) --print-parsing-errors
 
 check-format:
 	cargo run --bin cairo-format -- --check --recursive $(SOURCE_FOLDER)
+
+compile:
+	~/Programming/scarb/target/debug/scarb build
 
 starknet-compile:
 	mkdir -p out && \

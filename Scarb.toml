@@ -1,10 +1,13 @@
 [package]
-name = "contract_c1"
+name = "briq_protocol"
 version = "0.1.0"
 
 # See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest
 
 [dependencies]
 # foo = { path = "vendor/foo" }
+
+[lib]
+casm = true
 
 [[target.starknet-contract]]

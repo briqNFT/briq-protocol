@@ -22,7 +22,6 @@ classifiers = [
 ]
 dependencies = [
   "cairo-lang>=0.11.0",
-  "cairo-nile",
 ]
 
 [project.urls]
@@ -39,10 +38,22 @@ only-include = ["briq_protocol", "docs", "tests"]
 [tool.hatch.envs.default]
 python = "3.9"
 dependencies = [
-  "pytest",
-  "pytest-asyncio",
-  "flake8",
-  "cairo-nile>=0.9"
+  "pytest>=7",
+  "pytest-asyncio>=0.21",
+  "flake8>=6.0",
+  #"cairo-nile>=0.9",
+  #"starknet-devnet@git+ssh://git@github.com/Shard-Labs/starknet-devnet.git",
+  "starknet-py>=0.15",
 ]
+
 [tool.hatch.envs.default.scripts]
 test = "pytest"
+
+[tool.hatch.envs.devnet]
+python = "3.9"
+dependencies = [
+  "starknet-devnet@git+ssh://git@github.com/Shard-Labs/starknet-devnet.git",
+]
+
+[tool.hatch.envs.devnet.scripts]
+test = "starknet-devnet"
