@@ -2,7 +2,7 @@
 
 .PHONY: compile
 
-SOURCE_FOLDER=./contract_c1
+SOURCE_FOLDER=./src
 last_folder=$(basename $(dirname $(dir)))
 
 init-submodules:

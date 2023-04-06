@@ -25,31 +25,96 @@
 //    token_uri,
 //)
 
+mod collections;
+mod attributes;
+
 #[contract]
 mod AttributesRegistry {
-    use briq_protocol::utilities::authorization::Auth::_onlyAdmin;
-    use briq_protocol::ecosystem::to_set::Storj;
-
     use starknet::ContractAddress;
-    use option::OptionTrait;
-    use traits::Into;
-    use starknet::ContractAddressIntoFelt252;
-    use traits::TryInto;
-    use starknet::Felt252TryIntoContractAddress;
 
-    struct Storage {
-        to_set: Storj,
+    use briq_protocol::attributes_registry::collections::Collections;
+
+    #[external]
+    fn create_collection_(collection_id: felt252, params: felt252, admin_or_contract: felt252) {
+        Collections::create_collection_(collection_id, params, admin_or_contract);
+    }
+
+    #[external]
+    fn increase_attribute_balance_(attribute_id: felt252, initial_balance: felt252) {
+        Collections::increase_attribute_balance_(attribute_id, initial_balance);
+    }
+
+    use briq_protocol::attributes_registry::attributes::Attributes;
+    use briq_protocol::attributes_registry::attributes::Attributes::ShapeItem;
+    use briq_protocol::attributes_registry::attributes::Attributes::FTSpec;
+
+    #[external]
+    fn assign_attributes(
+        set_owner: felt252,
+        set_token_id: felt252,
+        mut attributes: Array<felt252>,
+        ref shape: Array<ShapeItem>,
+        ref fts: Array<FTSpec>,
+        ref nfts: Array<felt252>,
+    ) {
+        Attributes::assign_attributes(set_owner, set_token_id, attributes, ref shape, ref fts, ref nfts);
+    }
+
+    #[external]
+    fn assign_attribute(
+        set_owner: felt252,
+        set_token_id: felt252,
+        attribute_id: felt252,
+        ref shape: Array<ShapeItem>,
+        ref fts: Array<FTSpec>,
+        ref nfts: Array<felt252>,
+    ) {
+        Attributes::assign_attribute(set_owner, set_token_id, attribute_id, ref shape, ref fts, ref nfts);
+    }
+
+    #[external]
+    fn remove_attributes(
+        set_owner: felt252,
+        set_token_id: felt252,
+        mut attributes: Array<felt252>
+    ) {
+        Attributes::remove_attributes(set_owner, set_token_id, attributes);
+    }
+
+    #[external]
+    fn remove_attribute(
+        set_owner: felt252,
+        set_token_id: felt252,
+        attribute_id: felt252,
+    ) {
+        Attributes::remove_attribute(set_owner, set_token_id, attribute_id);
     }
 
     #[view]
+    fn has_attribute(
+        set_token_id: felt252, attribute_id: felt252
+    ) -> felt252  {
+        return Attributes::has_attribute(set_token_id, attribute_id);
+    }
+
+    #[view]
+    fn total_balance(
+        owner: felt252
+    ) -> felt252 {
+        return Attributes::total_balance(owner);
+    }
+    
+
+
+    use briq_protocol::ecosystem::to_set::ToSet;
+
+    #[view]
     fn getSetAddress_() -> ContractAddress {
-        let toto: Option<ContractAddress> = to_set::read().address.try_into();
-        toto.expect('not an address')
+        return ToSet::getSetAddress_();
     }
 
     #[external]
     fn setSetAddress_(addr: ContractAddress) {
-        _onlyAdmin();
-        to_set::write(Storj { address: addr.into() })
+        return ToSet::setSetAddress_(addr);
     }
 }
