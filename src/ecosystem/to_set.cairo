@@ -1,42 +1,28 @@
 
-use briq_protocol::utilities::authorization::Auth::_onlyAdmin;
-//from contracts.utilities.authorization import _onlyAdmin
+#[contract]
+mod ToSet {
+    use briq_protocol::utilities::authorization::Auth::_onlyAdmin;
+    use starknet::ContractAddress;
 
-#[derive(Drop)]
-struct Storj {
-    address: felt252,
-}
-
-use starknet::storage_access::StorageAccess;
-use starknet::storage_access::StorageBaseAddress;
-use starknet::SyscallResult;
-//use starknet::syscalls::storage_read_syscall;
-//use starknet::syscalls::storage_write_syscall;
-
-impl toto of StorageAccess::<Storj> {
-    fn read(address_domain: u32, base: StorageBaseAddress) -> SyscallResult<Storj> {
-        let address = StorageAccess::<felt252>::read(
-            address_domain, base
-        )?;
-        SyscallResult::<Storj>::Ok(Storj { address })
+    struct Storage {
+        address: ContractAddress,
     }
 
-    #[inline(always)]
-    fn write(address_domain: u32, base: StorageBaseAddress, value: Storj) -> SyscallResult<()> {
-        starknet::StorageAccess::write(address_domain, base, value.address)
+    use option::OptionTrait;
+    use traits::Into;
+    use starknet::ContractAddressIntoFelt252;
+    use traits::TryInto;
+    use starknet::Felt252TryIntoContractAddress;
+
+    //#[view]
+    fn getSetAddress_() -> ContractAddress {
+        return address::read();
     }
-}
 
-
-trait Accessor<T> {
-    #[external]
-    fn get(self: T) -> T;
-}
-
-impl StorjAccess of Accessor::<Storj> {
-    #[external]
-    fn get(self: Storj) -> Storj {
-        self
+    //#[external]
+    fn setSetAddress_(addr: ContractAddress) {
+        _onlyAdmin();
+        address::write(addr)
     }
 }
 
