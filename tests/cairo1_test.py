@@ -77,9 +77,10 @@ async def factory_root():
 
     from starknet_py.hash.casm_class_hash import compute_casm_class_hash
     from starknet_py.net.schemas.gateway import CasmClassSchema
+    from starknet_py.common import create_casm_class
 
-    with open("target/release/briq_protocol_AttributesRegistry.sierra.json", "r") as f:
-        casm_class = CasmClassSchema().loads(f.read())
+    with open("target/release/target/release/briq_protocol_AttributesRegistry.sierra.json", "r") as casm:
+        casm_class = create_casm_class(casm)
 
     # Compute Casm class hash
     casm_class_hash = compute_casm_class_hash(casm_class)

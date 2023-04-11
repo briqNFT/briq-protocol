@@ -43,7 +43,7 @@ dependencies = [
   "flake8>=6.0",
   #"cairo-nile>=0.9",
   #"starknet-devnet@git+ssh://git@github.com/Shard-Labs/starknet-devnet.git",
-  "starknet-py>=0.15",
+  "starknet-py>=0.15.2",
 ]
 
 [tool.hatch.envs.default.scripts]
@@ -56,4 +56,4 @@ dependencies = [
 ]
 
 [tool.hatch.envs.devnet.scripts]
-test = "starknet-devnet"
+devnet = "starknet-devnet"
