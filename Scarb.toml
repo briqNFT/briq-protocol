@@ -7,7 +7,6 @@ version = "0.1.0"
 [dependencies]
 # foo = { path = "vendor/foo" }
 
-[lib]
-casm = true
-
 [[target.starknet-contract]]
+casm = false
+sierra = true
