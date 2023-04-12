@@ -1,4 +1,3 @@
-
 #[contract]
 mod ToSet {
     use briq_protocol::utilities::authorization::Auth::_onlyAdmin;

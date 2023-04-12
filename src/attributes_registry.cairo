@@ -31,6 +31,7 @@ mod attributes;
 #[contract]
 mod AttributesRegistry {
     use starknet::ContractAddress;
+    use traits::Into;
 
     use briq_protocol::attributes_registry::collections::Collections;
 
@@ -50,58 +51,58 @@ mod AttributesRegistry {
 
     #[external]
     fn assign_attributes(
-        set_owner: felt252,
+        set_owner: ContractAddress,
         set_token_id: felt252,
         mut attributes: Array<felt252>,
         ref shape: Array<ShapeItem>,
         ref fts: Array<FTSpec>,
         ref nfts: Array<felt252>,
     ) {
-        Attributes::assign_attributes(set_owner, set_token_id, attributes, ref shape, ref fts, ref nfts);
+        Attributes::assign_attributes(set_owner.into(), set_token_id, attributes, ref shape, ref fts, ref nfts);
     }
 
     #[external]
     fn assign_attribute(
-        set_owner: felt252,
+        set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_id: felt252,
         ref shape: Array<ShapeItem>,
         ref fts: Array<FTSpec>,
         ref nfts: Array<felt252>,
     ) {
-        Attributes::assign_attribute(set_owner, set_token_id, attribute_id, ref shape, ref fts, ref nfts);
+        Attributes::assign_attribute(set_owner.into(), set_token_id, attribute_id, ref shape, ref fts, ref nfts);
     }
 
     #[external]
     fn remove_attributes(
-        set_owner: felt252,
+        set_owner: ContractAddress,
         set_token_id: felt252,
         mut attributes: Array<felt252>
     ) {
-        Attributes::remove_attributes(set_owner, set_token_id, attributes);
+        Attributes::remove_attributes(set_owner.into(), set_token_id, attributes);
     }
 
     #[external]
     fn remove_attribute(
-        set_owner: felt252,
+        set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_id: felt252,
     ) {
-        Attributes::remove_attribute(set_owner, set_token_id, attribute_id);
+        Attributes::remove_attribute(set_owner.into(), set_token_id, attribute_id);
     }
 
     #[view]
     fn has_attribute(
         set_token_id: felt252, attribute_id: felt252
-    ) -> felt252  {
+    ) -> bool  {
         return Attributes::has_attribute(set_token_id, attribute_id);
     }
 
     #[view]
     fn total_balance(
-        owner: felt252
+        owner: ContractAddress
     ) -> felt252 {
-        return Attributes::total_balance(owner);
+        return Attributes::total_balance(owner.into());
     }
     
 

@@ -57,12 +57,8 @@ fn insert_reverse(mut out: Array<felt252>, mut data: Span<u128>) -> Array<felt25
 fn felt_to_ascii_array(i: felt252) -> Array<u128> {
     let tok_u256 = u256_from_felt252(i);
     let out = ArrayTrait::<u128>::new();
+    // TODO: fix this by using u256
     let (q, low) = u128_safe_divmod(tok_u256.low, u128_as_non_zero(100000000000000000000000000000000000000_u128));
-    //let high = tok_u256.high * 4_u128 + (tok_u256.low - low) / 100000000000000000000000000000000000000_u128;
-    let high = tok_u256.high;// * 4_u128 + (tok_u256.low - low) / 100000000000000000000000000000000000000_u128;
-    if high > 0_u128 {
-        return _felt_to_ascii_array(out, high);
-    }
     return _felt_to_ascii_array(out, low);
 }
 
