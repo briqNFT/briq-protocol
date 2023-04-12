@@ -14,31 +14,27 @@ mod Balance {
     use array::ArrayTCloneImpl;
     use clone::Clone;
 
-    use starknet::get_caller_address;
-    use starknet::ContractAddress;
+    use briq_protocol::utils::TempContractAddress;
+    use briq_protocol::utils::GetCallerAddress;
     
     use briq_protocol::utils;
     use briq_protocol::utils::check_gas;
 
     struct Storage {
-        _balance: LegacyMap<(ContractAddress, felt252), felt252>,
+        _balance: LegacyMap<(TempContractAddress, felt252), felt252>,
     }
 
-    fn _increaseBalance(owner: ContractAddress, token_id: felt252, number: felt252) {
+    fn _increaseBalance(owner: TempContractAddress, token_id: felt252, number: felt252) {
         let balance = _balance::read((owner, token_id));
-        //with_attr error_message("Mint would overflow balance") {
-            //assert_lt_felt252(balance, balance + number);
         assert(balance < balance + number, 'Mint would overflow balance');
         _balance::write((owner, token_id), balance + number);
         return ();
     }
 
     fn _decreaseBalance(
-        owner: ContractAddress, token_id: felt252, number: felt252,
+        owner: TempContractAddress, token_id: felt252, number: felt252,
     ) {
         let balance = _balance::read((owner, token_id));
-        //with_attr error_message("Insufficient balance") {
-            //assert_lt_felt252(balance - number, balance);
         assert(balance - number < balance, 'Insufficient balance');
         _balance::write((owner, token_id), balance - number);
         return ();
@@ -46,7 +42,7 @@ mod Balance {
 
     // @view
     fn balanceOf_(
-        owner: ContractAddress, token_id: felt252
+        owner: TempContractAddress, token_id: felt252
     ) -> felt252 {
         return _balance::read((owner, token_id));
     }
@@ -70,7 +66,7 @@ mod Balance {
     //}
 
     fn balanceOfBatch_(
-        mut owners: Array<ContractAddress>, mut token_ids: Array<felt252>
+        mut owners: Array<TempContractAddress>, mut token_ids: Array<felt252>
     ) -> Array<felt252> {
         assert(owners.len() == token_ids.len(), 'Bad input');
         let mut balances = ArrayTrait::<felt252>::new();
@@ -78,7 +74,7 @@ mod Balance {
     }
 
     fn _balanceOfBatch_(
-        mut owners: Array<ContractAddress>, mut token_ids: Array<felt252>, mut balances: Array<felt252>
+        mut owners: Array<TempContractAddress>, mut token_ids: Array<felt252>, mut balances: Array<felt252>
     ) -> Array<felt252> {
         check_gas();
         if owners.len() == 0_u32 {

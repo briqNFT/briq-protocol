@@ -178,14 +178,14 @@ mod Attributes {
     //@view
     fn has_attribute(
         set_token_id: felt252, attribute_id: felt252
-    ) -> felt252 {
+    ) -> bool {
         let (_, delegate_contract) = _get_admin_or_contract(_get_collection_id(attribute_id));
         if (delegate_contract == 0) {
             let balance = 0;//ERC1155_balance.balanceOf_(set_token_id, attribute_id);
-            return balance;
+            return balance > 0;
         } else {
             let balance = IDelegateContractDispatcher { contract_address: delegate_contract.try_into().unwrap() }.balanceOf_(set_token_id, attribute_id);
-            return balance;
+            return balance > 0;
         }
     }
 

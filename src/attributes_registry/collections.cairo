@@ -49,6 +49,7 @@ mod Collections {
 
     use traits::BitAnd;
     use traits::Into;
+    use briq_protocol::utils;
 
     fn _OnCollectionCreated(collection_id: felt252) {
         let (admin, contract) = _get_admin_or_contract(collection_id);
@@ -113,7 +114,7 @@ mod Collections {
 
     fn _get_collection_id(attribute_id: felt252) -> felt252 {
         let collection_id = attribute_id.into() & COLLECTION_ID_MASK.into();
-        return collection_id.low.into() + collection_id.high.into() * 0x100000000000000000000000000000000; // 2**128
+        return collection_id.try_into().unwrap();
     }
 
     fn _has_contract(collection_id: felt252) -> bool {
