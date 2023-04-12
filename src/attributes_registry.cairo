@@ -54,11 +54,11 @@ mod AttributesRegistry {
         set_owner: ContractAddress,
         set_token_id: felt252,
         mut attributes: Array<felt252>,
-        ref shape: Array<ShapeItem>,
-        ref fts: Array<FTSpec>,
-        ref nfts: Array<felt252>,
+        shape: Array<ShapeItem>,
+        fts: Array<FTSpec>,
+        nfts: Array<felt252>,
     ) {
-        Attributes::assign_attributes(set_owner.into(), set_token_id, attributes, ref shape, ref fts, ref nfts);
+        Attributes::assign_attributes(set_owner.into(), set_token_id, ref attributes, @shape, @fts, @nfts);
     }
 
     #[external]
@@ -66,11 +66,11 @@ mod AttributesRegistry {
         set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_id: felt252,
-        ref shape: Array<ShapeItem>,
-        ref fts: Array<FTSpec>,
-        ref nfts: Array<felt252>,
+        shape: Array<ShapeItem>,
+        fts: Array<FTSpec>,
+        nfts: Array<felt252>,
     ) {
-        Attributes::assign_attribute(set_owner.into(), set_token_id, attribute_id, ref shape, ref fts, ref nfts);
+        Attributes::assign_attribute(set_owner.into(), set_token_id, attribute_id, @shape, @fts, @nfts);
     }
 
     #[external]
@@ -79,7 +79,7 @@ mod AttributesRegistry {
         set_token_id: felt252,
         mut attributes: Array<felt252>
     ) {
-        Attributes::remove_attributes(set_owner.into(), set_token_id, attributes);
+        Attributes::remove_attributes(set_owner.into(), set_token_id, ref attributes);
     }
 
     #[external]
@@ -105,7 +105,6 @@ mod AttributesRegistry {
         return Attributes::total_balance(owner.into());
     }
     
-
 
     use briq_protocol::ecosystem::to_set::ToSet;
 

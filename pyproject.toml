@@ -57,3 +57,4 @@ dependencies = [
 
 [tool.hatch.envs.devnet.scripts]
 devnet = "starknet-devnet"
+deploy = "starknet declare --contract ./target/dev/briq_protocol_AttributesRegistry.sierra.json --wallet=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount --compiler_dir ./target/debug"

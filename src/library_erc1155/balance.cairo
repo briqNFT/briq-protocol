@@ -69,8 +69,7 @@ mod Balance {
         mut owners: Array<TempContractAddress>, mut token_ids: Array<felt252>
     ) -> Array<felt252> {
         assert(owners.len() == token_ids.len(), 'Bad input');
-        let mut balances = ArrayTrait::<felt252>::new();
-        return _balanceOfBatch_(owners, token_ids, balances);
+        return _balanceOfBatch_(owners, token_ids, ArrayTrait::<felt252>::new());
     }
 
     fn _balanceOfBatch_(
