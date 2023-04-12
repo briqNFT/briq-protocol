@@ -4,7 +4,7 @@ mod ToSet {
     use starknet::ContractAddress;
 
     struct Storage {
-        address: ContractAddress,
+        set_address: ContractAddress,
     }
 
     use option::OptionTrait;
@@ -15,13 +15,13 @@ mod ToSet {
 
     //#[view]
     fn getSetAddress_() -> ContractAddress {
-        return address::read();
+        return set_address::read();
     }
 
     //#[external]
     fn setSetAddress_(addr: ContractAddress) {
         _onlyAdmin();
-        address::write(addr)
+        set_address::write(addr)
     }
 }
 

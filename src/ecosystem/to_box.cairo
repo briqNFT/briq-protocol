@@ -4,15 +4,15 @@ mod toBox {
     use briq_protocol::utils::TempContractAddress;
 
     struct Storage {
-        address: TempContractAddress,
+        box_address: TempContractAddress,
     }
 
     fn get() -> TempContractAddress {
-        return address::read();
+        return box_address::read();
     }
 
     fn set(addr: TempContractAddress) {
         _onlyAdmin();
-        address::write(addr)
+        box_address::write(addr)
     }
 }

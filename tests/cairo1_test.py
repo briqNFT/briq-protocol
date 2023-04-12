@@ -28,28 +28,6 @@ DISALLOWED_ADDRESS = 0xdead
 CONTRACT_SRC = os.path.join(os.path.dirname(__file__), "..", "contract_c1")
 VENDOR_SRC = os.path.join(os.path.dirname(__file__), "..", "contract_c1", "vendor")
 
-from dataclasses import dataclass
-
-@dataclass
-class fakeClass():
-    og: Any
-    program: Any
-    abi: Any
-
-    @property
-    def entry_points_by_type(self):
-        return self.og.entry_points_by_type
-
-    def get_builtins(self):
-        return []
-
-    def get_prime(self):
-        return self.og.prime
-
-    def get_bytecode(self):
-        return self.og.bytecode
-
-
 @pytest_asyncio.fixture(scope="session")
 async def factory_root():
     starknet = None

@@ -4,15 +4,15 @@ mod toAttributesRegistry {
     use briq_protocol::utils::TempContractAddress;
 
     struct Storage {
-        address: TempContractAddress,
+        ar_address: TempContractAddress,
     }
 
     fn get() -> TempContractAddress {
-        return address::read();
+        return ar_address::read();
     }
 
     fn set(addr: TempContractAddress) {
         _onlyAdmin();
-        address::write(addr)
+        ar_address::write(addr)
     }
 }

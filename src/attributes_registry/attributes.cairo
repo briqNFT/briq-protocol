@@ -64,17 +64,17 @@ mod Attributes {
     fn assign_attributes(
         set_owner: felt252,
         set_token_id: felt252,
-        mut attributes: Array<felt252>,
-        ref shape: Array<ShapeItem>,
-        ref fts: Array<FTSpec>,
-        ref nfts: Array<felt252>,
+        ref attributes: Array<felt252>,
+        shape: @Array<ShapeItem>,
+        fts: @Array<FTSpec>,
+        nfts: @Array<felt252>,
     ) {
         check_gas();
         if (attributes.len() == 0_u32) {
             return ();
         }
-        assign_attribute(set_owner, set_token_id, attributes.pop_front().unwrap(), ref shape, ref fts, ref nfts);
-        return assign_attributes(set_owner, set_token_id, attributes, ref shape, ref fts, ref nfts);
+        assign_attribute(set_owner, set_token_id, attributes.pop_front().unwrap(), shape, fts, nfts);
+        return assign_attributes(set_owner, set_token_id, ref attributes, shape, fts, nfts);
     }
 
     //@external
@@ -82,9 +82,9 @@ mod Attributes {
         set_owner: felt252,
         set_token_id: felt252,
         attribute_id: felt252,
-        ref shape: Array<ShapeItem>,
-        ref fts: Array<FTSpec>,
-        ref nfts: Array<felt252>,
+        shape: @Array<ShapeItem>,
+        fts: @Array<FTSpec>,
+        nfts: @Array<felt252>,
     ) {
         assert(set_owner != 0, 'Bad input');
         assert(set_token_id != 0, 'Bad input');
@@ -126,7 +126,7 @@ mod Attributes {
     fn remove_attributes(
         set_owner: felt252,
         set_token_id: felt252,
-        mut attributes: Array<felt252>
+        ref attributes: Array<felt252>
     ) {
         check_gas();
 
@@ -134,7 +134,7 @@ mod Attributes {
             return ();
         }
         remove_attribute(set_owner, set_token_id, attributes.pop_front().unwrap());
-        return remove_attributes(set_owner, set_token_id, attributes);
+        return remove_attributes(set_owner, set_token_id, ref attributes);
     }
 
     //@external
