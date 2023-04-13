@@ -13,7 +13,7 @@ use briq_protocol::utilities::token_uri;
 
 #[test]
 #[available_gas(99999999)]
-fn test_increase_amount() {
+fn test_uri_string() {
     let tb = token_uri::_getUrl(
         0x987755332CAFEBABE123456789809,
         token_uri::uri_part_1,
@@ -21,7 +21,7 @@ fn test_increase_amount() {
         token_uri::uri_part_3,
         token_uri::uri_part_4,
     );
-    tb.print();
+    //tb.print();
 
     let tb = token_uri::_getUrl(
         0xCAFE0000000000000000000000000000000000000,
@@ -30,5 +30,5 @@ fn test_increase_amount() {
         token_uri::uri_part_3,
         token_uri::uri_part_4,
     );
-    tb.print();    
+    //tb.print();
 }
