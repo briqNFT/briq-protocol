@@ -8,5 +8,5 @@ version = "0.1.0"
 # foo = { path = "vendor/foo" }
 
 [[target.starknet-contract]]
-casm = true
+casm = false
 sierra = true

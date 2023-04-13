@@ -12,3 +12,4 @@ mod types;
 
 mod attributes_registry;
 mod booklet_nft;
+mod shape;
