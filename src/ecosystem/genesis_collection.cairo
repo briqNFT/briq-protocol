@@ -1,0 +1,3 @@
+const GENESIS_COLLECTION: felt252 = 0x1;
+const DUCKS_COLLECTION: felt252 = 0x3;
+const ZENDUCKS_COLLECTION: felt252 = 0x4;

@@ -34,6 +34,19 @@ impl feltOrd of PartialOrd::<felt252> {
     }
 }
 
+// Define these traits for coding convenience.
+impl FeltDiv of Div::<felt252> {
+    fn div(lhs: felt252, rhs: felt252) -> felt252 {
+        (lhs.into() / rhs.into()).try_into().unwrap()
+    }
+}
+
+impl FeltBitAnd of BitAnd::<felt252> {
+    fn bitand(lhs: felt252, rhs: felt252) -> felt252 {
+        (lhs.into() & rhs.into()).try_into().unwrap()
+    }
+}
+
 
 const high_bit_max: u128 = 0x8000000000000110000000000000000;
 
