@@ -52,6 +52,8 @@ mod Attributes {
     use briq_protocol::utils::feltOrd;
     use briq_protocol::utils::check_gas;
 
+    use briq_protocol::library_erc1155;
+
     #[event]
     fn AttributeAssigned(set_token_id: u256, attribute_id: felt252) {
     }
@@ -97,7 +99,7 @@ mod Attributes {
         
         let (admin, delegate_contract) = _get_admin_or_contract(_get_collection_id(attribute_id));
         if (delegate_contract == 0) {
-            //ERC1155_transferability._transfer_burnable(0, set_token_id, attribute_id, 1);
+            library_erc1155::transferability::Transferability::_transfer_burnable(0, set_token_id, attribute_id, 1);
             assert(0 == 1, 'TODO');
         } else {
             IDelegateContractDispatcher { contract_address: delegate_contract.try_into().unwrap() }.assign_attribute(
@@ -153,7 +155,7 @@ mod Attributes {
 
         let (admin, delegate_contract) = _get_admin_or_contract(_get_collection_id(attribute_id));
         if (delegate_contract == 0) {
-            //ERC1155_transferability._transfer_burnable(set_token_id, 0, attribute_id, 1);
+            library_erc1155::transferability::Transferability::_transfer_burnable(set_token_id, 0, attribute_id, 1);
         } else {
             IDelegateContractDispatcher { contract_address: delegate_contract.try_into().unwrap() }.remove_attribute(
                 set_owner,
@@ -181,7 +183,7 @@ mod Attributes {
     ) -> bool {
         let (_, delegate_contract) = _get_admin_or_contract(_get_collection_id(attribute_id));
         if (delegate_contract == 0) {
-            let balance = 0;//ERC1155_balance.balanceOf_(set_token_id, attribute_id);
+            let balance = library_erc1155::balance::Balance::balanceOf_(set_token_id, attribute_id);
             return balance > 0;
         } else {
             let balance = IDelegateContractDispatcher { contract_address: delegate_contract.try_into().unwrap() }.balanceOf_(set_token_id, attribute_id);

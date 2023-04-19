@@ -61,6 +61,7 @@ mod Collections {
 
     use briq_protocol::utilities::authorization::Auth::_onlyAdmin;
     use briq_protocol::utilities::authorization::Auth::_only;
+    use briq_protocol::library_erc1155;
 
     use traits::TryInto;
     use option::OptionTrait;
@@ -107,7 +108,7 @@ mod Collections {
     //    }
         assert(admin != 0, 'NO: no admin');
         _only(admin.try_into().unwrap()); // I think the conversion makes the above assert redundant
-    //    ERC1155_balance._increaseBalance(0, attribute_id, initial_balance);
+        library_erc1155::balance::Balance::_increaseBalance(0, attribute_id, initial_balance);
     }
 
     ////////////////////

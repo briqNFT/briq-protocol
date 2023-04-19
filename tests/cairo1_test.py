@@ -57,14 +57,14 @@ async def factory_root():
     from starknet_py.net.schemas.gateway import CasmClassSchema
     from starknet_py.common import create_casm_class
 
-    with open("target/release/target/release/briq_protocol_AttributesRegistry.sierra.json", "r") as casm:
-        casm_class = create_casm_class(casm)
+    with open("target/dev/briq_protocol_BookletNFT.casm.json", "r") as casm:
+        casm_class = create_casm_class(casm.read())
 
     # Compute Casm class hash
     casm_class_hash = compute_casm_class_hash(casm_class)
 
     # Create Declare v2 transaction
-    with open("target/release/briq_protocol_AttributesRegistry.sierra.json", "r") as sierra:
+    with open("target/dev/briq_protocol_BookletNFT.sierra.json", "r") as sierra:
         declare_v2_transaction = await account.sign_declare_v2_transaction(
             compiled_contract=sierra.read(),
             compiled_class_hash=casm_class_hash,
