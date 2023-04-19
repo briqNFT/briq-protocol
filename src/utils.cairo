@@ -7,35 +7,35 @@ use option::OptionTrait;
 use array::ArrayTrait;
 use array::SpanTrait;
 
-fn felt252_le(a: felt252, b: felt252) -> bool {
-    a.into() <= b.into()
+fn felt252_le(lhs: felt252, rhs: felt252) -> bool {
+    lhs.into() <= rhs.into()
 }
 
-fn felt252_lt(a: felt252, b: felt252) -> bool {
-    a.into() < b.into()
+fn felt252_lt(lhs: felt252, rhs: felt252) -> bool {
+    lhs.into() < rhs.into()
 }
 
 impl feltOrd of PartialOrd::<felt252> {
     #[inline(always)]
-    fn le(a: felt252, b: felt252) -> bool {
-        felt252_le(a, b)
+    fn le(lhs: felt252, rhs: felt252) -> bool {
+        felt252_le(lhs, rhs)
     }
     #[inline(always)]
-    fn ge(a: felt252, b: felt252) -> bool {
-        felt252_le(b, a)
+    fn ge(lhs: felt252, rhs: felt252) -> bool {
+        felt252_le(rhs, lhs)
     }
     #[inline(always)]
-    fn lt(a: felt252, b: felt252) -> bool {
-        felt252_lt(a, b)
+    fn lt(lhs: felt252, rhs: felt252) -> bool {
+        felt252_lt(lhs, rhs)
     }
     #[inline(always)]
-    fn gt(a: felt252, b: felt252) -> bool {
-        felt252_lt(b, a)
+    fn gt(lhs: felt252, rhs: felt252) -> bool {
+        felt252_lt(rhs, lhs)
     }
 }
 
 
-const high_bit_max: u128 = 0x8000000000000110000000000000000_u128;
+const high_bit_max: u128 = 0x8000000000000110000000000000000;
 
 impl ___ of TryInto::<u256, felt252> {
     fn try_into(self: u256) -> Option<felt252> {
@@ -43,8 +43,8 @@ impl ___ of TryInto::<u256, felt252> {
             return Option::None(());
         }
         // Only one possible value otherwise, the actual PRIME - 1;
-        if self.high == high_bit_max - 1_u128 {
-            if self.low > 0_u128 {
+        if self.high == high_bit_max - 1 {
+            if self.low > 0 {
                 return Option::None(());
             }
         }

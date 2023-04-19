@@ -46,7 +46,7 @@ fn _getUrl(
 
 fn insert_reverse(mut out: Array<felt252>, mut data: Span<u128>) -> Array<felt252> {
     check_gas();
-    if data.len() == 0_u32 {
+    if data.len() == 0 {
         return out;
     }
     let nb = *data.pop_back().unwrap();
@@ -58,7 +58,7 @@ fn felt_to_ascii_array(i: felt252) -> Array<u128> {
     let tok_u256 = u256_from_felt252(i);
     let out = ArrayTrait::<u128>::new();
     // TODO: fix this by using u256
-    let (q, low) = u128_safe_divmod(tok_u256.low, u128_as_non_zero(100000000000000000000000000000000000000_u128));
+    let (q, low) = u128_safe_divmod(tok_u256.low, u128_as_non_zero(100000000000000000000000000000000000000));
     return _felt_to_ascii_array(out, low);
 }
 
@@ -66,7 +66,7 @@ fn _felt_to_ascii_array(mut out: Array<u128>, i: u128) -> Array<u128> {
     check_gas();
     let (q, r) = get_letter(i);
     out.append(r);
-    if (q == 0_u128) {
+    if (q == 0) {
         return out;
     }
     return _felt_to_ascii_array(out, q);
@@ -75,16 +75,16 @@ fn _felt_to_ascii_array(mut out: Array<u128>, i: u128) -> Array<u128> {
 fn get_letter(
     i: u128,
 ) -> (u128, u128) {
-    let (q, r) = u128_safe_divmod(i, u128_as_non_zero(10_u128));
+    let (q, r) = u128_safe_divmod(i, u128_as_non_zero(10));
     return (q, r + '0'.try_into().unwrap());
 }
 
 fn get_letter_hex(
     i: u128,
 ) -> (u128, u128) {
-    let (q, r) = u128_safe_divmod(i, u128_as_non_zero(16_u128));
-    if r < 10_u128 {
+    let (q, r) = u128_safe_divmod(i, u128_as_non_zero(16));
+    if r < 10 {
         return (q, r + '0'.try_into().unwrap());
     }
-    return (q, r + 'a'.try_into().unwrap() - 10_u128);
+    return (q, r + 'a'.try_into().unwrap() - 10);
 }
