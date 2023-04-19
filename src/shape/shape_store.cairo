@@ -18,18 +18,17 @@ const nft_data_end: felt252 = 1;
 
 use briq_protocol::utils::check_gas;
 
-// Pretend this works for now
-// TODO:: implement this somehow
+use briq_protocol::utils; // import u256 -> felt
+// Define these traits for coding convenience below.
 impl __ of Div::<felt252> {
-    fn div(a: felt252, b: felt252) -> felt252 {
-        a
+    fn div(lhs: felt252, rhs: felt252) -> felt252 {
+        (lhs.into() / rhs.into()).try_into().unwrap()
     }
 }
 
-use briq_protocol::utils; // import u256 -> felt
 impl ___ of BitAnd::<felt252> {
-    fn bitand(a: felt252, b: felt252) -> felt252 {
-        (a.into() & b.into()).try_into().unwrap()
+    fn bitand(lhs: felt252, rhs: felt252) -> felt252 {
+        (lhs.into() & rhs.into()).try_into().unwrap()
     }
 }
 
@@ -183,7 +182,7 @@ fn check_shape_numbers_(global_index: felt252, ref shape: Span<ShapeItem>, ref f
 
 fn _initialize_qty(mut fts: Span<FTSpec>, mut qty: Array<felt252>) -> Array<felt252> {
     check_gas();
-    if fts.len() == 0_u32 {
+    if fts.len() == 0 {
         return qty;
     }
     qty.append(*(fts.pop_front().unwrap()).qty);
@@ -192,7 +191,7 @@ fn _initialize_qty(mut fts: Span<FTSpec>, mut qty: Array<felt252>) -> Array<felt
 
 fn _check_qty_are_correct(mut qty: Array<felt252>) {
     check_gas();
-    if qty.len() == 0_u32 {
+    if qty.len() == 0 {
         return ();
     }
     assert(qty.pop_front().unwrap() == 0, 'wrong qty');
@@ -208,12 +207,12 @@ fn _check_shape_numbers_impl_(
     mut nfts: Span<felt252>,
 ) {
     check_gas();
-    if shape.len() == 0_u32 {
+    if shape.len() == 0 {
         //with_attr error_message("Wrong number of briqs in shape") {
         // At this point, if one of the quantities isn't 0, then we have a big problem.
         // (we know the length is correct by construction).
         _check_qty_are_correct(qty);
-        assert(nfts.len() == 0_u32, 'wrong nb nft');
+        assert(nfts.len() == 0, 'wrong nb nft');
         return ();
     }
 
@@ -261,7 +260,7 @@ fn _check_shape_numbers_impl_(
 // TODO: figure out if I can use cleverer typing, perhaps an array of array here (because that's what this is sorta).
 fn _decrement_ft_qty(mut fts: Span<FTSpec>, material: felt252, mut qty_in: Array<felt252>, mut qty_out: Array<felt252>) -> Array<felt252> {
     check_gas();
-    if fts.len() == 0_u32 {
+    if fts.len() == 0 {
         // Ensure we found the material in case the user lied in the fts list.
         // material can't be 0 initially, as we check for that in the outer loop.
         //with_attr error_message("Material not found in FT list") {

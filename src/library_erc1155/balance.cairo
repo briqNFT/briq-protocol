@@ -54,10 +54,10 @@ mod Balance {
     //    assert(owners.len() == token_ids.len(), 'Bad input');
     //    let mut balances = ArrayTrait::<felt252>::new();
     //    loop {
-    //        if owners.len() == 0_u32 {
+    //        if owners.len() == 0 {
     //            break 0;
     //        }
-    //        let balance = _balance::read((*owners.at(0_u32), *token_ids.at(0_u32)));
+    //        let balance = _balance::read((*owners.at(0), *token_ids.at(0)));
     //        balances.append(balance);
     //        owners.pop_front();
     //        token_ids.pop_front();
@@ -76,10 +76,10 @@ mod Balance {
         mut owners: Array<TempContractAddress>, mut token_ids: Array<felt252>, mut balances: Array<felt252>
     ) -> Array<felt252> {
         check_gas();
-        if owners.len() == 0_u32 {
+        if owners.len() == 0 {
             return balances;
         }
-        let balance = _balance::read((*owners.at(0_u32), *token_ids.at(0_u32)));
+        let balance = _balance::read((*owners.at(0), *token_ids.at(0)));
         balances.append(balance);
         owners.pop_front();
         token_ids.pop_front();

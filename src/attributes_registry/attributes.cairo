@@ -70,7 +70,7 @@ mod Attributes {
         nfts: @Array<felt252>,
     ) {
         check_gas();
-        if (attributes.len() == 0_u32) {
+        if (attributes.len() == 0) {
             return ();
         }
         assign_attribute(set_owner, set_token_id, attributes.pop_front().unwrap(), shape, fts, nfts);
@@ -130,7 +130,7 @@ mod Attributes {
     ) {
         check_gas();
 
-        if (attributes.len() == 0_u32) {
+        if (attributes.len() == 0) {
             return ();
         }
         remove_attribute(set_owner, set_token_id, attributes.pop_front().unwrap());

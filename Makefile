@@ -11,7 +11,7 @@ init-submodules:
 install: init-submodules update
 
 update-cairo:
-	git submodule update && cp -rf cairo/corelib .
+	git submodule update && (cd cairo && git fetch origin && git rebase origin/main) && cp -rf cairo/corelib .
 
 update-cargo:
 	cp cairo/Cargo.toml .
