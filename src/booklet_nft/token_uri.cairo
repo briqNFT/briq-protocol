@@ -7,6 +7,7 @@ use briq_protocol::utils;
 
 use briq_protocol::types::ShapeItem;
 use briq_protocol::types::FTSpec;
+use briq_protocol::constants;
 
 use briq_protocol::ecosystem::genesis_collection::GENESIS_COLLECTION;
 
@@ -30,7 +31,7 @@ mod toShapeContract {
 //@view
 fn get_shape_(token_id: felt252) -> (Array::<ShapeItem>, Array::<felt252>) {
     let addr = toShapeContract::_shape_contract::read(token_id);
-    return IShapeContractLibraryDispatcher { class_hash: addr.try_into().unwrap() }.shape_((token_id - GENESIS_COLLECTION) / 0x1000000000000000000000000000000000000000000000000);//2**192);
+    return IShapeContractLibraryDispatcher { class_hash: addr.try_into().unwrap() }.shape_((token_id - GENESIS_COLLECTION) / constants::c2_192);//2**192);
 }
 
 // @view
