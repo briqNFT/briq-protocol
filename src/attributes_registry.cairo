@@ -32,6 +32,8 @@ mod attributes;
 mod AttributesRegistry {
     use starknet::ContractAddress;
     use traits::Into;
+    use traits::TryInto;
+    use option::OptionTrait;
 
     use briq_protocol::attributes_registry::collections::Collections;
 
@@ -104,17 +106,16 @@ mod AttributesRegistry {
     ) -> felt252 {
         return Attributes::total_balance(owner.into());
     }
-    
 
-    use briq_protocol::ecosystem::to_set::ToSet;
+    use briq_protocol::ecosystem::to_set::toSet;
 
     #[view]
     fn getSetAddress_() -> ContractAddress {
-        return ToSet::getSetAddress_();
+        return toSet::get().try_into().unwrap();
     }
 
     #[external]
     fn setSetAddress_(addr: ContractAddress) {
-        return ToSet::setSetAddress_(addr);
+        return toSet::set(addr.into());
     }
 }

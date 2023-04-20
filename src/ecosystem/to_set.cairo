@@ -1,25 +1,17 @@
 #[contract]
-mod ToSet {
+mod toSet {
     use briq_protocol::utilities::authorization::Auth::_onlyAdmin;
-    use starknet::ContractAddress;
+    use briq_protocol::utils::TempContractAddress;
 
     struct Storage {
-        set_address: ContractAddress,
+        set_address: TempContractAddress,
     }
 
-    use option::OptionTrait;
-    use traits::Into;
-    use starknet::ContractAddressIntoFelt252;
-    use traits::TryInto;
-    use starknet::Felt252TryIntoContractAddress;
-
-    //#[view]
-    fn getSetAddress_() -> ContractAddress {
+    fn get() -> TempContractAddress {
         return set_address::read();
     }
 
-    //#[external]
-    fn setSetAddress_(addr: ContractAddress) {
+    fn set(addr: TempContractAddress) {
         _onlyAdmin();
         set_address::write(addr)
     }
