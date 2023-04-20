@@ -16,6 +16,7 @@ const nft_offset_cumulative_end: felt252 = 1;
 const nft_data: felt252 = 1;
 const nft_data_end: felt252 = 1;
 
+use briq_protocol::constants;
 use briq_protocol::utils::check_gas;
 
 use briq_protocol::utils; // import u256 -> felt
@@ -79,7 +80,7 @@ fn _shape(i: felt252) -> (Array::<ShapeItem>, Array::<felt252>) { //(shape_len: 
 //@view
 fn get_local_index(global_index: felt252) -> felt252 {
     // TODO: parametrize on duck collection ID
-    return (global_index - 345234829834) / (0x1000000000000000000000000000000000000000000000000) - 1;
+    return (global_index - 345234829834) / (constants::c2_192) - 1;
 }
 
 //@view

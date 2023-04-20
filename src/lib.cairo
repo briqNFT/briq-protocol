@@ -1,3 +1,4 @@
+mod constants;
 mod temp;
 mod utilities;
 
@@ -12,4 +13,5 @@ mod types;
 
 mod attributes_registry;
 mod booklet_nft;
+mod box_nft;
 mod shape;

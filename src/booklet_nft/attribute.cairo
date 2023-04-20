@@ -14,6 +14,7 @@ use briq_protocol::booklet_nft::token_uri::toShapeContract::get_shape_contract_;
 use briq_protocol::types::ShapeItem;
 use briq_protocol::types::FTSpec;
 use briq_protocol::ecosystem::to_attributes_registry::toAttributesRegistry::_onlyAttributesRegistry;
+use briq_protocol::constants;
 
 use briq_protocol::library_erc1155::transferability::Transferability;
 use briq_protocol::ecosystem::genesis_collection::GENESIS_COLLECTION;
@@ -31,9 +32,9 @@ fn _check_shape(
 
     // TEMP HACK because my original code hardcoded GENESIS_COLLECTION here.
     // Need to update the shape contracts that the booklets point to.
-    let coll = (attribute_id - GENESIS_COLLECTION) / 0x1000000000000000000000000000000000000000000000000;
+    let coll = (attribute_id - GENESIS_COLLECTION) / constants::c2_192;
     //let is_genesis = is_le_felt252(coll, 2**63);
-    let is_genesis = coll & 0xffffffffffffffff;
+    let is_genesis = coll & constants::c2_64_mask;
     if (is_genesis == GENESIS_COLLECTION) {
         IShapeContractLibraryDispatcher { class_hash: addr.try_into().unwrap() }.check_shape_numbers_(
             coll, shape, fts, nfts
