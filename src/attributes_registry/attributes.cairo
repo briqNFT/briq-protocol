@@ -28,10 +28,8 @@ mod Attributes {
     type FTSpec = felt252;
     type ShapeItem = felt252;
 
-    use starknet::get_caller_address;
-    use starknet::ContractAddress;
-    use starknet::ContractAddressIntoFelt252;
-    use starknet::Felt252TryIntoContractAddress;
+    use starknet::contract_address;
+    use briq_protocol::utils::GetCallerAddress;
 
     use gas::withdraw_gas_all;
     use gas::get_builtin_costs;
@@ -47,7 +45,7 @@ mod Attributes {
 
     use briq_protocol::attributes_registry::collections::Collections::_get_admin_or_contract;
     use briq_protocol::attributes_registry::collections::Collections::_get_collection_id;
-    use briq_protocol::ecosystem::to_set::ToSet::getSetAddress_;
+    use briq_protocol::ecosystem::to_set::toSet;
 
     use briq_protocol::utils::feltOrd;
     use briq_protocol::utils::check_gas;
@@ -92,8 +90,8 @@ mod Attributes {
         assert(set_token_id != 0, 'Bad input');
         assert(attribute_id != 0, 'Bad input');
 
-        let caller = get_caller_address();
-        let set_addr = getSetAddress_();
+        let caller = GetCallerAddress();
+        let set_addr = toSet::get();
         // TODO: Set permissions on the collection (owner / set) ? 
         assert (caller == set_addr, 'Bad caller');
         
@@ -149,8 +147,8 @@ mod Attributes {
         assert(set_owner != 0, 'Bad input');
         assert(set_token_id != 0, 'Bad input');
         assert(attribute_id != 0, 'Bad input');
-        let caller = get_caller_address();
-        let set_addr = getSetAddress_();
+        let caller = GetCallerAddress();
+        let set_addr = toSet::get();
         assert (caller == set_addr, 'Bad caller');
 
         let (admin, delegate_contract) = _get_admin_or_contract(_get_collection_id(attribute_id));
