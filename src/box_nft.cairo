@@ -149,10 +149,19 @@ mod BoxNFT {
         Transferability::safeTransferFrom_(from_, to, id.try_into().unwrap(), amount.try_into().unwrap(), data);
     }
 
+    use briq_protocol::utilities::IERC165;
     #[view]
     fn supportsInterface() -> bool {
-        // TODO
-        false
+        if interfaceId == IERC165::IERC165_ID {
+            return true;
+        }
+        if interfaceId == IERC165::IERC1155_ID {
+            return true;
+        }
+        if interfaceId == IERC165::IERC1155_METADATA_ID {
+            return true;
+        }
+        return false;
     }
 
     // URI is custom
