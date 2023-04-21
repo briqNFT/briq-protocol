@@ -168,7 +168,7 @@ mod BookletNFT {
 
     use briq_protocol::utilities::IERC165;
     #[view]
-    fn supportsInterface() -> bool {
+    fn supportsInterface(interfaceId: felt252) -> bool {
         if interfaceId == IERC165::IERC165_ID {
             return true;
         }
