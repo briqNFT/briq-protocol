@@ -25,8 +25,8 @@ mod Attributes {
     }
 
 
-    type FTSpec = felt252;
-    type ShapeItem = felt252;
+    use briq_protocol::types::FTSpec;
+    use briq_protocol::types::ShapeItem;
 
     use starknet::contract_address;
     use briq_protocol::utils::GetCallerAddress;
@@ -119,7 +119,6 @@ mod Attributes {
         //}
         assert(balance < balance + 1, 'Balance overflow');
         _cumulative_balance::write(set_token_id, balance + 1);
-        return ();
     }
 
     //@external
@@ -171,7 +170,6 @@ mod Attributes {
         //}
         assert(balance - 1 < balance, 'Balance underflow');
         _cumulative_balance::write(set_token_id, balance - 1);
-        return ();
     }
 
 

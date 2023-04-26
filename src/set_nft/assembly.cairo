@@ -21,6 +21,7 @@ use array::ArrayTrait;
 use array::SpanTrait;
 use option::OptionTrait;
 
+use briq_protocol::utils::check_gas;
 
 #[abi]
 trait IBriqContract {
@@ -53,6 +54,7 @@ trait IAttributesRegistryContract {
 // Assembly/Disassembly
 
 fn _transferFT(sender: felt252, recipient: felt252, mut fts: Span<FTSpec>) {
+    check_gas();
     if fts.len() == 0 {
         return ();
     }

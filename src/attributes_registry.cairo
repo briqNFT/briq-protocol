@@ -48,8 +48,8 @@ mod AttributesRegistry {
     }
 
     use briq_protocol::attributes_registry::attributes::Attributes;
-    use briq_protocol::attributes_registry::attributes::Attributes::ShapeItem;
-    use briq_protocol::attributes_registry::attributes::Attributes::FTSpec;
+    use briq_protocol::types::ShapeItem;
+    use briq_protocol::types::FTSpec;
 
     #[external]
     fn assign_attributes(

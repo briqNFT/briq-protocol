@@ -35,6 +35,7 @@ mod BalanceEnum {
     }
 
     fn _materialsOfImpl(owner: felt252, mut mats: Array<felt252>) -> Array<felt252> {
+        check_gas();
         let mat = _material_by_owner::read((owner, mats.len().into()));
         if mat != 0 {
             mats.append(mat);
@@ -50,6 +51,7 @@ mod BalanceEnum {
     }
 
     fn _fullBalanceOfImpl(owner: felt252, mut out: Array<FTSpec>) -> Array<FTSpec> { //) -> (balances_len: felt252, balances: BalanceSpec*) {
+        check_gas();
         let mat = _material_by_owner::read((owner, out.len().into()));
         if mat == 0 {
             return out;
@@ -65,6 +67,7 @@ mod BalanceEnum {
     // Store the new token id in the list, at an empty slot (marked by 0).
     // If the item already exists in the list, do nothing.
     fn _setMaterialByOwner(owner: felt252, material: felt252, index: felt252) {
+        check_gas();
         let token_id = _material_by_owner::read((owner, index));
         if token_id == material {
             return ();
@@ -79,6 +82,7 @@ mod BalanceEnum {
     // Unset the material from the list if the balance is 0. Swap and pop idiom.
     // NB: the item is asserted to be in the list.
     fn _maybeUnsetMaterialByOwner(owner: felt252, material: felt252) {
+        check_gas();
         let balance = Balance::_balance::read((owner, material));
         if balance != 0 {
             return ();
@@ -88,6 +92,7 @@ mod BalanceEnum {
 
     // During the search phase, we check for a matching token ID.
     fn _unsetMaterialByOwner_searchPhase(owner: felt252, material_id: felt252, index: felt252) {
+        check_gas();
         let tok = _material_by_owner::read((owner, index));
         assert(tok != 0, 'Mat not in list');
         if tok == material_id {
@@ -98,6 +103,7 @@ mod BalanceEnum {
 
     // During the erase phase, we pass the last known value and the slot to insert it in, and go one past the end.
     fn _unsetMaterialByOwner_erasePhase(owner: felt252, last_known_value: felt252, index: felt252, target_index: felt252) {
+        check_gas();
         let tok = _material_by_owner::read((owner, index));
         if tok != 0 {
             return _unsetMaterialByOwner_erasePhase(owner, tok, index + 1, target_index);

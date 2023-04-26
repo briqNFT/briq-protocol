@@ -148,17 +148,6 @@ mod Set {
         return Balance::balanceOf_(owner);
     }
 
-    use briq_protocol::briq::balance_enumerability::BalanceEnum;
-    #[view]
-    fn balanceDetailsOf_(owner: felt252) -> Array<felt252> {
-        BalanceEnum::materialsOf(owner)
-    }
-
-    #[view]
-    fn tokenOfOwnerByIndex_(owner: felt252, index: felt252) -> felt252 {
-        return BalanceEnum::_material_by_owner::read((owner, index));
-    }
-
     #[external]
     fn transferFrom_(sender: felt252, recipient: felt252, token_id: felt252) {
         return Transferability::transferFrom_(sender, recipient, token_id);

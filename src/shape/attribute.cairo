@@ -74,6 +74,7 @@ mod ShapeAttribute {
     }
 
     fn _rec_hash(hash: felt252, mut shape: Array<ShapeItem>) -> felt252 {
+        check_gas();
         if shape.len() == 0 {
             return hash;
         }
