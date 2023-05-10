@@ -1,4 +1,4 @@
-mod attributes_registry;
+//mod attributes_registry; Disabled until different bases bug is fixed
 mod booklet_nft;
 mod box_nft;
 mod briq;
@@ -12,3 +12,4 @@ mod temp;
 mod types;
 mod utilities;
 mod utils;
+mod briq_factory;

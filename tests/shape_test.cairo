@@ -1,8 +1,6 @@
 use array::ArrayTrait;
 use array::SpanTrait;
 
-use briq_protocol::attributes_registry::AttributesRegistry;
-
 use debug::PrintTrait;
 
 const ADDRESS: felt252 = 0x1234;
