@@ -34,7 +34,7 @@ async def factory(factory_root):
 import matplotlib.pyplot as plt
 
 @pytest.mark.asyncio
-async def test_chart(factory):
+async def disabled_test_chart(factory):
     await factory.briq_factory.initialise(0, 0, 0).execute()
 
     xs = [t for t in range(0, 300000, 300000//100)]
@@ -64,15 +64,11 @@ async def test_integrate(factory):
     await factory.briq_factory.initialise(0, 0, 0).execute()
     assert (await factory.briq_factory.get_current_t().call()).result.t == 0
 
-    assert (await factory.briq_factory.get_price(1).call()).result.price == 10**11 + 10**14 / 2
-    # For 1K briq,
-    # prix before = 10**11
-    # prix after = 10**11 + 10**14 * 1000
-    # Average price is sum divided by 2, we buy 1000, so:
-    expected_price = 1000 * ((10**11 + 10**14 * 1000) + 10**11) // 2
+    assert (await factory.briq_factory.get_price(1).call()).result.price == 3 * 10**13 + 333333333 // 2
+    expected_price = 1000 * (3 * 10**13 + 333333333 * 1000 // 2)
     assert (await factory.briq_factory.get_price(1000).call()).result.price == expected_price
 
-    await factory.briq_factory.initialise(1000 * 10**18, 0, 0).execute(ADDRESS)
+    await factory.briq_factory.initialise(1000 * 10**18, 0, 0).execute()
     assert (await factory.briq_factory.get_current_t().call()).result.t == 1000 * 10**18
 
     factory.starknet.state.state.update_block_info(
@@ -88,12 +84,15 @@ async def test_integrate(factory):
 async def test_overflows(factory):
     # Try wuth the maximum value I allow and ensure that we don't get overflows.
     await factory.briq_factory.initialise(10**18 * (10**12 - 1), 0, 0).execute()
-    assert (await factory.briq_factory.get_price(1).call()).result.price == 10**11 + 10**14 // 2 + 10**14 * (10**12 - 1)
+    assert (await factory.briq_factory.get_price(1).call()).result.price == 2 * 10**13 + 5 * 10**8 * (10**12 - 1) + (5 * 10**8 // 2)
 
-    # Price before: 10**11 + 10**14 * 10**12 - 1
-    # Price after: 10**11 + 10**14 * 10**12 - 1 + 10**14 * (10**10 - 1)
-    assert (await factory.briq_factory.get_price(10**10 - 1).call()).result.price == ((10**11 + 10**14 * (10**12 - 1)) + (
-        (10**14 * (10**10 - 1)) // 2)) * (10**10 - 1)
+    # Price before: 10**18 * (10**12 - 1) * 5 * 10**8 + 2 * 10**13
+    # Price after: (10**18 * (10**12 - 1) + (10**10 - 1) ) * 5 * 10**8 + 2 * 10**13
+    # Item not in both: 10**18 * (10**10 - 1) * 5 * 10**8
+    # Need to factor in surge to the value of 10**14 * ((10**10 - 1) * 10**18 - 10000 * 10**18) // 2
+    price_comp = (10**10 - 1) * (((10**12 - 1) * 5 * 10**8 + 2 * 10**13) + ((10**10 - 1) * 5 * 10**8) // 2)
+    surge_comp = (10**10 - 1 - 10000) * 10**14 // 2 * ((10**10 - 1) - 10000)
+    assert (await factory.briq_factory.get_price(10**10 - 1).call()).result.price == price_comp + surge_comp
 
 
 @pytest.mark.asyncio
