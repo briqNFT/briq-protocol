@@ -47,11 +47,12 @@ const lower_slope = 333333333; // (estimated_fair_price - lower_floor) / inflect
 
 const decay_per_second = 10**10; // decay: for each second, reduce the price by so many wei (there are 24*3600*365 = 31536000 seconds in a year)
 
-const surge_slope = 10**14;
+const surge_slope = 10**12;
 const minimal_surge = 10000 * 10**18;
 const surge_decay_per_second = 2315 * 10**14;
 
 const briq_material = 1;
+const minimum_purchase = 200;
 
 @contract_interface
 namespace IBriqContract {
@@ -143,6 +144,11 @@ func get_price_at_t{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
 func buy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(amount: felt) {
     alloc_locals;
+    _onlyAdmin();
+
+    with_attr error_message("At least 200 briqs must be purchased at a time") {
+        assert_lt_felt(minimum_purchase, amount);
+    }
 
     let (price) = get_price(amount);
     let (tmstp) = get_block_timestamp();
@@ -172,11 +178,6 @@ func transfer_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
         IERC20.transferFrom(erc20_addr, buyer, contract_address, price_uint);
     }
     return ();
-}
-
-func get_exp_integral{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(t2: felt, t1: felt) -> felt {
-    return 0; //return (math.exp(x / self.estimated_fair_price - 1) * self.a * self.estimated_fair_price * self.estimated_fair_price + self.b * x);
 }
 
 func get_lin_integral{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
@@ -213,5 +214,5 @@ func integrate{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }
 
     return get_lin_integral(lower_slope, lower_floor, t, inflection_point) +
-        get_lin_integral(slope, raw_floor, 0, t + amount);
+        get_lin_integral(slope, raw_floor, inflection_point, t + amount);
 }

@@ -44,6 +44,7 @@ from contracts.ecosystem.to_set import (
     setSetAddress_,
 )
 from contracts.ecosystem.to_box import (getBoxAddress_, setBoxAddress_)
+from contracts.ecosystem.to_factory import (getFactoryAddress_, setFactoryAddress_)
 
 //
 

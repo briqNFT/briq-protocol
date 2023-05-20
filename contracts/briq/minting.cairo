@@ -27,11 +27,20 @@ from contracts.library_erc1155.transferability import ERC1155_transferability
 
 from contracts.ecosystem.to_box import _box_address
 
+from contracts.ecosystem.to_factory import _factory_address
+
+
 from contracts.utilities.authorization import _onlyAdminAnd
 
+
 func _onlyAdminAndBoxContract{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
-    let (address) = _box_address.read();
-    _onlyAdminAnd(address);
+    let (caller) = get_caller_address();
+    let (factory_address) = _factory_address.read();
+    if (caller == factory_address) {
+        return ();
+    }
+    let (box_address) = _box_address.read();
+    _onlyAdminAnd(box_address);
     return ();
 }
 

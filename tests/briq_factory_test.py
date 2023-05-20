@@ -34,10 +34,10 @@ async def factory(factory_root):
 import matplotlib.pyplot as plt
 
 @pytest.mark.asyncio
-async def disabled_test_chart(factory):
+async def test_chart(factory):
     await factory.briq_factory.initialise(0, 0, 0).execute()
 
-    xs = [t for t in range(0, 300000, 300000//100)]
+    xs = [t for t in range(100, 300100, 300000//100)]
     ys = [(await factory.briq_factory.get_price_at_t(t * 10**18, 1).call()).result.price / 10**18 for t in xs]
     ys2 = [(await factory.briq_factory.get_price_at_t(t * 10**18, 200).call()).result.price / 10**18 for t in xs]
 
@@ -81,6 +81,15 @@ async def test_integrate(factory):
 
 
 @pytest.mark.asyncio
+async def test_inflection_point(factory):
+    await factory.briq_factory.initialise(55000 * 10**18, 0, 0).execute()
+
+    lower_ppb = 3 * 10**13 + 333333333 * (5000) // 2 + 333333333 * 55000
+    higher_ppb = 2 * 10**13 + 5 * 10**8 * (5000) // 2 + 5 * 10**8 * 60000
+    assert (await factory.briq_factory.get_price(10000).call()).result.price == 5000 * lower_ppb + 5000 * higher_ppb
+
+
+@pytest.mark.asyncio
 async def test_overflows(factory):
     # Try wuth the maximum value I allow and ensure that we don't get overflows.
     await factory.briq_factory.initialise(10**18 * (10**12 - 1), 0, 0).execute()
@@ -89,9 +98,9 @@ async def test_overflows(factory):
     # Price before: 10**18 * (10**12 - 1) * 5 * 10**8 + 2 * 10**13
     # Price after: (10**18 * (10**12 - 1) + (10**10 - 1) ) * 5 * 10**8 + 2 * 10**13
     # Item not in both: 10**18 * (10**10 - 1) * 5 * 10**8
-    # Need to factor in surge to the value of 10**14 * ((10**10 - 1) * 10**18 - 10000 * 10**18) // 2
+    # Need to factor in surge to the value of 10**12 * ((10**10 - 1) * 10**18 - 10000 * 10**18) // 2
     price_comp = (10**10 - 1) * (((10**12 - 1) * 5 * 10**8 + 2 * 10**13) + ((10**10 - 1) * 5 * 10**8) // 2)
-    surge_comp = (10**10 - 1 - 10000) * 10**14 // 2 * ((10**10 - 1) - 10000)
+    surge_comp = (10**10 - 1 - 10000) * 10**12 // 2 * ((10**10 - 1) - 10000)
     assert (await factory.briq_factory.get_price(10**10 - 1).call()).result.price == price_comp + surge_comp
 
 
@@ -101,13 +110,13 @@ async def test_surge(factory):
     assert (await factory.briq_factory.get_price(1).call()).result.price == 30000166666666
 
     await factory.briq_factory.initialise(0, 10000 * 10**18, 0).execute()
-    assert (await factory.briq_factory.get_price(1).call()).result.price == 30000166666666 + 10**14 // 2
+    assert (await factory.briq_factory.get_price(1).call()).result.price == 30000166666666 + 10**12 // 2
 
     await factory.briq_factory.initialise(0, 0, 0).execute()
     assert (await factory.briq_factory.get_price(10000).call()).result.price == 316666666650000000
 
     await factory.briq_factory.initialise(0, 5000 * 10**18, 0).execute()
-    assert (await factory.briq_factory.get_price(10000).call()).result.price == 316666666650000000 + 5000 * (5000 * 10**14 // 2)
+    assert (await factory.briq_factory.get_price(10000).call()).result.price == 316666666650000000 + 5000 * (5000 * 10**12 // 2)
 
     await factory.briq_factory.initialise(0, 20000 * 10**18, 0).execute()
     assert (await factory.briq_factory.get_surge_t().call()).result.t == 20000 * 10**18
