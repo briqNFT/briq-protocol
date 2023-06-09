@@ -12,13 +12,16 @@ from contracts.upgrades.upgradable_mixin import (
 from contracts.utilities.authorization import _onlyAdmin
 
 from starkware.cairo.common.math_cmp import is_le_felt
-from starkware.cairo.common.math import (unsigned_div_rem, assert_lt_felt)
+from starkware.cairo.common.math import (unsigned_div_rem, assert_lt)
 from starkware.starknet.common.syscalls import (get_caller_address, get_contract_address, get_block_timestamp)
 
 from contracts.vendor.openzeppelin.token.erc20.IERC20 import IERC20
 from contracts.utilities.Uint256_felt_conv import _felt_to_uint
 from contracts.ecosystem.to_briq import (_briq_address, getBriqAddress_, setBriqAddress_,)
 
+@event
+func BriqsBought(buyer: felt, amount: felt, price: felt) {
+}
 
 @storage_var
 func last_stored_t() -> (res: felt) {
@@ -37,22 +40,23 @@ func erc20_address() -> (addr: felt) {
 }
 
 const decimals = 10**18; // 18 decimals
-const estimated_fair_price = 5 * 10**13; // 0.01 for 200 briqs
-const slope = 5 * 10**8; // Slope: Buying 100 000 briqs increases price for 200 briqs by 0.01, so pp by 0.00005
-const inflection_point = 60000 * 10**18; // The inflection point is T such that T = (estimated_fair_price - raw_foor) / slope
-const raw_floor = 2 * 10**13;
 
-const lower_floor = 3 * 10**13; // should include raw_floor
-const lower_slope = 333333333; // (estimated_fair_price - lower_floor) / inflection_point;
+const inflection_point = 400000 * decimals; // Arbitrary inflection point below which to use the lower_* curve
 
-const decay_per_second = 10**10; // decay: for each second, reduce the price by so many wei (there are 24*3600*365 = 31536000 seconds in a year)
+const slope = 1 * 10**8; // Slope: Buying 100 000 briqs increases price per briq by 0.00001
+const raw_floor = -1 * 10**13; // Computed to hit the inflection point at 0.00003 per briq
 
-const surge_slope = 10**12;
-const minimal_surge = 10000 * 10**18;
-const surge_decay_per_second = 2315 * 10**14;
+const lower_floor = 1 * 10**13; // Actual floor price of the briqs = 0.0001
+const lower_slope = 5 * 10**7; // Computed to hit the inflection point at 0.00003 per briq
+
+const decay_per_second = 6337791082068820; // decay: for each second, reduce the price by so many wei. Computed to hit 200K per year.
+
+const surge_slope = 1 * 10**8; // Doubles the slope
+const minimal_surge = 250000 * decimals;
+const surge_decay_per_second = 4134 * 10**14; // Decays over a week
 
 const briq_material = 1;
-const minimum_purchase = 200;
+const minimum_purchase = 29;
 
 @contract_interface
 namespace IBriqContract {
@@ -144,10 +148,11 @@ func get_price_at_t{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
 func buy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(amount: felt) {
     alloc_locals;
-    _onlyAdmin();
+    // _onlyAdmin();
 
-    with_attr error_message("At least 200 briqs must be purchased at a time") {
-        assert_lt_felt(minimum_purchase, amount);
+    with_attr error_message("At least 30 briqs must be purchased at a time") {
+        // This also guarantees that amount isn't above 2**128 which is important to avoid an attack on amout * decimals;
+        assert_lt(minimum_purchase, amount);
     }
 
     let (price) = get_price(amount);
@@ -166,8 +171,11 @@ func buy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     let (briq_addr) = _briq_address.read();
     IBriqContract.mintFT_(briq_addr, buyer, briq_material, amount);
 
+    BriqsBought.emit(buyer, amount, price);
+
     return ();
 }
+
 
 func transfer_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(buyer: felt, price: felt) {
@@ -182,20 +190,40 @@ func transfer_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
 
 func get_lin_integral{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(slope: felt, floor: felt, t2: felt, t1: felt) -> felt {
-    assert_lt_felt(t2, t1);
+    assert_lt(t2, t1);
     // briq machine broke above 10^12 bricks of demand.
-    assert_lt_felt(t2, 10**18 * 10**12);
-    assert_lt_felt(t1 - t2, 10**18 * 10**10);
-    //return slope * t1 * t1 / 2 + floor * t1 - 
-    //    slope * t2 * t2 / 2 + floor * t2;
-    // slightly factored form for lower numbers
-    let a_interm = slope * (t1 + t2);
-    let (q, r) = unsigned_div_rem(a_interm, decimals);
-    let a_interm = q * (t1 - t2);
-    let (q, r) = unsigned_div_rem(a_interm, decimals);
-    let (q, r) = unsigned_div_rem(q, 2);
+    assert_lt(t2, decimals * 10**12);
+    assert_lt(t1 - t2, decimals * 10**10);
+    // Integral between t2 and t1:
+    // slope * t1 * t1 / 2 + floor * t1 - (slope * t2 * t2 / 2 + floor * t2);
+    // Factored as slope * (t1 + t2) * (t1 - t2) / 2 + floor * (t1 - t2);
+    // Then adding divisors for decimals, trying to avoid overflows and precision loss.
+    let interm = slope * (t1 + t2);
+    let (q, r) = unsigned_div_rem(interm, decimals);
+    let interm = q * (t1 - t2);
+    let (q, r) = unsigned_div_rem(interm, decimals * 2);
     let (floor_q, r) = unsigned_div_rem(floor * (t1 - t2), decimals);
     let interm_value = q + floor_q;
+    return interm_value;
+}
+
+func get_lin_integral_negative_floor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(slope: felt, floor: felt, t2: felt, t1: felt) -> felt {
+    assert_lt(t2, t1);
+    // briq machine broke above 10^12 bricks of demand.
+    assert_lt(t2, decimals * 10**12);
+    assert_lt(t1 - t2, decimals * 10**10);
+    // Integral between t2 and t1:
+    // slope * t1 * t1 / 2 + floor * t1 - (slope * t2 * t2 / 2 + floor * t2);
+    // Factored as slope * (t1 + t2) * (t1 - t2) / 2 + floor * (t1 - t2);
+    // Then adding divisors for decimals, trying to avoid overflows and precision loss.
+    let interm = slope * (t1 + t2);
+    let (q, r) = unsigned_div_rem(interm, decimals);
+    let interm = q * (t1 - t2);
+    let (q, r) = unsigned_div_rem(interm, decimals * 2);
+    // Floor is negative. t2 < t1 so invert these, then subtract instead of adding.
+    let (floor_q, r) = unsigned_div_rem(floor * (t2 - t1), decimals);
+    let interm_value = q - floor_q;
     return interm_value;
 }
 
@@ -210,9 +238,9 @@ func integrate{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 
     let is_higher_part = is_le_felt(inflection_point, t);
     if (is_higher_part == 1) {
-        return get_lin_integral(slope, raw_floor, t, t + amount);
+        return get_lin_integral_negative_floor(slope, raw_floor, t, t + amount);
     }
 
     return get_lin_integral(lower_slope, lower_floor, t, inflection_point) +
-        get_lin_integral(slope, raw_floor, inflection_point, t + amount);
+        get_lin_integral_negative_floor(slope, raw_floor, inflection_point, t + amount);
 }
