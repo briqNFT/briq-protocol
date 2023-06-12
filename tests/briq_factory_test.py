@@ -33,11 +33,12 @@ async def factory(factory_root):
 
 import matplotlib.pyplot as plt
 
+
 @pytest.mark.asyncio
 async def test_chart(factory):
     await factory.briq_factory.initialise(0, 0, 0).execute()
 
-    xs = [t for t in range(100, 300100, 300000//100)]
+    xs = [t for t in range(300000, 600000, 300000 // 100)]
     ys = [(await factory.briq_factory.get_price_at_t(t * 10**18, 1).call()).result.price / 10**18 for t in xs]
     ys2 = [(await factory.briq_factory.get_price_at_t(t * 10**18, 200).call()).result.price / 10**18 for t in xs]
 
@@ -59,17 +60,40 @@ async def test_chart(factory):
     plt.show()
 
 
+slope = 1 * 10**8
+raw_floor = -1 * 10**13
+
+lower_floor = 1 * 10**13
+lower_slope = 5 * 10**7
+
+decay_per_second = 6337791082068820
+
+inflection_point = 400000
+
+def price_below_ip(t, amount):
+    return (lower_floor + (lower_slope * t + lower_slope * (t + amount)) // 2) * amount
+
+def price_above_ip(t, amount):
+    return (raw_floor + (slope * t + slope * (t + amount)) // 2) * amount
+
+
 @pytest.mark.asyncio
 async def test_integrate(factory):
     await factory.briq_factory.initialise(0, 0, 0).execute()
     assert (await factory.briq_factory.get_current_t().call()).result.t == 0
 
-    assert (await factory.briq_factory.get_price(1).call()).result.price == 3 * 10**13 + 333333333 // 2
-    expected_price = 1000 * (3 * 10**13 + 333333333 * 1000 // 2)
+    assert (await factory.briq_factory.get_price(1).call()).result.price == lower_floor + lower_slope / 2
+    expected_price = price_below_ip(0, 1000)
     assert (await factory.briq_factory.get_price(1000).call()).result.price == expected_price
 
     await factory.briq_factory.initialise(1000 * 10**18, 0, 0).execute()
     assert (await factory.briq_factory.get_current_t().call()).result.t == 1000 * 10**18
+
+    # Test above inflection point.
+    await factory.briq_factory.initialise(inflection_point * 10 ** 18, 0, 0).execute()
+    expected_price = price_above_ip(inflection_point, 1000)
+    assert expected_price == 0.03005 * 10**18
+    assert (await factory.briq_factory.get_price(1000).call()).result.price == expected_price
 
     factory.starknet.state.state.update_block_info(
         BlockInfo.create_for_testing(
@@ -77,64 +101,77 @@ async def test_integrate(factory):
             block_timestamp=10000
         )
     )
-    assert (await factory.briq_factory.get_current_t().call()).result.t == 1000 * 10**18 - 10**10 * 10000
+    assert (await factory.briq_factory.get_current_t().call()).result.t == inflection_point * 10**18 - decay_per_second * 10000
+
+    factory.starknet.state.state.update_block_info(
+        BlockInfo.create_for_testing(
+            block_number=4,
+            block_timestamp=3600 * 24 * 365 * 5
+        )
+    )
+    assert (await factory.briq_factory.get_current_t().call()).result.t == 0
+    assert (await factory.briq_factory.get_surge_t().call()).result.t == 0
 
 
 @pytest.mark.asyncio
 async def test_inflection_point(factory):
-    await factory.briq_factory.initialise(55000 * 10**18, 0, 0).execute()
+    await factory.briq_factory.initialise((inflection_point - 100000) * 10**18, 0, 0).execute()
 
-    lower_ppb = 3 * 10**13 + 333333333 * (5000) // 2 + 333333333 * 55000
-    higher_ppb = 2 * 10**13 + 5 * 10**8 * (5000) // 2 + 5 * 10**8 * 60000
-    assert (await factory.briq_factory.get_price(10000).call()).result.price == 5000 * lower_ppb + 5000 * higher_ppb
+    lower_ppb = lower_floor + (lower_slope * 300000 + lower_slope * 400000) / 2
+    assert (await factory.briq_factory.get_price(100000).call()).result.price == lower_ppb * 100000
+
+    higher_ppb = raw_floor + (slope * inflection_point + slope * (inflection_point + 100000)) // 2
+    expected_price = 100000 * lower_ppb + 100000 * higher_ppb
+    assert (await factory.briq_factory.get_price(200000).call()).result.price == expected_price
 
 
 @pytest.mark.asyncio
 async def test_overflows(factory):
     # Try wuth the maximum value I allow and ensure that we don't get overflows.
     await factory.briq_factory.initialise(10**18 * (10**12 - 1), 0, 0).execute()
-    assert (await factory.briq_factory.get_price(1).call()).result.price == 2 * 10**13 + 5 * 10**8 * (10**12 - 1) + (5 * 10**8 // 2)
+    assert (await factory.briq_factory.get_price(1).call()).result.price == price_above_ip((10**12 - 1), 1)
 
-    # Price before: 10**18 * (10**12 - 1) * 5 * 10**8 + 2 * 10**13
-    # Price after: (10**18 * (10**12 - 1) + (10**10 - 1) ) * 5 * 10**8 + 2 * 10**13
-    # Item not in both: 10**18 * (10**10 - 1) * 5 * 10**8
-    # Need to factor in surge to the value of 10**12 * ((10**10 - 1) * 10**18 - 10000 * 10**18) // 2
-    price_comp = (10**10 - 1) * (((10**12 - 1) * 5 * 10**8 + 2 * 10**13) + ((10**10 - 1) * 5 * 10**8) // 2)
-    surge_comp = (10**10 - 1 - 10000) * 10**12 // 2 * ((10**10 - 1) - 10000)
-    assert (await factory.briq_factory.get_price(10**10 - 1).call()).result.price == price_comp + surge_comp
+    base = price_above_ip((10**12 - 1), 10**10 - 1)
+    surge_amount = 10**10 - 1 - 250000
+    surge_p = 10**8 * surge_amount * surge_amount // 2
+    assert (await factory.briq_factory.get_price(10**10 - 1).call()).result.price == base + surge_p
 
 
 @pytest.mark.asyncio
 async def test_surge(factory):
     await factory.briq_factory.initialise(0, 0, 0).execute()
-    assert (await factory.briq_factory.get_price(1).call()).result.price == 30000166666666
+    assert (await factory.briq_factory.get_price(1).call()).result.price == price_below_ip(0, 1)
 
-    await factory.briq_factory.initialise(0, 10000 * 10**18, 0).execute()
-    assert (await factory.briq_factory.get_price(1).call()).result.price == 30000166666666 + 10**12 // 2
+    await factory.briq_factory.initialise(0, 250000 * 10**18, 0).execute()
+    assert (await factory.briq_factory.get_price(1).call()).result.price == price_below_ip(0, 1) + 10**8 / 2
 
     await factory.briq_factory.initialise(0, 0, 0).execute()
-    assert (await factory.briq_factory.get_price(10000).call()).result.price == 316666666650000000
+    assert (await factory.briq_factory.get_price(250000).call()).result.price == price_below_ip(0, 250000)
 
-    await factory.briq_factory.initialise(0, 5000 * 10**18, 0).execute()
-    assert (await factory.briq_factory.get_price(10000).call()).result.price == 316666666650000000 + 5000 * (5000 * 10**12 // 2)
+    await factory.briq_factory.initialise(0, 0, 0).execute()
+    assert (await factory.briq_factory.get_price(250001).call()).result.price == price_below_ip(0, 250001) + 10**8 // 2
 
-    await factory.briq_factory.initialise(0, 20000 * 10**18, 0).execute()
-    assert (await factory.briq_factory.get_surge_t().call()).result.t == 20000 * 10**18
+    await factory.briq_factory.initialise(0, 200000 * 10**18, 0).execute()
+    assert (await factory.briq_factory.get_price(100000).call()).result.price == price_below_ip(0, 100000) + 10**8 * 50000 * 50000 // 2
+
+    await factory.briq_factory.initialise(0, 250000 * 10**18, 0).execute()
+    assert (await factory.briq_factory.get_surge_t().call()).result.t == 250000 * 10**18
 
     factory.starknet.state.state.update_block_info(
         BlockInfo.create_for_testing(
             block_number=3,
-            block_timestamp=3600*12
+            block_timestamp=3600 * 24 * 3
         )
     )
 
-    # Has about halved in half a day.
-    assert (await factory.briq_factory.get_surge_t().call()).result.t == 20000 * 10**18 - 2315 * 10**14 * 3600*12
+    # Has about halved in half a week
+    assert 250000 * 10**18 - 4134 * 10**14 * 3600 * 24 * 3 < 250000 * 10**18 * 3 / 5
+    assert (await factory.briq_factory.get_surge_t().call()).result.t == 250000 * 10**18 - 4134 * 10**14 * 3600 * 24 * 3
 
     factory.starknet.state.state.update_block_info(
         BlockInfo.create_for_testing(
             block_number=3,
-            block_timestamp=3600*52
+            block_timestamp=3600 * 24 * 12
         )
     )
 
@@ -157,11 +194,10 @@ async def test_actual(factory):
 
     [briq_contract, _] = await declare_and_deploy(factory.starknet, "briq.cairo")
 
-    # Hack:
-    await briq_contract.setBoxAddress_(factory.briq_factory.contract_address).execute()
-
     await factory.briq_factory.initialise(0, 0, token_contract_eth.contract_address).execute()
     await factory.briq_factory.setBriqAddress_(briq_contract.contract_address).execute()
+
+    await briq_contract.setFactoryAddress_(factory.briq_factory.contract_address).execute()
 
     with pytest.raises(StarkException, match="insufficient allowance"):
         await factory.briq_factory.buy(1000).execute(ADDRESS)

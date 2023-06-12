@@ -255,7 +255,7 @@
                 "selector": "0x273869799b60805eb1234567119139c190ff198cdfb89caf331322b767266e8"
             },
             {
-                "offset": "0x4c4",
+                "offset": "0x4ad",
                 "selector": "0x2d88e868af0a1983e3886d5f3e95a2fafbd6c3450bc229e27342283dc429ccc"
             }
         ],
@@ -322,16 +322,16 @@
                     "__main__",
                     "__main__.transfer_funds"
                 ],
-                "end_pc": 1261,
+                "end_pc": 1238,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 106,
+                        "group": 104,
                         "offset": 63
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 1252,
+                "start_pc": 1229,
                 "value": "Could not transfer funds"
             }
         ],
@@ -1387,7 +1387,7 @@
             "0x800000000000010ffffffffffffffffffffffffffffcb0f790c4cc497c00001",
             "0x48307ff97fb58000",
             "0x1104800180018000",
-            "0xdc",
+            "0xc5",
             "0x208b7fff7fff7ffe",
             "0x482680017ffd8000",
             "0x800000000000010ffffffffffffffffffffffffffffcb0f790c4cc497c00001",
@@ -1402,7 +1402,7 @@
             "0x0",
             "0x48307ff97fb58000",
             "0x1104800180018000",
-            "0xcd",
+            "0xb6",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -1414,7 +1414,7 @@
             "0x484680017ffd8000",
             "0xde0b6b3a7640000",
             "0x1104800180018000",
-            "0x113",
+            "0xfc",
             "0x40137fff7fff8000",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
@@ -1462,7 +1462,7 @@
             "0x484680017ffd8000",
             "0xde0b6b3a7640000",
             "0x1104800180018000",
-            "0xe3",
+            "0xcc",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -1508,41 +1508,18 @@
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff9d",
             "0x40137fff7fff8000",
             "0x48127ffc7fff8000",
-            "0x48127ffc7fff8000",
-            "0x48127ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffed4",
-            "0x484680017ffd8000",
-            "0xde0b6b3a7640000",
-            "0x48127ffb7fff8000",
-            "0x48127ffb7fff8000",
-            "0x48127ffb7fff8000",
-            "0x48307ffc7ffb8000",
-            "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe25",
-            "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff0e",
-            "0x484680017ffd8000",
-            "0xde0b6b3a7640000",
-            "0x48127ffb7fff8000",
-            "0x48127ffb7fff8000",
-            "0x48127ffb7fff8000",
-            "0x48307ffc7ffb8000",
-            "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe39",
-            "0x48127ffd7fff8000",
-            "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbe3",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbfa",
             "0x40137fff7fff8001",
             "0x48127ffe7fff8000",
-            "0x48127ff77fff8000",
-            "0x48127ff77fff8000",
+            "0x48127ff67fff8000",
+            "0x48127ff67fff8000",
             "0x480a80017fff8000",
             "0x480a80007fff8000",
             "0x1104800180018000",
             "0x28",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd90",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffda7",
             "0x48127ffc7fff8000",
             "0x48127ffd7fff8000",
             "0x48127ffd7fff8000",
@@ -1551,12 +1528,12 @@
             "0x1",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe6b",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe82",
             "0x480a80017fff8000",
             "0x480a7ffd7fff8000",
             "0x480a80007fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffdd4",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffdeb",
             "0x48127ffe7fff8000",
             "0x48127fc97fff8000",
             "0x48127ffd7fff8000",
@@ -1569,7 +1546,7 @@
             "0x480280027ffb8000",
             "0x480280007ffd8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffb5",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffcc",
             "0x40780017fff7fff",
             "0x1",
             "0x48127ffc7fff8000",
@@ -1584,15 +1561,15 @@
             "0x480a7ffb7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd53",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd6a",
             "0x48127ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbb3",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbca",
             "0x48127ffe7fff8000",
             "0x48127ff57fff8000",
             "0x48127ff57fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe29",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe40",
             "0x48127ffc7fff8000",
             "0x48127ffd7fff8000",
             "0x48127ffd7fff8000",
@@ -1601,7 +1578,7 @@
             "0x48127fdc7fff8000",
             "0x48127fdc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd28",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd3f",
             "0x48127ffd7fff8000",
             "0x48127fdf7fff8000",
             "0x48127ffc7fff8000",
@@ -1610,38 +1587,38 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb1e",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb35",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0xc9f2c9cd04674edea40000000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb19",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb30",
             "0x48297ffc80007ffd",
             "0x480680017fff8000",
             "0x204fce5e3e25026110000000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb14",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb2b",
             "0x482a7ffc7ffd8000",
             "0x48127ffe7fff8000",
             "0x48527ffe7ffa8000",
             "0x480680017fff8000",
             "0xde0b6b3a7640000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb69",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb80",
             "0x48297ffc80007ffd",
             "0x48127ffc7fff8000",
             "0x48507ffe7ffc8000",
             "0x480680017fff8000",
             "0x1bc16d674ec80000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb62",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb79",
             "0x48297ffc80007ffd",
             "0x48127ffc7fff8000",
             "0x48527ffe7ffb8000",
             "0x480680017fff8000",
             "0xde0b6b3a7640000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb5b",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb72",
             "0x480a7ff77fff8000",
             "0x480a7ff87fff8000",
             "0x48127ffb7fff8000",
@@ -1651,38 +1628,38 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf5",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb0c",
             "0x480a7ffc7fff8000",
             "0x480680017fff8000",
             "0xc9f2c9cd04674edea40000000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf0",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb07",
             "0x48297ffc80007ffd",
             "0x480680017fff8000",
             "0x204fce5e3e25026110000000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaeb",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb02",
             "0x482a7ffc7ffd8000",
             "0x48127ffe7fff8000",
             "0x48527ffe7ffa8000",
             "0x480680017fff8000",
             "0xde0b6b3a7640000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb40",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb57",
             "0x48297ffc80007ffd",
             "0x48127ffc7fff8000",
             "0x48507ffe7ffc8000",
             "0x480680017fff8000",
             "0x1bc16d674ec80000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb39",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb50",
             "0x48297ffd80007ffc",
             "0x48127ffc7fff8000",
             "0x48527ffe7ffb8000",
             "0x480680017fff8000",
             "0xde0b6b3a7640000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb32",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb49",
             "0x480a7ff77fff8000",
             "0x480a7ff87fff8000",
             "0x48127ffb7fff8000",
@@ -1695,7 +1672,7 @@
             "0x480680017fff8000",
             "0x54b40b1f852bda000000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcb6",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffccd",
             "0x482480017fff8000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x20680017fff7fff",
@@ -1717,7 +1694,7 @@
             "0x54b40b1f852bda000000",
             "0x480a7ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffca0",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcb7",
             "0x482480017fff8000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x20680017fff7fff",
@@ -34580,636 +34557,6 @@
                                 },
                                 "parent_location": [
                                     {
-                                        "end_col": 38,
-                                        "end_line": 82,
-                                        "input_file": {
-                                            "filename": "contracts/briq_factory.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 30,
-                                                "end_line": 164,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 15,
-                                                "start_line": 164
-                                            },
-                                            "While trying to retrieve the implicit argument 'syscall_ptr' in:"
-                                        ],
-                                        "start_col": 20,
-                                        "start_line": 82
-                                    },
-                                    "While expanding the reference 'syscall_ptr' in:"
-                                ],
-                                "start_col": 19,
-                                "start_line": 160
-                            },
-                            "While trying to update the implicit return value 'syscall_ptr' in:"
-                        ],
-                        "start_col": 16,
-                        "start_line": 130
-                    }
-                },
-                "1167": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 62,
-                        "end_line": 130,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 36,
-                                "end_line": 160,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 66,
-                                        "end_line": 82,
-                                        "input_file": {
-                                            "filename": "contracts/briq_factory.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 30,
-                                                "end_line": 164,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 15,
-                                                "start_line": 164
-                                            },
-                                            "While trying to retrieve the implicit argument 'pedersen_ptr' in:"
-                                        ],
-                                        "start_col": 40,
-                                        "start_line": 82
-                                    },
-                                    "While expanding the reference 'pedersen_ptr' in:"
-                                ],
-                                "start_col": 19,
-                                "start_line": 160
-                            },
-                            "While trying to update the implicit return value 'pedersen_ptr' in:"
-                        ],
-                        "start_col": 36,
-                        "start_line": 130
-                    }
-                },
-                "1168": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 79,
-                        "end_line": 130,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 36,
-                                "end_line": 160,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 83,
-                                        "end_line": 82,
-                                        "input_file": {
-                                            "filename": "contracts/briq_factory.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 30,
-                                                "end_line": 164,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 15,
-                                                "start_line": 164
-                                            },
-                                            "While trying to retrieve the implicit argument 'range_check_ptr' in:"
-                                        ],
-                                        "start_col": 68,
-                                        "start_line": 82
-                                    },
-                                    "While expanding the reference 'range_check_ptr' in:"
-                                ],
-                                "start_col": 19,
-                                "start_line": 160
-                            },
-                            "While trying to update the implicit return value 'range_check_ptr' in:"
-                        ],
-                        "start_col": 64,
-                        "start_line": 130
-                    }
-                },
-                "1169": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 30,
-                        "end_line": 164,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 15,
-                        "start_line": 164
-                    }
-                },
-                "1171": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 46,
-                        "end_line": 165,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 29,
-                        "start_line": 165
-                    }
-                },
-                "1173": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 38,
-                        "end_line": 82,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 30,
-                                "end_line": 164,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 34,
-                                        "end_line": 19,
-                                        "input_file": {
-                                            "filename": "autogen/starknet/storage_var/last_stored_t/decl.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 47,
-                                                "end_line": 165,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 5,
-                                                "start_line": 165
-                                            },
-                                            "While trying to retrieve the implicit argument 'syscall_ptr' in:"
-                                        ],
-                                        "start_col": 16,
-                                        "start_line": 19
-                                    },
-                                    "While expanding the reference 'syscall_ptr' in:"
-                                ],
-                                "start_col": 15,
-                                "start_line": 164
-                            },
-                            "While trying to update the implicit return value 'syscall_ptr' in:"
-                        ],
-                        "start_col": 20,
-                        "start_line": 82
-                    }
-                },
-                "1174": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 66,
-                        "end_line": 82,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 30,
-                                "end_line": 164,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 62,
-                                        "end_line": 19,
-                                        "input_file": {
-                                            "filename": "autogen/starknet/storage_var/last_stored_t/decl.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 47,
-                                                "end_line": 165,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 5,
-                                                "start_line": 165
-                                            },
-                                            "While trying to retrieve the implicit argument 'pedersen_ptr' in:"
-                                        ],
-                                        "start_col": 36,
-                                        "start_line": 19
-                                    },
-                                    "While expanding the reference 'pedersen_ptr' in:"
-                                ],
-                                "start_col": 15,
-                                "start_line": 164
-                            },
-                            "While trying to update the implicit return value 'pedersen_ptr' in:"
-                        ],
-                        "start_col": 40,
-                        "start_line": 82
-                    }
-                },
-                "1175": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 83,
-                        "end_line": 82,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 30,
-                                "end_line": 164,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 79,
-                                        "end_line": 19,
-                                        "input_file": {
-                                            "filename": "autogen/starknet/storage_var/last_stored_t/decl.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 47,
-                                                "end_line": 165,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 5,
-                                                "start_line": 165
-                                            },
-                                            "While trying to retrieve the implicit argument 'range_check_ptr' in:"
-                                        ],
-                                        "start_col": 64,
-                                        "start_line": 19
-                                    },
-                                    "While expanding the reference 'range_check_ptr' in:"
-                                ],
-                                "start_col": 15,
-                                "start_line": 164
-                            },
-                            "While trying to update the implicit return value 'range_check_ptr' in:"
-                        ],
-                        "start_col": 68,
-                        "start_line": 82
-                    }
-                },
-                "1176": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 46,
-                        "end_line": 165,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 25,
-                        "start_line": 165
-                    }
-                },
-                "1177": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 47,
-                        "end_line": 165,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 5,
-                        "start_line": 165
-                    }
-                },
-                "1179": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 34,
-                        "end_line": 167,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 21,
-                        "start_line": 167
-                    }
-                },
-                "1181": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 46,
-                        "end_line": 168,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 29,
-                        "start_line": 168
-                    }
-                },
-                "1183": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 36,
-                        "end_line": 99,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 34,
-                                "end_line": 167,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 34,
-                                        "end_line": 19,
-                                        "input_file": {
-                                            "filename": "autogen/starknet/storage_var/surge_t/decl.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 47,
-                                                "end_line": 168,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 5,
-                                                "start_line": 168
-                                            },
-                                            "While trying to retrieve the implicit argument 'syscall_ptr' in:"
-                                        ],
-                                        "start_col": 16,
-                                        "start_line": 19
-                                    },
-                                    "While expanding the reference 'syscall_ptr' in:"
-                                ],
-                                "start_col": 21,
-                                "start_line": 167
-                            },
-                            "While trying to update the implicit return value 'syscall_ptr' in:"
-                        ],
-                        "start_col": 18,
-                        "start_line": 99
-                    }
-                },
-                "1184": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 64,
-                        "end_line": 99,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 34,
-                                "end_line": 167,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 62,
-                                        "end_line": 19,
-                                        "input_file": {
-                                            "filename": "autogen/starknet/storage_var/surge_t/decl.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 47,
-                                                "end_line": 168,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 5,
-                                                "start_line": 168
-                                            },
-                                            "While trying to retrieve the implicit argument 'pedersen_ptr' in:"
-                                        ],
-                                        "start_col": 36,
-                                        "start_line": 19
-                                    },
-                                    "While expanding the reference 'pedersen_ptr' in:"
-                                ],
-                                "start_col": 21,
-                                "start_line": 167
-                            },
-                            "While trying to update the implicit return value 'pedersen_ptr' in:"
-                        ],
-                        "start_col": 38,
-                        "start_line": 99
-                    }
-                },
-                "1185": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 81,
-                        "end_line": 99,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 34,
-                                "end_line": 167,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
-                                        "end_col": 79,
-                                        "end_line": 19,
-                                        "input_file": {
-                                            "filename": "autogen/starknet/storage_var/surge_t/decl.cairo"
-                                        },
-                                        "parent_location": [
-                                            {
-                                                "end_col": 47,
-                                                "end_line": 168,
-                                                "input_file": {
-                                                    "filename": "contracts/briq_factory.cairo"
-                                                },
-                                                "start_col": 5,
-                                                "start_line": 168
-                                            },
-                                            "While trying to retrieve the implicit argument 'range_check_ptr' in:"
-                                        ],
-                                        "start_col": 64,
-                                        "start_line": 19
-                                    },
-                                    "While expanding the reference 'range_check_ptr' in:"
-                                ],
-                                "start_col": 21,
-                                "start_line": 167
-                            },
-                            "While trying to update the implicit return value 'range_check_ptr' in:"
-                        ],
-                        "start_col": 66,
-                        "start_line": 99
-                    }
-                },
-                "1186": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 46,
-                        "end_line": 168,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 19,
-                        "start_line": 168
-                    }
-                },
-                "1187": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 47,
-                        "end_line": 168,
-                        "input_file": {
-                            "filename": "contracts/briq_factory.cairo"
-                        },
-                        "start_col": 5,
-                        "start_line": 168
-                    }
-                },
-                "1189": {
-                    "accessible_scopes": [
-                        "__main__",
-                        "__main__",
-                        "__main__.buy"
-                    ],
-                    "flow_tracking_data": null,
-                    "hints": [],
-                    "inst": {
-                        "end_col": 34,
-                        "end_line": 19,
-                        "input_file": {
-                            "filename": "autogen/starknet/storage_var/surge_t/decl.cairo"
-                        },
-                        "parent_location": [
-                            {
-                                "end_col": 47,
-                                "end_line": 168,
-                                "input_file": {
-                                    "filename": "contracts/briq_factory.cairo"
-                                },
-                                "parent_location": [
-                                    {
                                         "end_col": 43,
                                         "end_line": 200,
                                         "input_file": {
@@ -35232,16 +34579,16 @@
                                     },
                                     "While expanding the reference 'syscall_ptr' in:"
                                 ],
-                                "start_col": 5,
-                                "start_line": 168
+                                "start_col": 19,
+                                "start_line": 160
                             },
                             "While trying to update the implicit return value 'syscall_ptr' in:"
                         ],
                         "start_col": 16,
-                        "start_line": 19
+                        "start_line": 130
                     }
                 },
-                "1190": {
+                "1167": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35259,7 +34606,7 @@
                         "start_line": 170
                     }
                 },
-                "1192": {
+                "1169": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35289,7 +34636,7 @@
                         "start_line": 170
                     }
                 },
-                "1193": {
+                "1170": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35343,7 +34690,7 @@
                         "start_line": 200
                     }
                 },
-                "1194": {
+                "1171": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35353,14 +34700,14 @@
                     "hints": [],
                     "inst": {
                         "end_col": 62,
-                        "end_line": 19,
+                        "end_line": 130,
                         "input_file": {
-                            "filename": "autogen/starknet/storage_var/surge_t/decl.cairo"
+                            "filename": "contracts/briq_factory.cairo"
                         },
                         "parent_location": [
                             {
-                                "end_col": 47,
-                                "end_line": 168,
+                                "end_col": 36,
+                                "end_line": 160,
                                 "input_file": {
                                     "filename": "contracts/briq_factory.cairo"
                                 },
@@ -35388,16 +34735,16 @@
                                     },
                                     "While expanding the reference 'pedersen_ptr' in:"
                                 ],
-                                "start_col": 5,
-                                "start_line": 168
+                                "start_col": 19,
+                                "start_line": 160
                             },
                             "While trying to update the implicit return value 'pedersen_ptr' in:"
                         ],
                         "start_col": 36,
-                        "start_line": 19
+                        "start_line": 130
                     }
                 },
-                "1195": {
+                "1172": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35407,14 +34754,14 @@
                     "hints": [],
                     "inst": {
                         "end_col": 79,
-                        "end_line": 19,
+                        "end_line": 130,
                         "input_file": {
-                            "filename": "autogen/starknet/storage_var/surge_t/decl.cairo"
+                            "filename": "contracts/briq_factory.cairo"
                         },
                         "parent_location": [
                             {
-                                "end_col": 47,
-                                "end_line": 168,
+                                "end_col": 36,
+                                "end_line": 160,
                                 "input_file": {
                                     "filename": "contracts/briq_factory.cairo"
                                 },
@@ -35442,16 +34789,16 @@
                                     },
                                     "While expanding the reference 'range_check_ptr' in:"
                                 ],
-                                "start_col": 5,
-                                "start_line": 168
+                                "start_col": 19,
+                                "start_line": 160
                             },
                             "While trying to update the implicit return value 'range_check_ptr' in:"
                         ],
                         "start_col": 64,
-                        "start_line": 19
+                        "start_line": 130
                     }
                 },
-                "1196": {
+                "1173": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35493,7 +34840,7 @@
                         "start_line": 170
                     }
                 },
-                "1197": {
+                "1174": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35535,7 +34882,7 @@
                         "start_line": 160
                     }
                 },
-                "1198": {
+                "1175": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35553,7 +34900,7 @@
                         "start_line": 171
                     }
                 },
-                "1200": {
+                "1177": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35571,7 +34918,7 @@
                         "start_line": 173
                     }
                 },
-                "1202": {
+                "1179": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35637,7 +34984,7 @@
                         "start_line": 13
                     }
                 },
-                "1203": {
+                "1180": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35703,7 +35050,7 @@
                         "start_line": 13
                     }
                 },
-                "1204": {
+                "1181": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35733,7 +35080,7 @@
                         "start_line": 173
                     }
                 },
-                "1205": {
+                "1182": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35775,7 +35122,7 @@
                         "start_line": 170
                     }
                 },
-                "1206": {
+                "1183": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35793,7 +35140,7 @@
                         "start_line": 174
                     }
                 },
-                "1208": {
+                "1185": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35823,7 +35170,7 @@
                         "start_line": 151
                     }
                 },
-                "1209": {
+                "1186": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35841,7 +35188,7 @@
                         "start_line": 174
                     }
                 },
-                "1211": {
+                "1188": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35883,7 +35230,7 @@
                         "start_line": 170
                     }
                 },
-                "1212": {
+                "1189": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35913,7 +35260,7 @@
                         "start_line": 151
                     }
                 },
-                "1213": {
+                "1190": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35955,7 +35302,7 @@
                         "start_line": 160
                     }
                 },
-                "1214": {
+                "1191": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -35973,7 +35320,7 @@
                         "start_line": 176
                     }
                 },
-                "1216": {
+                "1193": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36039,7 +35386,7 @@
                         "start_line": 1
                     }
                 },
-                "1217": {
+                "1194": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36093,7 +35440,7 @@
                         "start_line": 13
                     }
                 },
-                "1218": {
+                "1195": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36159,7 +35506,7 @@
                         "start_line": 1
                     }
                 },
-                "1219": {
+                "1196": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36177,7 +35524,7 @@
                         "start_line": 178
                     }
                 },
-                "1220": {
+                "1197": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36256,7 +35603,7 @@
                         "start_line": 2
                     }
                 },
-                "1222": {
+                "1199": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36287,7 +35634,7 @@
                         "start_line": 1
                     }
                 },
-                "1223": {
+                "1200": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36342,7 +35689,7 @@
                         "start_line": 1
                     }
                 },
-                "1224": {
+                "1201": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36397,7 +35744,7 @@
                         "start_line": 1
                     }
                 },
-                "1225": {
+                "1202": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36452,7 +35799,7 @@
                         "start_line": 1
                     }
                 },
-                "1226": {
+                "1203": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36507,7 +35854,7 @@
                         "start_line": 1
                     }
                 },
-                "1227": {
+                "1204": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36526,7 +35873,7 @@
                         "start_line": 150
                     }
                 },
-                "1229": {
+                "1206": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36582,7 +35929,7 @@
                         "start_line": 3
                     }
                 },
-                "1231": {
+                "1208": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36637,7 +35984,7 @@
                         "start_line": 1
                     }
                 },
-                "1232": {
+                "1209": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36692,7 +36039,7 @@
                         "start_line": 1
                     }
                 },
-                "1233": {
+                "1210": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36747,7 +36094,7 @@
                         "start_line": 1
                     }
                 },
-                "1234": {
+                "1211": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36802,7 +36149,7 @@
                         "start_line": 4
                     }
                 },
-                "1236": {
+                "1213": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36857,7 +36204,7 @@
                         "start_line": 3
                     }
                 },
-                "1237": {
+                "1214": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__",
@@ -36888,7 +36235,7 @@
                         "start_line": 1
                     }
                 },
-                "1238": {
+                "1215": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -36929,7 +36276,7 @@
                         "start_line": 182
                     }
                 },
-                "1239": {
+                "1216": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -36970,7 +36317,7 @@
                         "start_line": 182
                     }
                 },
-                "1240": {
+                "1217": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37011,7 +36358,7 @@
                         "start_line": 182
                     }
                 },
-                "1241": {
+                "1218": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37040,7 +36387,7 @@
                         "start_line": 183
                     }
                 },
-                "1242": {
+                "1219": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37057,7 +36404,7 @@
                         "start_line": 184
                     }
                 },
-                "1244": {
+                "1221": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37110,7 +36457,7 @@
                         "start_line": 40
                     }
                 },
-                "1245": {
+                "1222": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37127,7 +36474,7 @@
                         "start_line": 185
                     }
                 },
-                "1247": {
+                "1224": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37180,7 +36527,7 @@
                         "start_line": 274
                     }
                 },
-                "1248": {
+                "1225": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37233,7 +36580,7 @@
                         "start_line": 40
                     }
                 },
-                "1249": {
+                "1226": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37286,7 +36633,7 @@
                         "start_line": 40
                     }
                 },
-                "1250": {
+                "1227": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37303,7 +36650,7 @@
                         "start_line": 186
                     }
                 },
-                "1252": {
+                "1229": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37368,7 +36715,7 @@
                         "start_line": 13
                     }
                 },
-                "1253": {
+                "1230": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37433,7 +36780,7 @@
                         "start_line": 13
                     }
                 },
-                "1254": {
+                "1231": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37462,7 +36809,7 @@
                         "start_line": 186
                     }
                 },
-                "1255": {
+                "1232": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37491,7 +36838,7 @@
                         "start_line": 183
                     }
                 },
-                "1256": {
+                "1233": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37520,7 +36867,7 @@
                         "start_line": 185
                     }
                 },
-                "1257": {
+                "1234": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37549,7 +36896,7 @@
                         "start_line": 184
                     }
                 },
-                "1258": {
+                "1235": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37578,7 +36925,7 @@
                         "start_line": 184
                     }
                 },
-                "1259": {
+                "1236": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37595,7 +36942,7 @@
                         "start_line": 188
                     }
                 },
-                "1261": {
+                "1238": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37660,7 +37007,7 @@
                         "start_line": 1
                     }
                 },
-                "1262": {
+                "1239": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37713,7 +37060,7 @@
                         "start_line": 13
                     }
                 },
-                "1263": {
+                "1240": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37778,7 +37125,7 @@
                         "start_line": 1
                     }
                 },
-                "1264": {
+                "1241": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.transfer_funds"
@@ -37795,7 +37142,7 @@
                         "start_line": 190
                     }
                 },
-                "1265": {
+                "1242": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37836,7 +37183,7 @@
                         "start_line": 193
                     }
                 },
-                "1266": {
+                "1243": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37865,7 +37212,7 @@
                         "start_line": 194
                     }
                 },
-                "1267": {
+                "1244": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37894,7 +37241,7 @@
                         "start_line": 194
                     }
                 },
-                "1268": {
+                "1245": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37911,7 +37258,7 @@
                         "start_line": 195
                     }
                 },
-                "1270": {
+                "1247": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37940,7 +37287,7 @@
                         "start_line": 194
                     }
                 },
-                "1271": {
+                "1248": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37957,7 +37304,7 @@
                         "start_line": 197
                     }
                 },
-                "1273": {
+                "1250": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37974,7 +37321,7 @@
                         "start_line": 197
                     }
                 },
-                "1275": {
+                "1252": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -37991,7 +37338,7 @@
                         "start_line": 198
                     }
                 },
-                "1276": {
+                "1253": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38008,7 +37355,7 @@
                         "start_line": 198
                     }
                 },
-                "1278": {
+                "1255": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38025,7 +37372,7 @@
                         "start_line": 198
                     }
                 },
-                "1280": {
+                "1257": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38054,7 +37401,7 @@
                         "start_line": 203
                     }
                 },
-                "1281": {
+                "1258": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38107,7 +37454,7 @@
                         "start_line": 59
                     }
                 },
-                "1282": {
+                "1259": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38136,7 +37483,7 @@
                         "start_line": 203
                     }
                 },
-                "1283": {
+                "1260": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38153,7 +37500,7 @@
                         "start_line": 204
                     }
                 },
-                "1285": {
+                "1262": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38170,7 +37517,7 @@
                         "start_line": 204
                     }
                 },
-                "1287": {
+                "1264": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38199,7 +37546,7 @@
                         "start_line": 205
                     }
                 },
-                "1288": {
+                "1265": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38252,7 +37599,7 @@
                         "start_line": 297
                     }
                 },
-                "1289": {
+                "1266": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38281,7 +37628,7 @@
                         "start_line": 205
                     }
                 },
-                "1290": {
+                "1267": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38298,7 +37645,7 @@
                         "start_line": 206
                     }
                 },
-                "1292": {
+                "1269": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38315,7 +37662,7 @@
                         "start_line": 206
                     }
                 },
-                "1294": {
+                "1271": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38332,7 +37679,7 @@
                         "start_line": 207
                     }
                 },
-                "1295": {
+                "1272": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38385,7 +37732,7 @@
                         "start_line": 297
                     }
                 },
-                "1296": {
+                "1273": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38402,7 +37749,7 @@
                         "start_line": 207
                     }
                 },
-                "1297": {
+                "1274": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38419,7 +37766,7 @@
                         "start_line": 207
                     }
                 },
-                "1299": {
+                "1276": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38436,7 +37783,7 @@
                         "start_line": 207
                     }
                 },
-                "1301": {
+                "1278": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38477,7 +37824,7 @@
                         "start_line": 193
                     }
                 },
-                "1302": {
+                "1279": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38518,7 +37865,7 @@
                         "start_line": 193
                     }
                 },
-                "1303": {
+                "1280": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38571,7 +37918,7 @@
                         "start_line": 297
                     }
                 },
-                "1304": {
+                "1281": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38600,7 +37947,7 @@
                         "start_line": 208
                     }
                 },
-                "1305": {
+                "1282": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral"
@@ -38617,7 +37964,7 @@
                         "start_line": 209
                     }
                 },
-                "1306": {
+                "1283": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38658,7 +38005,7 @@
                         "start_line": 212
                     }
                 },
-                "1307": {
+                "1284": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38687,7 +38034,7 @@
                         "start_line": 213
                     }
                 },
-                "1308": {
+                "1285": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38716,7 +38063,7 @@
                         "start_line": 213
                     }
                 },
-                "1309": {
+                "1286": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38733,7 +38080,7 @@
                         "start_line": 214
                     }
                 },
-                "1311": {
+                "1288": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38762,7 +38109,7 @@
                         "start_line": 213
                     }
                 },
-                "1312": {
+                "1289": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38779,7 +38126,7 @@
                         "start_line": 216
                     }
                 },
-                "1314": {
+                "1291": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38796,7 +38143,7 @@
                         "start_line": 216
                     }
                 },
-                "1316": {
+                "1293": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38813,7 +38160,7 @@
                         "start_line": 217
                     }
                 },
-                "1317": {
+                "1294": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38830,7 +38177,7 @@
                         "start_line": 217
                     }
                 },
-                "1319": {
+                "1296": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38847,7 +38194,7 @@
                         "start_line": 217
                     }
                 },
-                "1321": {
+                "1298": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38876,7 +38223,7 @@
                         "start_line": 222
                     }
                 },
-                "1322": {
+                "1299": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38929,7 +38276,7 @@
                         "start_line": 59
                     }
                 },
-                "1323": {
+                "1300": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38958,7 +38305,7 @@
                         "start_line": 222
                     }
                 },
-                "1324": {
+                "1301": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38975,7 +38322,7 @@
                         "start_line": 223
                     }
                 },
-                "1326": {
+                "1303": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -38992,7 +38339,7 @@
                         "start_line": 223
                     }
                 },
-                "1328": {
+                "1305": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39021,7 +38368,7 @@
                         "start_line": 224
                     }
                 },
-                "1329": {
+                "1306": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39074,7 +38421,7 @@
                         "start_line": 297
                     }
                 },
-                "1330": {
+                "1307": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39103,7 +38450,7 @@
                         "start_line": 224
                     }
                 },
-                "1331": {
+                "1308": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39120,7 +38467,7 @@
                         "start_line": 225
                     }
                 },
-                "1333": {
+                "1310": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39137,7 +38484,7 @@
                         "start_line": 225
                     }
                 },
-                "1335": {
+                "1312": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39154,7 +38501,7 @@
                         "start_line": 227
                     }
                 },
-                "1336": {
+                "1313": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39207,7 +38554,7 @@
                         "start_line": 297
                     }
                 },
-                "1337": {
+                "1314": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39224,7 +38571,7 @@
                         "start_line": 227
                     }
                 },
-                "1338": {
+                "1315": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39241,7 +38588,7 @@
                         "start_line": 227
                     }
                 },
-                "1340": {
+                "1317": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39258,7 +38605,7 @@
                         "start_line": 227
                     }
                 },
-                "1342": {
+                "1319": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39299,7 +38646,7 @@
                         "start_line": 212
                     }
                 },
-                "1343": {
+                "1320": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39340,7 +38687,7 @@
                         "start_line": 212
                     }
                 },
-                "1344": {
+                "1321": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39393,7 +38740,7 @@
                         "start_line": 297
                     }
                 },
-                "1345": {
+                "1322": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39422,7 +38769,7 @@
                         "start_line": 228
                     }
                 },
-                "1346": {
+                "1323": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.get_lin_integral_negative_floor"
@@ -39439,7 +38786,7 @@
                         "start_line": 229
                     }
                 },
-                "1347": {
+                "1324": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39456,7 +38803,7 @@
                         "start_line": 234
                     }
                 },
-                "1349": {
+                "1326": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39497,7 +38844,7 @@
                         "start_line": 232
                     }
                 },
-                "1350": {
+                "1327": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39514,7 +38861,7 @@
                         "start_line": 236
                     }
                 },
-                "1351": {
+                "1328": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39531,7 +38878,7 @@
                         "start_line": 236
                     }
                 },
-                "1353": {
+                "1330": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39548,7 +38895,7 @@
                         "start_line": 236
                     }
                 },
-                "1355": {
+                "1332": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39565,7 +38912,7 @@
                         "start_line": 237
                     }
                 },
-                "1357": {
+                "1334": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39582,7 +38929,7 @@
                         "start_line": 237
                     }
                 },
-                "1359": {
+                "1336": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39623,7 +38970,7 @@
                         "start_line": 232
                     }
                 },
-                "1360": {
+                "1337": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39664,7 +39011,7 @@
                         "start_line": 232
                     }
                 },
-                "1361": {
+                "1338": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39717,7 +39064,7 @@
                         "start_line": 79
                     }
                 },
-                "1362": {
+                "1339": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39734,7 +39081,7 @@
                         "start_line": 238
                     }
                 },
-                "1364": {
+                "1341": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39751,7 +39098,7 @@
                         "start_line": 238
                     }
                 },
-                "1366": {
+                "1343": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39780,7 +39127,7 @@
                         "start_line": 233
                     }
                 },
-                "1367": {
+                "1344": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39797,7 +39144,7 @@
                         "start_line": 238
                     }
                 },
-                "1368": {
+                "1345": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39814,7 +39161,7 @@
                         "start_line": 238
                     }
                 },
-                "1370": {
+                "1347": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39831,7 +39178,7 @@
                         "start_line": 238
                     }
                 },
-                "1371": {
+                "1348": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39884,7 +39231,7 @@
                         "start_line": 79
                     }
                 },
-                "1372": {
+                "1349": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39901,7 +39248,7 @@
                         "start_line": 241
                     }
                 },
-                "1374": {
+                "1351": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39930,7 +39277,7 @@
                         "start_line": 233
                     }
                 },
-                "1375": {
+                "1352": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39947,7 +39294,7 @@
                         "start_line": 241
                     }
                 },
-                "1377": {
+                "1354": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39964,7 +39311,7 @@
                         "start_line": 242
                     }
                 },
-                "1379": {
+                "1356": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -39981,7 +39328,7 @@
                         "start_line": 242
                     }
                 },
-                "1381": {
+                "1358": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40022,7 +39369,7 @@
                         "start_line": 232
                     }
                 },
-                "1382": {
+                "1359": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40063,7 +39410,7 @@
                         "start_line": 232
                     }
                 },
-                "1383": {
+                "1360": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40116,7 +39463,7 @@
                         "start_line": 79
                     }
                 },
-                "1384": {
+                "1361": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40133,7 +39480,7 @@
                         "start_line": 243
                     }
                 },
-                "1386": {
+                "1363": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40150,7 +39497,7 @@
                         "start_line": 243
                     }
                 },
-                "1388": {
+                "1365": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40179,7 +39526,7 @@
                         "start_line": 233
                     }
                 },
-                "1389": {
+                "1366": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40196,7 +39543,7 @@
                         "start_line": 243
                     }
                 },
-                "1390": {
+                "1367": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40213,7 +39560,7 @@
                         "start_line": 243
                     }
                 },
-                "1392": {
+                "1369": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40230,7 +39577,7 @@
                         "start_line": 243
                     }
                 },
-                "1393": {
+                "1370": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40271,7 +39618,7 @@
                         "start_line": 232
                     }
                 },
-                "1394": {
+                "1371": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40312,7 +39659,7 @@
                         "start_line": 232
                     }
                 },
-                "1395": {
+                "1372": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40365,7 +39712,7 @@
                         "start_line": 79
                     }
                 },
-                "1396": {
+                "1373": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40382,7 +39729,7 @@
                         "start_line": 246
                     }
                 },
-                "1398": {
+                "1375": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40399,7 +39746,7 @@
                         "start_line": 246
                     }
                 },
-                "1400": {
+                "1377": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40428,7 +39775,7 @@
                         "start_line": 233
                     }
                 },
-                "1401": {
+                "1378": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40445,7 +39792,7 @@
                         "start_line": 246
                     }
                 },
-                "1403": {
+                "1380": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40462,7 +39809,7 @@
                         "start_line": 246
                     }
                 },
-                "1405": {
+                "1382": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40515,7 +39862,7 @@
                         "start_line": 193
                     }
                 },
-                "1406": {
+                "1383": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40568,7 +39915,7 @@
                         "start_line": 193
                     }
                 },
-                "1407": {
+                "1384": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40621,7 +39968,7 @@
                         "start_line": 193
                     }
                 },
-                "1408": {
+                "1385": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40638,7 +39985,7 @@
                         "start_line": 247
                     }
                 },
-                "1410": {
+                "1387": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40655,7 +40002,7 @@
                         "start_line": 247
                     }
                 },
-                "1412": {
+                "1389": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40672,7 +40019,7 @@
                         "start_line": 247
                     }
                 },
-                "1414": {
+                "1391": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40689,7 +40036,7 @@
                         "start_line": 247
                     }
                 },
-                "1415": {
+                "1392": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40706,7 +40053,7 @@
                         "start_line": 247
                     }
                 },
-                "1417": {
+                "1394": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40759,7 +40106,7 @@
                         "start_line": 212
                     }
                 },
-                "1418": {
+                "1395": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40812,7 +40159,7 @@
                         "start_line": 212
                     }
                 },
-                "1419": {
+                "1396": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40865,7 +40212,7 @@
                         "start_line": 212
                     }
                 },
-                "1420": {
+                "1397": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -40882,7 +40229,7 @@
                         "start_line": 246
                     }
                 },
-                "1421": {
+                "1398": {
                     "accessible_scopes": [
                         "__main__",
                         "__main__.integrate"
@@ -41425,7 +40772,7 @@
                     }
                 }
             ],
-            "1229": [
+            "1206": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -41436,7 +40783,7 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 105,
+                            "group": 103,
                             "offset": 0
                         },
                         "reference_ids": {}
@@ -41938,7 +41285,7 @@
             },
             "__main__.get_lin_integral": {
                 "decorators": [],
-                "pc": 1265,
+                "pc": 1242,
                 "type": "function"
             },
             "__main__.get_lin_integral.Args": {
@@ -41993,7 +41340,7 @@
             },
             "__main__.get_lin_integral_negative_floor": {
                 "decorators": [],
-                "pc": 1306,
+                "pc": 1283,
                 "type": "function"
             },
             "__main__.get_lin_integral_negative_floor.Args": {
@@ -42282,7 +41629,7 @@
             },
             "__main__.integrate": {
                 "decorators": [],
-                "pc": 1347,
+                "pc": 1324,
                 "type": "function"
             },
             "__main__.integrate.Args": {
@@ -42847,7 +42194,7 @@
             },
             "__main__.transfer_funds": {
                 "decorators": [],
-                "pc": 1238,
+                "pc": 1215,
                 "type": "function"
             },
             "__main__.transfer_funds.Args": {
@@ -42904,7 +42251,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 1220,
+                "pc": 1197,
                 "type": "function"
             },
             "__wrappers__.buy.Args": {

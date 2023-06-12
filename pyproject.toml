@@ -21,7 +21,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "cairo-lang>=0.10.3,<0.11.0",
+  "cairo-lang",
   "cairo-nile",
 ]
 
@@ -42,7 +42,8 @@ dependencies = [
   "pytest",
   "pytest-asyncio",
   "flake8",
-  "cairo-nile>=0.9"
+  "cairo-nile>=0.9",
+  "matplotlib",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest"

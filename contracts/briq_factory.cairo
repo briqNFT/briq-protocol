@@ -161,11 +161,11 @@ func buy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     //let (tmstp) = get_block_timestamp();
     //last_purchase_time.write(tmstp);
     
-    let (t) = get_current_t();
-    last_stored_t.write(t + amount * decimals);
+    //let (t) = last_stored_t.read();
+    //last_stored_t.write(t + amount * decimals);
 
-    let (csurget) = get_surge_t();
-    surge_t.write(csurget + amount * decimals);
+    //let (csurget) = surge_t.read();
+    //surge_t.write(csurget + amount * decimals);
 
     let (buyer) = get_caller_address();
     transfer_funds(buyer, price);
