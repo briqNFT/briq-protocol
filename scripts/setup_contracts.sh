@@ -23,6 +23,7 @@ starknet_declare artifacts/shape_attribute.json shape_attribute_hash
 starknet_declare artifacts/auction.json auction_hash
 starknet_declare artifacts/box_nft.json box_hash
 starknet_declare artifacts/shape_store.json shape_store_hash
+starknet_declare artifacts/briq_factory.json briq_factory_hash
 
 starknet_declare artifacts/auction_onchain.json auction_onchain_hash
 starknet_declare "artifacts/auction_onchain_data_${STARKNET_NETWORK_ID}.json" auction_onchain_data_hash
@@ -44,6 +45,7 @@ deploy_proxy() {
 
 # In testnet, nonces will fail to deploy several at one time
 nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
+
 deploy_proxy $auction_hash auction_addr
 deploy_proxy $box_hash box_addr
 deploy_proxy $booklet_hash booklet_addr
@@ -52,6 +54,7 @@ deploy_proxy $set_hash set_addr
 deploy_proxy $briq_hash briq_addr
 deploy_proxy $shape_attribute_hash shape_attribute_addr
 deploy_proxy $auction_onchain_hash auction_onchain_addr
+deploy_proxy $briq_factory_hash briq_factory_addr
 
 # Setup
 
@@ -102,9 +105,14 @@ invoke $set_addr set_nft setBriqAddress_ $briq_addr
 
 invoke $briq_addr briq setSetAddress_ $set_addr
 invoke $briq_addr briq setBoxAddress_ $box_addr
+invoke $briq_addr briq setFactoryAddress_ $briq_factory_addr
 
 invoke $booklet_addr booklet_nft setAttributesRegistryAddress_ $attributes_registry_addr
 invoke $booklet_addr booklet_nft setBoxAddress_ $box_addr
+
+invoke $briq_factory_addr briq_factory setBriqAddress_ $briq_addr
+# Start at 300000
+invoke $briq_factory_addr briq_factory initialise 300000000000000000000000 0 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
 
 invoke $auction_onchain_addr auction_onchain setPaymentAddress_ 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
 invoke $auction_onchain_addr auction_onchain setSetAddress_ $set_addr
@@ -132,8 +140,11 @@ invoke $attributes_registry_addr box_nft upgradeImplementation_ $attributes_regi
 invoke $set_addr box_nft upgradeImplementation_ $set_hash
 invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
 invoke $auction_onchain_addr box_nft upgradeImplementation_ $auction_onchain_hash
+invoke $briq_factory_addr briq_factory upgradeImplementation_ $briq_factory_hash
+
 # Don't forget data hash
 
 call $booklet_addr booklet_nft get_shape_ 0x13000000000000000000000000000000000000000000000001
 
 call $auction_onchain_addr auction_onchain get_auction_data 1
+call $briq_factory_addr briq_factory get_price 100
