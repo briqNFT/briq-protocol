@@ -1,0 +1,208 @@
+[
+    {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "previousAdmin",
+                "type": "felt"
+            },
+            {
+                "name": "newAdmin",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "AdminChanged",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "getAdmin_",
+        "outputs": [
+            {
+                "name": "admin",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getImplementation_",
+        "outputs": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_implementation",
+                "type": "felt"
+            }
+        ],
+        "name": "upgradeImplementation_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_admin",
+                "type": "felt"
+            }
+        ],
+        "name": "setRootAdmin_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getBriqAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setBriqAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "buyer",
+                "type": "felt"
+            },
+            {
+                "name": "amount",
+                "type": "felt"
+            },
+            {
+                "name": "price",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "BriqsBought",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "t",
+                "type": "felt"
+            },
+            {
+                "name": "surget",
+                "type": "felt"
+            },
+            {
+                "name": "erc20",
+                "type": "felt"
+            }
+        ],
+        "name": "initialise",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_current_t",
+        "outputs": [
+            {
+                "name": "t",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_surge_t",
+        "outputs": [
+            {
+                "name": "t",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "get_price",
+        "outputs": [
+            {
+                "name": "price",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "t",
+                "type": "felt"
+            },
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "get_price_at_t",
+        "outputs": [
+            {
+                "name": "price",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "buy",
+        "outputs": [],
+        "type": "function"
+    }
+]

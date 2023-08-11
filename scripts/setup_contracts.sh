@@ -66,7 +66,6 @@ invoke () {
     ((nonce=$nonce+1))
 }
 
-
 call () {
     tx=$(starknet call --address $1 --abi artifacts/abis/$2.json --function $3 --inputs $4 $5 $6 $7)
     echo $tx
@@ -121,7 +120,7 @@ invoke $auction_onchain_addr auction_onchain setDataHash_ $auction_onchain_data_
 invoke $shape_attribute_addr shape_attribute setAttributesRegistryAddress_ $attributes_registry_addr
 ##
 invoke $attributes_registry_addr attributes_registry setSetAddress_ $set_addr
-# Collection 1 is GENESIS, supported by contract (thus params = 2)
+# Collection 1 is GENESIS, supported by contract (thus params = 2) - also briqmas.
 invoke $attributes_registry_addr attributes_registry create_collection_ 1 2 $booklet_addr
 # Collection 2 is shape hashes, supported by contract (thus params = 2)
 invoke $attributes_registry_addr attributes_registry create_collection_ 2 2 $shape_attribute_addr
@@ -129,6 +128,18 @@ invoke $attributes_registry_addr attributes_registry create_collection_ 2 2 $sha
 invoke $attributes_registry_addr attributes_registry create_collection_ 3 2 $booklet_addr
 # Collection 4 is zenducks, idem
 invoke $attributes_registry_addr attributes_registry create_collection_ 4 2 $booklet_addr
+# Collection 5 is Ducks x Unframed, this is a non-contract-collection for now.
+invoke $attributes_registry_addr attributes_registry create_collection_ 5 0 0x533e327451f538c64a70c08935177435e3d8d8177c4edd0f8a29a88a41e02f5
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x1000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x2000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x3000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x4000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x5000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x6000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x7000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x8000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0x9000000000000000000000000000000000000000000000005 10
+invoke $attributes_registry_addr attributes_registry increase_attribute_balance_ 0xa000000000000000000000000000000000000000000000005 10
 
 # If you have to upgrade
 # invoke $attributes_registry_addr attributes_registry upgradeImplementation_ $attributes_registry_hash
