@@ -37,7 +37,7 @@ mod ERC1155 {
     use traits::{ Into, TryInto };
     use zeroable::Zeroable;
     use dojo::world::{ IWorldDispatcher, IWorldDispatcherTrait };
-    use dojo_erc::erc1155::components::{ OperatorApproval, Uri, Balance };
+    use briq_protocol::erc::erc1155::components::{ OperatorApproval, Balance };
 
     const UNLIMITED_ALLOWANCE: felt252 = 3618502788666131213697322783095070105623107215331596699973092056135872020480;
 
@@ -111,7 +111,7 @@ mod ERC1155 {
 
     #[storage]
     struct Storage {
-        world_address: ContractAddress,
+        world: IWorldDispatcher,
     }
 
     //
@@ -119,9 +119,8 @@ mod ERC1155 {
     //
 
     #[constructor]
-    fn constructor(ref self: ContractState, world: ContractAddress, uri: felt252) {
-        self.world_address.write(world);
-        self._set_uri(uri);
+    fn constructor(ref self: ContractState, world: ContractAddress) {
+        self.world.write(IWorldDispatcher { contract_address: world });
     }
 
     #[external(v0)]
@@ -136,15 +135,9 @@ mod ERC1155 {
         // ERC1155Metadata
         //
         fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            let token = get_contract_address();
-            let mut keys = ArrayTrait::new();
-            keys.append(token.into());
-            let token_id_felt: felt252 = token_id.try_into().unwrap();
-            keys.append(token_id_felt.into());
-            let mut uri_raw = self.world().entity('Uri', keys.span(), 0, 0);
-            let _uri = serde::Serde::<Uri>::deserialize(ref uri_raw).unwrap();
-            _uri.uri
+            0
         }
+
         //
         // ERC1155
         //
@@ -212,31 +205,15 @@ mod ERC1155 {
 
     #[generate_trait]
     impl PrivateFunctions of PrivateFunctionsTrait {
-        // NOTE: temporary, until we have inline commands outside of systems
-        fn world(self: @ContractState) -> IWorldDispatcher {
-            IWorldDispatcher { contract_address: self.world_address.read() }
-        }
-
         fn _balance_of(self: @ContractState, account: ContractAddress, id: u256) -> u256 {
             let token = get_contract_address();
-            let mut keys = ArrayTrait::new();
             let id_felt: felt252 = id.try_into().unwrap();
-            keys.append(token.into());
-            keys.append(account.into());
-            keys.append(id_felt.into());
-            let mut balance_raw = self.world().entity('Balance', keys.span(), 0, 0);     
-            let balance = serde::Serde::<Balance>::deserialize(ref balance_raw).unwrap();
-            balance.amount.into()
+            get!(self.world.read(), (token, account, id_felt), Balance).amount.into()
         }
 
         fn _is_approved_for_all(self: @ContractState, account: ContractAddress, operator: ContractAddress) -> bool {
             let token = get_contract_address();
-            let mut keys = ArrayTrait::new();
-            keys.append(token.into());
-            keys.append(account.into());
-            keys.append(operator.into());
-            let mut approval_raw = self.world().entity('OperatorApproval', keys.span(), 0, 0);
-            serde::Serde::<OperatorApproval>::deserialize(ref approval_raw).unwrap().approved
+            get!(self.world.read(), (token, account, operator), OperatorApproval).approved
         }
 
         fn _update( 
@@ -292,7 +269,7 @@ mod ERC1155 {
                 calldata.append(data_cell);
                 index += 1;
             };
-            self.world().execute('ERC1155Update'.into(), calldata.span());
+            self.world.read().execute('ERC1155Update'.into(), calldata);
 
             if (ids_clone.len() == 1) {
                 let id = *ids_clone.at(0);
@@ -360,14 +337,6 @@ mod ERC1155 {
             self._update(from, to, ids, amounts, data);
         }
 
-        fn _set_uri(ref self: ContractState, uri: felt252) {
-            let token = get_contract_address();
-            let mut calldata = ArrayTrait::new();
-            calldata.append(token.into());
-            calldata.append(uri);
-            self.world().execute('ERC1155SetUri'.into(), calldata.span());
-        }
-
         fn _mint(ref self: ContractState, to: ContractAddress, id: u256, amount: u256, data: Array<u8>) {
             assert(to.is_non_zero(), 'ERC1155: invalid receiver');
 
@@ -406,7 +375,7 @@ mod ERC1155 {
             } else {
                 calldata.append(0);
             }
-            self.world().execute('ERC1155SetApprovalForAll'.into(), calldata.span());
+            self.world.read().execute('ERC1155SetApprovalForAll'.into(), calldata);
 
             self.emit(ApprovalForAll { owner, operator, approved});
         }  
