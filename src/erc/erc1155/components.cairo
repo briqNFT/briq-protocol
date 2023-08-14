@@ -1,5 +1,15 @@
 use starknet::ContractAddress;
-use dojo_erc::erc1155::components::OperatorApproval;
+
+#[derive(Component, Copy, Drop, Serde, SerdeLen)]
+struct OperatorApproval {
+    #[key]
+    token: ContractAddress,
+    #[key]
+    owner: ContractAddress,
+    #[key]
+    operator: ContractAddress,
+    approved: bool
+}
 
 #[derive(Component, Copy, Drop, Serde, SerdeLen)]
 struct Balance {
