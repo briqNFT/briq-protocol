@@ -174,9 +174,12 @@ mod BriqErc1155 {
             data: Array<u8>
         ) {
             let caller = get_caller_address();
-            assert(caller == from || self._is_approved_for_all(from, caller),
-                'ERC1155: insufficient approval'
-            );
+            let set_contract = get!(self.world.read(), (SYSTEM_CONFIG_ID), WorldConfig).set;
+            if caller == set_contract {} else {
+                assert(caller == from || self._is_approved_for_all(from, caller),
+                    'ERC1155: insufficient approval'
+                );
+            }
             self._safe_batch_transfer_from(from, to, ids, amounts, data);
         }
     }
