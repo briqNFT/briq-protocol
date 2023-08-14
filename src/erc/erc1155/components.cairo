@@ -1,5 +1,22 @@
 use starknet::ContractAddress;
-use dojo_erc::erc1155::components::{OperatorApproval};
+
+#[derive(Component, Copy, Drop, Serde, SerdeLen)]
+struct OperatorApproval {
+    #[key]
+    token: ContractAddress,
+    #[key]
+    owner: ContractAddress,
+    #[key]
+    operator: ContractAddress,
+    approved: bool
+}
+
+#[derive(Component, Copy, Drop, Serde, SerdeLen)]
+struct Uri {
+    #[key]
+    token: ContractAddress,
+    uri: felt252
+}
 
 #[derive(Component, Copy, Drop, Serde, SerdeLen)]
 struct Balance {
@@ -9,7 +26,5 @@ struct Balance {
     token_id: felt252,
     #[key]
     account: ContractAddress,
-
-    // Todo -> bitpacking?
-    amount: u64,
+    amount: felt252,
 }
