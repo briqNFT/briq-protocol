@@ -13,6 +13,8 @@ mod BriqErc1155 {
     use dojo::world::{ IWorldDispatcher, IWorldDispatcherTrait };
     use briq_protocol::erc::erc1155::components::{ OperatorApproval, Balance };
 
+    use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
+
     const UNLIMITED_ALLOWANCE: felt252 = 3618502788666131213697322783095070105623107215331596699973092056135872020480;
 
     // Account
@@ -154,9 +156,12 @@ mod BriqErc1155 {
             data: Array<u8>
         ) {
             let caller = get_caller_address();
-            assert(caller == from || self._is_approved_for_all(from, caller),
-                'ERC1155: insufficient approval'
-            );
+            let set_contract = get!(self.world.read(), (SYSTEM_CONFIG_ID), WorldConfig).set;
+            if caller == set_contract {} else {
+                assert(caller == from || self._is_approved_for_all(from, caller),
+                    'ERC1155: insufficient approval'
+                );
+            }
             self._safe_transfer_from(from, to, id, amount, data);
         }
 
