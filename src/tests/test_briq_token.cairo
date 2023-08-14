@@ -14,6 +14,7 @@ use dojo::test_utils::spawn_test_world;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use briq_protocol::briq_token::BriqErc1155;
+use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
 
 fn spawn_world() -> IWorldDispatcher {
     // components
@@ -31,13 +32,6 @@ fn spawn_world() -> IWorldDispatcher {
     ];
 
     let world = spawn_test_world(components, systems);
-    world.execute('SetupWorld', (array![
-        0x1,
-        0x2,
-        0x3,
-        0x4,
-        0x5,
-    ]));
     world
 }
 
@@ -66,6 +60,13 @@ fn deploy_default() -> (IWorldDispatcher, ContractAddress) {
 
     let world = spawn_world();
     let briq_token_address = deploy_briq_token(world);
+    world.execute('SetupWorld', (array![
+        0x1,
+        briq_token_address.into(),
+        0x0,
+        0x0,
+        0x0,
+    ]));
     (world, briq_token_address)
 }
 
@@ -73,5 +74,6 @@ fn deploy_default() -> (IWorldDispatcher, ContractAddress) {
 #[available_gas(30000000)]
 fn test_deploy_default() {
     let (world, briq_token) = deploy_default();
-    assert(true == false, 'toto');
+    let b_a = get!(world, (SYSTEM_CONFIG_ID), WorldConfig ).briq;
+    assert(b_a == 0x5.try_into().unwrap(), 'totoro');
 }
