@@ -12,6 +12,9 @@ dojo = { git = "https://github.com/dojoengine/dojo" }
 dojo_erc = { path = "dojo-erc" }
 
 [[target.dojo]]
+build-external-contracts = [
+    "briq_protocol::briq::BriqErc1155"
+]
 
 [tool.dojo]
 initializer_class_hash = "0xbeef"

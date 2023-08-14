@@ -1,34 +1,8 @@
 use starknet::ContractAddress;
-
-#[starknet::interface]
-trait IERC1155<TContractState> {
-
-    fn safe_batch_transfer_from(
-        ref self: TContractState,
-        from: ContractAddress,
-        to: ContractAddress,
-        ids: Array<u256>,
-        amounts: Array<u256>,
-        data: Array<u8>
-    );
-    fn safe_transfer_from(
-        ref self: TContractState,
-        from: ContractAddress,
-        to: ContractAddress,
-        id: u256,
-        amount: u256,
-        data: Array<u8>
-    );
-    fn set_approval_for_all(ref self: TContractState, operator: ContractAddress, approved: bool);
-    fn is_approved_for_all(self: @TContractState, account: ContractAddress, operator: ContractAddress) -> bool;
-    fn balance_of(self: @TContractState, account: ContractAddress, id: u256) -> u256;
-    fn balance_of_batch(self: @TContractState, accounts: Array<ContractAddress>, ids: Array<u256>) -> Array<u256>;
-    fn uri(self: @TContractState, token_id: u256) -> felt252;
-    fn supports_interface(self: @TContractState, interface_id: u32) -> bool;
-}
+use dojo_erc::erc1155::erc1155::IERC1155;
 
 #[starknet::contract]
-mod ERC1155 {
+mod BriqErc1155 {
     use array::ArrayTrait;
     use option::OptionTrait;
     use clone::Clone;
@@ -122,6 +96,9 @@ mod ERC1155 {
     fn constructor(ref self: ContractState, world: ContractAddress) {
         self.world.write(IWorldDispatcher { contract_address: world });
     }
+
+    #[external(v0)]
+    fn test(self: @ContractState) {}
 
     #[external(v0)]
     impl ERC1155 of super::IERC1155<ContractState> {
