@@ -5,6 +5,4 @@ name = "dojo_erc"
 version = "0.1.0"
 
 [dependencies]
-dojo = { path = "../dojo-core" }
-
-[[target.dojo]]
+dojo = { git = "https://github.com/dojoengine/dojo" }
