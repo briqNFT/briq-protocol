@@ -26,7 +26,12 @@ use briq_protocol::attributes::attributes::remove_attributes;
 //###########
 // Assembly/Disassembly
 
-fn transfer_briqs(world: IWorldDispatcher, sender: ContractAddress, recipient: ContractAddress, mut fts: Array<FTSpec>) {
+fn transfer_briqs(
+    world: IWorldDispatcher,
+    sender: ContractAddress,
+    recipient: ContractAddress,
+    mut fts: Array<FTSpec>
+) {
     if fts.len() == 0 {
         return ();
     }
@@ -34,7 +39,14 @@ fn transfer_briqs(world: IWorldDispatcher, sender: ContractAddress, recipient: C
     let ftspec = fts.pop_front().unwrap();
 
     briq_protocol::briq_token::systems::update_nocheck(
-        world, 'set_contract_TODO'.try_into().unwrap(), address, sender, recipient, array![ftspec.token_id], array![ftspec.qty], array![]
+        world,
+        'set_contract_TODO'.try_into().unwrap(),
+        address,
+        sender,
+        recipient,
+        array![ftspec.token_id],
+        array![ftspec.qty],
+        array![]
     );
 
     return transfer_briqs(world, sender, recipient, fts);
@@ -45,11 +57,7 @@ fn transfer_briqs(world: IWorldDispatcher, sender: ContractAddress, recipient: C
 // The solution adopted is to hash a hint. Our security becomes the chain hash security.
 // Hash on the # of briqs to avoid people being able to 'game' off-chain latency,
 // we had issues where people regenerated sets with the wrong # of briqs shown on marketplaces before a refresh.
-fn hash_token_id(
-    owner: ContractAddress,
-    token_id_hint: felt252,
-    nb_briqs: u32,
-) -> felt252 {
+fn hash_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32, ) -> felt252 {
     let hash = pedersen(0, owner.into());
     let hash = pedersen(hash, token_id_hint);
     let hash = pedersen(hash, nb_briqs.into());
@@ -84,13 +92,13 @@ fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: felt252) {
     assert(balance == 0, 'Set still has briqs');
 
     // Check that we no longer have any attributes active.
-    let balance = get!(ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, token_id), ERC1155Balance).amount;
+    let balance = get!(ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, token_id), ERC1155Balance)
+        .amount;
     assert(balance == 0, 'Set still attributed');
 }
 
 #[derive(Drop, Serde)]
-struct AssemblySystemData
-{
+struct AssemblySystemData {
     caller: ContractAddress,
     owner: ContractAddress,
     token_id_hint: felt252,
@@ -121,11 +129,8 @@ mod set_nft_assembly {
     use debug::PrintTrait;
     use super::AssemblySystemData;
 
-    fn execute(
-        ctx: Context,
-        data: AssemblySystemData,
-    ) {
-        let AssemblySystemData { caller, owner, token_id_hint, fts, shape, attributes } = data;
+    fn execute(ctx: Context, data: AssemblySystemData, ) {
+        let AssemblySystemData{caller, owner, token_id_hint, fts, shape, attributes } = data;
 
         assert(ctx.origin == get!(ctx.world, (SYSTEM_CONFIG_ID), WorldConfig).set, 'Only SetNft');
 
@@ -139,21 +144,13 @@ mod set_nft_assembly {
             return;
         }
 
-        assign_attributes(
-            ctx,
-            owner,
-            token_id,
-            attributes,
-            @shape,
-            @fts,
-        );
+        assign_attributes(ctx, owner, token_id, attributes, @shape, @fts, );
     }
 }
 
 
 #[derive(Drop, Serde)]
-struct DisassemblySystemData
-{
+struct DisassemblySystemData {
     caller: ContractAddress,
     owner: ContractAddress,
     token_id: felt252,
@@ -181,11 +178,8 @@ mod set_nft_disassembly {
 
     use super::DisassemblySystemData;
 
-    fn execute(
-        ctx: Context,
-        data: DisassemblySystemData,
-    ) {
-        let DisassemblySystemData { caller, owner, token_id, fts, attributes } = data;
+    fn execute(ctx: Context, data: DisassemblySystemData, ) {
+        let DisassemblySystemData{caller, owner, token_id, fts, attributes } = data;
         let token = ctx.origin;
 
         assert(token == get!(ctx.world, (SYSTEM_CONFIG_ID), WorldConfig).set, 'Only SetNft');
@@ -196,7 +190,7 @@ mod set_nft_disassembly {
 
         let token_approval = get!(ctx.world, (token, token_id), ERC721TokenApproval);
         let is_approved = get!(ctx.world, (token, token_owner.address, caller), OperatorApproval);
-        
+
         assert(
             token_owner.address == caller
                 || is_approved.approved
@@ -204,12 +198,7 @@ mod set_nft_disassembly {
             'ERC721: unauthorized caller'
         );
 
-        remove_attributes(
-            ctx,
-            owner,
-            token_id,
-            attributes.clone(),
-        );
+        remove_attributes(ctx, owner, token_id, attributes.clone(), );
 
         super::transfer_briqs(ctx.world, token_id.try_into().unwrap(), owner, fts.clone());
 

@@ -12,9 +12,7 @@ const SYSTEM_CONFIG_ID: u32 = 1;
 struct WorldConfig {
     #[key]
     config_id: u32,
-
     super_admin: ContractAddress,
-
     briq: ContractAddress,
     set: ContractAddress,
     booklet: ContractAddress,
@@ -52,16 +50,17 @@ mod SetupWorld {
     use super::WorldConfig;
     use super::SYSTEM_CONFIG_ID;
 
-    fn execute(ctx: Context, super_admin: ContractAddress, briq: ContractAddress, set: ContractAddress, booklet: ContractAddress, box: ContractAddress) {
-        set !(
-            ctx.world, (WorldConfig {
-                config_id: SYSTEM_CONFIG_ID,
-                super_admin,
-                briq,
-                set,
-                booklet,
-                box,
-            } )
+    fn execute(
+        ctx: Context,
+        super_admin: ContractAddress,
+        briq: ContractAddress,
+        set: ContractAddress,
+        booklet: ContractAddress,
+        box: ContractAddress
+    ) {
+        set!(
+            ctx.world,
+            (WorldConfig { config_id: SYSTEM_CONFIG_ID, super_admin, briq, set, booklet, box,  })
         );
         return ();
     }

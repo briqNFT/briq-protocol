@@ -1,7 +1,7 @@
 use traits::{Into, TryInto};
 use option::OptionTrait;
 
-impl feltBitAnd of BitAnd::<felt252> {
+impl feltBitAnd of BitAnd<felt252> {
     fn bitand(lhs: felt252, rhs: felt252) -> felt252 {
         (Into::<felt252, u256>::into(lhs) & rhs.into()).try_into().unwrap()
     }
@@ -15,7 +15,7 @@ fn felt252_lt(lhs: felt252, rhs: felt252) -> bool {
     Into::<felt252, u256>::into(lhs) < rhs.into()
 }
 
-impl feltOrd of PartialOrd::<felt252> {
+impl feltOrd of PartialOrd<felt252> {
     #[inline(always)]
     fn le(lhs: felt252, rhs: felt252) -> bool {
         felt252_le(lhs, rhs)
