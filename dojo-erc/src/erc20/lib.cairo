@@ -1,4 +1,3 @@
-mod erc721;
+mod erc20;
 mod components;
 mod systems;
-mod interfaces;
