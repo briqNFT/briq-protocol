@@ -18,13 +18,13 @@ use debug::PrintTrait;
 
 
 #[starknet::interface]
-trait IShapeChecker<ContractState>
-{
-    fn verify_shape(self: @ContractState, token_id: felt252, shape: Span<ShapeItem>, fts: Span<FTSpec>);
+trait IShapeChecker<ContractState> {
+    fn verify_shape(
+        self: @ContractState, token_id: felt252, shape: Span<ShapeItem>, fts: Span<FTSpec>
+    );
 }
 
-impl ClassHashPrint of PrintTrait<ClassHash>
-{
+impl ClassHashPrint of PrintTrait<ClassHash> {
     fn print(self: ClassHash) {}
 }
 
@@ -32,12 +32,10 @@ impl ClassHashPrint of PrintTrait<ClassHash>
 struct ShapeVerifier {
     #[key]
     attribute_id: u64,
-
     class_hash: ClassHash,
 }
 
-trait CheckShapeTrait
-{
+trait CheckShapeTrait {
     fn assign_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
@@ -57,15 +55,11 @@ trait CheckShapeTrait
     );
 
     fn check_shape(
-        self: @ShapeVerifier,
-        attribute_id: felt252,
-        shape: @Array<ShapeItem>,
-        fts: @Array<FTSpec>,
+        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<ShapeItem>, fts: @Array<FTSpec>, 
     );
 }
 
-impl CheckShapeImpl of CheckShapeTrait
-{
+impl CheckShapeImpl of CheckShapeTrait {
     fn assign_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
@@ -79,7 +73,7 @@ impl CheckShapeImpl of CheckShapeTrait
         //  - check that we're being called by the proper system
         //  - check that the shape is valid
         //  - try to transfer the booklet (also checks ownership)
-        
+
         // TODO
         //assert(ctx.world.caller_system()? == 'assign_attributes', 'Bad system caller');
 
@@ -97,14 +91,13 @@ impl CheckShapeImpl of CheckShapeTrait
     }
 
     fn check_shape(
-        self: @ShapeVerifier,
-        attribute_id: felt252,
-        shape: @Array<ShapeItem>,
-        fts: @Array<FTSpec>,
+        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<ShapeItem>, fts: @Array<FTSpec>, 
     ) {
         assert((*self.class_hash).is_non_zero(), 'No class hash found');
 
-        IShapeCheckerLibraryDispatcher { class_hash: *self.class_hash }.verify_shape(attribute_id, shape.span(), fts.span());
+        IShapeCheckerLibraryDispatcher {
+            class_hash: *self.class_hash
+        }.verify_shape(attribute_id, shape.span(), fts.span());
 
         return ();
     }
@@ -131,26 +124,21 @@ impl CheckShapeImpl of CheckShapeTrait
 }
 
 #[derive(Drop, Copy, Serde)]
-struct RegisterShapeVerifierData
-{
+struct RegisterShapeVerifierData {
     attribute_id: u64,
     class_hash: ClassHash,
 }
 
 #[system]
-mod register_shape_verifier
-{
+mod register_shape_verifier {
     use dojo::world::Context;
     use super::RegisterShapeVerifierData;
     use super::ShapeVerifier;
 
     use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, AdminTrait};
 
-    fn execute(
-        ctx: Context,
-        data: RegisterShapeVerifierData,
-    ) {
-        let RegisterShapeVerifierData { attribute_id, class_hash } = data;
+    fn execute(ctx: Context, data: RegisterShapeVerifierData, ) {
+        let RegisterShapeVerifierData{attribute_id, class_hash } = data;
 
         ctx.world.only_admins(@ctx.origin);
 

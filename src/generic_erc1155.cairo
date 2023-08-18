@@ -82,9 +82,7 @@ mod GenericERC1155 {
     //
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState, world: ContractAddress
-    ) {
+    fn constructor(ref self: ContractState, world: ContractAddress) {
         self.world.write(IWorldDispatcher { contract_address: world });
     }
 
@@ -108,7 +106,10 @@ mod GenericERC1155 {
         // ERC1155
         //
         fn balance_of(self: @ContractState, account: ContractAddress, id: u256) -> u256 {
-            ERC1155BalanceTrait::balance_of(self.world.read(), get_contract_address(), account, id.try_into().unwrap()).into()
+            ERC1155BalanceTrait::balance_of(
+                self.world.read(), get_contract_address(), account, id.try_into().unwrap()
+            )
+                .into()
         }
 
         fn balance_of_batch(
@@ -122,7 +123,16 @@ mod GenericERC1155 {
                 if index == ids.len() {
                     break batch_balances.clone();
                 }
-                batch_balances.append(ERC1155BalanceTrait::balance_of(self.world.read(), get_contract_address(), *accounts.at(index), (*ids.at(index)).try_into().unwrap()).into());
+                batch_balances
+                    .append(
+                        ERC1155BalanceTrait::balance_of(
+                            self.world.read(),
+                            get_contract_address(),
+                            *accounts.at(index),
+                            (*ids.at(index)).try_into().unwrap()
+                        )
+                            .into()
+                    );
                 index += 1;
             }
         }
@@ -130,7 +140,9 @@ mod GenericERC1155 {
         fn is_approved_for_all(
             self: @ContractState, account: ContractAddress, operator: ContractAddress
         ) -> bool {
-            dojo_erc::erc1155::components::OperatorApprovalTrait::is_approved_for_all(self.world.read(), get_contract_address(), account, operator)
+            dojo_erc::erc1155::components::OperatorApprovalTrait::is_approved_for_all(
+                self.world.read(), get_contract_address(), account, operator
+            )
         }
 
         fn set_approval_for_all(
@@ -140,13 +152,17 @@ mod GenericERC1155 {
 
             assert(owner != operator, 'ERC1155: wrong approval');
 
-            self.world.read().execute('ERC1155SetApprovalForAll',
-                to_calldata(get_contract_address())
-                    .plus(owner)
-                    .plus(operator)
-                    .plus(approved)
-                    .data
-            );
+            self
+                .world
+                .read()
+                .execute(
+                    'ERC1155SetApprovalForAll',
+                    to_calldata(get_contract_address())
+                        .plus(owner)
+                        .plus(operator)
+                        .plus(approved)
+                        .data
+                );
         }
 
         fn safe_transfer_from(
@@ -159,16 +175,20 @@ mod GenericERC1155 {
         ) {
             let idf: felt252 = id.try_into().unwrap();
             let amount128: u128 = amount.try_into().unwrap();
-            self.world.read().execute('ERC1155SafeTransferFrom',
-                to_calldata(get_caller_address())
-                    .plus(get_contract_address())
-                    .plus(from)
-                    .plus(to)
-                    .plus(idf)
-                    .plus(amount128)
-                    .plus(data)
-                    .data
-            );
+            self
+                .world
+                .read()
+                .execute(
+                    'ERC1155SafeTransferFrom',
+                    to_calldata(get_caller_address())
+                        .plus(get_contract_address())
+                        .plus(from)
+                        .plus(to)
+                        .plus(idf)
+                        .plus(amount128)
+                        .plus(data)
+                        .data
+                );
         }
 
         fn safe_batch_transfer_from(
@@ -189,16 +209,20 @@ mod GenericERC1155 {
                 amounts128.append(amounts.pop_front().unwrap().try_into().unwrap());
             };
 
-            self.world.read().execute('ERC1155SafeBatchTransferFrom',
-                to_calldata(get_caller_address())
-                    .plus(get_contract_address())
-                    .plus(from)
-                    .plus(to)
-                    .plus(idsf)
-                    .plus(amounts128)
-                    .plus(data)
-                    .data
-            );
+            self
+                .world
+                .read()
+                .execute(
+                    'ERC1155SafeBatchTransferFrom',
+                    to_calldata(get_caller_address())
+                        .plus(get_contract_address())
+                        .plus(from)
+                        .plus(to)
+                        .plus(idsf)
+                        .plus(amounts128)
+                        .plus(data)
+                        .data
+                );
         }
     }
 

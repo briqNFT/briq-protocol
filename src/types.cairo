@@ -9,9 +9,7 @@ struct FTSpec {
 struct ShapeItem {
     // ASCII short string
     color: felt252,
-
     material: u64,
-
     x: felt252,
     y: felt252,
     z: felt252,

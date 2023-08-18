@@ -206,26 +206,26 @@ mod SetNft {
         }
 
         fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
-            assert(false==true, 'not usable');
-            //let token = get_contract_address();
-            //let mut calldata: Array<felt252> = ArrayTrait::new();
-            //calldata.append(token.into());
-            //calldata.append(u256_into_felt252(token_id));
-            //calldata.append(to.into());
-            //self.world.read().execute('erc721_mint'.into(), calldata);
-            //self.emit(Transfer { from: Zeroable::zero(), to, token_id });
+            assert(false == true, 'not usable');
+        //let token = get_contract_address();
+        //let mut calldata: Array<felt252> = ArrayTrait::new();
+        //calldata.append(token.into());
+        //calldata.append(u256_into_felt252(token_id));
+        //calldata.append(to.into());
+        //self.world.read().execute('erc721_mint'.into(), calldata);
+        //self.emit(Transfer { from: Zeroable::zero(), to, token_id });
         }
 
         fn burn(ref self: ContractState, token_id: u256) {
-            assert(false==true, 'not usable');
-            //let token = get_contract_address();
-            //let caller = get_caller_address();
-            //let mut calldata: Array<felt252> = ArrayTrait::new();
-            //calldata.append(token.into());
-            //calldata.append(caller.into());
-            //calldata.append(u256_into_felt252(token_id));
-            //self.world.read().execute('erc721_burn'.into(), calldata);
-            //self.emit(Transfer { from: get_caller_address(), to: Zeroable::zero(), token_id });
+            assert(false == true, 'not usable');
+        //let token = get_contract_address();
+        //let caller = get_caller_address();
+        //let mut calldata: Array<felt252> = ArrayTrait::new();
+        //calldata.append(token.into());
+        //calldata.append(caller.into());
+        //calldata.append(u256_into_felt252(token_id));
+        //self.world.read().execute('erc721_burn'.into(), calldata);
+        //self.emit(Transfer { from: get_caller_address(), to: Zeroable::zero(), token_id });
         }
     }
 
@@ -251,12 +251,7 @@ mod SetNft {
 
         let mut calldata: Array<felt252> = ArrayTrait::new();
         AssemblySystemData {
-            caller: get_caller_address(),
-            owner,
-            token_id_hint,
-            fts,
-            shape,
-            attributes
+            caller: get_caller_address(), owner, token_id_hint, fts, shape, attributes
         }.serialize(ref calldata);
         self.world.read().execute('set_nft_assembly', calldata);
 
@@ -275,11 +270,7 @@ mod SetNft {
     ) {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         DisassemblySystemData {
-            caller: get_caller_address(),
-            owner,
-            token_id,
-            fts,
-            attributes
+            caller: get_caller_address(), owner, token_id, fts, attributes
         }.serialize(ref calldata);
         self.world.read().execute('set_nft_disassembly', calldata);
 

@@ -31,28 +31,40 @@ fn default_owner() -> ContractAddress {
 #[test]
 #[available_gas(300000000)]
 fn test_mint_and_unbox() {
-    let DefaultWorld { world, briq_token, booklet, box_nft, .. } = deploy_default_world();
-    
-    world.execute('ERC1155MintBurn', (array![
-        WORLD_ADMIN().into(),
-        get_world_config(world).box.into(),
-        0,
-        default_owner().into(),
-        1,
-        0x1,
-        1,
-        1
-    ]));
+    let DefaultWorld{world, briq_token, booklet, box_nft, .. } = deploy_default_world();
+
+    world
+        .execute(
+            'ERC1155MintBurn',
+            (array![
+                WORLD_ADMIN().into(),
+                get_world_config(world).box.into(),
+                0,
+                default_owner().into(),
+                1,
+                0x1,
+                1,
+                1
+            ])
+        );
 
     set_contract_address(default_owner());
 
     assert(briq_token.balance_of(default_owner(), 1) == 0, 'bad balance');
-    assert(booklet.balance_of(default_owner(), 0x1000000000000000000000000000000000000000000000001) == 0, 'bad balance 1');
+    assert(
+        booklet
+            .balance_of(default_owner(), 0x1000000000000000000000000000000000000000000000001) == 0,
+        'bad balance 1'
+    );
     assert(box_nft.balance_of(default_owner(), 1) == 1, 'bad balance 2');
 
-    world.execute('box_unboxing', (array![0x1,]));
+    world.execute('box_unboxing', (array![0x1, ]));
 
     assert(briq_token.balance_of(default_owner(), 1) == 434, 'bad balance 2.5');
-    assert(booklet.balance_of(default_owner(), 0x1000000000000000000000000000000000000000000000001) == 1, 'bad balance 3');
+    assert(
+        booklet
+            .balance_of(default_owner(), 0x1000000000000000000000000000000000000000000000001) == 1,
+        'bad balance 3'
+    );
     assert(box_nft.balance_of(default_owner(), 1) == 0, 'bad balance 4');
 }
