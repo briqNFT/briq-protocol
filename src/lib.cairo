@@ -1,15 +1,15 @@
+mod attributes;
+mod box_nft;
 mod briq_token;
-mod erc;
+mod check_shape;
+mod cumulative_balance;
+mod felt_math;
+mod generic_erc1155;
+mod set_nft;
+mod types;
 mod world_config;
 
-<<<<<<< HEAD
-mod dojo_erc;
-
-#[cfg(test)]
-mod tests;
-=======
 #[cfg(test)]
 mod tests;
 
-mod dojo_erc;
->>>>>>> cd3ad0f (Initial setup for tests)
+//mod dojo_erc;
