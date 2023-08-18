@@ -1,7 +1,5 @@
-mod systems;
-
 #[starknet::contract]
-mod BriqToken {
+mod GenericERC1155 {
     use array::ArrayTrait;
     use option::OptionTrait;
     use clone::Clone;
@@ -76,7 +74,7 @@ mod BriqToken {
 
     #[storage]
     struct Storage {
-        world: IWorldDispatcher,
+        world: IWorldDispatcher
     }
 
     //
@@ -161,7 +159,7 @@ mod BriqToken {
         ) {
             let idf: felt252 = id.try_into().unwrap();
             let amount128: u128 = amount.try_into().unwrap();
-            self.world.read().execute('BriqTokenSafeTransferFrom',
+            self.world.read().execute('ERC1155SafeTransferFrom',
                 to_calldata(get_caller_address())
                     .plus(get_contract_address())
                     .plus(from)
@@ -191,7 +189,7 @@ mod BriqToken {
                 amounts128.append(amounts.pop_front().unwrap().try_into().unwrap());
             };
 
-            self.world.read().execute('BriqTokenSafeBatchTransferFrom',
+            self.world.read().execute('ERC1155SafeBatchTransferFrom',
                 to_calldata(get_caller_address())
                     .plus(get_contract_address())
                     .plus(from)
