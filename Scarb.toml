@@ -1,7 +1,7 @@
 [package]
 name = "briq_protocol"
 version = "2.0.0"
-cairo-version = "2.1.0-rc4"
+cairo-version = "2.1.1"
 
 [cairo]
 sierra-replace-ids = true
@@ -13,18 +13,15 @@ dojo_erc = { path = "dojo-erc" }
 
 [[target.dojo]]
 build-external-contracts = [
-    "briq_protocol::briq::BriqErc1155",
-    "dojo_erc::erc1155::components::OperatorApproval",
-    "dojo_erc::erc721::components::Balance",
-    "dojo_erc::erc721::components::OperatorApproval",
-    "dojo_erc::erc721::components::Owner",
-    "dojo_erc::erc721::components::TokenApproval",
-    "dojo_erc::erc721::erc721::ERC721",
-    "dojo_erc::erc721::systems::erc721_approve",
-    "dojo_erc::erc721::systems::erc721_burn",
-    "dojo_erc::erc721::systems::erc721_mint",
-    "dojo_erc::erc721::systems::erc721_set_approval_for_all",
-    "dojo_erc::erc721::systems::erc721_transfer_from",
+    'dojo_erc::erc1155::components::erc_1155_balance',
+    'dojo_erc::erc1155::components::operator_approval',
+    'dojo_erc::erc721::components::erc_721_balance',
+    'dojo_erc::erc721::components::erc_721_owner',
+    'dojo_erc::erc721::components::erc_721_token_approval',
+    'dojo_erc::erc1155::systems::ERC1155SetApprovalForAll',
+    'dojo_erc::erc721::systems::ERC721Approve',
+    'dojo_erc::erc721::systems::ERC721SetApprovalForAll',
+    'dojo_erc::erc721::systems::ERC721TransferFrom'
 ]
 
 [tool.dojo]
