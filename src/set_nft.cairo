@@ -31,6 +31,7 @@ mod SetNft {
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use traits::{Into, TryInto};
     use zeroable::Zeroable;
+    use serde::Serde;
     use clone::Clone;
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -38,27 +39,37 @@ mod SetNft {
         ERC721Owner, ERC721OwnerTrait, BaseUri, BaseUriTrait, ERC721Balance, ERC721BalanceTrait,
         ERC721TokenApproval, ERC721TokenApprovalTrait, OperatorApproval, OperatorApprovalTrait
     };
-    use dojo_erc::erc721::interface::IERC721;
-    use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait};
+    use dojo_erc::erc721::systems::{
+        ERC721ApproveParams, ERC721SetApprovalForAllParams, ERC721TransferFromParams,
+        ERC721MintParams, ERC721BurnParams
+    };
 
-    use briq_protocol::types::{FTSpec, ShapeItem};
-    use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
+    use dojo_erc::erc165::interface::{IERC165, IERC165_ID};
+    use dojo_erc::erc721::interface::{IERC721, IERC721Metadata, IERC721_ID, IERC721_METADATA_ID};
 
-    #[derive(Clone, Drop, Serde, starknet::Event)]
+    use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait, system_calldata};
+
+
+    #[storage]
+    struct Storage {
+        world: IWorldDispatcher, 
+    }
+
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
     struct Transfer {
         from: ContractAddress,
         to: ContractAddress,
         token_id: u256
     }
 
-    #[derive(Clone, Drop, Serde, starknet::Event)]
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
     struct Approval {
         owner: ContractAddress,
         to: ContractAddress,
         token_id: u256
     }
 
-    #[derive(Clone, Drop, Serde, starknet::Event)]
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
     struct ApprovalForAll {
         owner: ContractAddress,
         operator: ContractAddress,
@@ -66,7 +77,7 @@ mod SetNft {
     }
 
     #[event]
-    #[derive(Drop, starknet::Event)]
+    #[derive(Drop, PartialEq, starknet::Event)]
     enum Event {
         Transfer: Transfer,
         Approval: Approval,
@@ -74,16 +85,10 @@ mod SetNft {
     }
 
     #[starknet::interface]
-    trait IERC721EventEmitter<ContractState> {
+    trait IERC721Events<ContractState> {
         fn on_transfer(ref self: ContractState, event: Transfer);
         fn on_approval(ref self: ContractState, event: Approval);
         fn on_approval_for_all(ref self: ContractState, event: ApprovalForAll);
-    }
-
-
-    #[storage]
-    struct Storage {
-        world: IWorldDispatcher
     }
 
     //
@@ -91,42 +96,33 @@ mod SetNft {
     //
 
     #[constructor]
-    fn constructor(ref self: ContractState, world: ContractAddress) {
-        self.world.write(IWorldDispatcher { contract_address: world });
+    fn constructor(ref self: ContractState, world: IWorldDispatcher) {
+        self.world.write(world);
+    }
+
+
+    #[external(v0)]
+    impl ERC165 of IERC165<ContractState> {
+        fn supports_interface(self: @ContractState, interface_id: u32) -> bool {
+            interface_id == IERC165_ID
+                || interface_id == IERC721_ID
+                || interface_id == IERC721_METADATA_ID
+        }
     }
 
     #[external(v0)]
     impl ERC721 of IERC721<ContractState> {
-        fn owner(self: @ContractState) -> ContractAddress {
-            get!(self.world.read(), (SYSTEM_CONFIG_ID), WorldConfig).super_admin
-        }
-
-        fn name(self: @ContractState) -> felt252 {
-            'briq Set'
-        }
-
-        fn symbol(self: @ContractState) -> felt252 {
-            'B7'
-        }
-
-        fn token_uri(self: @ContractState, token_id: u256) -> felt252 {
-            // TODO
-            ''
-        }
-
         fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
             ERC721BalanceTrait::balance_of(self.world.read(), get_contract_address(), account)
                 .into()
         }
 
-        fn exists(self: @ContractState, token_id: u256) -> bool {
-            self.owner_of(token_id).is_non_zero()
-        }
-
         fn owner_of(self: @ContractState, token_id: u256) -> ContractAddress {
-            ERC721OwnerTrait::owner_of(
+            let owner = ERC721OwnerTrait::owner_of(
                 self.world.read(), get_contract_address(), token_id.try_into().unwrap()
-            )
+            );
+            assert(owner.is_non_zero(), 'ERC721: invalid token_id');
+            owner
         }
 
         fn get_approved(self: @ContractState, token_id: u256) -> ContractAddress {
@@ -139,16 +135,19 @@ mod SetNft {
         }
 
         fn approve(ref self: ContractState, to: ContractAddress, token_id: u256) {
-            let token = get_contract_address();
-            let caller = get_caller_address();
-            let token_id_felt: felt252 = token_id.try_into().unwrap();
-
             self
                 .world
                 .read()
                 .execute(
                     'ERC721Approve',
-                    to_calldata(token).plus(caller).plus(token_id_felt).plus(to).data
+                    system_calldata(
+                        ERC721ApproveParams {
+                            token: get_contract_address(),
+                            caller: get_caller_address(),
+                            token_id: token_id.try_into().unwrap(),
+                            to
+                        }
+                    )
                 );
         }
 
@@ -163,76 +162,142 @@ mod SetNft {
         fn set_approval_for_all(
             ref self: ContractState, operator: ContractAddress, approved: bool
         ) {
-            let owner = get_caller_address();
-
-            assert(owner != operator, 'ERC1155: wrong approval');
-
             self
                 .world
                 .read()
                 .execute(
                     'ERC721SetApprovalForAll',
-                    to_calldata(get_contract_address())
-                        .plus(owner)
-                        .plus(operator)
-                        .plus(approved)
-                        .data
+                    system_calldata(
+                        ERC721SetApprovalForAllParams {
+                            token: get_contract_address(),
+                            owner: get_caller_address(),
+                            operator,
+                            approved
+                        }
+                    )
                 );
         }
-
 
         fn transfer_from(
             ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
         ) {
-            let token_id_felt: felt252 = token_id.try_into().unwrap();
-
             self
                 .world
                 .read()
                 .execute(
                     'ERC721TransferFrom',
-                    to_calldata(get_contract_address())
-                        .plus(get_caller_address())
-                        .plus(from)
-                        .plus(to)
-                        .plus(token_id_felt)
-                        .data
+                    system_calldata(
+                        ERC721TransferFromParams {
+                            token: get_contract_address(),
+                            caller: get_caller_address(),
+                            from,
+                            to,
+                            token_id: token_id.try_into().unwrap()
+                        }
+                    )
                 );
         }
 
+        fn safe_transfer_from(
+            ref self: ContractState,
+            from: ContractAddress,
+            to: ContractAddress,
+            token_id: u256,
+            data: Span<felt252>
+        ) {
+            // TODO: check if we should do it
+            panic(array!['not implemented !']);
+        }
+    }
+
+    #[external(v0)]
+    impl ERC721Metadata of IERC721Metadata<ContractState> {
+        fn name(self: @ContractState) -> felt252 {
+            'briq set'
+        }
+
+        fn symbol(self: @ContractState) -> felt252 {
+            'B7'
+        }
+
+        fn token_uri(self: @ContractState, token_id: u256) -> felt252 {
+            // TODO
+            0
+        }
+    }
+
+
+    #[external(v0)]
+    #[generate_trait]
+    impl ERC721Custom of ERC721CustomTrait {
+        fn exists(self: @ContractState, token_id: u256) -> bool {
+            self.owner_of(token_id).is_non_zero()
+        }
+
+        fn owner(self: @ContractState) -> ContractAddress {
+            assert(false, 'TODO remove');
+            Zeroable::zero()
+        }
 
         fn transfer(ref self: ContractState, to: ContractAddress, token_id: u256) {
             self.transfer_from(get_caller_address(), to, token_id);
         }
 
         fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
-            assert(false == true, 'not usable');
-        //let token = get_contract_address();
-        //let mut calldata: Array<felt252> = ArrayTrait::new();
-        //calldata.append(token.into());
-        //calldata.append(u256_into_felt252(token_id));
-        //calldata.append(to.into());
-        //self.world.read().execute('erc721_mint'.into(), calldata);
-        //self.emit(Transfer { from: Zeroable::zero(), to, token_id });
+            self
+                .world
+                .read()
+                .execute(
+                    'ERC721Mint',
+                    system_calldata(
+                        ERC721MintParams {
+                            token: get_contract_address(),
+                            recipient: to,
+                            token_id: token_id.try_into().unwrap()
+                        }
+                    )
+                );
         }
 
         fn burn(ref self: ContractState, token_id: u256) {
-            assert(false == true, 'not usable');
-        //let token = get_contract_address();
-        //let caller = get_caller_address();
-        //let mut calldata: Array<felt252> = ArrayTrait::new();
-        //calldata.append(token.into());
-        //calldata.append(caller.into());
-        //calldata.append(u256_into_felt252(token_id));
-        //self.world.read().execute('erc721_burn'.into(), calldata);
-        //self.emit(Transfer { from: get_caller_address(), to: Zeroable::zero(), token_id });
+            self
+                .world
+                .read()
+                .execute(
+                    'ERC721Burn',
+                    system_calldata(
+                        ERC721BurnParams {
+                            token: get_contract_address(),
+                            caller: get_caller_address(),
+                            token_id: token_id.try_into().unwrap()
+                        }
+                    )
+                );
+        }
+    }
+
+
+    #[external(v0)]
+    impl ERC721EventEmitter of IERC721Events<ContractState> {
+        fn on_transfer(ref self: ContractState, event: Transfer) {
+            assert(get_caller_address() == self.world.read().executor(), 'ERC721: not authorized');
+            self.emit(event);
+        }
+        fn on_approval(ref self: ContractState, event: Approval) {
+            assert(get_caller_address() == self.world.read().executor(), 'ERC721: not authorized');
+            self.emit(event);
+        }
+        fn on_approval_for_all(ref self: ContractState, event: ApprovalForAll) {
+            assert(get_caller_address() == self.world.read().executor(), 'ERC721: not authorized');
+            self.emit(event);
         }
     }
 
     use briq_protocol::set_nft::systems::hash_token_id;
     use briq_protocol::set_nft::systems::AssemblySystemData;
     use briq_protocol::set_nft::systems::DisassemblySystemData;
-    use serde::Serde;
+
+    use briq_protocol::types::{FTSpec, ShapeItem};
 
     #[external(v0)]
     fn assemble_(
@@ -275,24 +340,5 @@ mod SetNft {
         self.world.read().execute('set_nft_disassembly', calldata);
 
         self.emit(Transfer { from: owner, to: Zeroable::zero(), token_id: token_id.into() });
-    }
-
-    use traits::Default;
-
-    fn concat<T, impl TSerde: Serde<T>>(ref into: Array<felt252>, data: @T) {
-        let mut serialized_data: Array<felt252> = Default::default();
-        data.serialize(ref serialized_data);
-        let mut index = 0;
-        loop {
-            if index == serialized_data.len() {
-                break ();
-            }
-            into.append(*serialized_data.at(index));
-            index += 1;
-        };
-    }
-
-    fn u256_into_felt252(val: u256) -> felt252 {
-        val.try_into().unwrap()
     }
 }

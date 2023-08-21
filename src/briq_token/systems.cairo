@@ -9,8 +9,8 @@ use traits::{Into, TryInto};
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use dojo_erc::erc1155::erc1155::{TransferSingle, TransferBatch};
-use dojo_erc::erc1155::erc1155::{IDojoERC1155Dispatcher, IDojoERC1155DispatcherTrait};
+use dojo_erc::erc1155::erc1155::ERC1155::{TransferSingle, TransferBatch};
+use dojo_erc::erc1155::erc1155::ERC1155::{IERC1155EventsDispatcher, IERC1155EventsDispatcherTrait};
 use dojo_erc::erc1155::components::{ERC1155BalanceTrait, OperatorApprovalTrait};
 use dojo_erc::erc1155::systems::{emit_transfer_batch, emit_transfer_single};
 
@@ -79,10 +79,11 @@ fn update_nocheck(
 
         emit_transfer_single(world, token, operator, from, to, id, amount);
 
-        if (to.is_non_zero()) {//do_safe_transfer_acceptance_check(operator, from, to, id.into(), amount.into(), data);
+        if (to
+            .is_non_zero()) { //do_safe_transfer_acceptance_check(operator, from, to, id.into(), amount.into(), data);
         } else {
             emit_transfer_batch(world, token, operator, from, to, ids.span(), amounts.span());
-            if (to.is_non_zero()) {//do_safe_batch_transfer_acceptance_check(
+            if (to.is_non_zero()) { //do_safe_batch_transfer_acceptance_check(
             //    operator, from, to, ids, amounts, data
             //);
             }
