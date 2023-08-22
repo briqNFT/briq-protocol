@@ -18,9 +18,10 @@ use dojo_erc::erc1155::components::OperatorApproval;
 use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner, ERC721TokenApproval};
 use dojo_erc::erc1155::components::ERC1155Balance;
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
-use briq_protocol::types::{FTSpec, ShapeItem};
 
 use briq_protocol::attributes::attributes::remove_attributes;
+
+use briq_protocol::types::{FTSpec, PackedShapeItem};
 
 //###########
 //###########
@@ -103,7 +104,7 @@ struct AssemblySystemData {
     owner: ContractAddress,
     token_id_hint: felt252,
     fts: Array<FTSpec>,
-    shape: Array<ShapeItem>,
+    shape: Array<PackedShapeItem>,
     attributes: Array<felt252>
 }
 
@@ -122,7 +123,7 @@ mod set_nft_assembly {
     use dojo::world::Context;
     use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
 
-    use briq_protocol::types::{FTSpec, ShapeItem};
+    use briq_protocol::types::{FTSpec, PackedShapeItem};
 
     use briq_protocol::attributes::attributes::assign_attributes;
 
@@ -172,7 +173,7 @@ mod set_nft_disassembly {
     use dojo_erc::erc1155::components::OperatorApproval;
     use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
 
-    use briq_protocol::types::{FTSpec, ShapeItem};
+    use briq_protocol::types::{FTSpec, PackedShapeItem};
 
     use briq_protocol::attributes::attributes::remove_attributes;
 
@@ -206,4 +207,45 @@ mod set_nft_disassembly {
 
         super::destroy_token(ctx, owner, token_id);
     }
+}
+
+use starknet::get_caller_address;
+use serde::Serde;
+
+fn assemble(
+    world: IWorldDispatcher,
+    owner: ContractAddress,
+    token_id_hint: felt252,
+    name: Array<felt252>, // TODO string
+    description: Array<felt252>, // TODO string
+    fts: Array<FTSpec>,
+    shape: Array<PackedShapeItem>,
+    attributes: Array<felt252>
+) -> felt252 {
+    // The name/description is unused except to have them show up in calldata.
+
+    let nb_briq = shape.len();
+
+    let mut calldata: Array<felt252> = ArrayTrait::new();
+    AssemblySystemData {
+        caller: get_caller_address(), owner, token_id_hint, fts, shape, attributes
+    }.serialize(ref calldata);
+    world.execute('set_nft_assembly', calldata);
+
+    let token_id = hash_token_id(owner, token_id_hint, nb_briq);
+    token_id
+}
+
+fn disassemble(
+    world: IWorldDispatcher,
+    owner: ContractAddress,
+    token_id: felt252,
+    fts: Array<FTSpec>,
+    attributes: Array<felt252>
+) {
+    let mut calldata: Array<felt252> = ArrayTrait::new();
+    DisassemblySystemData {
+        caller: get_caller_address(), owner, token_id, fts, attributes
+    }.serialize(ref calldata);
+    world.execute('set_nft_disassembly', calldata);
 }
