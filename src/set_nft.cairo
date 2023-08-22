@@ -1,29 +1,5 @@
 mod systems;
 
-use starknet::ContractAddress;
-use briq_protocol::types::{FTSpec, ShapeItem};
-
-#[starknet::interface]
-trait ISetNft<ContractState> {
-    fn assemble_(
-        ref self: ContractState,
-        owner: ContractAddress,
-        token_id_hint: felt252,
-        name: Array<felt252>, // TODO string
-        description: Array<felt252>, // TODO string
-        fts: Array<FTSpec>,
-        shape: Array<ShapeItem>,
-        attributes: Array<felt252>
-    ) -> felt252;
-    fn disassemble_(
-        ref self: ContractState,
-        owner: ContractAddress,
-        token_id: felt252,
-        fts: Array<FTSpec>,
-        attributes: Array<felt252>
-    );
-}
-
 #[starknet::contract]
 mod SetNft {
     use array::ArrayTrait;
@@ -299,46 +275,5 @@ mod SetNft {
 
     use briq_protocol::types::{FTSpec, ShapeItem};
 
-    #[external(v0)]
-    fn assemble_(
-        ref self: ContractState,
-        owner: ContractAddress,
-        token_id_hint: felt252,
-        name: Array<felt252>, // TODO string
-        description: Array<felt252>, // TODO string
-        fts: Array<FTSpec>,
-        shape: Array<ShapeItem>,
-        attributes: Array<felt252>
-    ) -> felt252 {
-        // The name/description is unused except to have them show up in calldata.
 
-        let nb_briq = shape.len();
-
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        AssemblySystemData {
-            caller: get_caller_address(), owner, token_id_hint, fts, shape, attributes
-        }.serialize(ref calldata);
-        self.world.read().execute('set_nft_assembly', calldata);
-
-        let token_id = hash_token_id(owner, token_id_hint, nb_briq);
-        self.emit(Transfer { from: Zeroable::zero(), to: owner, token_id: token_id.into() });
-        token_id
-    }
-
-    #[external(v0)]
-    fn disassemble_(
-        ref self: ContractState,
-        owner: ContractAddress,
-        token_id: felt252,
-        fts: Array<FTSpec>,
-        attributes: Array<felt252>
-    ) {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        DisassemblySystemData {
-            caller: get_caller_address(), owner, token_id, fts, attributes
-        }.serialize(ref calldata);
-        self.world.read().execute('set_nft_disassembly', calldata);
-
-        self.emit(Transfer { from: owner, to: Zeroable::zero(), token_id: token_id.into() });
-    }
 }

@@ -12,7 +12,7 @@ use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner};
 use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
 
-use briq_protocol::types::{FTSpec, ShapeItem};
+use briq_protocol::types::{FTSpec, PackedShapeItem};
 
 use debug::PrintTrait;
 
@@ -20,7 +20,7 @@ use debug::PrintTrait;
 #[starknet::interface]
 trait IShapeChecker<ContractState> {
     fn verify_shape(
-        self: @ContractState, token_id: felt252, shape: Span<ShapeItem>, fts: Span<FTSpec>
+        self: @ContractState, token_id: felt252, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
     );
 }
 
@@ -42,7 +42,7 @@ trait CheckShapeTrait {
         set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_id: felt252,
-        shape: @Array<ShapeItem>,
+        shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
     );
 
@@ -55,7 +55,7 @@ trait CheckShapeTrait {
     );
 
     fn check_shape(
-        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<ShapeItem>, fts: @Array<FTSpec>, 
+        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<PackedShapeItem>, fts: @Array<FTSpec>, 
     );
 }
 
@@ -66,7 +66,7 @@ impl CheckShapeImpl of CheckShapeTrait {
         set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_id: felt252,
-        shape: @Array<ShapeItem>,
+        shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
     ) {
         // 3 things to do:
@@ -91,7 +91,7 @@ impl CheckShapeImpl of CheckShapeTrait {
     }
 
     fn check_shape(
-        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<ShapeItem>, fts: @Array<FTSpec>, 
+        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<PackedShapeItem>, fts: @Array<FTSpec>, 
     ) {
         assert((*self.class_hash).is_non_zero(), 'No class hash found');
 

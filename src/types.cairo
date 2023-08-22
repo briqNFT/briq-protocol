@@ -19,17 +19,19 @@ struct ShapeItem {
 }
 
 #[derive(Copy, Drop, Serde, Store)]
-struct PackedShape {
+struct PackedShapeItem {
+    color: felt252
 }
 
-impl ShapePacking of StorePacking<ShapeItem, PackedShape> {
-    fn pack(value: ShapeItem) -> PackedShape
+impl ShapePacking of StorePacking<ShapeItem, PackedShapeItem> {
+    fn pack(value: ShapeItem) -> PackedShapeItem
     {
-        PackedShape {
+        PackedShapeItem {
+            color: 'toto'
         }
     }
 
-    fn unpack(value: PackedShape) -> ShapeItem
+    fn unpack(value: PackedShapeItem) -> ShapeItem
     {
         ShapeItem {
             color: 'toto',

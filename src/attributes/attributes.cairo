@@ -8,7 +8,7 @@ use option::OptionTrait;
 use zeroable::Zeroable;
 use clone::Clone;
 
-use briq_protocol::types::{FTSpec, ShapeItem};
+use briq_protocol::types::{FTSpec, PackedShapeItem};
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 
@@ -41,7 +41,7 @@ fn assign_attributes(
     set_owner: ContractAddress,
     set_token_id: felt252,
     mut attributes: Array<felt252>,
-    shape: @Array<ShapeItem>,
+    shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
 ) {
     loop {
@@ -57,7 +57,7 @@ fn assign_attribute(
     set_owner: ContractAddress,
     set_token_id: felt252,
     attribute_id: felt252,
-    shape: @Array<ShapeItem>,
+    shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
 ) {
     assert(set_owner.is_non_zero(), 'Bad input');
