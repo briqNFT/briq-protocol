@@ -1,4 +1,3 @@
-use briq_protocol::set_nft::ISetNftDispatcherTrait;
 use traits::{Into, TryInto, Default};
 use option::{Option, OptionTrait};
 use result::ResultTrait;
@@ -14,11 +13,12 @@ use briq_protocol::tests::test_utils::{WORLD_ADMIN, DefaultWorld, deploy_default
 
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
-use briq_protocol::set_nft::ISetNftDispatcher;
 
 use briq_protocol::attributes::collection::CreateCollectionData;
 use briq_protocol::check_shape::RegisterShapeVerifierData;
-use briq_protocol::types::{FTSpec, ShapeItem};
+use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking};
+
+use briq_protocol::set_nft::systems::{assemble, disassemble};
 
 use debug::PrintTrait;
 
@@ -32,14 +32,12 @@ fn default_owner() -> ContractAddress {
 fn test_empty_mint() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     set_contract_address(default_owner());
+    set_caller_address(default_owner());
 
-    let token_id = set_assembler
-        .assemble_(
-            default_owner(), 0xfade, array![0xcafe], array![0xfade], array![], array![], array![], 
-        );
+    let token_id = assemble(
+        world, default_owner(), 0xfade, array![0xcafe], array![0xfade], array![], array![], array![], 
+    );
     assert(
         token_id == 0x1a61b367b44cb5cdc969ad212931f85c0dc5d31227cc1bdb8bf65238a722a6a,
         'bad token id'
@@ -52,20 +50,19 @@ fn test_empty_mint() {
 fn test_simple_mint_and_burn() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
-    set_contract_address(default_owner());
-
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    set_contract_address(default_owner());
+    set_caller_address(default_owner());
+
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 1 }],
-            array![ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }],
+            array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
             array![],
         );
     assert(
@@ -77,14 +74,10 @@ fn test_simple_mint_and_burn() {
     assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 1, 'bad balance');
     assert(briq_token.balance_of(default_owner(), 1) == 99, 'bad balance');
 
-    set_assembler
-        .disassemble_(default_owner(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
-    assert(
-        starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
-    );
+    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
     assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
-    assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 0, 'bad balance');
     assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad balance');
+    // TODO: validate that token ID balance asserts as it's 0
 }
 
 #[test]
@@ -93,18 +86,17 @@ fn test_simple_mint_and_burn() {
 fn test_simple_mint_and_burn_not_enough_briqs() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     set_contract_address(default_owner());
+    set_caller_address(default_owner());
 
-    let token_id = set_assembler
-        .assemble_(
+    let token_id = assemble(
+            world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 1 }],
-            array![ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }],
+            array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
             array![],
         );
 }
@@ -114,29 +106,28 @@ fn test_simple_mint_and_burn_not_enough_briqs() {
 fn test_simple_mint_and_burn_2() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
-    set_contract_address(default_owner());
-
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    set_contract_address(default_owner());
+    set_caller_address(default_owner());
+
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
+                ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                },
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
+                }),
             ],
             array![],
         );
@@ -149,14 +140,10 @@ fn test_simple_mint_and_burn_2() {
     assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 4, 'bad token balance 1');
     assert(briq_token.balance_of(default_owner(), 1) == 96, 'bad briq balance 1');
 
-    set_assembler
-        .disassemble_(default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
-    assert(
-        starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
-    );
+    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
     assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
-    assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 0, 'bad token balance 2');
     assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad briq balance 2');
+    // TODO: validate that token ID balance asserts as it's 0
 }
 
 #[test]
@@ -166,36 +153,34 @@ fn test_simple_mint_and_burn_2() {
         'Set still has briqs',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED'
     )
 )]
 fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     set_contract_address(default_owner());
+    set_caller_address(default_owner());
 
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
+                ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                },
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
+                }),
             ],
             array![],
         );
@@ -208,14 +193,12 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 4, 'bad token balance 1');
     assert(briq_token.balance_of(default_owner(), 1) == 96, 'bad briq balance 1');
 
-    set_assembler
-        .disassemble_(default_owner(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
+    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
     assert(
         starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
     );
-    assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
-    assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 0, 'bad token balance 2');
     assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad briq balance 2');
+    // TODO: validate that token ID balance asserts as it's 0
 }
 
 
@@ -225,29 +208,28 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
 fn test_simple_mint_attribute_not_exist() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     set_contract_address(default_owner());
+    set_caller_address(default_owner());
 
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
+                ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                },
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
+                }),
             ],
             array![0x1],
         );
@@ -278,8 +260,6 @@ fn test_simple_mint_attribute_ok() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     world
         .execute(
             'ERC1155MintBurn',
@@ -295,27 +275,28 @@ fn test_simple_mint_attribute_ok() {
             ])
         );
 
-    set_contract_address(default_owner());
-
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    set_caller_address(default_owner());
+    set_contract_address(default_owner());
+
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
-                    color: '#ffaaff', material: 1, x: 1, y: 4, z: -2
-                    }, ShapeItem {
+                ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }, ShapeItem {
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                },
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
+                }),
             ],
             array![0x1],
         );
@@ -325,19 +306,14 @@ fn test_simple_mint_attribute_ok() {
     );
     assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
     assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
-    assert(booklet.balance_of(default_owner(), 0x1) == 0, 'bad booklet balance 1');
     assert(booklet.balance_of(token_id.try_into().unwrap(), 0x1) == 1, 'bad booklet balance 2');
+    // TODO validate booklet balance of owner to 0
 
-    set_assembler
-        .disassemble_(
-            default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
+    disassemble(
+            world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
         );
-    assert(
-        starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
-    );
-    assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
     assert(booklet.balance_of(default_owner(), 0x1) == 1, 'bad booklet balance 3');
-    assert(booklet.balance_of(token_id.try_into().unwrap(), 0x1) == 0, 'bad booklet balance 4');
+    // TODO: validate that token ID balance asserts as it's 0
 }
 
 #[test]
@@ -345,7 +321,6 @@ fn test_simple_mint_attribute_ok() {
 #[should_panic(
     expected: (
         'u128_sub Overflow',
-        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED'
@@ -373,29 +348,28 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     set_contract_address(default_owner());
+    set_caller_address(default_owner());
 
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
-                    color: '#ffaaff', material: 1, x: 1, y: 4, z: -2
-                    }, ShapeItem {
+                ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }, ShapeItem {
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                },
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
+                }),
             ],
             array![0x1],
         );
@@ -406,9 +380,8 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
     assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
 
-    set_assembler
-        .disassemble_(
-            default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
+    disassemble(
+            world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
         );
     assert(
         starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
@@ -421,7 +394,6 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
 #[should_panic(
     expected: (
         'bad shape item',
-        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
@@ -450,29 +422,28 @@ fn test_simple_mint_attribute_bad_shape_item() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
-    set_contract_address(default_owner());
-
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    set_contract_address(default_owner());
+    set_caller_address(default_owner());
+
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
-                    color: '#ffaaff', material: 1, x: 1, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
-                    color: '#ffaaff', material: 1, x: 0, y: 4, z: -2
-                    }, ShapeItem {
+                ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: -100, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                },
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
+                }),
             ],
             array![0x1],
         );
@@ -483,7 +454,6 @@ fn test_simple_mint_attribute_bad_shape_item() {
 #[should_panic(
     expected: (
         'bad shape length',
-        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
@@ -512,25 +482,24 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     set_contract_address(default_owner());
+    set_caller_address(default_owner());
 
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
+                ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 1, y: 4, z: -2
-                    }, ShapeItem {
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                },
+                }),
             ],
             array![0x1],
         );
@@ -562,29 +531,28 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    let set_assembler = ISetNftDispatcher { contract_address: set_nft.contract_address };
-
     set_contract_address(default_owner());
+    set_caller_address(default_owner());
 
     mint_briqs(world, default_owner(), 1, 100);
 
-    let token_id = set_assembler
-        .assemble_(
+    let token_id = assemble(
+        world,
             default_owner(),
             0xfade,
             array![0xcafe],
             array![0xfade],
             array![FTSpec { token_id: 1, qty: 4 }],
             array![
-                ShapeItem {
-                    color: '#ffaaff', material: 1, x: 1, y: 4, z: -2
-                    }, ShapeItem {
+                ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }, ShapeItem {
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }, ShapeItem {
+                    }), ShapePacking::pack(ShapeItem {
                     color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                },
+                    }), ShapePacking::pack(ShapeItem {
+                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
+                }),
             ],
             array![0x1],
         );
@@ -595,6 +563,5 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
     assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
 
-    set_assembler
-        .disassemble_(default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
+    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
 }

@@ -63,12 +63,7 @@ fn assign_attribute(
     assert(set_owner.is_non_zero(), 'Bad input');
     assert(set_token_id != 0, 'Bad input');
     assert(attribute_id != 0, 'Bad input');
-
-    let caller = ctx.origin;
-    let set_addr = get!(ctx.world, (SYSTEM_CONFIG_ID), WorldConfig).set;
-    // TODO: Set permissions on the collection (owner / set) ?
-    assert(caller == set_addr, 'Bad caller');
-
+ 
     let collection_id = get_collection_id(attribute_id);
     let (admin, system) = get!(ctx.world, (collection_id), Collection).get_admin_or_system();
     if admin.is_some() {
@@ -114,11 +109,6 @@ fn remove_attribute(
     assert(set_owner.is_non_zero(), 'Bad input');
     assert(set_token_id != 0, 'Bad input');
     assert(attribute_id != 0, 'Bad input');
-
-    let caller = ctx.origin;
-    let set_addr = get!(ctx.world, (SYSTEM_CONFIG_ID), WorldConfig).set;
-    // TODO: Set permissions on the collection (owner / set) ?
-    assert(caller == set_addr, 'Bad caller');
 
     let collection_id = get_collection_id(attribute_id);
     let (admin, system) = get!(ctx.world, (collection_id), Collection).get_admin_or_system();

@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from typing import Dict
 
+from numpy import integer
+
 
 def generate_shape_check(shape):
     materials = {}
@@ -24,20 +26,15 @@ def mat_check(materials: Dict[int, int]):
         i += 1
     return "\n    ".join(out)
 
-ANY_MATERIAL = 0
-ANY_COLOR = 0
+ANY_MATERIAL_ANY_COLOR = 0
 
 def item_check(item):
     out = [
         "    let shapeItem = shape.pop_front().unwrap();",
     ]
-    if item.material != ANY_COLOR:
-        out.append(f"assert(shapeItem.color == '{item.color}', 'bad shape item');")
-    if item.material != ANY_MATERIAL:
-        out.append(f"assert(shapeItem.material == {item.material}, 'bad shape item');")
-    out.append(f"assert(shapeItem.x == {item.x}, 'bad shape item');")
-    out.append(f"assert(shapeItem.z == {item.y}, 'bad shape item');")
-    out.append(f"assert(shapeItem.y == {item.z}, 'bad shape item');")
+    if item.material != ANY_MATERIAL_ANY_COLOR:
+        out.append(f"assert(shapeItem.color_material == {item.color_material}, 'bad shape item');")
+    out.append(f"assert(shapeItem.x_y_z == {item.x_y_z}, 'bad shape item');")
     return "\n    ".join(out)
 
 @dataclass
@@ -47,3 +44,11 @@ class ShapeItem:
     z: int
     color: str
     material: int
+
+    @property
+    def color_material(self):
+        return int.from_bytes(self.color.encode(), 'big') * 2**64 + self.material
+
+    @property
+    def x_y_z(self):
+        return (self.x + 2**31) * 2**64 + (self.y + 2**31) * 2**32 + (self.z + 2**31)

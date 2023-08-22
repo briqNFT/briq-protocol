@@ -11,7 +11,7 @@ use debug::PrintTrait;
 use dojo::world::Context;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
+use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, get_world_config};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 
 use dojo_erc::erc1155::components::OperatorApproval;
@@ -66,7 +66,7 @@ fn hash_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32, 
 }
 
 fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
-    let token = ctx.origin;
+    let token = get_world_config(ctx.world).set;
     assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
     let token_owner = get!(ctx.world, (token, token_id), ERC721Owner);
@@ -80,7 +80,7 @@ fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
 }
 
 fn destroy_token(ctx: Context, owner: ContractAddress, token_id: felt252) {
-    let token = ctx.origin;
+    let token = get_world_config(ctx.world).set;
     let mut balance = get!(ctx.world, (token, owner), ERC721Balance);
     balance.amount -= 1;
     set!(ctx.world, (balance));
@@ -130,10 +130,10 @@ mod set_nft_assembly {
     use debug::PrintTrait;
     use super::AssemblySystemData;
 
-    fn execute(ctx: Context, data: AssemblySystemData, ) {
+    fn execute(ctx: Context, data: AssemblySystemData) {
         let AssemblySystemData{caller, owner, token_id_hint, fts, shape, attributes } = data;
 
-        assert(ctx.origin == get!(ctx.world, (SYSTEM_CONFIG_ID), WorldConfig).set, 'Only SetNft');
+        assert(ctx.origin == caller, 'Only Caller');
 
         assert(shape.len() != 0, 'Cannot mint empty set');
 
@@ -171,7 +171,7 @@ mod set_nft_disassembly {
     use dojo::world::Context;
     use dojo_erc::erc721::components::{ERC721Owner, ERC721TokenApproval};
     use dojo_erc::erc1155::components::OperatorApproval;
-    use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
+    use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, get_world_config};
 
     use briq_protocol::types::{FTSpec, PackedShapeItem};
 
@@ -179,11 +179,12 @@ mod set_nft_disassembly {
 
     use super::DisassemblySystemData;
 
-    fn execute(ctx: Context, data: DisassemblySystemData, ) {
+    fn execute(ctx: Context, data: DisassemblySystemData) {
         let DisassemblySystemData{caller, owner, token_id, fts, attributes } = data;
-        let token = ctx.origin;
 
-        assert(token == get!(ctx.world, (SYSTEM_CONFIG_ID), WorldConfig).set, 'Only SetNft');
+        assert(ctx.origin == caller, 'Only Caller');
+
+        let token = get_world_config(ctx.world).set;
 
         let token_owner = get!(ctx.world, (token, token_id), ERC721Owner);
         assert(token_owner.address.is_non_zero(), 'ERC721: invalid token_id');
@@ -223,7 +224,6 @@ fn assemble(
     attributes: Array<felt252>
 ) -> felt252 {
     // The name/description is unused except to have them show up in calldata.
-
     let nb_briq = shape.len();
 
     let mut calldata: Array<felt252> = ArrayTrait::new();

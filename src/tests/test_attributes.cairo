@@ -1,4 +1,3 @@
-use briq_protocol::set_nft::ISetNftDispatcherTrait;
 use traits::{Into, TryInto, Default};
 use option::{Option, OptionTrait};
 use result::ResultTrait;
@@ -10,7 +9,6 @@ use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
 use briq_protocol::tests::test_utils::deploy_default_world;
 
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
-use briq_protocol::set_nft::ISetNftDispatcher;
 
 use briq_protocol::types::{FTSpec, ShapeItem};
 
