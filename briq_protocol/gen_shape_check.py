@@ -1,45 +1,49 @@
 
+from dataclasses import dataclass
+from typing import Dict
+
+
 def generate_shape_check(shape):
     materials = {}
     for shapeItem in shape:
-        if shapeItem.color_nft_material not in materials:
-            materials[shapeItem.color_nft_material] = 0
-        materials[shapeItem.color_nft_material] += 1
+        if shapeItem.material not in materials:
+            materials[shapeItem.material] = 0
+        materials[shapeItem.material] += 1
     return f"""
-fn check_shape_numbers(
-    mut shape: Span<ShapeItem>,
-    mut fts: Span<FTSpec>,
-) {{
     assert(shape.len() == {len(shape)}, 'bad shape length');
     assert(fts.len() == {len(materials)}, 'bad ft spec');
-    assert(fts.at(0).token_id == @0, 'bad ft spec');
-    assert(fts.at(1).token_id == @1, 'bad ft spec');
-    assert(fts.at(0).qty == @{materials[0]}, 'bad ft spec');
-    assert(fts.at(1).qty == @{materials[1]}, 'bad ft spec');
+    {mat_check(materials)}
+""" + '\n'.join([item_check(item) for item in shape])
 
-""" + '\n'.join([item_check(item) for item in shape]) + """
-}}
-"""
+def mat_check(materials: Dict[int, int]):
+    out = []
+    i = 0
+    for material, count in materials.items():
+        out.append(f"assert(fts.at({i}).token_id == @{material}, 'bad ft spec');")
+        out.append(f"assert(fts.at({i}).qty == @{count}, 'bad ft spec');")
+        i += 1
+    return "\n    ".join(out)
 
-ANY_MATERIAL_ANY_COLOR = 0
+ANY_MATERIAL = 0
+ANY_COLOR = 0
 
 def item_check(item):
     out = [
         "    let shapeItem = shape.pop_front().unwrap();",
     ]
-    if item.color_nft_material != ANY_MATERIAL_ANY_COLOR:
-        out.append(f"assert(shapeItem.color_nft_material == {item.color_nft_material}, 'bad shape item');")
-    out.append(f"assert(shapeItem.x_y_z == {item.x_y_z}, 'bad shape item');")
+    if item.material != ANY_COLOR:
+        out.append(f"assert(shapeItem.color == '{item.color}', 'bad shape item');")
+    if item.material != ANY_MATERIAL:
+        out.append(f"assert(shapeItem.material == {item.material}, 'bad shape item');")
+    out.append(f"assert(shapeItem.x == {item.x}, 'bad shape item');")
+    out.append(f"assert(shapeItem.z == {item.y}, 'bad shape item');")
+    out.append(f"assert(shapeItem.y == {item.z}, 'bad shape item');")
     return "\n    ".join(out)
 
+@dataclass
 class ShapeItem:
-    def __init__(self, x_y_z, color_nft_material, material):
-        self.x_y_z = x_y_z
-        self.color_nft_material = color_nft_material
-        self.material = material
-
-print(generate_shape_check([
-    ShapeItem(0, 0, 0),
-    ShapeItem(1, 0, 0),
-    ShapeItem(2, 1, 1),
-]))
+    x: int
+    y: int
+    z: int
+    color: str
+    material: int
