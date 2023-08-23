@@ -19,8 +19,6 @@ use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
 use briq_protocol::attributes::get_collection_id;
 use briq_protocol::attributes::collection::{Collection, CollectionTrait};
 
-use briq_protocol::check_shape::{ShapeVerifier, CheckShapeTrait};
-
 use debug::PrintTrait;
 
 
@@ -45,6 +43,19 @@ struct AttributeAssignData {
     fts: Array<FTSpec>,
 }
 
+#[derive(Drop, Serde)]
+struct AttributeRemoveData {
+    set_owner: ContractAddress,
+    set_token_id: felt252,
+    attribute_id: felt252
+}
+
+#[derive(Drop, Serde)]
+enum AttributeHandlerData
+{
+    Assign: AttributeAssignData,
+    Remove: AttributeRemoveData,
+}
 
 fn assign_attributes(
     ctx: Context,
@@ -81,7 +92,7 @@ fn assign_attribute(
         assert(0 == 1, 'TODO');
     } else {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        AttributeAssignData { set_owner, set_token_id, attribute_id, shape: shape.clone(), fts: fts.clone() }.serialize(ref calldata);
+        AttributeHandlerData::Assign(AttributeAssignData { set_owner, set_token_id, attribute_id, shape: shape.clone(), fts: fts.clone() }).serialize(ref calldata);
         ctx.world.execute(system.unwrap().into(), calldata);
     }
     emit!(ctx.world, AttributeAssigned { set_token_id: set_token_id.into(), attribute_id });
@@ -126,8 +137,9 @@ fn remove_attribute(
         //library_erc1155::transferability::Transferability::_transfer_burnable(set_token_id, 0, attribute_id, 1);
         assert(0 == 1, 'TODO');
     } else {
-        let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
-        shape_verifier.remove_attribute(ctx.world, set_owner, set_token_id, attribute_id);
+        let mut calldata: Array<felt252> = ArrayTrait::new();
+        AttributeHandlerData::Remove(AttributeRemoveData { set_owner, set_token_id, attribute_id }).serialize(ref calldata);
+        ctx.world.execute(system.unwrap().into(), calldata);
     }
 
     emit!(ctx.world, AttributeRemoved { set_token_id: set_token_id.into(), attribute_id });

@@ -16,7 +16,6 @@ use briq_protocol::types::{FTSpec, PackedShapeItem};
 
 use debug::PrintTrait;
 
-
 #[starknet::interface]
 trait IShapeChecker<ContractState> {
     fn verify_shape(
@@ -35,7 +34,8 @@ struct ShapeVerifier {
     class_hash: ClassHash,
 }
 
-trait CheckShapeTrait {
+trait ShapeVerifierTrait
+{
     fn assign_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
@@ -45,21 +45,17 @@ trait CheckShapeTrait {
         shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
     );
-
+ 
     fn remove_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_id: felt252,
-    );
-
-    fn check_shape(
-        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<PackedShapeItem>, fts: @Array<FTSpec>, 
-    );
+    );   
 }
 
-impl CheckShapeImpl of CheckShapeTrait {
+impl ShapeVerifierImpl of ShapeVerifierTrait {
     fn assign_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
@@ -69,15 +65,11 @@ impl CheckShapeImpl of CheckShapeTrait {
         shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
     ) {
-        // 3 things to do:
-        //  - check that we're being called by the proper system
-        //  - check that the shape is valid
-        //  - try to transfer the booklet (also checks ownership)
+        assert((*self.class_hash).is_non_zero(), 'No class hash found');
 
-        // TODO
-        //assert(ctx.world.caller_system()? == 'assign_attributes', 'Bad system caller');
-
-        self.check_shape(attribute_id, shape, fts);
+        IShapeCheckerLibraryDispatcher {
+            class_hash: *self.class_hash
+        }.verify_shape(attribute_id, shape.span(), fts.span());
 
         // TODO -> use update that sends events
         dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
@@ -90,18 +82,6 @@ impl CheckShapeImpl of CheckShapeTrait {
         );
     }
 
-    fn check_shape(
-        self: @ShapeVerifier, attribute_id: felt252, shape: @Array<PackedShapeItem>, fts: @Array<FTSpec>, 
-    ) {
-        assert((*self.class_hash).is_non_zero(), 'No class hash found');
-
-        IShapeCheckerLibraryDispatcher {
-            class_hash: *self.class_hash
-        }.verify_shape(attribute_id, shape.span(), fts.span());
-
-        return ();
-    }
-
     fn remove_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
@@ -109,8 +89,6 @@ impl CheckShapeImpl of CheckShapeTrait {
         set_token_id: felt252,
         attribute_id: felt252,
     ) {
-        // TODO: check that we're being called by the proper system
-
         // TODO -> use update that sends events
         dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
             world,
@@ -147,17 +125,31 @@ mod register_shape_verifier {
 }
 
 #[system]
-mod verify_shape {
+mod shape_verifier_system {
     use dojo::world::Context;
-    use super::{ShapeVerifier, CheckShapeTrait};
-    use briq_protocol::attributes::attributes::AttributeAssignData;
-
     use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, AdminTrait};
+    
+    use super::{ShapeVerifier, ShapeVerifierTrait};
+    use briq_protocol::attributes::attributes::{
+        AttributeHandlerData,
+        AttributeAssignData,
+        AttributeRemoveData,
+    };
 
-    fn execute(ctx: Context, data: AttributeAssignData) {
-        let AttributeAssignData { set_owner, set_token_id, attribute_id, shape, fts } = data;
-        let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
-        shape_verifier
-            .assign_attribute(ctx.world, set_owner, set_token_id, attribute_id, @shape, @fts);
+    fn execute(ctx: Context, data: AttributeHandlerData) {
+        match data {
+            AttributeHandlerData::Assign(d) => {
+                let AttributeAssignData { set_owner, set_token_id, attribute_id, shape, fts } = d;
+                let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
+                shape_verifier
+                    .assign_attribute(ctx.world, set_owner, set_token_id, attribute_id, @shape, @fts);
+            },
+            AttributeHandlerData::Remove(d) => {
+                let AttributeRemoveData { set_owner, set_token_id, attribute_id } = d;
+                let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
+                shape_verifier
+                    .remove_attribute(ctx.world, set_owner, set_token_id, attribute_id);
+            },
+        }
     }
 }

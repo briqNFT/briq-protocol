@@ -15,7 +15,7 @@ use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::attributes::collection::CreateCollectionData;
-use briq_protocol::check_shape::RegisterShapeVerifierData;
+use briq_protocol::shape_verifier::RegisterShapeVerifierData;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking};
 
 use briq_protocol::set_nft::systems::{assemble, disassemble};
@@ -244,7 +244,7 @@ fn test_simple_mint_attribute_ok() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -335,7 +335,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -412,7 +412,7 @@ fn test_simple_mint_attribute_bad_shape_item() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -475,7 +475,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -524,7 +524,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }

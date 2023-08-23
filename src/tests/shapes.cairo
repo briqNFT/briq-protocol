@@ -3,7 +3,7 @@ mod test_shape_1 {
     use array::{SpanTrait, ArrayTrait};
     use option::OptionTrait;
     use briq_protocol::types::{PackedShapeItem, FTSpec};
-    use briq_protocol::check_shape::IShapeChecker;
+    use briq_protocol::shape_verifier::IShapeChecker;
 
     #[storage]
     struct Storage {}
