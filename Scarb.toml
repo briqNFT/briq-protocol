@@ -9,7 +9,6 @@ sierra-replace-ids = true
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo" }
 dojo_erc = { git = "https://github.com/dojoengine/dojo" }
-#dojo_erc = { path = "dojo-erc" }
 
 [[target.dojo]]
 build-external-contracts = [
