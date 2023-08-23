@@ -44,8 +44,7 @@ fn MINIMAL_SURGE() -> felt252 {
 }
 
 fn SURGE_DECAY_PER_SECOND() -> felt252 {
-    150 * DECIMALS()
-//4134 * 100000000000000// 4134 * 10**14 : Decays over a week
+    4134 * 100000000000000 // 4134 * 10**14 : Decays over a week
 }
 
 fn MIN_PURCHASE() -> felt252 {

@@ -52,10 +52,12 @@ trait BriqFactoryStoreTrait {
 
 // #[generate_trait]
 impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
+    #[always(inline)]
     fn get_store(world: IWorldDispatcher) -> BriqFactoryStore {
         get!(world, (BRIQ_FACTORY_STORE_ID), BriqFactoryStore)
     }
 
+    #[always(inline)]
     fn set_store(world: IWorldDispatcher, new_store: BriqFactoryStore) {
         set!(world, (new_store));
     }
@@ -87,18 +89,18 @@ impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
         if store.surge_t <= decay {
             0
         } else {
-            store.last_stored_t - decay
+            store.surge_t - decay
         }
     }
 
     fn get_surge_price(world: IWorldDispatcher, amount: felt252) -> felt252 {
         let surge_t = BriqFactoryStoreTrait::get_surge_t(world);
 
-        if surge_t + amount <= MINIMAL_SURGE() {
+        if (surge_t + amount) <= MINIMAL_SURGE() {
             return 0;
         };
 
-        if !(surge_t <= MINIMAL_SURGE()) {
+        if surge_t > MINIMAL_SURGE() {
             BriqFactoryStoreTrait::get_lin_integral(
                 world,
                 SURGE_SLOPE(),
@@ -138,7 +140,7 @@ impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
         let interm = slope * (t1 + t2);
         let q = interm / DECIMALS();
         let interm = q * (t1 - t2);
-        let q = interm / DECIMALS() * 2;
+        let q = interm / DECIMALS() / 2;
 
         let floor_q = floor * (t1 - t2) / DECIMALS();
         q + floor_q
@@ -161,7 +163,7 @@ impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
         let interm = slope * (t1 + t2);
         let q = interm / DECIMALS();
         let interm = q * (t1 - t2);
-        let q = interm / DECIMALS() * 2;
+        let q = interm / DECIMALS() / 2;
         // Floor is negative. t2 < t1 so invert these, then subtract instead of adding.
         let floor_q = floor * (t2 - t1) / DECIMALS();
         q - floor_q
@@ -170,22 +172,19 @@ impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
 
     fn integrate(world: IWorldDispatcher, t: felt252, amount: felt252) -> felt252 {
         if (t + amount) <= INFLECTION_POINT() {
-            'integrate_A'.print();
             return BriqFactoryStoreTrait::get_lin_integral(
                 world, LOWER_SLOPE(), LOWER_FLOOR(), t, t + amount
             );
         }
 
         if INFLECTION_POINT() <= t {
-            'integrate_B'.print();
             return BriqFactoryStoreTrait::get_lin_integral_negative_floor(
                 world, SLOPE(), RAW_FLOOR(), t, t + amount
             );
         }
 
-        'integrate_C'.print();
         BriqFactoryStoreTrait::get_lin_integral(
-            world, LOWER_SLOPE(), LOWER_FLOOR(), t, t + INFLECTION_POINT()
+            world, LOWER_SLOPE(), LOWER_FLOOR(), t, INFLECTION_POINT()
         )
             + BriqFactoryStoreTrait::get_lin_integral_negative_floor(
                 world, SLOPE(), RAW_FLOOR(), INFLECTION_POINT(), t + amount

@@ -1,3 +1,4 @@
+use core::zeroable::Zeroable;
 use briq_protocol::set_nft::ISetNftDispatcherTrait;
 use traits::{Into, TryInto, Default};
 use option::{Option, OptionTrait};
@@ -5,8 +6,9 @@ use result::ResultTrait;
 use array::ArrayTrait;
 use serde::Serde;
 
-use starknet::testing::{set_caller_address, set_contract_address};
+use starknet::testing::{set_caller_address, set_contract_address, set_block_timestamp};
 use starknet::ContractAddress;
+use starknet::info::get_block_timestamp;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
@@ -15,9 +17,12 @@ use briq_protocol::tests::test_utils::{WORLD_ADMIN, DefaultWorld, deploy_default
 use dojo_erc::erc_common::utils::system_calldata;
 
 use briq_protocol::briq_factory::systems::{BriqFactoryInitializeParams};
-use briq_protocol::briq_factory::constants::{DECIMALS};
+use briq_protocol::briq_factory::constants::{
+    DECIMALS, LOWER_FLOOR, LOWER_SLOPE, INFLECTION_POINT, DECAY_PER_SECOND,MINIMAL_SURGE
+};
 use briq_protocol::briq_factory::components::{BriqFactoryStoreTrait};
 
+use briq_protocol::felt_math::{FeltOrd, FeltDiv};
 
 use debug::PrintTrait;
 
@@ -29,38 +34,116 @@ fn eth_address() -> ContractAddress {
     starknet::contract_address_const::<0xeeee>()
 }
 
-#[test]
-#[available_gas(30000000)]
-fn test_briq_factory() {
-    let DefaultWorld{world, .. } = deploy_default_world();
 
+fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252, ) {
     world
         .execute(
             'BriqFactoryInitialize',
-            system_calldata(
-                BriqFactoryInitializeParams {
-                    t: DECIMALS(), surge_t: DECIMALS(), buy_token: eth_address()
-                }
-            )
+            system_calldata(BriqFactoryInitializeParams { t, surge_t, buy_token: eth_address() })
         );
+}
+
+#[test]
+#[available_gas(90000000)]
+fn test_briq_factory_init() {
+    let DefaultWorld{world, .. } = deploy_default_world();
+    init_briq_factory(world, DECIMALS(), DECIMALS());
 
     let store = BriqFactoryStoreTrait::get_store(world);
-
     assert(store.buy_token == eth_address(), 'invalid buy_token');
     assert(store.surge_t == DECIMALS(), 'invalid surge_t');
     assert(store.last_stored_t == DECIMALS(), 'invalid last_stored_t');
+}
 
-    let integrate_1 = BriqFactoryStoreTrait::integrate(world, 6478383 * DECIMALS(), 1);
-    // let integrate_2 = BriqFactoryStoreTrait::integrate(world, 66478383478383, 347174);
 
-    // 'integrate_1'.print();
-    // integrate_1.print();
-    // 'integrate_2'.print();
-    // integrate_2.print();
+#[test]
+#[available_gas(90000000)]
+fn test_briq_factory_integrate() {
+    let DefaultWorld{world, .. } = deploy_default_world();
 
-    assert(integrate_1 == 647838450000000000000, 'bad T1');
-// assert(
-//     BriqFactoryStoreTrait::integrate(world, 6478383, 347174) == 230939137995400000000000000,
-//     'bad T2'
-// );
+    init_briq_factory(world, 0, 0);
+    assert(BriqFactoryStoreTrait::get_current_t(world) == 0, 'invalid current_t');
+
+    let price_for_1 = BriqFactoryStoreTrait::get_price(world, 1);
+    let expected_price = LOWER_FLOOR() + LOWER_SLOPE() / 2;
+    //10000025000000
+    assert(price_for_1 == expected_price, 'invalid price 1');
+
+    let price_for_1000 = BriqFactoryStoreTrait::get_price(world, 1000);
+    // 10025000000000000
+    assert(price_for_1000 == 10025000000000000, 'invalid price 1000');
+}
+
+
+#[test]
+#[available_gas(90000000)]
+fn test_briq_factory_integrate_above_inflection_point() {
+    let DefaultWorld{world, .. } = deploy_default_world();
+
+    init_briq_factory(world, INFLECTION_POINT(), 0);
+    let price_for_1000 = BriqFactoryStoreTrait::get_price(world, 1000);
+
+    let expected_price_1000 = 3005 * 10000000000000; // 0.03005 * 10**18
+    assert(price_for_1000 == expected_price_1000, 'invalid price 1000');
+
+    let timestamp = get_block_timestamp();
+    set_block_timestamp(timestamp + 10000);
+
+    let current_t = BriqFactoryStoreTrait::get_current_t(world);
+    let expected_current_t = INFLECTION_POINT() - DECAY_PER_SECOND() * 10000;
+    assert(current_t == expected_current_t, 'invalid current_t');
+
+    let timestamp = get_block_timestamp();
+    set_block_timestamp(timestamp + 3600 * 24 * 365 * 5);
+    assert(BriqFactoryStoreTrait::get_current_t(world) == 0, 'invalid current_t 1y');
+    assert(BriqFactoryStoreTrait::get_surge_t(world) == 0, 'invalid surge_t 1y');
+}
+
+
+#[test]
+#[available_gas(90000000)]
+fn test_briq_factory_surge() {
+    let DefaultWorld{world, .. } = deploy_default_world();
+
+    init_briq_factory(world, 0, 0);
+    let expected = 10000025000000; //price_below_ip(0, 1)
+    assert(BriqFactoryStoreTrait::get_price(world, 1) == expected, 'invalid price A');
+
+    init_briq_factory(world, 0, MINIMAL_SURGE());
+    let expected = 10000075000000; // price_below_ip(0, 1) + 10**8 / 2
+    assert(BriqFactoryStoreTrait::get_price(world, 1) == expected, 'invalid price B');
+
+    init_briq_factory(world, 0, 0);
+    let expected = 4062500000000000000; // price_below_ip(0, 250000)
+    assert(BriqFactoryStoreTrait::get_price(world, 250000) == expected, 'invalid price C');
+
+    init_briq_factory(world, 0, 0);
+    let expected = 4062522500075000000; // price_below_ip(0, 250001) + 10**8 // 2
+    assert(BriqFactoryStoreTrait::get_price(world, 250001) == expected, 'invalid price D');
+
+    init_briq_factory(world, 0, 200000 * DECIMALS());
+    let expected = 1375000000000000000; // price_below_ip(0, 100000) + 10**8 * 50000 * 50000 // 2
+    assert(BriqFactoryStoreTrait::get_price(world, 100000) == expected, 'invalid price E');
+
+    init_briq_factory(world, 0, 250000 * DECIMALS());
+    let expected = 250000 * DECIMALS();
+    assert(BriqFactoryStoreTrait::get_surge_t(world) == expected, 'invalid surge_t A');
+
+    let timestamp = get_block_timestamp();
+    set_block_timestamp(timestamp + 3600 * 24 * 3);
+
+    //  Has about halved in half a week
+    let expected = 250000 * DECIMALS() - 4134 * 100000000000000 * 3600 * 24 * 3;
+    assert(BriqFactoryStoreTrait::get_surge_t(world) == expected, 'invalid surge_t B');
+
+    let timestamp = get_block_timestamp();
+    set_block_timestamp(timestamp + 3600 * 24 * 12);
+    assert(BriqFactoryStoreTrait::get_surge_t(world) == 0, 'invalid surge_t C');
+}
+
+
+#[test]
+#[available_gas(90000000)]
+fn test_briq_factory_buy() {
+// TODO deploy buy token & test buy
 }

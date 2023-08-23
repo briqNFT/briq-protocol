@@ -79,13 +79,24 @@ mod BriqFactoryMint {
         store.surge_t = surge_t + amount * DECIMALS();
         BriqFactoryStoreTrait::set_store(ctx.world, store);
 
-        //  mint briqs to buyer
-        let token_id = BRIQ_MATERIAL();
+        // //  mint briqs to buyer
+        // let token_id = BRIQ_MATERIAL();
         let amount_u128: u128 = amount.try_into().unwrap();
-        let data: Array<u8> = array![];
-        IBriqDispatcher {
-            contract_address: world_config.briq
-        }.mint(buyer, token_id, amount_u128, data);
+        // let data: Array<u8> = array![];
+        // IBriqDispatcher {
+        //     contract_address: world_config.briq
+        // }.mint(buyer, token_id, amount_u128, data);
+
+        briq_protocol::briq_token::systems::update_nocheck(
+            ctx.world,
+            buyer,
+            world_config.briq,
+            from: Zeroable::zero(),
+            to: buyer,
+            ids: array![BRIQ_MATERIAL()],
+            amounts: array![amount_u128],
+            data: array![]
+        );
 
         emit!(ctx.world, BriqsBought { buyer: buyer, amount: amount, price: price });
     }
