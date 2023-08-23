@@ -34,7 +34,7 @@ fn spawn_world() -> IWorldDispatcher {
         dojo_erc::erc721::components::erc_721_owner::TEST_CLASS_HASH,
         dojo_erc::erc721::components::erc_721_token_approval::TEST_CLASS_HASH,
         briq_protocol::attributes::collection::collection::TEST_CLASS_HASH,
-        briq_protocol::check_shape::shape_verifier::TEST_CLASS_HASH,
+        briq_protocol::shape_verifier::shape_verifier::TEST_CLASS_HASH,
         briq_protocol::world_config::world_config::TEST_CLASS_HASH,
     ];
     // systems
@@ -49,8 +49,8 @@ fn spawn_world() -> IWorldDispatcher {
         briq_protocol::set_nft::systems::set_nft_assembly::TEST_CLASS_HASH,
         briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
         briq_protocol::attributes::collection::create_collection::TEST_CLASS_HASH,
-        briq_protocol::check_shape::register_shape_verifier::TEST_CLASS_HASH,
-        briq_protocol::check_shape::verify_shape::TEST_CLASS_HASH,
+        briq_protocol::shape_verifier::register_shape_verifier::TEST_CLASS_HASH,
+        briq_protocol::shape_verifier::shape_verifier_system::TEST_CLASS_HASH,
         briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
         briq_protocol::world_config::SetupWorld::TEST_CLASS_HASH,
         briq_protocol::briq_factory::systems::BriqFactoryMint::TEST_CLASS_HASH,
