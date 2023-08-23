@@ -8,6 +8,8 @@ mod generic_erc1155;
 mod set_nft;
 mod types;
 mod world_config;
+mod briq_factory;
+
 
 #[cfg(test)]
 mod tests;

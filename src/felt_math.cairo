@@ -33,3 +33,10 @@ impl feltOrd of PartialOrd<felt252> {
         felt252_lt(rhs, lhs)
     }
 }
+
+
+fn felt252_div(lhs: felt252, rhs: felt252) -> felt252 {
+    let l:u256 = lhs.into();
+    let r:u256 = rhs.into();
+    (l/r).try_into().unwrap()
+}

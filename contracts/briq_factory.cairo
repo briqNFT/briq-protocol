@@ -53,10 +53,10 @@ const decay_per_second = 6337791082068820; // decay: for each second, reduce the
 
 const surge_slope = 1 * 10**8; // Doubles the slope
 const minimal_surge = 250000 * decimals;
-const surge_decay_per_second = 150 * 10**18; // Decays over an hour
+const surge_decay_per_second = 4134 * 10**14; // Decays over a week
 
 const briq_material = 1;
-const minimum_purchase = 9;
+const minimum_purchase = 29;
 
 @contract_interface
 namespace IBriqContract {
@@ -85,7 +85,6 @@ func get_current_t{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     let (tmstp) = get_block_timestamp();
     let (last_pt) = last_purchase_time.read();
     let time_since_last_purchase = tmstp - last_pt;
-    assert_lt(time_since_last_purchase, 3600 * 24 * 365 * 10);
     let decay = time_since_last_purchase * decay_per_second;
 
     let cmp = is_le_felt(t, decay);
@@ -102,7 +101,6 @@ func get_surge_t{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     let (tmstp) = get_block_timestamp();
     let (last_pt) = last_purchase_time.read();
     let time_since_last_purchase = tmstp - last_pt;
-    assert_lt(time_since_last_purchase, 3600 * 24 * 365 * 10);
     let decay = time_since_last_purchase * surge_decay_per_second;
 
     let cmp = is_le_felt(t, decay);
@@ -158,14 +156,14 @@ func buy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }
 
     let (price) = get_price(amount);
-    //let (tmstp) = get_block_timestamp();
-    //last_purchase_time.write(tmstp);
+    let (tmstp) = get_block_timestamp();
+    last_purchase_time.write(tmstp);
     
-    //let (t) = last_stored_t.read();
-    //last_stored_t.write(t + amount * decimals);
+    let (t) = get_current_t();
+    last_stored_t.write(t + amount * decimals);
 
-    //let (csurget) = surge_t.read();
-    //surge_t.write(csurget + amount * decimals);
+    let (csurget) = get_surge_t();
+    surge_t.write(csurget + amount * decimals);
 
     let (buyer) = get_caller_address();
     transfer_funds(buyer, price);

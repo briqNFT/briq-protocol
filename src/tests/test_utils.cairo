@@ -51,6 +51,8 @@ fn spawn_world() -> IWorldDispatcher {
         briq_protocol::check_shape::register_shape_verifier::TEST_CLASS_HASH,
         briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
         briq_protocol::world_config::SetupWorld::TEST_CLASS_HASH,
+        briq_protocol::briq_factory::systems::BriqFactoryMint::TEST_CLASS_HASH,
+        briq_protocol::briq_factory::systems::BriqFactoryInitialize::TEST_CLASS_HASH,
     ];
 
     let world = spawn_test_world(components, systems);
@@ -99,6 +101,7 @@ struct DefaultWorld {
     set_nft: IERC721Dispatcher,
     booklet: IERC1155Dispatcher,
     box_nft: IERC1155Dispatcher,
+    //briq_fatory ?
 }
 
 fn deploy_default_world() -> DefaultWorld {
