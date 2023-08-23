@@ -12,7 +12,7 @@ use briq_protocol::types::{FTSpec, PackedShapeItem};
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 
-use dojo::world::{Context, IWorldDispatcherTrait};
+use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc1155::components::ERC1155Balance;
 use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
 
@@ -35,6 +35,16 @@ struct AttributeRemoved {
     set_token_id: u256,
     attribute_id: felt252
 }
+
+#[derive(Drop, Serde)]
+struct AttributeAssignData {
+    set_owner: ContractAddress,
+    set_token_id: felt252,
+    attribute_id: felt252,
+    shape: Array<PackedShapeItem>,
+    fts: Array<FTSpec>,
+}
+
 
 fn assign_attributes(
     ctx: Context,
@@ -70,9 +80,9 @@ fn assign_attribute(
         //library_erc1155::transferability::Transferability::_transfer_burnable(0, set_token_id, attribute_id, 1);
         assert(0 == 1, 'TODO');
     } else {
-        let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
-        shape_verifier
-            .assign_attribute(ctx.world, set_owner, set_token_id, attribute_id, shape, fts);
+        let mut calldata: Array<felt252> = ArrayTrait::new();
+        AttributeAssignData { set_owner, set_token_id, attribute_id, shape: shape.clone(), fts: fts.clone() }.serialize(ref calldata);
+        ctx.world.execute(system.unwrap().into(), calldata);
     }
     emit!(ctx.world, AttributeAssigned { set_token_id: set_token_id.into(), attribute_id });
 

@@ -145,3 +145,19 @@ mod register_shape_verifier {
         set!(ctx.world, ShapeVerifier { attribute_id, class_hash });
     }
 }
+
+#[system]
+mod verify_shape {
+    use dojo::world::Context;
+    use super::{ShapeVerifier, CheckShapeTrait};
+    use briq_protocol::attributes::attributes::AttributeAssignData;
+
+    use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, AdminTrait};
+
+    fn execute(ctx: Context, data: AttributeAssignData) {
+        let AttributeAssignData { set_owner, set_token_id, attribute_id, shape, fts } = data;
+        let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
+        shape_verifier
+            .assign_attribute(ctx.world, set_owner, set_token_id, attribute_id, @shape, @fts);
+    }
+}

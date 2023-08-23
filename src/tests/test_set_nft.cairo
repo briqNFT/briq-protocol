@@ -244,7 +244,7 @@ fn test_simple_mint_attribute_ok() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'check_shape_booklet'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -323,6 +323,9 @@ fn test_simple_mint_attribute_ok() {
         'u128_sub Overflow',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED'
     )
 )]
@@ -332,7 +335,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'check_shape_booklet'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -397,6 +400,9 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED'
     )
 )]
@@ -406,7 +412,7 @@ fn test_simple_mint_attribute_bad_shape_item() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'check_shape_booklet'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -457,6 +463,9 @@ fn test_simple_mint_attribute_bad_shape_item() {
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
+        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED'
     )
 )]
@@ -466,7 +475,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'check_shape_booklet'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -515,7 +524,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'check_shape_booklet'.try_into().unwrap()
+            collection_id: 1, params: 2, admin_or_system: 'verify_shape'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
