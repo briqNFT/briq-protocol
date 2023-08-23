@@ -274,6 +274,4 @@ mod SetNft {
     use briq_protocol::set_nft::systems::DisassemblySystemData;
 
     use briq_protocol::types::{FTSpec, ShapeItem};
-
-
 }

@@ -51,8 +51,7 @@ struct AttributeRemoveData {
 }
 
 #[derive(Drop, Serde)]
-enum AttributeHandlerData
-{
+enum AttributeHandlerData {
     Assign: AttributeAssignData,
     Remove: AttributeRemoveData,
 }
@@ -65,37 +64,16 @@ fn assign_attributes(
     shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
 ) {
+    assert(set_owner.is_non_zero(), 'Bad input');
+    assert(set_token_id != 0, 'Bad input');
     loop {
         if (attributes.len() == 0) {
             break ();
         }
-        assign_attribute(ctx, set_owner, set_token_id, attributes.pop_front().unwrap(), shape, fts);
+        inner_attribute_assign(
+            ctx, set_owner, set_token_id, attributes.pop_front().unwrap(), shape, fts
+        );
     }
-}
-
-fn assign_attribute(
-    ctx: Context,
-    set_owner: ContractAddress,
-    set_token_id: felt252,
-    attribute_id: felt252,
-    shape: @Array<PackedShapeItem>,
-    fts: @Array<FTSpec>,
-) {
-    assert(set_owner.is_non_zero(), 'Bad input');
-    assert(set_token_id != 0, 'Bad input');
-    assert(attribute_id != 0, 'Bad input');
- 
-    let collection_id = get_collection_id(attribute_id);
-    let (admin, system) = get!(ctx.world, (collection_id), Collection).get_admin_or_system();
-    if admin.is_some() {
-        //library_erc1155::transferability::Transferability::_transfer_burnable(0, set_token_id, attribute_id, 1);
-        assert(0 == 1, 'TODO');
-    } else {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        AttributeHandlerData::Assign(AttributeAssignData { set_owner, set_token_id, attribute_id, shape: shape.clone(), fts: fts.clone() }).serialize(ref calldata);
-        ctx.world.execute(system.unwrap().into(), calldata);
-    }
-    emit!(ctx.world, AttributeAssigned { set_token_id: set_token_id.into(), attribute_id });
 
     // Update the cumulative balance
     let balance = get!(
@@ -108,9 +86,36 @@ fn assign_attribute(
             token: CUM_BALANCE_TOKEN(),
             token_id: CB_ATTRIBUTES,
             account: set_token_id.try_into().unwrap(),
-            amount: balance + 1
+            amount: balance + attributes.len()
         }
     );
+}
+
+fn inner_attribute_assign(
+    ctx: Context,
+    set_owner: ContractAddress,
+    set_token_id: felt252,
+    attribute_id: felt252,
+    shape: @Array<PackedShapeItem>,
+    fts: @Array<FTSpec>,
+) {
+    assert(attribute_id != 0, 'Bad input');
+    let collection_id = get_collection_id(attribute_id);
+    let (admin, system) = get!(ctx.world, (collection_id), Collection).get_admin_or_system();
+    if admin.is_some() {
+        //library_erc1155::transferability::Transferability::_transfer_burnable(0, set_token_id, attribute_id, 1);
+        assert(0 == 1, 'TODO');
+    } else {
+        let mut calldata: Array<felt252> = ArrayTrait::new();
+        AttributeHandlerData::Assign(
+            AttributeAssignData {
+                set_owner, set_token_id, attribute_id, shape: shape.clone(), fts: fts.clone()
+            }
+        )
+            .serialize(ref calldata);
+        ctx.world.execute(system.unwrap().into(), calldata);
+    }
+    emit!(ctx.world, AttributeAssigned { set_token_id: set_token_id.into(), attribute_id });
 }
 
 fn remove_attributes(
@@ -138,7 +143,8 @@ fn remove_attribute(
         assert(0 == 1, 'TODO');
     } else {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        AttributeHandlerData::Remove(AttributeRemoveData { set_owner, set_token_id, attribute_id }).serialize(ref calldata);
+        AttributeHandlerData::Remove(AttributeRemoveData { set_owner, set_token_id, attribute_id })
+            .serialize(ref calldata);
         ctx.world.execute(system.unwrap().into(), calldata);
     }
 

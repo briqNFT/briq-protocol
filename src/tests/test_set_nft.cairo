@@ -36,7 +36,14 @@ fn test_empty_mint() {
     set_caller_address(default_owner());
 
     let token_id = assemble(
-        world, default_owner(), 0xfade, array![0xcafe], array![0xfade], array![], array![], array![], 
+        world,
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![],
+        array![],
+        array![],
     );
     assert(
         token_id == 0x1a61b367b44cb5cdc969ad212931f85c0dc5d31227cc1bdb8bf65238a722a6a,
@@ -57,14 +64,14 @@ fn test_simple_mint_and_burn() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 1 }],
-            array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
-            array![],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 1 }],
+        array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
+        array![],
+    );
     assert(
         token_id == 0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2,
         'bad token id'
@@ -77,7 +84,7 @@ fn test_simple_mint_and_burn() {
     disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
     assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
     assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad balance');
-    // TODO: validate that token ID balance asserts as it's 0
+// TODO: validate that token ID balance asserts as it's 0
 }
 
 #[test]
@@ -90,15 +97,15 @@ fn test_simple_mint_and_burn_not_enough_briqs() {
     set_caller_address(default_owner());
 
     let token_id = assemble(
-            world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 1 }],
-            array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
-            array![],
-        );
+        world,
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 1 }],
+        array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
+        array![],
+    );
 }
 
 #[test]
@@ -113,24 +120,19 @@ fn test_simple_mint_and_burn_2() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
-                }),
-            ],
-            array![],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ],
+        array![],
+    );
     assert(
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
@@ -143,18 +145,13 @@ fn test_simple_mint_and_burn_2() {
     disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
     assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
     assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad briq balance 2');
-    // TODO: validate that token ID balance asserts as it's 0
+// TODO: validate that token ID balance asserts as it's 0
 }
 
 #[test]
 #[available_gas(3000000000)]
 #[should_panic(
-    expected: (
-        'Set still has briqs',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED'
-    )
+    expected: ('Set still has briqs', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED')
 )]
 fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
@@ -166,24 +163,19 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
-                }),
-            ],
-            array![],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ],
+        array![],
+    );
     assert(
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
@@ -198,7 +190,7 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
         starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
     );
     assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad briq balance 2');
-    // TODO: validate that token ID balance asserts as it's 0
+// TODO: validate that token ID balance asserts as it's 0
 }
 
 
@@ -215,24 +207,19 @@ fn test_simple_mint_attribute_not_exist() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
-                }),
-            ],
-            array![0x1],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ],
+        array![0x1],
+    );
 }
 
 
@@ -244,7 +231,9 @@ fn test_simple_mint_attribute_ok() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
+            collection_id: 1,
+            params: 2,
+            admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -282,24 +271,19 @@ fn test_simple_mint_attribute_ok() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
-                }),
-            ],
-            array![0x1],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ],
+        array![0x1],
+    );
     assert(
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
@@ -310,10 +294,10 @@ fn test_simple_mint_attribute_ok() {
     // TODO validate booklet balance of owner to 0
 
     disassemble(
-            world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
-        );
+        world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
+    );
     assert(booklet.balance_of(default_owner(), 0x1) == 1, 'bad booklet balance 3');
-    // TODO: validate that token ID balance asserts as it's 0
+// TODO: validate that token ID balance asserts as it's 0
 }
 
 #[test]
@@ -335,7 +319,9 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
+            collection_id: 1,
+            params: 2,
+            admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -358,24 +344,19 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
-                }),
-            ],
-            array![0x1],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ],
+        array![0x1],
+    );
     assert(
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
@@ -384,8 +365,8 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
 
     disassemble(
-            world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
-        );
+        world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
+    );
     assert(
         starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
     );
@@ -412,7 +393,9 @@ fn test_simple_mint_attribute_bad_shape_item() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
+            collection_id: 1,
+            params: 2,
+            admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -435,24 +418,19 @@ fn test_simple_mint_attribute_bad_shape_item() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: -100, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
-                }),
-            ],
-            array![0x1],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: -100, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ],
+        array![0x1],
+    );
 }
 
 #[test]
@@ -475,7 +453,9 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
+            collection_id: 1,
+            params: 2,
+            admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -498,20 +478,17 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 1, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                }),
-            ],
-            array![0x1],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 1, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+        ],
+        array![0x1],
+    );
 }
 
 
@@ -524,7 +501,9 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
-            collection_id: 1, params: 2, admin_or_system: 'shape_verifier_system'.try_into().unwrap()
+            collection_id: 1,
+            params: 2,
+            admin_or_system: 'shape_verifier_system'.try_into().unwrap()
         }.serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
@@ -547,24 +526,19 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
 
     let token_id = assemble(
         world,
-            default_owner(),
-            0xfade,
-            array![0xcafe],
-            array![0xfade],
-            array![FTSpec { token_id: 1, qty: 4 }],
-            array![
-                ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 2, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 3, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 4, y: 4, z: -2
-                    }), ShapePacking::pack(ShapeItem {
-                    color: '#ffaaff', material: 1, x: 5, y: 4, z: -2
-                }),
-            ],
-            array![0x1],
-        );
+        default_owner(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ],
+        array![0x1],
+    );
     assert(
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'

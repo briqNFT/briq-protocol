@@ -34,8 +34,7 @@ struct ShapeVerifier {
     class_hash: ClassHash,
 }
 
-trait ShapeVerifierTrait
-{
+trait ShapeVerifierTrait {
     fn assign_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
@@ -45,14 +44,14 @@ trait ShapeVerifierTrait
         shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
     );
- 
+
     fn remove_attribute(
         self: @ShapeVerifier,
         world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_id: felt252,
-    );   
+    );
 }
 
 impl ShapeVerifierImpl of ShapeVerifierTrait {
@@ -128,27 +127,26 @@ mod register_shape_verifier {
 mod shape_verifier_system {
     use dojo::world::Context;
     use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, AdminTrait};
-    
+
     use super::{ShapeVerifier, ShapeVerifierTrait};
     use briq_protocol::attributes::attributes::{
-        AttributeHandlerData,
-        AttributeAssignData,
-        AttributeRemoveData,
+        AttributeHandlerData, AttributeAssignData, AttributeRemoveData,
     };
 
     fn execute(ctx: Context, data: AttributeHandlerData) {
         match data {
             AttributeHandlerData::Assign(d) => {
-                let AttributeAssignData { set_owner, set_token_id, attribute_id, shape, fts } = d;
+                let AttributeAssignData{set_owner, set_token_id, attribute_id, shape, fts } = d;
                 let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
                 shape_verifier
-                    .assign_attribute(ctx.world, set_owner, set_token_id, attribute_id, @shape, @fts);
+                    .assign_attribute(
+                        ctx.world, set_owner, set_token_id, attribute_id, @shape, @fts
+                    );
             },
             AttributeHandlerData::Remove(d) => {
-                let AttributeRemoveData { set_owner, set_token_id, attribute_id } = d;
+                let AttributeRemoveData{set_owner, set_token_id, attribute_id } = d;
                 let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
-                shape_verifier
-                    .remove_attribute(ctx.world, set_owner, set_token_id, attribute_id);
+                shape_verifier.remove_attribute(ctx.world, set_owner, set_token_id, attribute_id);
             },
         }
     }
