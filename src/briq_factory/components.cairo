@@ -12,7 +12,7 @@ use briq_protocol::briq_factory::constants::{
     MIN_PURCHASE, BRIQ_MATERIAL
 };
 
-use briq_protocol::felt_math::{feltOrd, felt252_div};
+use briq_protocol::felt_math::{FeltOrd, FeltDiv};
 
 use debug::PrintTrait;
 
@@ -42,10 +42,10 @@ trait BriqFactoryStoreTrait {
     fn get_surge_price(world: IWorldDispatcher, amount: felt252) -> felt252;
     fn get_price(world: IWorldDispatcher, amount: felt252) -> felt252;
     fn get_lin_integral(
-        world: IWorldDispatcher, slope: felt252, floor: felt252, t1: felt252, t2: felt252
+        world: IWorldDispatcher, slope: felt252, floor: felt252, t2: felt252, t1: felt252
     ) -> felt252;
     fn get_lin_integral_negative_floor(
-        world: IWorldDispatcher, slope: felt252, floor: felt252, t1: felt252, t2: felt252
+        world: IWorldDispatcher, slope: felt252, floor: felt252, t2: felt252, t1: felt252
     ) -> felt252;
     fn integrate(world: IWorldDispatcher, t: felt252, amount: felt252) -> felt252;
 }
@@ -123,13 +123,8 @@ impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
     }
 
     fn get_lin_integral(
-        world: IWorldDispatcher, slope: felt252, floor: felt252, t1: felt252, t2: felt252, 
+        world: IWorldDispatcher, slope: felt252, floor: felt252, t2: felt252, t1: felt252, 
     ) -> felt252 {
-        't1'.print();
-        t1.print();
-        't2'.print();
-        t2.print();
-
         assert(t2 < t1, 't1 >= t2');
         // briq machine broke above 10^12 bricks of demand.
         assert(t2 < DECIMALS() * 1000000000000, 't2 >= 10**12');
@@ -139,18 +134,19 @@ impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
         // slope * t1 * t1 / 2 + floor * t1 - (slope * t2 * t2 / 2 + floor * t2);
         // Factored as slope * (t1 + t2) * (t1 - t2) / 2 + floor * (t1 - t2);
         // Then adding divisors for decimals, trying to avoid overflows and precision loss.
-        let interm = slope * (t1 + t2);
-        let q = felt252_div(interm, DECIMALS());
-        let interm = q * (t1 - t2);
-        let q = felt252_div(interm, DECIMALS() * 2);
 
-        let floor_q = felt252_div(floor * (t1 - t2), DECIMALS());
+        let interm = slope * (t1 + t2);
+        let q = interm / DECIMALS();
+        let interm = q * (t1 - t2);
+        let q = interm / DECIMALS() * 2;
+
+        let floor_q = floor * (t1 - t2) / DECIMALS();
         q + floor_q
     }
 
 
     fn get_lin_integral_negative_floor(
-        world: IWorldDispatcher, slope: felt252, floor: felt252, t1: felt252, t2: felt252, 
+        world: IWorldDispatcher, slope: felt252, floor: felt252, t2: felt252, t1: felt252, 
     ) -> felt252 {
         assert(t2 < t1, 't1 >= t2');
         // briq machine broke above 10^12 bricks of demand.
@@ -163,33 +159,31 @@ impl BriqFactoryStoreImpl of BriqFactoryStoreTrait {
         // Then adding divisors for decimals, trying to avoid overflows and precision loss.
 
         let interm = slope * (t1 + t2);
-        let q = felt252_div(interm, DECIMALS());
+        let q = interm / DECIMALS();
         let interm = q * (t1 - t2);
-        let q = felt252_div(interm, DECIMALS() * 2);
-
+        let q = interm / DECIMALS() * 2;
         // Floor is negative. t2 < t1 so invert these, then subtract instead of adding.
-        let floor_q = felt252_div(floor * (t2 - t1), DECIMALS());
+        let floor_q = floor * (t2 - t1) / DECIMALS();
         q - floor_q
     }
 
 
-    fn integrate(world: IWorldDispatcher, t: felt252, amount: felt252, ) -> felt252 {
-        if t + amount <= INFLECTION_POINT() {
-            'intergrate 1'.print();
+    fn integrate(world: IWorldDispatcher, t: felt252, amount: felt252) -> felt252 {
+        if (t + amount) <= INFLECTION_POINT() {
+            'integrate_A'.print();
             return BriqFactoryStoreTrait::get_lin_integral(
                 world, LOWER_SLOPE(), LOWER_FLOOR(), t, t + amount
             );
         }
 
         if INFLECTION_POINT() <= t {
-            'intergrate 2'.print();
-
+            'integrate_B'.print();
             return BriqFactoryStoreTrait::get_lin_integral_negative_floor(
-                world, LOWER_SLOPE(), LOWER_FLOOR(), t, t + amount
+                world, SLOPE(), RAW_FLOOR(), t, t + amount
             );
         }
-        'intergrate 3'.print();
 
+        'integrate_C'.print();
         BriqFactoryStoreTrait::get_lin_integral(
             world, LOWER_SLOPE(), LOWER_FLOOR(), t, t + INFLECTION_POINT()
         )

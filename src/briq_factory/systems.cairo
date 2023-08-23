@@ -23,7 +23,7 @@ use briq_protocol::briq_factory::components::{
 #[derive(Drop, Serde)]
 struct BriqFactoryBuyParams {
     material: u8,
-    amount: felt252
+    amount: u16
 }
 
 #[system]
@@ -36,7 +36,7 @@ mod BriqFactoryMint {
     use starknet::{ContractAddress, get_contract_address, get_caller_address, get_block_timestamp};
 
     use briq_protocol::world_config::{AdminTrait, get_world_config};
-    use briq_protocol::felt_math::{feltOrd};
+    use briq_protocol::felt_math::{FeltOrd};
     use briq_protocol::briq_factory::events::BriqsBought;
     use super::{BriqFactoryStoreTrait, BriqFactoryBuyParams, DECIMALS, MIN_PURCHASE, BRIQ_MATERIAL};
 
@@ -54,7 +54,8 @@ mod BriqFactoryMint {
     }
 
     fn execute(ctx: Context, params: BriqFactoryBuyParams) {
-        let BriqFactoryBuyParams{material, amount } = params;
+        let BriqFactoryBuyParams{material, amount: amount_u16 } = params;
+        let amount: felt252 = amount_u16.into();
         assert(amount >= MIN_PURCHASE(), 'amount too low !');
 
         // ?? This also guarantees that amount isn't above 2**128 which is important to avoid an attack on amount * decimals;
