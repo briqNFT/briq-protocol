@@ -20,7 +20,7 @@ use briq_protocol::briq_factory::systems::{BriqFactoryInitializeParams};
 use briq_protocol::briq_factory::constants::{
     DECIMALS, LOWER_FLOOR, LOWER_SLOPE, INFLECTION_POINT, DECAY_PER_SECOND, MINIMAL_SURGE, SLOPE, RAW_FLOOR
 };
-use briq_protocol::briq_factory::components::{BriqFactoryStoreTrait};
+use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
 
 use briq_protocol::felt_math::{FeltOrd, FeltDiv};
 
@@ -34,24 +34,24 @@ fn eth_address() -> ContractAddress {
     starknet::contract_address_const::<0xeeee>()
 }
 
-fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252, ) {
+fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252, ) -> BriqFactoryStore {
     world
         .execute(
             'BriqFactoryInitialize',
             system_calldata(BriqFactoryInitializeParams { t, surge_t, buy_token: eth_address() })
         );
+    BriqFactoryTrait::get_briq_factory(world)
 }
 
 #[test]
 #[available_gas(90000000)]
 fn test_briq_factory_init() {
     let DefaultWorld{world, .. } = deploy_default_world();
-    init_briq_factory(world, DECIMALS(), DECIMALS());
+    let briq_factory = init_briq_factory(world, DECIMALS(), DECIMALS());
 
-    let store = BriqFactoryStoreTrait::get_store(world);
-    assert(store.buy_token == eth_address(), 'invalid buy_token');
-    assert(store.surge_t == DECIMALS(), 'invalid surge_t');
-    assert(store.last_stored_t == DECIMALS(), 'invalid last_stored_t');
+    assert(briq_factory.buy_token == eth_address(), 'invalid buy_token');
+    assert(briq_factory.surge_t == DECIMALS(), 'invalid surge_t');
+    assert(briq_factory.last_stored_t == DECIMALS(), 'invalid last_stored_t');
 }
 
 
@@ -60,15 +60,15 @@ fn test_briq_factory_init() {
 fn test_briq_factory_integrate() {
     let DefaultWorld{world, .. } = deploy_default_world();
 
-    init_briq_factory(world, 0, 0);
-    assert(BriqFactoryStoreTrait::get_current_t(world) == 0, 'invalid current_t');
+    let briq_factory = init_briq_factory(world, 0, 0);
+    assert(briq_factory.get_current_t() == 0, 'invalid current_t');
 
-    let price_for_1 = BriqFactoryStoreTrait::get_price(world, 1);
+    let price_for_1 = briq_factory.get_price(1);
     let expected_price = LOWER_FLOOR() + LOWER_SLOPE() / 2;
     //10000025000000
     assert(price_for_1 == expected_price, 'invalid price 1');
 
-    let price_for_1000 = BriqFactoryStoreTrait::get_price(world, 1000);
+    let price_for_1000 = briq_factory.get_price(1000);
     // 10025000000000000
     assert(price_for_1000 == 10025000000000000, 'invalid price 1000');
 }
@@ -79,8 +79,8 @@ fn test_briq_factory_integrate() {
 fn test_briq_factory_integrate_above_inflection_point() {
     let DefaultWorld{world, .. } = deploy_default_world();
 
-    init_briq_factory(world, INFLECTION_POINT(), 0);
-    let price_for_1000 = BriqFactoryStoreTrait::get_price(world, 1000);
+    let briq_factory = init_briq_factory(world, INFLECTION_POINT(), 0);
+    let price_for_1000 = briq_factory.get_price(1000);
 
     let expected_price_1000 = 3005 * 10000000000000; // 0.03005 * 10**18
     assert(price_for_1000 == expected_price_1000, 'invalid price 1000');
@@ -88,14 +88,14 @@ fn test_briq_factory_integrate_above_inflection_point() {
     let timestamp = get_block_timestamp();
     set_block_timestamp(timestamp + 10000);
 
-    let current_t = BriqFactoryStoreTrait::get_current_t(world);
+    let current_t = briq_factory.get_current_t();
     let expected_current_t = INFLECTION_POINT() - DECAY_PER_SECOND() * 10000;
     assert(current_t == expected_current_t, 'invalid current_t');
 
     let timestamp = get_block_timestamp();
     set_block_timestamp(timestamp + 3600 * 24 * 365 * 5);
-    assert(BriqFactoryStoreTrait::get_current_t(world) == 0, 'invalid current_t 1y');
-    assert(BriqFactoryStoreTrait::get_surge_t(world) == 0, 'invalid surge_t 1y');
+    assert(briq_factory.get_current_t() == 0, 'invalid current_t 1y');
+    assert(briq_factory.get_surge_t() == 0, 'invalid surge_t 1y');
 }
 
 
@@ -104,40 +104,40 @@ fn test_briq_factory_integrate_above_inflection_point() {
 fn test_briq_factory_surge() {
     let DefaultWorld{world, .. } = deploy_default_world();
 
-    init_briq_factory(world, 0, 0);
+    let briq_factory = init_briq_factory(world, 0, 0);
     let expected = 10000025000000; //price_below_ip(0, 1)
-    assert(BriqFactoryStoreTrait::get_price(world, 1) == expected, 'invalid price A');
+    assert(briq_factory.get_price(1) == expected, 'invalid price A');
 
-    init_briq_factory(world, 0, MINIMAL_SURGE());
+    let briq_factory = init_briq_factory(world, 0, MINIMAL_SURGE());
     let expected = 10000075000000; // price_below_ip(0, 1) + 10**8 / 2
-    assert(BriqFactoryStoreTrait::get_price(world, 1) == expected, 'invalid price B');
+    assert(briq_factory.get_price(1) == expected, 'invalid price B');
 
-    init_briq_factory(world, 0, 0);
+    let briq_factory = init_briq_factory(world, 0, 0);
     let expected = 4062500000000000000; // price_below_ip(0, 250000)
-    assert(BriqFactoryStoreTrait::get_price(world, 250000) == expected, 'invalid price C');
+    assert(briq_factory.get_price(250000) == expected, 'invalid price C');
 
-    init_briq_factory(world, 0, 0);
+    let briq_factory = init_briq_factory(world, 0, 0);
     let expected = 4062522500075000000; // price_below_ip(0, 250001) + 10**8 // 2
-    assert(BriqFactoryStoreTrait::get_price(world, 250001) == expected, 'invalid price D');
+    assert(briq_factory.get_price(250001) == expected, 'invalid price D');
 
-    init_briq_factory(world, 0, 200000 * DECIMALS());
+    let briq_factory = init_briq_factory(world, 0, 200000 * DECIMALS());
     let expected = 1375000000000000000; // price_below_ip(0, 100000) + 10**8 * 50000 * 50000 // 2
-    assert(BriqFactoryStoreTrait::get_price(world, 100000) == expected, 'invalid price E');
+    assert(briq_factory.get_price(100000) == expected, 'invalid price E');
 
-    init_briq_factory(world, 0, 250000 * DECIMALS());
+    let briq_factory = init_briq_factory(world, 0, 250000 * DECIMALS());
     let expected = 250000 * DECIMALS();
-    assert(BriqFactoryStoreTrait::get_surge_t(world) == expected, 'invalid surge_t A');
+    assert(briq_factory.get_surge_t() == expected, 'invalid surge_t A');
 
     let timestamp = get_block_timestamp();
     set_block_timestamp(timestamp + 3600 * 24 * 3);
 
     //  Has about halved in half a week
     let expected = 250000 * DECIMALS() - 4134 * 100000000000000 * 3600 * 24 * 3;
-    assert(BriqFactoryStoreTrait::get_surge_t(world) == expected, 'invalid surge_t B');
+    assert(briq_factory.get_surge_t() == expected, 'invalid surge_t B');
 
     let timestamp = get_block_timestamp();
     set_block_timestamp(timestamp + 3600 * 24 * 12);
-    assert(BriqFactoryStoreTrait::get_surge_t(world) == 0, 'invalid surge_t C');
+    assert(briq_factory.get_surge_t() == 0, 'invalid surge_t C');
 }
 
 #[test]
@@ -145,15 +145,13 @@ fn test_briq_factory_surge() {
 fn test_inflection_point() {
     let DefaultWorld{world, .. } = deploy_default_world();
 
-    let store = BriqFactoryStoreTrait::get_store(world);
-
-    init_briq_factory(world, INFLECTION_POINT() - 100000 * DECIMALS(), 0);
+    let briq_factory = init_briq_factory(world, INFLECTION_POINT() - 100000 * DECIMALS(), 0);
 
     // Compute the average price-per-briq below the inflection point
     let lower_price_per_briq = LOWER_FLOOR() + LOWER_SLOPE() * (INFLECTION_POINT() / DECIMALS() - 100000 / 2);
     
     assert(
-        BriqFactoryStoreTrait::get_price(world, 100000) == lower_price_per_briq * 100000,
+        briq_factory.get_price(100000) == lower_price_per_briq * 100000,
         'bad price calculation 1'
     );
 
@@ -162,7 +160,7 @@ fn test_inflection_point() {
 
     // Check that integrating across the inflection point works
     assert(
-        BriqFactoryStoreTrait::get_price(world, 200000) == lower_price_per_briq * 100000 + higher_price_per_briq * 100000,
+        briq_factory.get_price(200000) == lower_price_per_briq * 100000 + higher_price_per_briq * 100000,
         'bad price calculation 2'
     );
 }
@@ -172,21 +170,19 @@ fn test_inflection_point() {
 fn test_overflows_ok() {
     let DefaultWorld{world, .. } = deploy_default_world();
 
-    let store = BriqFactoryStoreTrait::get_store(world);
-
-    init_briq_factory(world, INFLECTION_POINT(), 0);
+    let briq_factory = init_briq_factory(world, INFLECTION_POINT(), 0);
 
     // Try to check the max amount of briqs that can be bought
     assert(
-        BriqFactoryStoreTrait::get_price(world, 10000000000 - 1) == 0x204fd8f4cf25bc04864d1100, // I trust the computer
+        briq_factory.get_price(10000000000 - 1) == 0x204fd8f4cf25bc04864d1100, // I trust the computer
         'bad price calculation 0'
     );
 
     //Try with the maximum value allowed and ensure that we don't get overflows.
-    init_briq_factory(world, DECIMALS() * (1000000000000 - 1), 0);
+    let briq_factory = init_briq_factory(world, DECIMALS() * (1000000000000 - 1), 0);
 
     assert(
-        BriqFactoryStoreTrait::get_price(world, 1) == RAW_FLOOR() + (SLOPE() * (1000000000000 - 1) + SLOPE() * (1000000000000)) / 2,
+        briq_factory.get_price(1) == RAW_FLOOR() + (SLOPE() * (1000000000000 - 1) + SLOPE() * (1000000000000)) / 2,
         'bad price calculation'
     );
 }
@@ -196,12 +192,9 @@ fn test_overflows_ok() {
 #[should_panic(expected: ('t1-t2 >= 10**10',))]
 fn test_overflows_bad_max_amnt() {
     let DefaultWorld{world, .. } = deploy_default_world();
+    let briq_factory = init_briq_factory(world, INFLECTION_POINT(), 0);
 
-    let store = BriqFactoryStoreTrait::get_store(world);
-
-    init_briq_factory(world, INFLECTION_POINT(), 0);
-
-    BriqFactoryStoreTrait::get_price(world, 10000000000);
+    briq_factory.get_price(10000000000);
 }
 
 #[test]
@@ -209,12 +202,9 @@ fn test_overflows_bad_max_amnt() {
 #[should_panic(expected: ('t2 >= 10**12',))]
 fn test_overflows_bad_max_t() {
     let DefaultWorld{world, .. } = deploy_default_world();
+    let briq_factory = init_briq_factory(world, 1000000000000 * DECIMALS(), 0);
 
-    let store = BriqFactoryStoreTrait::get_store(world);
-
-    init_briq_factory(world, 1000000000000 * DECIMALS(), 0);
-
-    BriqFactoryStoreTrait::get_price(world, 1);
+    briq_factory.get_price(1);
 }
 
 #[test]

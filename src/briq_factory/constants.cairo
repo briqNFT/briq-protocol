@@ -1,6 +1,3 @@
-const BRIQ_FACTORY_CONFIG_ID: felt252 = 69;
-const BRIQ_FACTORY_STORE_ID: felt252 = 420;
-
 // 10**18
 fn DECIMALS() -> felt252 {
     1000000000000000000

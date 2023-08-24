@@ -10,20 +10,26 @@ use traits::{Into, TryInto};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use briq_protocol::briq_factory::constants::{
-    BRIQ_FACTORY_CONFIG_ID, BRIQ_FACTORY_STORE_ID, DECIMALS, INFLECTION_POINT, SLOPE, RAW_FLOOR,
+    DECIMALS, INFLECTION_POINT, SLOPE, RAW_FLOOR,
     LOWER_FLOOR, LOWER_SLOPE, DECAY_PER_SECOND, SURGE_SLOPE, MINIMAL_SURGE, SURGE_DECAY_PER_SECOND,
     MIN_PURCHASE, BRIQ_MATERIAL
 };
 
 use briq_protocol::briq_factory::components::{
-    BriqFactoryConfig, BriqFactoryStore, BriqFactoryStoreTrait
+    BriqFactoryStore, BriqFactoryTrait
 };
 
+#[derive( Drop, starknet::Event)]
+struct BriqsBought {
+    buyer: ContractAddress,
+    amount: u32,
+    price: u128
+}
 
 #[derive(Drop, Serde)]
 struct BriqFactoryBuyParams {
-    material: u8,
-    amount: u16
+    material: u64,
+    amount: u32
 }
 
 #[system]
@@ -37,9 +43,7 @@ mod BriqFactoryMint {
 
     use briq_protocol::world_config::{AdminTrait, get_world_config};
     use briq_protocol::felt_math::{FeltOrd};
-    use briq_protocol::briq_factory::events::BriqsBought;
-    use super::{BriqFactoryStoreTrait, BriqFactoryBuyParams, DECIMALS, MIN_PURCHASE, BRIQ_MATERIAL};
-
+    use super::{BriqsBought, BriqFactoryTrait, BriqFactoryBuyParams, DECIMALS, MIN_PURCHASE, BRIQ_MATERIAL};
 
     #[starknet::interface]
     trait IERC20<TState> {
@@ -54,39 +58,32 @@ mod BriqFactoryMint {
     }
 
     fn execute(ctx: Context, params: BriqFactoryBuyParams) {
-        let BriqFactoryBuyParams{material, amount: amount_u16 } = params;
-        let amount: felt252 = amount_u16.into();
+        let BriqFactoryBuyParams{material, amount: amount_u32 } = params;
+        let amount: felt252 = amount_u32.into();
         assert(amount >= MIN_PURCHASE(), 'amount too low !');
 
-        // ?? This also guarantees that amount isn't above 2**128 which is important to avoid an attack on amount * decimals;
+        let mut briq_factory = BriqFactoryTrait::get_briq_factory(ctx.world);
 
+        let price = briq_factory.get_price(amount);
+        let t = briq_factory.get_current_t();
+        let surge_t = briq_factory.get_surge_t();
+
+        // Transfer funds to receiver wallet
+        // TODO: use something other than the super-admin address for this.
         let world_config = get_world_config(ctx.world);
-        let store = BriqFactoryStoreTrait::get_store(ctx.world);
-        let price = BriqFactoryStoreTrait::get_price(ctx.world, amount);
         let buyer = get_caller_address();
-        let t = BriqFactoryStoreTrait::get_current_t(ctx.world);
-        let surge_t = BriqFactoryStoreTrait::get_surge_t(ctx.world);
-
-        // transfer buy_tokens from buyer to super_admin
         IERC20Dispatcher {
-            contract_address: store.buy_token
+            contract_address: briq_factory.buy_token
         }.transfer_from(buyer, world_config.super_admin, price.into());
 
         // update store
-        let mut store = BriqFactoryStoreTrait::get_store(ctx.world);
-        store.last_purchase_time = get_block_timestamp();
-        store.last_stored_t = t + amount * DECIMALS();
-        store.surge_t = surge_t + amount * DECIMALS();
-        BriqFactoryStoreTrait::set_store(ctx.world, store);
+        briq_factory.last_purchase_time = get_block_timestamp();
+        briq_factory.last_stored_t = t + amount * DECIMALS();
+        briq_factory.surge_t = surge_t + amount * DECIMALS();
+        BriqFactoryTrait::set_briq_factory(ctx.world, briq_factory);
 
-        // //  mint briqs to buyer
-        // let token_id = BRIQ_MATERIAL();
+        //  mint briqs to buyer
         let amount_u128: u128 = amount.try_into().unwrap();
-        // let data: Array<u8> = array![];
-        // IBriqDispatcher {
-        //     contract_address: world_config.briq
-        // }.mint(buyer, token_id, amount_u128, data);
-
         briq_protocol::briq_token::systems::update_nocheck(
             ctx.world,
             buyer,
@@ -98,7 +95,7 @@ mod BriqFactoryMint {
             data: array![]
         );
 
-        emit!(ctx.world, BriqsBought { buyer: buyer, amount: amount, price: price });
+        emit!(ctx.world, BriqsBought { buyer, amount: amount_u32, price: price.try_into().unwrap() });
     }
 }
 
@@ -121,22 +118,22 @@ mod BriqFactoryInitialize {
     use briq_protocol::world_config::AdminTrait;
 
     use super::BriqFactoryInitializeParams;
-    use super::{BriqFactoryStore, BriqFactoryStoreTrait};
+    use super::{BriqFactoryStore, BriqFactoryTrait};
 
 
     fn execute(ctx: Context, params: BriqFactoryInitializeParams) {
-        // TODO: safety check
+        ctx.world.only_admins(@ctx.origin);
 
         let BriqFactoryInitializeParams{t, surge_t, buy_token } = params;
 
-        let mut store = BriqFactoryStoreTrait::get_store(ctx.world);
+        let mut briq_factory = BriqFactoryTrait::get_briq_factory(ctx.world);
 
-        store.last_stored_t = t;
-        store.surge_t = surge_t;
-        store.buy_token = buy_token;
-        store.last_purchase_time = starknet::info::get_block_timestamp();
+        briq_factory.last_stored_t = t;
+        briq_factory.surge_t = surge_t;
+        briq_factory.buy_token = buy_token;
+        briq_factory.last_purchase_time = starknet::info::get_block_timestamp();
 
-        BriqFactoryStoreTrait::set_store(ctx.world, store);
+        BriqFactoryTrait::set_briq_factory(ctx.world, briq_factory);
     }
 }
 

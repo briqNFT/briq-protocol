@@ -101,7 +101,6 @@ struct DefaultWorld {
     set_nft: IERC721Dispatcher,
     booklet: IERC1155Dispatcher,
     box_nft: IERC1155Dispatcher,
-    //briq_fatory ?
 }
 
 fn deploy_default_world() -> DefaultWorld {
