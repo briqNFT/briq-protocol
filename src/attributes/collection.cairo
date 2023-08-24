@@ -8,7 +8,7 @@ use option::OptionTrait;
 use clone::Clone;
 use serde::Serde;
 
-use briq_protocol::felt_math::{feltBitAnd, feltOrd};
+use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 
 #[derive(Component, Copy, Drop, Serde, SerdeLen)]
 struct Collection {

@@ -9,7 +9,7 @@ use zeroable::Zeroable;
 use clone::Clone;
 
 use briq_protocol::types::{FTSpec, ShapeItem};
-use briq_protocol::felt_math::{feltBitAnd, feltOrd};
+use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 
 use dojo::world::{Context, IWorldDispatcherTrait};
