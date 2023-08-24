@@ -1,5 +1,4 @@
 use core::zeroable::Zeroable;
-use briq_protocol::set_nft::ISetNftDispatcherTrait;
 use traits::{Into, TryInto, Default};
 use option::{Option, OptionTrait};
 use result::ResultTrait;

@@ -3,7 +3,7 @@ use serde::Serde;
 use traits::{TryInto, Into};
 use option::OptionTrait;
 
-use briq_protocol::felt_math::feltBitAnd;
+use briq_protocol::felt_math::FeltBitAnd;
 
 #[derive(Copy, Drop, Serde)]
 struct FTSpec {
