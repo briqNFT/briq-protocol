@@ -47,14 +47,9 @@ mod BriqFactoryMint {
 
     #[starknet::interface]
     trait IERC20<TState> {
-        fn transfer_from(
+        fn transferFrom(
             ref self: TState, spender: ContractAddress, recipient: ContractAddress, amount: u256
         );
-    }
-
-    #[starknet::interface]
-    trait IBriq<TState> {
-        fn mint(ref self: TState, to: ContractAddress, id: felt252, amount: u128, data: Array<u8>);
     }
 
     fn execute(ctx: Context, params: BriqFactoryBuyParams) {
@@ -71,10 +66,10 @@ mod BriqFactoryMint {
         // Transfer funds to receiver wallet
         // TODO: use something other than the super-admin address for this.
         let world_config = get_world_config(ctx.world);
-        let buyer = get_caller_address();
+        let buyer = ctx.origin;
         IERC20Dispatcher {
             contract_address: briq_factory.buy_token
-        }.transfer_from(buyer, world_config.super_admin, price.into());
+        }.transferFrom(buyer, world_config.treasury, price.into());
 
         // update store
         briq_factory.last_purchase_time = get_block_timestamp();
