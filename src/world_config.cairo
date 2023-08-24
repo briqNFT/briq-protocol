@@ -13,6 +13,7 @@ struct WorldConfig {
     #[key]
     config_id: u32,
     super_admin: ContractAddress,
+    treasury: ContractAddress,
     briq: ContractAddress,
     set: ContractAddress,
     booklet: ContractAddress,
@@ -53,6 +54,7 @@ mod SetupWorld {
     fn execute(
         ctx: Context,
         super_admin: ContractAddress,
+        treasury: ContractAddress,
         briq: ContractAddress,
         set: ContractAddress,
         booklet: ContractAddress,
@@ -60,7 +62,9 @@ mod SetupWorld {
     ) {
         set!(
             ctx.world,
-            (WorldConfig { config_id: SYSTEM_CONFIG_ID, super_admin, briq, set, booklet, box,  })
+            (WorldConfig {
+                config_id: SYSTEM_CONFIG_ID, super_admin, treasury, briq, set, booklet, box, 
+            })
         );
         return ();
     }
