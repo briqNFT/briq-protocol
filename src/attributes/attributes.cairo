@@ -64,8 +64,13 @@ fn assign_attributes(
     shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
 ) {
+    if attributes.len() == 0 {
+        return ();
+    }
+
     assert(set_owner.is_non_zero(), 'Bad input');
     assert(set_token_id != 0, 'Bad input');
+    
     loop {
         if (attributes.len() == 0) {
             break ();
@@ -73,20 +78,19 @@ fn assign_attributes(
         inner_attribute_assign(
             ctx, set_owner, set_token_id, attributes.pop_front().unwrap(), shape, fts
         );
-    }
+    };
 
     // Update the cumulative balance
     let balance = get!(
         ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, set_token_id), ERC1155Balance
     )
         .amount;
-    assert(balance < balance + 1, 'Balance overflow');
     set!(
         ctx.world, ERC1155Balance {
             token: CUM_BALANCE_TOKEN(),
             token_id: CB_ATTRIBUTES,
             account: set_token_id.try_into().unwrap(),
-            amount: balance + attributes.len()
+            amount: balance + attributes.len().into()
         }
     );
 }
@@ -100,6 +104,7 @@ fn inner_attribute_assign(
     fts: @Array<FTSpec>,
 ) {
     assert(attribute_id != 0, 'Bad input');
+
     let collection_id = get_collection_id(attribute_id);
     let (admin, system) = get!(ctx.world, (collection_id), Collection).get_admin_or_system();
     if admin.is_some() {
@@ -121,19 +126,38 @@ fn inner_attribute_assign(
 fn remove_attributes(
     ctx: Context, set_owner: ContractAddress, set_token_id: felt252, mut attributes: Array<felt252>
 ) {
+    if attributes.len() == 0 {
+        return ();
+    }
+
+    assert(set_owner.is_non_zero(), 'Bad input');
+    assert(set_token_id != 0, 'Bad input');
+
     loop {
         if (attributes.len() == 0) {
             break ();
         }
-        remove_attribute(ctx, set_owner, set_token_id, attributes.pop_front().unwrap());
-    }
+        remove_attribute_inner(ctx, set_owner, set_token_id, attributes.pop_front().unwrap());
+    };
+
+    // Update the cumulative balance
+    let balance = get!(
+        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, set_token_id), ERC1155Balance
+    )
+        .amount;
+    set!(
+        ctx.world, ERC1155Balance {
+            token: CUM_BALANCE_TOKEN(),
+            token_id: CB_ATTRIBUTES,
+            account: set_token_id.try_into().unwrap(),
+            amount: balance - attributes.len().into()
+        }
+    );
 }
 
-fn remove_attribute(
+fn remove_attribute_inner(
     ctx: Context, set_owner: ContractAddress, set_token_id: felt252, attribute_id: felt252, 
 ) {
-    assert(set_owner.is_non_zero(), 'Bad input');
-    assert(set_token_id != 0, 'Bad input');
     assert(attribute_id != 0, 'Bad input');
 
     let collection_id = get_collection_id(attribute_id);
@@ -149,19 +173,4 @@ fn remove_attribute(
     }
 
     emit!(ctx.world, AttributeRemoved { set_token_id: set_token_id.into(), attribute_id });
-
-    // Update the cumulative balance
-    let balance = get!(
-        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, set_token_id), ERC1155Balance
-    )
-        .amount;
-    assert(balance > balance - 1, 'Balance underflow');
-    set!(
-        ctx.world, ERC1155Balance {
-            token: CUM_BALANCE_TOKEN(),
-            token_id: CB_ATTRIBUTES,
-            account: set_token_id.try_into().unwrap(),
-            amount: balance - 1
-        }
-    );
 }
