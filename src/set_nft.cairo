@@ -28,7 +28,7 @@ mod SetNft {
 
     #[storage]
     struct Storage {
-        world: IWorldDispatcher, 
+        world: IWorldDispatcher,
     }
 
     #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]

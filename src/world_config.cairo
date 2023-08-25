@@ -63,7 +63,7 @@ mod SetupWorld {
         set!(
             ctx.world,
             (WorldConfig {
-                config_id: SYSTEM_CONFIG_ID, super_admin, treasury, briq, set, booklet, box, 
+                config_id: SYSTEM_CONFIG_ID, super_admin, treasury, briq, set, booklet, box,
             })
         );
         return ();

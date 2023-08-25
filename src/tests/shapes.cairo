@@ -21,7 +21,7 @@ mod test_shape_1 {
         }
     }
 
-    fn basic_test_shape(mut shape: Span<PackedShapeItem>, mut fts: Span<FTSpec>, ) {
+    fn basic_test_shape(mut shape: Span<PackedShapeItem>, mut fts: Span<FTSpec>,) {
         assert(shape.len() == 4, 'bad shape length');
         assert(fts.len() == 1, 'bad ft spec');
         assert(fts.at(0).token_id == @1, 'bad ft spec');

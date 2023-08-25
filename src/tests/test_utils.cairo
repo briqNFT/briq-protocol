@@ -63,7 +63,7 @@ fn spawn_world() -> IWorldDispatcher {
 
 
 fn deploy_contracts(
-    world: IWorldDispatcher, 
+    world: IWorldDispatcher,
 ) -> (ContractAddress, ContractAddress, ContractAddress, ContractAddress) {
     let constructor_calldata = array![world.contract_address.into()];
 
@@ -114,18 +114,14 @@ fn deploy_default_world() -> DefaultWorld {
     world
         .execute(
             'SetupWorld',
-            (array![WORLD_ADMIN().into(), briq.into(), set.into(), booklet.into(), box.into(), ])
+            (array![WORLD_ADMIN().into(), briq.into(), set.into(), booklet.into(), box.into(),])
         );
     DefaultWorld {
-        world, briq_token: IERC1155Dispatcher {
-            contract_address: briq
-            }, set_nft: IERC721Dispatcher {
-            contract_address: set
-            }, booklet: IERC1155Dispatcher {
-            contract_address: booklet
-            }, box_nft: IERC1155Dispatcher {
-            contract_address: box
-        },
+        world,
+        briq_token: IERC1155Dispatcher { contract_address: briq },
+        set_nft: IERC721Dispatcher { contract_address: set },
+        booklet: IERC1155Dispatcher { contract_address: booklet },
+        box_nft: IERC1155Dispatcher { contract_address: box },
     }
 }
 

@@ -70,7 +70,7 @@ fn assign_attributes(
 
     assert(set_owner.is_non_zero(), 'Bad input');
     assert(set_token_id != 0, 'Bad input');
-    
+
     loop {
         if (attributes.len() == 0) {
             break ();
@@ -86,7 +86,8 @@ fn assign_attributes(
     )
         .amount;
     set!(
-        ctx.world, ERC1155Balance {
+        ctx.world,
+        ERC1155Balance {
             token: CUM_BALANCE_TOKEN(),
             token_id: CB_ATTRIBUTES,
             account: set_token_id.try_into().unwrap(),
@@ -146,7 +147,8 @@ fn remove_attributes(
     )
         .amount;
     set!(
-        ctx.world, ERC1155Balance {
+        ctx.world,
+        ERC1155Balance {
             token: CUM_BALANCE_TOKEN(),
             token_id: CB_ATTRIBUTES,
             account: set_token_id.try_into().unwrap(),
@@ -156,7 +158,7 @@ fn remove_attributes(
 }
 
 fn remove_attribute_inner(
-    ctx: Context, set_owner: ContractAddress, set_token_id: felt252, attribute_id: felt252, 
+    ctx: Context, set_owner: ContractAddress, set_token_id: felt252, attribute_id: felt252,
 ) {
     assert(attribute_id != 0, 'Bad input');
 

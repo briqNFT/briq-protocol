@@ -27,7 +27,8 @@ fn test_create_collections() {
             collection_id: 1,
             params: 2,
             admin_or_system: starknet::contract_address_const::<0xfafa>()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 
@@ -37,7 +38,8 @@ fn test_create_collections() {
             collection_id: 2,
             params: 2,
             admin_or_system: starknet::contract_address_const::<0xfafa>()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 }
@@ -54,7 +56,8 @@ fn test_create_collection_collision() {
             collection_id: 1,
             params: 2,
             admin_or_system: starknet::contract_address_const::<0xfafa>()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 
@@ -64,7 +67,8 @@ fn test_create_collection_collision() {
             collection_id: 1,
             params: 2,
             admin_or_system: starknet::contract_address_const::<0xfafa>()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 }

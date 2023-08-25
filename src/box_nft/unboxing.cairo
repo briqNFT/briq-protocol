@@ -138,7 +138,7 @@ mod box_unboxing {
     use zeroable::Zeroable;
     use starknet::ContractAddress;
 
-    fn execute(ctx: Context, box_id: felt252, ) {
+    fn execute(ctx: Context, box_id: felt252,) {
         // Only the owner may unbox their box.
         super::unbox(ctx.world, ctx.origin, box_id);
     }

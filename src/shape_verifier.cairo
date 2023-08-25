@@ -66,9 +66,8 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
     ) {
         assert((*self.class_hash).is_non_zero(), 'No class hash found');
 
-        IShapeCheckerLibraryDispatcher {
-            class_hash: *self.class_hash
-        }.verify_shape(attribute_id, shape.span(), fts.span());
+        IShapeCheckerLibraryDispatcher { class_hash: *self.class_hash }
+            .verify_shape(attribute_id, shape.span(), fts.span());
 
         // TODO -> use update that sends events
         dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
@@ -114,7 +113,7 @@ mod register_shape_verifier {
 
     use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, AdminTrait};
 
-    fn execute(ctx: Context, data: RegisterShapeVerifierData, ) {
+    fn execute(ctx: Context, data: RegisterShapeVerifierData,) {
         let RegisterShapeVerifierData{attribute_id, class_hash } = data;
 
         ctx.world.only_admins(@ctx.origin);

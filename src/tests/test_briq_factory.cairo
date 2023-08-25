@@ -17,7 +17,8 @@ use dojo_erc::erc_common::utils::system_calldata;
 
 use briq_protocol::briq_factory::systems::{BriqFactoryInitializeParams};
 use briq_protocol::briq_factory::constants::{
-    DECIMALS, LOWER_FLOOR, LOWER_SLOPE, INFLECTION_POINT, DECAY_PER_SECOND, MINIMAL_SURGE, SLOPE, RAW_FLOOR
+    DECIMALS, LOWER_FLOOR, LOWER_SLOPE, INFLECTION_POINT, DECAY_PER_SECOND, MINIMAL_SURGE, SLOPE,
+    RAW_FLOOR
 };
 use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
 
@@ -33,7 +34,7 @@ fn eth_address() -> ContractAddress {
     starknet::contract_address_const::<0xeeee>()
 }
 
-fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252, ) -> BriqFactoryStore {
+fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252,) -> BriqFactoryStore {
     world
         .execute(
             'BriqFactoryInitialize',
@@ -147,19 +148,21 @@ fn test_inflection_point() {
     let briq_factory = init_briq_factory(world, INFLECTION_POINT() - 100000 * DECIMALS(), 0);
 
     // Compute the average price-per-briq below the inflection point
-    let lower_price_per_briq = LOWER_FLOOR() + LOWER_SLOPE() * (INFLECTION_POINT() / DECIMALS() - 100000 / 2);
-    
+    let lower_price_per_briq = LOWER_FLOOR()
+        + LOWER_SLOPE() * (INFLECTION_POINT() / DECIMALS() - 100000 / 2);
+
     assert(
-        briq_factory.get_price(100000) == lower_price_per_briq * 100000,
-        'bad price calculation 1'
+        briq_factory.get_price(100000) == lower_price_per_briq * 100000, 'bad price calculation 1'
     );
 
     // And the price per briq above the curve
-    let higher_price_per_briq = RAW_FLOOR() + SLOPE() * (INFLECTION_POINT() / DECIMALS() + 100000 / 2);
+    let higher_price_per_briq = RAW_FLOOR()
+        + SLOPE() * (INFLECTION_POINT() / DECIMALS() + 100000 / 2);
 
     // Check that integrating across the inflection point works
     assert(
-        briq_factory.get_price(200000) == lower_price_per_briq * 100000 + higher_price_per_briq * 100000,
+        briq_factory.get_price(200000) == lower_price_per_briq * 100000
+            + higher_price_per_briq * 100000,
         'bad price calculation 2'
     );
 }
@@ -173,7 +176,8 @@ fn test_overflows_ok() {
 
     // Try to check the max amount of briqs that can be bought
     assert(
-        briq_factory.get_price(10000000000 - 1) == 0x204fd8f4cf25bc04864d1100, // I trust the computer
+        briq_factory
+            .get_price(10000000000 - 1) == 0x204fd8f4cf25bc04864d1100, // I trust the computer
         'bad price calculation 0'
     );
 
@@ -181,7 +185,8 @@ fn test_overflows_ok() {
     let briq_factory = init_briq_factory(world, DECIMALS() * (1000000000000 - 1), 0);
 
     assert(
-        briq_factory.get_price(1) == RAW_FLOOR() + (SLOPE() * (1000000000000 - 1) + SLOPE() * (1000000000000)) / 2,
+        briq_factory.get_price(1) == RAW_FLOOR()
+            + (SLOPE() * (1000000000000 - 1) + SLOPE() * (1000000000000)) / 2,
         'bad price calculation'
     );
 }
@@ -208,6 +213,5 @@ fn test_overflows_bad_max_t() {
 
 #[test]
 #[available_gas(90000000)]
-fn test_briq_factory_buy() {
-// TODO deploy buy token & test buy
+fn test_briq_factory_buy() {// TODO deploy buy token & test buy
 }

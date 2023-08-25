@@ -74,7 +74,7 @@ mod BriqToken {
 
     #[storage]
     struct Storage {
-        world: IWorldDispatcher, 
+        world: IWorldDispatcher,
     }
 
     //

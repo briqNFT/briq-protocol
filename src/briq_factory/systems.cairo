@@ -10,16 +10,13 @@ use traits::{Into, TryInto};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use briq_protocol::briq_factory::constants::{
-    DECIMALS, INFLECTION_POINT, SLOPE, RAW_FLOOR,
-    LOWER_FLOOR, LOWER_SLOPE, DECAY_PER_SECOND, SURGE_SLOPE, MINIMAL_SURGE, SURGE_DECAY_PER_SECOND,
-    MIN_PURCHASE, BRIQ_MATERIAL
+    DECIMALS, INFLECTION_POINT, SLOPE, RAW_FLOOR, LOWER_FLOOR, LOWER_SLOPE, DECAY_PER_SECOND,
+    SURGE_SLOPE, MINIMAL_SURGE, SURGE_DECAY_PER_SECOND, MIN_PURCHASE, BRIQ_MATERIAL
 };
 
-use briq_protocol::briq_factory::components::{
-    BriqFactoryStore, BriqFactoryTrait
-};
+use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
 
-#[derive( Drop, starknet::Event)]
+#[derive(Drop, starknet::Event)]
 struct BriqsBought {
     buyer: ContractAddress,
     amount: u32,
@@ -43,7 +40,9 @@ mod BriqFactoryMint {
 
     use briq_protocol::world_config::{AdminTrait, get_world_config};
     use briq_protocol::felt_math::{FeltOrd};
-    use super::{BriqsBought, BriqFactoryTrait, BriqFactoryBuyParams, DECIMALS, MIN_PURCHASE, BRIQ_MATERIAL};
+    use super::{
+        BriqsBought, BriqFactoryTrait, BriqFactoryBuyParams, DECIMALS, MIN_PURCHASE, BRIQ_MATERIAL
+    };
 
     #[starknet::interface]
     trait IERC20<TState> {
@@ -67,9 +66,8 @@ mod BriqFactoryMint {
         // TODO: use something other than the super-admin address for this.
         let world_config = get_world_config(ctx.world);
         let buyer = ctx.origin;
-        IERC20Dispatcher {
-            contract_address: briq_factory.buy_token
-        }.transferFrom(buyer, world_config.treasury, price.into());
+        IERC20Dispatcher { contract_address: briq_factory.buy_token }
+            .transferFrom(buyer, world_config.treasury, price.into());
 
         // update store
         briq_factory.last_purchase_time = get_block_timestamp();
@@ -90,7 +88,9 @@ mod BriqFactoryMint {
             data: array![]
         );
 
-        emit!(ctx.world, BriqsBought { buyer, amount: amount_u32, price: price.try_into().unwrap() });
+        emit!(
+            ctx.world, BriqsBought { buyer, amount: amount_u32, price: price.try_into().unwrap() }
+        );
     }
 }
 

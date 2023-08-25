@@ -58,7 +58,7 @@ fn transfer_briqs(
 // The solution adopted is to hash a hint. Our security becomes the chain hash security.
 // Hash on the # of briqs to avoid people being able to 'game' off-chain latency,
 // we had issues where people regenerated sets with the wrong # of briqs shown on marketplaces before a refresh.
-fn hash_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32, ) -> felt252 {
+fn hash_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) -> felt252 {
     let hash = pedersen(0, owner.into());
     let hash = pedersen(hash, token_id_hint);
     let hash = pedersen(hash, nb_briqs.into());
@@ -145,7 +145,7 @@ mod set_nft_assembly {
             return;
         }
 
-        assign_attributes(ctx, owner, token_id, attributes, @shape, @fts, );
+        assign_attributes(ctx, owner, token_id, attributes, @shape, @fts,);
     }
 }
 
@@ -200,7 +200,7 @@ mod set_nft_disassembly {
             'ERC721: unauthorized caller'
         );
 
-        remove_attributes(ctx, owner, token_id, attributes.clone(), );
+        remove_attributes(ctx, owner, token_id, attributes.clone(),);
 
         super::transfer_briqs(ctx.world, token_id.try_into().unwrap(), owner, fts.clone());
 
@@ -229,7 +229,8 @@ fn assemble(
     let mut calldata: Array<felt252> = ArrayTrait::new();
     AssemblySystemData {
         caller: get_caller_address(), owner, token_id_hint, fts, shape, attributes
-    }.serialize(ref calldata);
+    }
+        .serialize(ref calldata);
     world.execute('set_nft_assembly', calldata);
 
     let token_id = hash_token_id(owner, token_id_hint, nb_briq);
@@ -244,8 +245,7 @@ fn disassemble(
     attributes: Array<felt252>
 ) {
     let mut calldata: Array<felt252> = ArrayTrait::new();
-    DisassemblySystemData {
-        caller: get_caller_address(), owner, token_id, fts, attributes
-    }.serialize(ref calldata);
+    DisassemblySystemData { caller: get_caller_address(), owner, token_id, fts, attributes }
+        .serialize(ref calldata);
     world.execute('set_nft_disassembly', calldata);
 }

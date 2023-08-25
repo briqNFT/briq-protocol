@@ -89,7 +89,7 @@ mod create_collection {
         parameters: felt252
     }
 
-    fn execute(ctx: Context, data: CreateCollectionData, ) {
+    fn execute(ctx: Context, data: CreateCollectionData,) {
         let CreateCollectionData{collection_id, params, admin_or_system } = data;
 
         assert(admin_or_system.is_non_zero(), 'Must have admin');
@@ -108,7 +108,8 @@ mod create_collection {
         let (admin, system) = collec.get_admin_or_system();
         if admin.is_some() {
             emit!(
-                ctx.world, CollectionCreated {
+                ctx.world,
+                CollectionCreated {
                     collection_id,
                     system: Zeroable::zero(),
                     admin: admin.unwrap(),
@@ -117,7 +118,8 @@ mod create_collection {
             );
         } else {
             emit!(
-                ctx.world, CollectionCreated {
+                ctx.world,
+                CollectionCreated {
                     collection_id,
                     system: system.unwrap(),
                     admin: Zeroable::zero(),

@@ -9,9 +9,8 @@ use traits::{Into, TryInto};
 use briq_protocol::world_config::SYSTEM_CONFIG_ID;
 
 use briq_protocol::briq_factory::constants::{
-    DECIMALS, INFLECTION_POINT, SLOPE, RAW_FLOOR,
-    LOWER_FLOOR, LOWER_SLOPE, DECAY_PER_SECOND, SURGE_SLOPE, MINIMAL_SURGE, SURGE_DECAY_PER_SECOND,
-    MIN_PURCHASE, BRIQ_MATERIAL
+    DECIMALS, INFLECTION_POINT, SLOPE, RAW_FLOOR, LOWER_FLOOR, LOWER_SLOPE, DECAY_PER_SECOND,
+    SURGE_SLOPE, MINIMAL_SURGE, SURGE_DECAY_PER_SECOND, MIN_PURCHASE, BRIQ_MATERIAL
 };
 
 use briq_protocol::felt_math::{FeltOrd, FeltDiv};
@@ -96,16 +95,12 @@ impl BriqFactoryStoreImpl of BriqFactoryTrait {
         };
 
         if surge_t > MINIMAL_SURGE() {
-            self.get_lin_integral(
-                SURGE_SLOPE(),
-                0,
-                surge_t - MINIMAL_SURGE(),
-                surge_t + amount - MINIMAL_SURGE()
-            )
+            self
+                .get_lin_integral(
+                    SURGE_SLOPE(), 0, surge_t - MINIMAL_SURGE(), surge_t + amount - MINIMAL_SURGE()
+                )
         } else {
-            self.get_lin_integral(
-                SURGE_SLOPE(), 0, 0, surge_t + amount - MINIMAL_SURGE()
-            )
+            self.get_lin_integral(SURGE_SLOPE(), 0, 0, surge_t + amount - MINIMAL_SURGE())
         }
     }
 
@@ -119,7 +114,7 @@ impl BriqFactoryStoreImpl of BriqFactoryTrait {
     }
 
     fn get_lin_integral(
-        self: @BriqFactoryStore, slope: felt252, floor: felt252, t2: felt252, t1: felt252, 
+        self: @BriqFactoryStore, slope: felt252, floor: felt252, t2: felt252, t1: felt252,
     ) -> felt252 {
         assert(t2 < t1, 't1 >= t2');
         // briq machine broke above 10^12 bricks of demand.
@@ -142,7 +137,7 @@ impl BriqFactoryStoreImpl of BriqFactoryTrait {
 
 
     fn get_lin_integral_negative_floor(
-        self: @BriqFactoryStore, slope: felt252, floor: felt252, t2: felt252, t1: felt252, 
+        self: @BriqFactoryStore, slope: felt252, floor: felt252, t2: felt252, t1: felt252,
     ) -> felt252 {
         assert(t2 < t1, 't1 >= t2');
         // briq machine broke above 10^12 bricks of demand.
@@ -166,22 +161,17 @@ impl BriqFactoryStoreImpl of BriqFactoryTrait {
 
     fn integrate(self: @BriqFactoryStore, t: felt252, amount: felt252) -> felt252 {
         if (t + amount) <= INFLECTION_POINT() {
-            return self.get_lin_integral(
-                LOWER_SLOPE(), LOWER_FLOOR(), t, t + amount
-            );
+            return self.get_lin_integral(LOWER_SLOPE(), LOWER_FLOOR(), t, t + amount);
         }
 
         if INFLECTION_POINT() <= t {
-            return self.get_lin_integral_negative_floor(
-                SLOPE(), RAW_FLOOR(), t, t + amount
-            );
+            return self.get_lin_integral_negative_floor(SLOPE(), RAW_FLOOR(), t, t + amount);
         }
 
-        self.get_lin_integral(
-            LOWER_SLOPE(), LOWER_FLOOR(), t, INFLECTION_POINT()
-        )
-            + self.get_lin_integral_negative_floor(
-                SLOPE(), RAW_FLOOR(), INFLECTION_POINT(), t + amount
-            )
+        self.get_lin_integral(LOWER_SLOPE(), LOWER_FLOOR(), t, INFLECTION_POINT())
+            + self
+                .get_lin_integral_negative_floor(
+                    SLOPE(), RAW_FLOOR(), INFLECTION_POINT(), t + amount
+                )
     }
 }

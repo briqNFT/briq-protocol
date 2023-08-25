@@ -56,7 +56,7 @@ fn test_mint_and_unbox() {
     );
     assert(box_nft.balance_of(default_owner(), 1) == 1, 'bad balance 2');
 
-    world.execute('box_unboxing', (array![0x1, ]));
+    world.execute('box_unboxing', (array![0x1,]));
 
     assert(briq_token.balance_of(default_owner(), 1) == 434, 'bad balance 2.5');
     assert(

@@ -234,7 +234,8 @@ fn test_simple_mint_attribute_ok() {
             collection_id: 1,
             params: 2,
             admin_or_system: 'shape_verifier_system'.try_into().unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 
@@ -245,7 +246,8 @@ fn test_simple_mint_attribute_ok() {
             class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
                 .try_into()
                 .unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('register_shape_verifier', (calldata));
     }
 
@@ -322,7 +324,8 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
             collection_id: 1,
             params: 2,
             admin_or_system: 'shape_verifier_system'.try_into().unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 
@@ -333,7 +336,8 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
             class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
                 .try_into()
                 .unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('register_shape_verifier', (calldata));
     }
 
@@ -396,7 +400,8 @@ fn test_simple_mint_attribute_bad_shape_item() {
             collection_id: 1,
             params: 2,
             admin_or_system: 'shape_verifier_system'.try_into().unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 
@@ -407,7 +412,8 @@ fn test_simple_mint_attribute_bad_shape_item() {
             class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
                 .try_into()
                 .unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('register_shape_verifier', (calldata));
     }
 
@@ -456,7 +462,8 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
             collection_id: 1,
             params: 2,
             admin_or_system: 'shape_verifier_system'.try_into().unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 
@@ -467,7 +474,8 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
             class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
                 .try_into()
                 .unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('register_shape_verifier', (calldata));
     }
 
@@ -504,7 +512,8 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
             collection_id: 1,
             params: 2,
             admin_or_system: 'shape_verifier_system'.try_into().unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
 
@@ -515,7 +524,8 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
             class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
                 .try_into()
                 .unwrap()
-        }.serialize(ref calldata);
+        }
+            .serialize(ref calldata);
         world.execute('register_shape_verifier', (calldata));
     }
 
