@@ -9,7 +9,9 @@ use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
-use briq_protocol::tests::test_utils::{WORLD_ADMIN, DefaultWorld, deploy_default_world, mint_briqs};
+use briq_protocol::tests::test_utils::{
+    WORLD_ADMIN, DEFAULT_OWNER, DefaultWorld, deploy_default_world, mint_briqs, impersonate
+};
 
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
@@ -22,9 +24,6 @@ use briq_protocol::set_nft::systems::{assemble, disassemble};
 
 use debug::PrintTrait;
 
-fn default_owner() -> ContractAddress {
-    starknet::contract_address_const::<0xcafe>()
-}
 
 #[test]
 #[available_gas(30000000)]
@@ -32,12 +31,11 @@ fn default_owner() -> ContractAddress {
 fn test_empty_mint() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -49,7 +47,7 @@ fn test_empty_mint() {
         token_id == 0x1a61b367b44cb5cdc969ad212931f85c0dc5d31227cc1bdb8bf65238a722a6a,
         'bad token id'
     );
-    assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
+    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
 }
 
 #[test]
@@ -57,14 +55,15 @@ fn test_empty_mint() {
 fn test_simple_mint_and_burn() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -76,14 +75,14 @@ fn test_simple_mint_and_burn() {
         token_id == 0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2,
         'bad token id'
     );
-    assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 1, 'bad balance');
-    assert(briq_token.balance_of(default_owner(), 1) == 99, 'bad balance');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 99, 'bad balance');
 
-    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
-    assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
-    assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad balance');
+    disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
 // TODO: validate that token ID balance asserts as it's 0
 }
 
@@ -93,12 +92,13 @@ fn test_simple_mint_and_burn() {
 fn test_simple_mint_and_burn_not_enough_briqs() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -113,14 +113,15 @@ fn test_simple_mint_and_burn_not_enough_briqs() {
 fn test_simple_mint_and_burn_2() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -137,14 +138,14 @@ fn test_simple_mint_and_burn_2() {
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
     );
-    assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 4, 'bad token balance 1');
-    assert(briq_token.balance_of(default_owner(), 1) == 96, 'bad briq balance 1');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
-    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
-    assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
-    assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad briq balance 2');
+    disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
 // TODO: validate that token ID balance asserts as it's 0
 }
 
@@ -156,14 +157,15 @@ fn test_simple_mint_and_burn_2() {
 fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -180,16 +182,16 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
     );
-    assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 4, 'bad token balance 1');
-    assert(briq_token.balance_of(default_owner(), 1) == 96, 'bad briq balance 1');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
-    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
+    disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
     assert(
         starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
     );
-    assert(briq_token.balance_of(default_owner(), 1) == 100, 'bad briq balance 2');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
 // TODO: validate that token ID balance asserts as it's 0
 }
 
@@ -200,14 +202,15 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
 fn test_simple_mint_attribute_not_exist() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -258,7 +261,7 @@ fn test_simple_mint_attribute_ok() {
                 WORLD_ADMIN().into(),
                 get!(world, (SYSTEM_CONFIG_ID), WorldConfig).booklet.into(),
                 0,
-                default_owner().into(),
+                DEFAULT_OWNER().into(),
                 1,
                 0x1,
                 1,
@@ -266,14 +269,15 @@ fn test_simple_mint_attribute_ok() {
             ])
         );
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
-    set_caller_address(default_owner());
-    set_contract_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -290,15 +294,15 @@ fn test_simple_mint_attribute_ok() {
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
     );
-    assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(booklet.balance_of(token_id.try_into().unwrap(), 0x1) == 1, 'bad booklet balance 2');
     // TODO validate booklet balance of owner to 0
 
     disassemble(
-        world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
+        world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
     );
-    assert(booklet.balance_of(default_owner(), 0x1) == 1, 'bad booklet balance 3');
+    assert(booklet.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad booklet balance 3');
 // TODO: validate that token ID balance asserts as it's 0
 }
 
@@ -341,14 +345,15 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -365,16 +370,16 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
     );
-    assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
 
     disassemble(
-        world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
+        world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
     );
     assert(
         starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
     );
-    assert(set_nft.balance_of(default_owner()) == 0, 'bad balance');
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
 }
 
 #[test]
@@ -417,14 +422,15 @@ fn test_simple_mint_attribute_bad_shape_item() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -479,14 +485,15 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -529,14 +536,15 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         world.execute('register_shape_verifier', (calldata));
     }
 
-    set_contract_address(default_owner());
-    set_caller_address(default_owner());
+    impersonate(DEFAULT_OWNER());
+    // assemble is not a contract, se we have to set_caller_address
+    set_caller_address(DEFAULT_OWNER());
 
-    mint_briqs(world, default_owner(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     let token_id = assemble(
         world,
-        default_owner(),
+        DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
@@ -553,8 +561,8 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
         'bad token id'
     );
-    assert(default_owner() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(default_owner()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
+    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
 
-    disassemble(world, default_owner(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
+    disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
 }

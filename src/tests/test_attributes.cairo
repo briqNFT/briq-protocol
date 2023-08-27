@@ -6,7 +6,7 @@ use serde::Serde;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
-use briq_protocol::tests::test_utils::deploy_default_world;
+use briq_protocol::tests::test_utils::{DEFAULT_OWNER, deploy_default_world, impersonate};
 
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 
@@ -71,4 +71,21 @@ fn test_create_collection_collision() {
             .serialize(ref calldata);
         world.execute('create_collection', (calldata));
     }
+}
+
+
+#[test]
+#[available_gas(30000000)]
+#[should_panic]
+fn test_create_collection_with_non_world_admin() {
+    let DefaultWorld{world, .. } = deploy_default_world();
+
+    impersonate(DEFAULT_OWNER());
+
+    let mut calldata: Array<felt252> = ArrayTrait::new();
+    CreateCollectionData {
+        collection_id: 1, params: 2, admin_or_system: starknet::contract_address_const::<0xfafa>()
+    }
+        .serialize(ref calldata);
+    world.execute('create_collection', (calldata));
 }
