@@ -11,7 +11,7 @@ use starknet::info::get_block_timestamp;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
-use briq_protocol::tests::test_utils::{WORLD_ADMIN, DefaultWorld, deploy_default_world, mint_briqs};
+use briq_protocol::tests::test_utils::{WORLD_ADMIN,ETH_ADDRESS, DefaultWorld, deploy_default_world, mint_briqs};
 
 use dojo_erc::erc_common::utils::system_calldata;
 
@@ -26,19 +26,13 @@ use briq_protocol::felt_math::{FeltOrd, FeltDiv};
 
 use debug::PrintTrait;
 
-fn default_owner() -> ContractAddress {
-    starknet::contract_address_const::<0xcafe>()
-}
 
-fn eth_address() -> ContractAddress {
-    starknet::contract_address_const::<0xeeee>()
-}
 
 fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252,) -> BriqFactoryStore {
     world
         .execute(
             'BriqFactoryInitialize',
-            system_calldata(BriqFactoryInitializeParams { t, surge_t, buy_token: eth_address() })
+            system_calldata(BriqFactoryInitializeParams { t, surge_t, buy_token: ETH_ADDRESS() })
         );
     BriqFactoryTrait::get_briq_factory(world)
 }
@@ -49,7 +43,7 @@ fn test_briq_factory_init() {
     let DefaultWorld{world, .. } = deploy_default_world();
     let briq_factory = init_briq_factory(world, DECIMALS(), DECIMALS());
 
-    assert(briq_factory.buy_token == eth_address(), 'invalid buy_token');
+    assert(briq_factory.buy_token == ETH_ADDRESS(), 'invalid buy_token');
     assert(briq_factory.surge_t == DECIMALS(), 'invalid surge_t');
     assert(briq_factory.last_stored_t == DECIMALS(), 'invalid last_stored_t');
 }
