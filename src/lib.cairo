@@ -10,6 +10,9 @@ mod types;
 mod world_config;
 mod briq_factory;
 
+mod utils;
+mod upgradeable;
+
 
 #[cfg(test)]
 mod tests;
