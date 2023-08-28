@@ -11,7 +11,6 @@ __pycache__/
 !.github/
 !artifacts/
 !contracts/
-!scripts/
 !briq_protocol/
 !docs/
 !tests/
@@ -22,4 +21,11 @@ __pycache__/
 !src
 !src-old
 !tests-old
-!dojo-erc
+
+!scripts/
+scripts/*
+!scripts/deploy.sh
+!scripts/setup_katana.sh
+!scripts/katana_account.json
+!scripts/katana_signer.json
+!scripts-old
