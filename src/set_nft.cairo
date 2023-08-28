@@ -4,7 +4,7 @@ mod systems;
 mod SetNft {
     use array::ArrayTrait;
     use option::OptionTrait;
-    use starknet::{ContractAddress, get_caller_address, get_contract_address};
+    use starknet::{ContractAddress, ClassHash, get_caller_address, get_contract_address};
     use traits::{Into, TryInto};
     use zeroable::Zeroable;
     use serde::Serde;
@@ -24,6 +24,10 @@ mod SetNft {
     use dojo_erc::erc721::interface::{IERC721, IERC721Metadata, IERC721_ID, IERC721_METADATA_ID};
 
     use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait, system_calldata};
+
+    use briq_protocol::world_config::AdminTrait;
+    use briq_protocol::utils::PartialEqArray;
+    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
 
 
     #[storage]
@@ -52,12 +56,18 @@ mod SetNft {
         approved: bool
     }
 
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
+    struct Upgraded {
+        class_hash: ClassHash,
+    }
+
     #[event]
     #[derive(Drop, PartialEq, starknet::Event)]
     enum Event {
         Transfer: Transfer,
         Approval: Approval,
-        ApprovalForAll: ApprovalForAll
+        ApprovalForAll: ApprovalForAll,
+        Upgraded: Upgraded
     }
 
     #[starknet::interface]
@@ -65,6 +75,19 @@ mod SetNft {
         fn on_transfer(ref self: ContractState, event: Transfer);
         fn on_approval(ref self: ContractState, event: Approval);
         fn on_approval_for_all(ref self: ContractState, event: ApprovalForAll);
+    }
+
+    //
+    // Upgradable
+    //
+
+    #[external(v0)]
+    impl Upgradable of IUpgradeable<ContractState> {
+        fn upgrade(ref self: ContractState, new_class_hash: ClassHash) {
+            self.world.read().only_admins(@get_caller_address());
+            UpgradeableTrait::upgrade(new_class_hash);
+            self.emit(Upgraded { class_hash: new_class_hash });
+        }
     }
 
     //

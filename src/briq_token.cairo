@@ -6,9 +6,12 @@ mod BriqToken {
     use option::OptionTrait;
     use clone::Clone;
     use array::ArrayTCloneImpl;
-    use starknet::{ContractAddress, get_caller_address, get_contract_address};
+    use starknet::{ContractAddress, ClassHash, get_caller_address, get_contract_address};
     use traits::{Into, TryInto};
     use zeroable::Zeroable;
+    use briq_protocol::utils::PartialEqArray;
+    use briq_protocol::world_config::AdminTrait;
+
     use serde::Serde;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo_erc::erc1155::components::{
@@ -28,11 +31,13 @@ mod BriqToken {
         ERC1155SafeBatchTransferFromParams, ERC1155MintParams, ERC1155BurnParams
     };
 
+    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
+
     const UNLIMITED_ALLOWANCE: felt252 =
         3618502788666131213697322783095070105623107215331596699973092056135872020480;
 
 
-    #[derive(Clone, Drop, Serde, starknet::Event)]
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
     struct TransferSingle {
         operator: ContractAddress,
         from: ContractAddress,
@@ -41,7 +46,7 @@ mod BriqToken {
         value: u256
     }
 
-    #[derive(Clone, Drop, Serde, starknet::Event)]
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
     struct TransferBatch {
         operator: ContractAddress,
         from: ContractAddress,
@@ -50,11 +55,16 @@ mod BriqToken {
         values: Array<u256>
     }
 
-    #[derive(Clone, Drop, Serde, starknet::Event)]
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
     struct ApprovalForAll {
         owner: ContractAddress,
         operator: ContractAddress,
         approved: bool
+    }
+
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
+    struct Upgraded {
+        class_hash: ClassHash,
     }
 
     #[starknet::interface]
@@ -65,16 +75,30 @@ mod BriqToken {
     }
 
     #[event]
-    #[derive(Drop, starknet::Event)]
+    #[derive(Drop, PartialEq, starknet::Event)]
     enum Event {
         TransferSingle: TransferSingle,
         TransferBatch: TransferBatch,
-        ApprovalForAll: ApprovalForAll
+        ApprovalForAll: ApprovalForAll,
+        Upgraded: Upgraded
     }
 
     #[storage]
     struct Storage {
         world: IWorldDispatcher,
+    }
+
+    //
+    // Upgradable
+    //
+
+    #[external(v0)]
+    impl Upgradable of IUpgradeable<ContractState> {
+        fn upgrade(ref self: ContractState, new_class_hash: ClassHash) {
+            self.world.read().only_admins(@get_caller_address());
+            UpgradeableTrait::upgrade(new_class_hash);
+            self.emit(Upgraded { class_hash: new_class_hash });
+        }
     }
 
     //
