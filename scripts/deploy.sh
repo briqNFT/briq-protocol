@@ -2,7 +2,7 @@
 
 sozo build
 
-sozo migrate
+sozo migrate --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 export WORLD_ADDRESS=0x598f57e84be4279ff74e7ba389be4d46ec2b1c7974088caad07ebd5a3e8baaa
 export EXECUTOR_ADDRESS=0x75f86ab304522ccf46e65201024f9abbe708ac76639bece351921fae1831f7d
@@ -58,7 +58,7 @@ return
 
 
 ## ACCOUNT_ADDRESS balance : BRIQ
-# starkli call $BRIQ_ADDR balance_of $ACCOUNT_ADDRESS u256:1
+starkli call $BRIQ_ADDR balance_of $ACCOUNT_ADDRESS u256:1
 
 ## ACCOUNT_ADDRESS balance : ETH
 # starkli balance $ACCOUNT_ADDRESS
