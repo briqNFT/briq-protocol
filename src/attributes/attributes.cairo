@@ -21,7 +21,6 @@ use briq_protocol::attributes::collection::{Collection, CollectionTrait};
 
 use debug::PrintTrait;
 
-
 #[derive(Drop, starknet::Event)]
 struct AttributeAssigned {
     set_token_id: u256,

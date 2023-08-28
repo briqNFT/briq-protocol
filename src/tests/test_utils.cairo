@@ -95,19 +95,15 @@ fn spawn_world() -> IWorldDispatcher {
     // set-up writer rights
     //
 
-    // WARNING !! if uncommented --> anybody can SetupWorld
-    // world.grant_writer('WorldConfig', 'SetupWorld');
+    world.grant_writer('WorldConfig', 'SetupWorld');
 
-    // WARNING !! if uncommented --> anybody can create_collection
-    // world.grant_writer('Collection', 'create_collection');
+    world.grant_writer('Collection', 'create_collection');
 
     // ***************************
     // ****  erc1155   
     // ***************************
 
     //  erc_1155_balance
-    // world.grant_writer('ERC1155Balance', 'ERC1155SafeTransferFrom');
-    // world.grant_writer('ERC1155Balance', 'ERC1155SafeBatchTransferFrom');
     world.grant_writer('ERC1155Balance', 'ERC1155MintBurn');
 
     // operator_approval
@@ -119,20 +115,13 @@ fn spawn_world() -> IWorldDispatcher {
 
     //  erc_721_balance
     world.grant_writer('ERC721Balance', 'ERC721TransferFrom');
-    // world.grant_writer('ERC721Balance', 'ERC721Mint');
-    // world.grant_writer('ERC721Balance', 'ERC721Burn');
 
     // erc_721_owner
     world.grant_writer('ERC721Owner', 'ERC721TransferFrom');
-    // world.grant_writer('ERC721Owner', 'ERC721Mint');
-    // world.grant_writer('ERC721Owner', 'ERC721Burn');
 
     // erc_721_token_approval
     world.grant_writer('ERC721TokenApproval', 'ERC721Approve');
     world.grant_writer('ERC721TokenApproval', 'ERC721TransferFrom');
-
-    // // operator_approval
-    // world.grant_writer('OperatorApproval', 'ERC721SetApprovalForAll');
 
     // ***************************
     // **** set_nft (erc721) 
@@ -216,7 +205,6 @@ fn deploy_default_world() -> DefaultWorld {
         .execute(
             'SetupWorld',
             (array![
-                WORLD_ADMIN().into(),
                 TREASURY().into(),
                 briq.into(),
                 set.into(),

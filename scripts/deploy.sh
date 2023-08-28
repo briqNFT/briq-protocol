@@ -51,7 +51,7 @@ echo "*************************************"
 
 
 ## Setup World config
-sozo execute SetupWorld --world $WORLD_ADDRESS --calldata $ACCOUNT_ADDRESS,$TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$BOOKLET_ADDR,$BOX_ADDR 
+sozo execute SetupWorld --world $WORLD_ADDRESS --calldata $TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$BOOKLET_ADDR,$BOX_ADDR 
 
 ## Return World config
 sozo component entity WorldConfig 1 --world $WORLD_ADDRESS 
