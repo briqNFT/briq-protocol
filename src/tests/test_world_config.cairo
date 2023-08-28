@@ -29,7 +29,6 @@ fn test_world_admin_can_setup_world() {
         .execute(
             'SetupWorld',
             (array![
-                WORLD_ADMIN().into(),
                 TREASURY().into(),
                 briq.into(),
                 set.into(),
@@ -55,34 +54,6 @@ fn test_not_world_admin_cannot_setup_world() {
         .execute(
             'SetupWorld',
             (array![
-                WORLD_ADMIN().into(),
-                TREASURY().into(),
-                briq.into(),
-                set.into(),
-                booklet.into(),
-                box.into(),
-            ])
-        );
-}
-
-
-#[test]
-#[available_gas(30000000)]
-fn test_not_world_admin_can_setup_world_if_bad_writer_config() {
-    impersonate(WORLD_ADMIN());
-
-    let world = spawn_world();
-    let (briq, set, booklet, box) = deploy_contracts(world);
-
-    world.grant_writer('WorldConfig', 'SetupWorld');
-
-    impersonate(DEFAULT_OWNER());
-
-    world
-        .execute(
-            'SetupWorld',
-            (array![
-                WORLD_ADMIN().into(),
                 TREASURY().into(),
                 briq.into(),
                 set.into(),

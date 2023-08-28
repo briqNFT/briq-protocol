@@ -12,7 +12,6 @@ const SYSTEM_CONFIG_ID: u32 = 1;
 struct WorldConfig {
     #[key]
     config_id: u32,
-    super_admin: ContractAddress,
     treasury: ContractAddress,
     briq: ContractAddress,
     set: ContractAddress,
@@ -33,7 +32,10 @@ trait AdminTrait {
 
 impl AdminTraitImpl of AdminTrait {
     fn is_admin(self: IWorldDispatcher, addr: @ContractAddress) -> bool {
-        @get!(self, (SYSTEM_CONFIG_ID), WorldConfig).super_admin == addr
+        if self.is_owner(*addr, 0) {
+            return true;
+        }
+        false
     }
 
     fn only_admins(self: IWorldDispatcher, caller: @ContractAddress) {
@@ -47,23 +49,26 @@ mod SetupWorld {
     use array::ArrayTrait;
     use traits::Into;
 
+    use briq_protocol::world_config::AdminTrait;
+
     use dojo::world::Context;
     use super::WorldConfig;
     use super::SYSTEM_CONFIG_ID;
 
     fn execute(
         ctx: Context,
-        super_admin: ContractAddress,
         treasury: ContractAddress,
         briq: ContractAddress,
         set: ContractAddress,
         booklet: ContractAddress,
         box: ContractAddress
     ) {
+        ctx.world.only_admins(@ctx.origin);
+
         set!(
             ctx.world,
             (WorldConfig {
-                config_id: SYSTEM_CONFIG_ID, super_admin, treasury, briq, set, booklet, box,
+                config_id: SYSTEM_CONFIG_ID, treasury, briq, set, booklet, box,
             })
         );
         return ();

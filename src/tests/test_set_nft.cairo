@@ -18,12 +18,55 @@ use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::attributes::collection::CreateCollectionData;
 use briq_protocol::shape_verifier::RegisterShapeVerifierData;
-use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking};
-
-use briq_protocol::set_nft::systems::{assemble, disassemble};
+use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem};
 
 use debug::PrintTrait;
 
+mod convenience_for_testing {
+    use array::ArrayTrait;
+    use serde::Serde;
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use starknet::{ContractAddress, get_contract_address};
+    use briq_protocol::types::{FTSpec, PackedShapeItem};
+    use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData, hash_token_id};
+    fn assemble(
+        world: IWorldDispatcher,
+        owner: ContractAddress,
+        token_id_hint: felt252,
+        name: Array<felt252>, // TODO string
+        description: Array<felt252>, // TODO string
+        fts: Array<FTSpec>,
+        shape: Array<PackedShapeItem>,
+        attributes: Array<felt252>
+    ) -> felt252 {
+        // The name/description is unused except to have them show up in calldata.
+        let nb_briq = shape.len();
+
+        let mut calldata: Array<felt252> = ArrayTrait::new();
+        AssemblySystemData {
+            caller: get_contract_address(), owner, token_id_hint, fts, shape, attributes
+        }
+            .serialize(ref calldata);
+        world.execute('set_nft_assembly', calldata);
+
+        let token_id = hash_token_id(owner, token_id_hint, nb_briq);
+        token_id
+    }
+
+    fn disassemble(
+        world: IWorldDispatcher,
+        owner: ContractAddress,
+        token_id: felt252,
+        fts: Array<FTSpec>,
+        attributes: Array<felt252>
+    ) {
+        let mut calldata: Array<felt252> = ArrayTrait::new();
+        DisassemblySystemData { caller: get_contract_address(), owner, token_id, fts, attributes }
+            .serialize(ref calldata);
+        world.execute('set_nft_disassembly', calldata);
+    }
+}
+use convenience_for_testing::{assemble, disassemble};
 
 #[test]
 #[available_gas(30000000)]
@@ -58,8 +101,6 @@ fn test_simple_mint_and_burn() {
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
@@ -93,8 +134,6 @@ fn test_simple_mint_and_burn_not_enough_briqs() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
@@ -116,8 +155,6 @@ fn test_simple_mint_and_burn_2() {
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
@@ -158,8 +195,6 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -203,8 +238,6 @@ fn test_simple_mint_attribute_not_exist() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -272,8 +305,6 @@ fn test_simple_mint_attribute_ok() {
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
@@ -346,8 +377,6 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     }
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -425,8 +454,6 @@ fn test_simple_mint_attribute_bad_shape_item() {
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     let token_id = assemble(
         world,
@@ -486,8 +513,6 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
     }
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -537,8 +562,6 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     }
 
     impersonate(DEFAULT_OWNER());
-    // assemble is not a contract, se we have to set_caller_address
-    set_caller_address(DEFAULT_OWNER());
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
