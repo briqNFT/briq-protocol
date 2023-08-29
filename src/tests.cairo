@@ -11,3 +11,5 @@ mod test_world_config;
 mod test_briq_factory;
 
 mod test_upgradeable;
+
+mod test_set_nft_multiple;

@@ -15,7 +15,6 @@ use briq_protocol::tests::test_utils::{
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
 
-use briq_protocol::attributes::collection::CreateCollectionData;
 use briq_protocol::shape_verifier::RegisterShapeVerifierData;
 use briq_protocol::types::{FTSpec, ShapeItem};
 

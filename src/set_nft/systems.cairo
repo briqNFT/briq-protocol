@@ -1,6 +1,5 @@
 use starknet::ContractAddress;
-use traits::Into;
-use traits::TryInto;
+use traits::{Into,TryInto};
 use array::ArrayTrait;
 use array::SpanTrait;
 use option::OptionTrait;
@@ -15,13 +14,17 @@ use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, get_world_confi
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 
 use dojo_erc::erc1155::components::OperatorApproval;
-use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner, ERC721TokenApproval};
 use dojo_erc::erc1155::components::ERC1155Balance;
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
+
+use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner, ERC721TokenApproval};
+
 
 use briq_protocol::attributes::attributes::remove_attributes;
 
 use briq_protocol::types::{FTSpec, PackedShapeItem};
+
+
 
 //###########
 //###########
