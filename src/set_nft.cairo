@@ -1,4 +1,5 @@
 mod systems;
+mod systems_erc721;
 
 #[starknet::contract]
 mod SetNft {
@@ -15,7 +16,7 @@ mod SetNft {
         ERC721Owner, ERC721OwnerTrait, BaseUri, BaseUriTrait, ERC721Balance, ERC721BalanceTrait,
         ERC721TokenApproval, ERC721TokenApprovalTrait, OperatorApproval, OperatorApprovalTrait
     };
-    use dojo_erc::erc721::systems::{
+    use super::systems_erc721::{
         ERC721ApproveParams, ERC721SetApprovalForAllParams, ERC721TransferFromParams,
         ERC721MintParams, ERC721BurnParams
     };
@@ -33,6 +34,8 @@ mod SetNft {
     #[storage]
     struct Storage {
         world: IWorldDispatcher,
+        name_: felt252, // TODO : string
+        symbol_: felt252, // TODO : string
     }
 
     #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
@@ -95,8 +98,10 @@ mod SetNft {
     //
 
     #[constructor]
-    fn constructor(ref self: ContractState, world: IWorldDispatcher) {
+    fn constructor(ref self: ContractState, world: IWorldDispatcher, name:felt252, symbol:felt252) {
         self.world.write(world);
+        self.name_.write(name);
+        self.symbol_.write(symbol);
     }
 
 
@@ -212,11 +217,11 @@ mod SetNft {
     #[external(v0)]
     impl ERC721Metadata of IERC721Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briq set'
+            self.name_.read()
         }
 
         fn symbol(self: @ContractState) -> felt252 {
-            'B7'
+            self.symbol_.read()
         }
 
         fn token_uri(self: @ContractState, token_id: u256) -> felt252 {
@@ -292,9 +297,5 @@ mod SetNft {
         }
     }
 
-    use briq_protocol::set_nft::systems::hash_token_id;
-    use briq_protocol::set_nft::systems::AssemblySystemData;
-    use briq_protocol::set_nft::systems::DisassemblySystemData;
-
-    use briq_protocol::types::{FTSpec, ShapeItem};
+  
 }

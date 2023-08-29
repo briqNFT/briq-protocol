@@ -38,6 +38,10 @@ fn DEFAULT_OWNER() -> ContractAddress {
     starknet::contract_address_const::<0xcafe>()
 }
 
+fn USER1() -> ContractAddress {
+    starknet::contract_address_const::<0xfafa>()
+}
+
 fn impersonate(address: ContractAddress) {
     set_contract_address(address);
     set_account_contract_address(address);
@@ -67,10 +71,14 @@ fn spawn_world() -> IWorldDispatcher {
         // erc1155
         dojo_erc::erc1155::systems::ERC1155SetApprovalForAll::TEST_CLASS_HASH,
         briq_protocol::briq_token::systems::ERC1155MintBurn::TEST_CLASS_HASH,
+        // // erc721
+        // dojo_erc::erc721::systems::ERC721Approve::TEST_CLASS_HASH,
+        // dojo_erc::erc721::systems::ERC721SetApprovalForAll::TEST_CLASS_HASH,
+        // dojo_erc::erc721::systems::ERC721TransferFrom::TEST_CLASS_HASH,
         // erc721
-        dojo_erc::erc721::systems::ERC721Approve::TEST_CLASS_HASH,
-        dojo_erc::erc721::systems::ERC721SetApprovalForAll::TEST_CLASS_HASH,
-        dojo_erc::erc721::systems::ERC721TransferFrom::TEST_CLASS_HASH,
+        briq_protocol::set_nft::systems_erc721::ERC721Approve::TEST_CLASS_HASH,
+        briq_protocol::set_nft::systems_erc721::ERC721SetApprovalForAll::TEST_CLASS_HASH,
+        briq_protocol::set_nft::systems_erc721::ERC721TransferFrom::TEST_CLASS_HASH,
         // briq_token
         briq_protocol::briq_token::systems::BriqTokenSafeTransferFrom::TEST_CLASS_HASH,
         briq_protocol::briq_token::systems::BriqTokenSafeBatchTransferFrom::TEST_CLASS_HASH,
@@ -96,7 +104,6 @@ fn spawn_world() -> IWorldDispatcher {
     //
 
     world.grant_writer('WorldConfig', 'SetupWorld');
-
     world.grant_writer('Collection', 'create_collection');
 
     // ***************************
@@ -155,8 +162,10 @@ fn spawn_world() -> IWorldDispatcher {
 
 fn deploy_contracts(
     world: IWorldDispatcher,
-) -> (ContractAddress, ContractAddress, ContractAddress, ContractAddress) {
+) -> (ContractAddress, ContractAddress, ContractAddress, ContractAddress, ContractAddress) {
     let constructor_calldata = array![world.contract_address.into()];
+    let set_constructor_calldata = array![world.contract_address.into(), 'briq set', 'B7'];
+    let set2_constructor_calldata = array![world.contract_address.into(), 'briq set2', 'B7'];
 
     let (briq, _) = deploy_syscall(
         BriqToken::TEST_CLASS_HASH.try_into().unwrap(), 0, constructor_calldata.span(), false
@@ -164,7 +173,12 @@ fn deploy_contracts(
         .expect('error deploying');
 
     let (set, _) = deploy_syscall(
-        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, constructor_calldata.span(), false
+        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, set_constructor_calldata.span(), false
+    )
+        .expect('error deploying');
+
+    let (set2, _) = deploy_syscall(
+        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, set2_constructor_calldata.span(), false
     )
         .expect('error deploying');
 
@@ -184,7 +198,7 @@ fn deploy_contracts(
     )
         .expect('error deploying');
 
-    (briq, set, booklet, box)
+    (briq, set, set2, booklet, box)
 }
 
 #[derive(Copy, Drop)]
@@ -192,6 +206,7 @@ struct DefaultWorld {
     world: IWorldDispatcher,
     briq_token: IERC1155Dispatcher,
     set_nft: IERC721Dispatcher,
+    set2_nft: IERC721Dispatcher,
     booklet: IERC1155Dispatcher,
     box_nft: IERC1155Dispatcher,
 }
@@ -200,22 +215,19 @@ fn deploy_default_world() -> DefaultWorld {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, set, booklet, box) = deploy_contracts(world);
+    let (briq, set, set2, booklet, box) = deploy_contracts(world);
     world
         .execute(
             'SetupWorld',
             (array![
-                TREASURY().into(),
-                briq.into(),
-                set.into(),
-                booklet.into(),
-                box.into(),
+                TREASURY().into(), briq.into(), set.into(), set2.into(), booklet.into(), box.into(),
             ])
         );
     DefaultWorld {
         world,
         briq_token: IERC1155Dispatcher { contract_address: briq },
         set_nft: IERC721Dispatcher { contract_address: set },
+        set2_nft: IERC721Dispatcher { contract_address: set2 },
         booklet: IERC1155Dispatcher { contract_address: booklet },
         box_nft: IERC1155Dispatcher { contract_address: box },
     }
@@ -250,7 +262,4 @@ fn mint_briqs(world: IWorldDispatcher, owner: ContractAddress, material: felt252
         );
     set_contract_address(old_caller);
 }
-
-
-
 

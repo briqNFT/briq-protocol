@@ -3,10 +3,13 @@ use option::{Option, OptionTrait};
 use result::ResultTrait;
 use array::ArrayTrait;
 use serde::Serde;
+use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
-use briq_protocol::tests::test_utils::{DEFAULT_OWNER, deploy_default_world, impersonate};
+use briq_protocol::tests::test_utils::{
+    DefaultWorld, DEFAULT_OWNER, USER1, deploy_default_world, impersonate
+};
 
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 
@@ -14,19 +17,20 @@ use briq_protocol::types::{FTSpec, ShapeItem};
 
 use debug::PrintTrait;
 
-use briq_protocol::attributes::collection::CreateCollectionData;
+use briq_protocol::attributes::collection::{CreateCollectionData, CollectionOwner};
+
 
 #[test]
 #[available_gas(30000000)]
 fn test_create_collections() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
             collection_id: 1,
-            params: 2,
-            admin_or_system: starknet::contract_address_const::<0xfafa>()
+            owner: CollectionOwner::Admin(USER1()),
+            briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
         world.execute('create_collection', (calldata));
@@ -36,8 +40,8 @@ fn test_create_collections() {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
             collection_id: 2,
-            params: 2,
-            admin_or_system: starknet::contract_address_const::<0xfafa>()
+            owner: CollectionOwner::Admin(USER1()),
+            briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
         world.execute('create_collection', (calldata));
@@ -48,14 +52,14 @@ fn test_create_collections() {
 #[available_gas(30000000)]
 #[should_panic]
 fn test_create_collection_collision() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
             collection_id: 1,
-            params: 2,
-            admin_or_system: starknet::contract_address_const::<0xfafa>()
+            owner: CollectionOwner::Admin(USER1()),
+            briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
         world.execute('create_collection', (calldata));
@@ -65,8 +69,8 @@ fn test_create_collection_collision() {
         let mut calldata: Array<felt252> = ArrayTrait::new();
         CreateCollectionData {
             collection_id: 1,
-            params: 2,
-            admin_or_system: starknet::contract_address_const::<0xfafa>()
+            owner: CollectionOwner::Admin(USER1()),
+            briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
         world.execute('create_collection', (calldata));
@@ -78,13 +82,16 @@ fn test_create_collection_collision() {
 #[available_gas(30000000)]
 #[should_panic]
 fn test_create_collection_with_non_world_admin() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
     let mut calldata: Array<felt252> = ArrayTrait::new();
+
     CreateCollectionData {
-        collection_id: 1, params: 2, admin_or_system: starknet::contract_address_const::<0xfafa>()
+        collection_id: 1,
+        owner: CollectionOwner::Admin(USER1()),
+        briq_set_contract_address: set_nft.contract_address
     }
         .serialize(ref calldata);
     world.execute('create_collection', (calldata));
