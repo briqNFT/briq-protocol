@@ -39,7 +39,7 @@ trait ShapeVerifierTrait {
         self: @ShapeVerifier,
         world: IWorldDispatcher,
         set_owner: ContractAddress,
-        set_token_id: felt252,
+        set_token_id: ContractAddress,
         attribute_id: felt252,
         shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
@@ -49,7 +49,7 @@ trait ShapeVerifierTrait {
         self: @ShapeVerifier,
         world: IWorldDispatcher,
         set_owner: ContractAddress,
-        set_token_id: felt252,
+        set_token_id: ContractAddress,
         attribute_id: felt252,
     );
 }
@@ -59,7 +59,7 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
         self: @ShapeVerifier,
         world: IWorldDispatcher,
         set_owner: ContractAddress,
-        set_token_id: felt252,
+        set_token_id: ContractAddress,
         attribute_id: felt252,
         shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
@@ -70,11 +70,11 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
             .verify_shape(attribute_id, shape.span(), fts.span());
 
         // TODO -> use update that sends events
-        dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
+        dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
             world,
             get_world_config(world).booklet,
             set_owner,
-            set_token_id.try_into().unwrap(),
+            set_token_id,
             array![attribute_id].span(),
             array![1].span()
         );
@@ -84,14 +84,14 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
         self: @ShapeVerifier,
         world: IWorldDispatcher,
         set_owner: ContractAddress,
-        set_token_id: felt252,
+        set_token_id: ContractAddress,
         attribute_id: felt252,
     ) {
         // TODO -> use update that sends events
-        dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
+        dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
             world,
             get_world_config(world).booklet,
-            set_token_id.try_into().unwrap(),
+            set_token_id,
             set_owner,
             array![attribute_id].span(),
             array![1].span()

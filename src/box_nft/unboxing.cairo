@@ -92,7 +92,7 @@ fn get_booklet_id_for_box(box_id: felt252) -> felt252 {
 fn unbox(world: IWorldDispatcher, owner: ContractAddress, box_id: felt252) {
     // Burn the box
     // TODO: use event-emitting variant
-    dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
+    dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
         world,
         get_world_config(world).box,
         owner,
@@ -103,7 +103,7 @@ fn unbox(world: IWorldDispatcher, owner: ContractAddress, box_id: felt252) {
 
     // Mint a booklet
     // TODO: use event-emitting variant
-    dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
+    dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
         world,
         get_world_config(world).booklet,
         Zeroable::zero(),

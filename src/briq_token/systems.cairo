@@ -38,18 +38,18 @@ fn update_nocheck(
             world, token, to, *ids_span.pop_front().unwrap()
         );
         if amnt != @0 && balance == 0 {
-            ERC1155BalanceTrait::transfer_tokens(
+            ERC1155BalanceTrait::unchecked_transfer_tokens(
                 world,
                 CUM_BALANCE_TOKEN(),
                 Zeroable::zero(),
                 to,
-                array![CB_BRIQ().into()].span(),
+                array![CB_BRIQ()].span(),
                 array![1].span()
             );
         };
     };
 
-    ERC1155BalanceTrait::transfer_tokens(world, token, from, to, ids.span(), amounts.span());
+    ERC1155BalanceTrait::unchecked_transfer_tokens(world, token, from, to, ids.span(), amounts.span());
 
     let mut ids_span = ids.span();
     let mut amounts_span = amounts.span();
@@ -62,12 +62,12 @@ fn update_nocheck(
             world, token, from, *ids_span.pop_front().unwrap()
         );
         if amnt != @0 && balance == 0 {
-            ERC1155BalanceTrait::transfer_tokens(
+            ERC1155BalanceTrait::unchecked_transfer_tokens(
                 world,
                 CUM_BALANCE_TOKEN(),
                 from,
                 Zeroable::zero(),
-                array![CB_BRIQ().into()].span(),
+                array![CB_BRIQ()].span(),
                 array![1].span()
             );
         };
