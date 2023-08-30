@@ -28,7 +28,7 @@ mod SetNft {
 
     use briq_protocol::world_config::AdminTrait;
     use briq_protocol::utils::PartialEqArray;
-    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
+    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
 
 
     #[storage]
@@ -57,11 +57,6 @@ mod SetNft {
         owner: ContractAddress,
         operator: ContractAddress,
         approved: bool
-    }
-
-    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
-    struct Upgraded {
-        class_hash: ClassHash,
     }
 
     #[event]
