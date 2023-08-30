@@ -30,7 +30,7 @@ mod GenericERC1155 {
 
     use briq_protocol::world_config::AdminTrait;
     use briq_protocol::utils::PartialEqArray;
-    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
+    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
 
 
     const UNLIMITED_ALLOWANCE: felt252 =
@@ -62,11 +62,7 @@ mod GenericERC1155 {
         approved: bool
     }
 
-    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
-    struct Upgraded {
-        class_hash: ClassHash,
-    }
-
+   
     #[starknet::interface]
     trait IERC1155Events<ContractState> {
         fn on_transfer_single(ref self: ContractState, event: TransferSingle);

@@ -1,21 +1,27 @@
-use starknet::ClassHash;
+use starknet::{ClassHash, SyscallResult, SyscallResultTrait};
 use zeroable::Zeroable;
 use result::ResultTrait;
-use starknet::{SyscallResult, SyscallResultTrait};
-
+use clone::Clone;
+use serde::Serde;
+use traits::PartialEq;
 
 #[starknet::interface]
-trait IUpgradeable<TState> {
-    fn upgrade(ref self: TState, new_class_hash: ClassHash);
+trait IUpgradeable<T> {
+    fn upgrade(ref self: T, new_class_hash: ClassHash);
 }
 
 trait UpgradeableTrait {
     fn upgrade(new_class_hash: ClassHash);
 }
 
+#[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
+struct Upgraded {
+    class_hash: ClassHash,
+}
+
 impl UpgradeableTraitImpl of UpgradeableTrait {
     fn upgrade(new_class_hash: ClassHash) {
-        assert(!new_class_hash.is_zero(), 'Class hash cannot be zero');
+        assert(new_class_hash.is_non_zero(), 'class_hash cannot be zero');
         starknet::replace_class_syscall(new_class_hash).unwrap_syscall();
     }
 }
