@@ -43,7 +43,7 @@ fn update_nocheck(
                 CUM_BALANCE_TOKEN(),
                 Zeroable::zero(),
                 to,
-                array![CB_BRIQ].span(),
+                array![CB_BRIQ().into()].span(),
                 array![1].span()
             );
         };
@@ -67,7 +67,7 @@ fn update_nocheck(
                 CUM_BALANCE_TOKEN(),
                 from,
                 Zeroable::zero(),
-                array![CB_BRIQ].span(),
+                array![CB_BRIQ().into()].span(),
                 array![1].span()
             );
         };

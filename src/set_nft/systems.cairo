@@ -2,10 +2,8 @@ use starknet::ContractAddress;
 use traits::{Into, TryInto};
 use array::ArrayTrait;
 use array::SpanTrait;
-use option::OptionTrait;
+use option::{Option, OptionTrait};
 use zeroable::Zeroable;
-
-use debug::PrintTrait;
 
 use dojo::world::Context;
 
@@ -14,7 +12,7 @@ use briq_protocol::world_config::{WorldConfig, get_world_config};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 
 use dojo_erc::erc1155::components::OperatorApproval;
-use dojo_erc::erc1155::components::ERC1155Balance;
+use dojo_erc::erc1155::components::{ERC1155Balance, ERC1155BalanceTrait};
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
 
 use dojo_erc::erc721::components::{
@@ -22,10 +20,9 @@ use dojo_erc::erc721::components::{
     ERC721TokenApprovalTrait
 };
 
-
 use briq_protocol::attributes::attributes::remove_attributes;
-
 use briq_protocol::types::{FTSpec, PackedShapeItem};
+
 
 
 //###########
@@ -38,24 +35,27 @@ fn transfer_briqs(
     recipient: ContractAddress,
     mut fts: Array<FTSpec>
 ) {
-    if fts.len() == 0 {
-        return ();
-    }
     let address = get_world_config(world).briq;
-    let ftspec = fts.pop_front().unwrap();
 
-    briq_protocol::briq_token::systems::update_nocheck(
-        world,
-        'set_contract_TODO'.try_into().unwrap(),
-        address,
-        sender,
-        recipient,
-        array![ftspec.token_id],
-        array![ftspec.qty],
-        array![]
-    );
-
-    return transfer_briqs(world, sender, recipient, fts);
+    loop {
+        match fts.pop_front() {
+            Option::Some(ftspec) => {
+                briq_protocol::briq_token::systems::update_nocheck(
+                    world,
+                    'set_contract_TODO'.try_into().unwrap(),
+                    address,
+                    sender,
+                    recipient,
+                    array![ftspec.token_id],
+                    array![ftspec.qty],
+                    array![]
+                );
+            },
+            Option::None => {
+                break;
+            }
+        };
+    }
 }
 
 // To prevent people from generating collisions, we need the token_id to be random.
@@ -95,11 +95,22 @@ fn destroy_token(ctx: Context, owner: ContractAddress, token_id: felt252) {
 
 fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: felt252) {
     // Check that we gave back all briqs (the user might attempt to lie).
-    let balance = get!(ctx.world, (CUM_BALANCE_TOKEN(), CB_BRIQ, token_id), ERC1155Balance).amount;
+
+    // TODO replace wen merged in dojo
+    // let balance = ERC1155BalanceTrait::balance_of(
+    //     ctx.world, CUM_BALANCE_TOKEN(), CB_BRIQ(), token_id
+    // );
+    let balance = get!(ctx.world, (CUM_BALANCE_TOKEN(), CB_BRIQ(), token_id), ERC1155Balance).amount;
+
     assert(balance == 0, 'Set still has briqs');
 
     // Check that we no longer have any attributes active.
-    let balance = get!(ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, token_id), ERC1155Balance)
+
+    // TODO replace wen merged in dojo
+    // let balance = ERC1155BalanceTrait::balance_of(
+    //     ctx.world, CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), token_id
+    // );
+    let balance = get!(ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), token_id), ERC1155Balance)
         .amount;
     assert(balance == 0, 'Set still attributed');
 }
@@ -175,8 +186,10 @@ mod set_nft_disassembly {
     use clone::Clone;
 
     use dojo::world::Context;
-    use dojo_erc::erc721::components::{ERC721Owner, ERC721TokenApproval};
-    use dojo_erc::erc1155::components::OperatorApproval;
+    use dojo_erc::erc721::components::{
+        ERC721Owner, ERC721OwnerTrait, ERC721TokenApproval, ERC721TokenApprovalTrait
+    };
+    use dojo_erc::erc1155::components::{OperatorApproval, OperatorApprovalTrait};
     use briq_protocol::world_config::{WorldConfig, get_world_config};
 
     use briq_protocol::types::{FTSpec, PackedShapeItem};
@@ -192,17 +205,17 @@ mod set_nft_disassembly {
 
         let token = get_world_config(ctx.world).set;
 
-        let token_owner = get!(ctx.world, (token, token_id), ERC721Owner);
-        assert(token_owner.address.is_non_zero(), 'ERC721: invalid token_id');
-        assert(token_owner.address == owner, 'SetNft: invalid owner');
+        let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id);
+        assert(token_owner.is_non_zero(), 'ERC721: invalid token_id');
+        assert(token_owner == owner, 'SetNft: invalid owner');
 
-        let token_approval = get!(ctx.world, (token, token_id), ERC721TokenApproval);
-        let is_approved = get!(ctx.world, (token, token_owner.address, caller), OperatorApproval);
+        let token_approval = ERC721TokenApprovalTrait::get_approved(ctx.world, token, token_id);
+        let is_approved_for_all = OperatorApprovalTrait::is_approved_for_all(
+            ctx.world, token, token_owner, caller
+        );
 
         assert(
-            token_owner.address == caller
-                || is_approved.approved
-                || token_approval.address == caller,
+            token_owner == caller || is_approved_for_all || token_approval == caller,
             'ERC721: unauthorized caller'
         );
 
