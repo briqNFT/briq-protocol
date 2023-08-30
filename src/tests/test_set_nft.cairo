@@ -151,13 +151,6 @@ fn test_empty_mint() {
         array![],
         array![],
     );
-    'test_empty_mint'.print();
-    token_id.print();
-// assert(
-//     token_id == 0x1a61b367b44cb5cdc969ad212931f85c0dc5d31227cc1bdb8bf65238a722a6a,
-//     'bad token id'
-// );
-// assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
 }
 
 #[test]
@@ -181,7 +174,7 @@ fn test_simple_mint_and_burn() {
     );
 
     assert(
-        token_id == starknet::contract_address_const::<0x8e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2>(),
+        token_id == starknet::contract_address_const::<0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2>(),
         'bad token id'
     );
 
@@ -239,7 +232,7 @@ fn test_simple_mint_and_burn_2() {
     );
 
     assert(
-        token_id == starknet::contract_address_const::<0xb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
 
@@ -280,7 +273,7 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     );
 
     assert(
-        token_id == starknet::contract_address_const::<0xb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
@@ -315,6 +308,7 @@ fn test_simple_mint_attribute_not_exist() {
         array![0x1],
     );
 }
+
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_attribute_ok() {
@@ -354,7 +348,7 @@ fn test_simple_mint_attribute_ok() {
         array![0x1],
     );
     assert(
-        token_id == starknet::contract_address_const::<0xb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
@@ -404,7 +398,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         array![0x1],
     );
     assert(
-        token_id == starknet::contract_address_const::<0xb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
@@ -526,7 +520,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         array![0x1],
     );
     assert(
-        token_id == starknet::contract_address_const::<0xb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
