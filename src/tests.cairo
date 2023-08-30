@@ -17,3 +17,4 @@ mod test_hash;
 
 mod test_upgradeable;
 
+mod test_migrate;

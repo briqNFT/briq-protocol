@@ -27,9 +27,7 @@ mod GenericERC1155 {
     };
 
     use briq_protocol::world_config::AdminTrait;
-    use briq_protocol::utils::PartialEqArray;
     use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
-
    
     #[derive(Clone, Drop, Serde, starknet::Event)]
     struct TransferSingle {

@@ -1,4 +1,3 @@
-
 // common
 mod upgradeable;
 mod utils;
@@ -21,16 +20,13 @@ mod briq_factory;
 mod briq_booklet;
 
 
-// boxes 
+// boxes
 // mod briq_box;
-
-
 mod generic_erc1155;
 
+// Migration
+mod migrate;
 
 
 #[cfg(test)]
 mod tests;
-//mod dojo_erc;
-
-

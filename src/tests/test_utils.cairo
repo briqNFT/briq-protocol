@@ -105,6 +105,8 @@ fn spawn_world() -> IWorldDispatcher {
         briq_protocol::attributes::attribute_group::update_attribute_group::TEST_CLASS_HASH,
         // unboxing
         briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
+        // Migration
+        briq_protocol::migrate::migrate_assets::TEST_CLASS_HASH,
     ];
 
     let world = spawn_test_world(components, systems);
