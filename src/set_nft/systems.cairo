@@ -60,8 +60,7 @@ fn transfer_briqs(
 }
 
 
-const CONTRACT_ADDRESS_MASK: felt252 =
-    0xffffffffffffffffffffffffffffffffffffffffffffffff; // 2**192 - 1;
+
 // To prevent people from generating collisions, we need the token_id to be random.
 // However, we need it to be predictable for good UI.
 // The solution adopted is to hash a hint. Our security becomes the chain hash security.
@@ -72,8 +71,7 @@ fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) 
     let hash = pedersen(hash, token_id_hint);
     let hash = pedersen(hash, nb_briqs.into());
 
-    let masked = hash & CONTRACT_ADDRESS_MASK;
-    masked.try_into().unwrap()
+    hash.try_into().unwrap()
 }
 
 fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
