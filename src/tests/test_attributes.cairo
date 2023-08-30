@@ -17,6 +17,7 @@ use briq_protocol::types::{FTSpec, ShapeItem};
 use debug::PrintTrait;
 
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
+use dojo_erc::erc_common::utils::{system_calldata};
 
 
 #[test]
@@ -25,25 +26,31 @@ fn test_create_attribute_groups() {
     let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::Admin(USER1()),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
+        world
+            .execute(
+                'create_attribute_group',
+                system_calldata(
+                    CreateAttributeGroupData {
+                        attribute_group_id: 1,
+                        owner: AttributeGroupOwner::Admin(USER1()),
+                        briq_set_contract_address: set_nft.contract_address
+                    }
+                )
+            );
     }
 
     {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 2,
-            owner: AttributeGroupOwner::Admin(USER1()),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
+        world
+            .execute(
+                'create_attribute_group',
+                system_calldata(
+                    CreateAttributeGroupData {
+                        attribute_group_id: 2,
+                        owner: AttributeGroupOwner::Admin(USER1()),
+                        briq_set_contract_address: set_nft.contract_address
+                    }
+                )
+            );
     }
 }
 
@@ -54,25 +61,31 @@ fn test_create_attribute_group_collision() {
     let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::Admin(USER1()),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
+        world
+            .execute(
+                'create_attribute_group',
+                system_calldata(
+                    CreateAttributeGroupData {
+                        attribute_group_id: 1,
+                        owner: AttributeGroupOwner::Admin(USER1()),
+                        briq_set_contract_address: set_nft.contract_address
+                    }
+                )
+            );
     }
 
     {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::Admin(USER1()),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
+        world
+            .execute(
+                'create_attribute_group',
+                system_calldata(
+                    CreateAttributeGroupData {
+                        attribute_group_id: 1,
+                        owner: AttributeGroupOwner::Admin(USER1()),
+                        briq_set_contract_address: set_nft.contract_address
+                    }
+                )
+            );
     }
 }
 
@@ -85,13 +98,15 @@ fn test_create_attribute_group_with_non_world_admin() {
 
     impersonate(DEFAULT_OWNER());
 
-    let mut calldata: Array<felt252> = ArrayTrait::new();
-
-    CreateAttributeGroupData {
-        attribute_group_id: 1,
-        owner: AttributeGroupOwner::Admin(USER1()),
-        briq_set_contract_address: set_nft.contract_address
-    }
-        .serialize(ref calldata);
-    world.execute('create_attribute_group', (calldata));
+    world
+        .execute(
+            'create_attribute_group',
+            system_calldata(
+                CreateAttributeGroupData {
+                    attribute_group_id: 1,
+                    owner: AttributeGroupOwner::Admin(USER1()),
+                    briq_set_contract_address: set_nft.contract_address
+                }
+            )
+        );
 }

@@ -99,8 +99,7 @@ struct CreateAttributeGroupData {
 #[system]
 mod create_attribute_group {
     use starknet::ContractAddress;
-    use traits::Into;
-    use traits::TryInto;
+    use traits::{Into,TryInto};
     use array::ArrayTrait;
     use array::SpanTrait;
     use option::OptionTrait;
