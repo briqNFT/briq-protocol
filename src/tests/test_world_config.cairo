@@ -5,18 +5,10 @@ use array::ArrayTrait;
 use serde::Serde;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
 use briq_protocol::tests::test_utils::{
     DefaultWorld, spawn_world, deploy_contracts, WORLD_ADMIN, TREASURY, DEFAULT_OWNER, impersonate,
-    deploy_default_world
 };
 
-
-use briq_protocol::types::{FTSpec, ShapeItem};
-
-use debug::PrintTrait;
-
-use briq_protocol::attributes::collection::CreateCollectionData;
 
 #[test]
 #[available_gas(30000000)]

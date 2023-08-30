@@ -16,8 +16,8 @@ use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc1155::components::ERC1155Balance;
 use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
 
-use briq_protocol::attributes::get_collection_id;
-use briq_protocol::attributes::collection::{Collection, CollectionTrait, CollectionOwner};
+use briq_protocol::attributes::get_attribute_group_id;
+use briq_protocol::attributes::attribute_group::{AttributeGroup, AttributeGroupTrait, AttributeGroupOwner};
 
 use debug::PrintTrait;
 
@@ -105,15 +105,15 @@ fn inner_attribute_assign(
 ) {
     assert(attribute_id != 0, 'Bad input');
 
-    let collection_id = get_collection_id(attribute_id);
-    let collection = CollectionTrait::get_collection(ctx.world, collection_id.try_into().unwrap());
+    let attribute_group_id = get_attribute_group_id(attribute_id);
+    let attribute_group = AttributeGroupTrait::get_attribute_group(ctx.world, attribute_group_id.try_into().unwrap());
 
-    match collection.owner {
-        CollectionOwner::Admin(address) => {
+    match attribute_group.owner {
+        AttributeGroupOwner::Admin(address) => {
             //library_erc1155::transferability::Transferability::_transfer_burnable(0, set_token_id, attribute_id, 1);
             assert(0 == 1, 'TODO');
         },
-        CollectionOwner::System(system_name) => {
+        AttributeGroupOwner::System(system_name) => {
             let mut calldata: Array<felt252> = ArrayTrait::new();
             AttributeHandlerData::Assign(
                 AttributeAssignData {
@@ -166,15 +166,15 @@ fn remove_attribute_inner(
 ) {
     assert(attribute_id != 0, 'Bad input');
 
-    let collection_id = get_collection_id(attribute_id);
-    let collection = CollectionTrait::get_collection(ctx.world, collection_id.try_into().unwrap());
+    let attribute_group_id = get_attribute_group_id(attribute_id);
+    let attribute_group = AttributeGroupTrait::get_attribute_group(ctx.world, attribute_group_id.try_into().unwrap());
 
-    match collection.owner {
-        CollectionOwner::Admin(address) => {
+    match attribute_group.owner {
+        AttributeGroupOwner::Admin(address) => {
             //library_erc1155::transferability::Transferability::_transfer_burnable(set_token_id, 0, attribute_id, 1);
             assert(0 == 1, 'TODO');
         },
-        CollectionOwner::System(system_name) => {
+        AttributeGroupOwner::System(system_name) => {
             let mut calldata: Array<felt252> = ArrayTrait::new();
             AttributeHandlerData::Remove(
                 AttributeRemoveData { set_owner, set_token_id, attribute_id }
@@ -186,3 +186,8 @@ fn remove_attribute_inner(
 
     emit!(ctx.world, AttributeRemoved { set_token_id: set_token_id.into(), attribute_id });
 }
+
+
+
+
+

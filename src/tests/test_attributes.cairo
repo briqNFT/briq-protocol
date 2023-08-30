@@ -17,63 +17,63 @@ use briq_protocol::types::{FTSpec, ShapeItem};
 
 use debug::PrintTrait;
 
-use briq_protocol::attributes::collection::{CreateCollectionData, CollectionOwner};
+use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
 
 
 #[test]
 #[available_gas(30000000)]
-fn test_create_collections() {
+fn test_create_attribute_groups() {
     let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::Admin(USER1()),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::Admin(USER1()),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 2,
-            owner: CollectionOwner::Admin(USER1()),
+        CreateAttributeGroupData {
+            attribute_group_id: 2,
+            owner: AttributeGroupOwner::Admin(USER1()),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 }
 
 #[test]
 #[available_gas(30000000)]
 #[should_panic]
-fn test_create_collection_collision() {
+fn test_create_attribute_group_collision() {
     let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::Admin(USER1()),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::Admin(USER1()),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::Admin(USER1()),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::Admin(USER1()),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 }
 
@@ -81,18 +81,18 @@ fn test_create_collection_collision() {
 #[test]
 #[available_gas(30000000)]
 #[should_panic]
-fn test_create_collection_with_non_world_admin() {
+fn test_create_attribute_group_with_non_world_admin() {
     let DefaultWorld{world, set_nft, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
     let mut calldata: Array<felt252> = ArrayTrait::new();
 
-    CreateCollectionData {
-        collection_id: 1,
-        owner: CollectionOwner::Admin(USER1()),
+    CreateAttributeGroupData {
+        attribute_group_id: 1,
+        owner: AttributeGroupOwner::Admin(USER1()),
         briq_set_contract_address: set_nft.contract_address
     }
         .serialize(ref calldata);
-    world.execute('create_collection', (calldata));
+    world.execute('create_attribute_group', (calldata));
 }

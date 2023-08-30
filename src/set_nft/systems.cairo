@@ -1,5 +1,5 @@
 use starknet::ContractAddress;
-use traits::{Into,TryInto};
+use traits::{Into, TryInto};
 use array::ArrayTrait;
 use array::SpanTrait;
 use option::OptionTrait;
@@ -17,13 +17,15 @@ use dojo_erc::erc1155::components::OperatorApproval;
 use dojo_erc::erc1155::components::ERC1155Balance;
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
 
-use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner, ERC721TokenApproval};
+use dojo_erc::erc721::components::{
+    ERC721Balance, ERC721BalanceTrait, ERC721Owner, ERC721OwnerTrait, ERC721TokenApproval,
+    ERC721TokenApprovalTrait
+};
 
 
 use briq_protocol::attributes::attributes::remove_attributes;
 
 use briq_protocol::types::{FTSpec, PackedShapeItem};
-
 
 
 //###########
@@ -69,25 +71,26 @@ fn hash_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,)
 }
 
 fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
+    // TODO: retrieve related collection
+
     let token = get_world_config(ctx.world).set;
     assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
-    let token_owner = get!(ctx.world, (token, token_id), ERC721Owner);
-    assert(token_owner.address.is_zero(), 'ERC721: already minted');
+    let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id);
+    assert(token_owner.is_zero(), 'ERC721: already minted');
 
     // increase token supply
-    let mut balance = get!(ctx.world, (token, recipient), ERC721Balance);
-    balance.amount += 1;
-    set!(ctx.world, (balance));
-    set!(ctx.world, ERC721Owner { token, token_id, address: recipient });
+    ERC721BalanceTrait::increase_balance(ctx.world, token, recipient, 1);
+    ERC721OwnerTrait::set_owner(ctx.world, token, token_id, recipient);
 }
 
 fn destroy_token(ctx: Context, owner: ContractAddress, token_id: felt252) {
+    // TODO: retrieve related collection
     let token = get_world_config(ctx.world).set;
-    let mut balance = get!(ctx.world, (token, owner), ERC721Balance);
-    balance.amount -= 1;
-    set!(ctx.world, (balance));
-    set!(ctx.world, ERC721Owner { token, token_id, address: Zeroable::zero() });
+
+    // decrease token supply
+    ERC721BalanceTrait::decrease_balance(ctx.world, token, owner, 1);
+    ERC721OwnerTrait::set_owner(ctx.world, token, token_id, Zeroable::zero());
 }
 
 fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: felt252) {

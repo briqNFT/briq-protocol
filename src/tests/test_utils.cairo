@@ -59,8 +59,8 @@ fn spawn_world() -> IWorldDispatcher {
         dojo_erc::erc721::components::erc_721_balance::TEST_CLASS_HASH,
         dojo_erc::erc721::components::erc_721_owner::TEST_CLASS_HASH,
         dojo_erc::erc721::components::erc_721_token_approval::TEST_CLASS_HASH,
-        // collection
-        briq_protocol::attributes::collection::collection::TEST_CLASS_HASH,
+        // attribute_group
+        briq_protocol::attributes::attribute_group::attribute_group::TEST_CLASS_HASH,
         // shape_verifier
         briq_protocol::shape_verifier::shape_verifier::TEST_CLASS_HASH,
     ];
@@ -91,8 +91,8 @@ fn spawn_world() -> IWorldDispatcher {
         // briq_factory
         briq_protocol::briq_factory::systems::BriqFactoryMint::TEST_CLASS_HASH,
         briq_protocol::briq_factory::systems::BriqFactoryInitialize::TEST_CLASS_HASH,
-        // attributes
-        briq_protocol::attributes::collection::create_collection::TEST_CLASS_HASH,
+        // attribute_group
+        briq_protocol::attributes::attribute_group::create_attribute_group::TEST_CLASS_HASH,
         // unboxing
         briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
     ];
@@ -104,7 +104,7 @@ fn spawn_world() -> IWorldDispatcher {
     //
 
     world.grant_writer('WorldConfig', 'SetupWorld');
-    world.grant_writer('Collection', 'create_collection');
+    world.grant_writer('AttributeGroup', 'create_attribute_group');
 
     // ***************************
     // ****  erc1155   

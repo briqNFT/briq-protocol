@@ -16,7 +16,7 @@ use briq_protocol::tests::test_utils::{
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
 
-use briq_protocol::attributes::collection::{CreateCollectionData, CollectionOwner};
+use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
 use briq_protocol::shape_verifier::RegisterShapeVerifierData;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem};
 
@@ -37,7 +37,7 @@ mod convenience_for_testing {
         description: Array<felt252>, // TODO string
         fts: Array<FTSpec>,
         shape: Array<PackedShapeItem>,
-        attributes: Array<felt252>
+        attributes: Array<felt252>,
     ) -> felt252 {
         // The name/description is unused except to have them show up in calldata.
         let nb_briq = shape.len();
@@ -266,13 +266,13 @@ fn test_simple_mint_attribute_ok() {
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::System('shape_verifier_system'),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::System('shape_verifier_system'),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 
     {
@@ -355,13 +355,13 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::System('shape_verifier_system'),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::System('shape_verifier_system'),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 
     {
@@ -430,13 +430,13 @@ fn test_simple_mint_attribute_bad_shape_item() {
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::System('shape_verifier_system'),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::System('shape_verifier_system'),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 
     {
@@ -491,13 +491,13 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::System('shape_verifier_system'),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::System('shape_verifier_system'),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 
     {
@@ -540,13 +540,13 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
 
     {
         let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateCollectionData {
-            collection_id: 1,
-            owner: CollectionOwner::System('shape_verifier_system'),
+        CreateAttributeGroupData {
+            attribute_group_id: 1,
+            owner: AttributeGroupOwner::System('shape_verifier_system'),
             briq_set_contract_address: set_nft.contract_address
         }
             .serialize(ref calldata);
-        world.execute('create_collection', (calldata));
+        world.execute('create_attribute_group', (calldata));
     }
 
     {
