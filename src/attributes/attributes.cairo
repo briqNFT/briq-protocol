@@ -24,20 +24,20 @@ use debug::PrintTrait;
 
 #[derive(Drop, starknet::Event)]
 struct AttributeAssigned {
-    set_token_id: u256,
+    set_token_id: ContractAddress,
     attribute_id: felt252
 }
 
 #[derive(Drop, starknet::Event)]
 struct AttributeRemoved {
-    set_token_id: u256,
+    set_token_id: ContractAddress,
     attribute_id: felt252
 }
 
 #[derive(Drop, Serde)]
 struct AttributeAssignData {
     set_owner: ContractAddress,
-    set_token_id: felt252,
+    set_token_id: ContractAddress,
     attribute_id: felt252,
     shape: Array<PackedShapeItem>,
     fts: Array<FTSpec>,
@@ -46,7 +46,7 @@ struct AttributeAssignData {
 #[derive(Drop, Serde)]
 struct AttributeRemoveData {
     set_owner: ContractAddress,
-    set_token_id: felt252,
+    set_token_id: ContractAddress,
     attribute_id: felt252
 }
 
@@ -59,7 +59,7 @@ enum AttributeHandlerData {
 fn assign_attributes(
     ctx: Context,
     set_owner: ContractAddress,
-    set_token_id: felt252,
+    set_token_id: ContractAddress,
     mut attributes: Array<felt252>,
     shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
@@ -69,7 +69,7 @@ fn assign_attributes(
     }
 
     assert(set_owner.is_non_zero(), 'Bad input');
-    assert(set_token_id != 0, 'Bad input');
+    assert(set_token_id.is_non_zero(), 'Bad input');
 
     loop {
         if (attributes.len() == 0) {
@@ -81,29 +81,15 @@ fn assign_attributes(
     };
 
     // Update the cumulative balance
-    // TODO: replace wen merge on dojo
-    // let balance = ERC1155BalanceTrait::balance_of(
-    //     ctx.world, CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id
-    // );
-    let balance = get!(
-        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id), ERC1155Balance
-    )
-        .amount;
-    set!(
-        ctx.world,
-        ERC1155Balance {
-            token: CUM_BALANCE_TOKEN(),
-            token_id: CB_ATTRIBUTES().into(),
-            account: set_token_id.try_into().unwrap(),
-            amount: balance + attributes.len().into()
-        }
+    ERC1155BalanceTrait::unchecked_increase_balance(
+        ctx.world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into()
     );
 }
 
 fn inner_attribute_assign(
     ctx: Context,
     set_owner: ContractAddress,
-    set_token_id: felt252,
+    set_token_id: ContractAddress,
     attribute_id: felt252,
     shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
@@ -132,18 +118,21 @@ fn inner_attribute_assign(
         },
     };
 
-    emit!(ctx.world, AttributeAssigned { set_token_id: set_token_id.into(), attribute_id });
+    emit!(ctx.world, AttributeAssigned { set_token_id: set_token_id, attribute_id });
 }
 
 fn remove_attributes(
-    ctx: Context, set_owner: ContractAddress, set_token_id: felt252, mut attributes: Array<felt252>
+    ctx: Context,
+    set_owner: ContractAddress,
+    set_token_id: ContractAddress,
+    mut attributes: Array<felt252>
 ) {
     if attributes.len() == 0 {
         return ();
     }
 
     assert(set_owner.is_non_zero(), 'Bad input');
-    assert(set_token_id != 0, 'Bad input');
+    assert(set_token_id.is_non_zero(), 'Bad input');
 
     loop {
         if (attributes.len() == 0) {
@@ -153,29 +142,13 @@ fn remove_attributes(
     };
 
     // Update the cumulative balance
-    // TODO: replace wen merge on dojo
-    // let balance = ERC1155BalanceTrait::balance_of(
-    //     ctx.world, CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id
-    // );
-
-    let balance = get!(
-        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id), ERC1155Balance
-    )
-        .amount;
-
-    set!(
-        ctx.world,
-        ERC1155Balance {
-            token: CUM_BALANCE_TOKEN(),
-            token_id: CB_ATTRIBUTES().into(),
-            account: set_token_id.try_into().unwrap(),
-            amount: balance - attributes.len().into()
-        }
+    ERC1155BalanceTrait::unchecked_decrease_balance(
+        ctx.world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into()
     );
 }
 
 fn remove_attribute_inner(
-    ctx: Context, set_owner: ContractAddress, set_token_id: felt252, attribute_id: felt252,
+    ctx: Context, set_owner: ContractAddress, set_token_id: ContractAddress, attribute_id: felt252,
 ) {
     assert(attribute_id != 0, 'Bad input');
 
@@ -199,6 +172,6 @@ fn remove_attribute_inner(
         },
     }
 
-    emit!(ctx.world, AttributeRemoved { set_token_id: set_token_id.into(), attribute_id });
+    emit!(ctx.world, AttributeRemoved { set_token_id, attribute_id });
 }
 
