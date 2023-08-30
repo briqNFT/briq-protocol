@@ -19,16 +19,25 @@ use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, Attri
 use briq_protocol::shape_verifier::RegisterShapeVerifierData;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem};
 use briq_protocol::world_config::get_world_config;
+use dojo_erc::erc_common::utils::{system_calldata};
+
 
 use debug::PrintTrait;
 
 mod convenience_for_testing {
     use array::ArrayTrait;
     use serde::Serde;
+    use traits::{Into, TryInto};
+    use option::{OptionTrait};
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use starknet::{ContractAddress, get_contract_address};
-    use briq_protocol::types::{FTSpec, PackedShapeItem};
+    use starknet::{ContractAddress, ClassHash, get_contract_address};
+    use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem};
     use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData, hash_token_id};
+    use dojo_erc::erc_common::utils::{system_calldata};
+    use briq_protocol::shape_verifier::RegisterShapeVerifierData;
+    use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
+
+
     fn assemble(
         world: IWorldDispatcher,
         owner: ContractAddress,
@@ -38,16 +47,20 @@ mod convenience_for_testing {
         fts: Array<FTSpec>,
         shape: Array<PackedShapeItem>,
         attributes: Array<felt252>,
+    // set_address: ContractAddress
     ) -> felt252 {
         // The name/description is unused except to have them show up in calldata.
         let nb_briq = shape.len();
 
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        AssemblySystemData {
-            caller: get_contract_address(), owner, token_id_hint, fts, shape, attributes
-        }
-            .serialize(ref calldata);
-        world.execute('set_nft_assembly', calldata);
+        world
+            .execute(
+                'set_nft_assembly',
+                system_calldata(
+                    AssemblySystemData {
+                        caller: get_contract_address(), owner, token_id_hint, fts, shape, attributes
+                    }
+                )
+            );
 
         let token_id = hash_token_id(owner, token_id_hint, nb_briq);
         token_id
@@ -60,13 +73,65 @@ mod convenience_for_testing {
         fts: Array<FTSpec>,
         attributes: Array<felt252>
     ) {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        DisassemblySystemData { caller: get_contract_address(), owner, token_id, fts, attributes }
-            .serialize(ref calldata);
-        world.execute('set_nft_disassembly', calldata);
+        world
+            .execute(
+                'set_nft_disassembly',
+                system_calldata(
+                    DisassemblySystemData {
+                        caller: get_contract_address(), owner, token_id, fts, attributes
+                    }
+                )
+            );
+    }
+
+
+    fn register_shape_verifier(
+        world: IWorldDispatcher, attribute_id: felt252, class_hash: ClassHash
+    ) {
+        world
+            .execute(
+                'register_shape_verifier',
+                system_calldata(RegisterShapeVerifierData { attribute_id: 0x1, class_hash })
+            );
+    }
+
+    fn register_shape_verifier_shape_1(world: IWorldDispatcher) {
+        register_shape_verifier(
+            world,
+            0x1,
+            briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH.try_into().unwrap()
+        )
+    }
+
+    fn valid_shape_1() -> Array<PackedShapeItem> {
+        array![
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
+            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
+        ]
+    }
+
+
+    fn create_attribute_group_1(
+        world: IWorldDispatcher, briq_set_contract_address: ContractAddress
+    ) {
+        world
+            .execute(
+                'create_attribute_group',
+                system_calldata(
+                    CreateAttributeGroupData {
+                        attribute_group_id: 1,
+                        owner: AttributeGroupOwner::System('shape_verifier_system'),
+                        briq_set_contract_address: briq_set_contract_address
+                    }
+                )
+            );
     }
 }
-use convenience_for_testing::{assemble, disassemble};
+use convenience_for_testing::{
+    assemble, disassemble, register_shape_verifier_shape_1, valid_shape_1, create_attribute_group_1
+};
 
 #[test]
 #[available_gas(30000000)]
@@ -163,12 +228,7 @@ fn test_simple_mint_and_burn_2() {
         array![0xcafe],
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
-        array![
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
-        ],
+        valid_shape_1(),
         array![],
     );
     assert(
@@ -205,12 +265,7 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
         array![0xcafe],
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
-        array![
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
-        ],
+        valid_shape_1(),
         array![],
     );
     assert(
@@ -223,12 +278,6 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
     disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
-    // assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
-    // assert(
-    //     starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
-    // );
-    // 
-// TODO: validate that token ID balance asserts as it's 0
 }
 
 
@@ -249,12 +298,7 @@ fn test_simple_mint_attribute_not_exist() {
         array![0xcafe],
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
-        array![
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
-        ],
+        valid_shape_1(),
         array![0x1],
     );
 }
@@ -265,28 +309,9 @@ fn test_simple_mint_attribute_not_exist() {
 fn test_simple_mint_attribute_ok() {
     let DefaultWorld{world, briq_token, set_nft, booklet, .. } = deploy_default_world();
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::System('shape_verifier_system'),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
-    }
+    create_attribute_group_1(world, set_nft.contract_address);
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        RegisterShapeVerifierData {
-            attribute_id: 0x1,
-            class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
-                .try_into()
-                .unwrap()
-        }
-            .serialize(ref calldata);
-        world.execute('register_shape_verifier', (calldata));
-    }
+    register_shape_verifier_shape_1(world);
 
     world
         .execute(
@@ -314,12 +339,7 @@ fn test_simple_mint_attribute_ok() {
         array![0xcafe],
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
-        array![
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
-        ],
+        valid_shape_1(),
         array![0x1],
     );
     assert(
@@ -354,28 +374,9 @@ fn test_simple_mint_attribute_ok() {
 fn test_simple_mint_attribute_dont_have_the_booklet() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::System('shape_verifier_system'),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
-    }
+    create_attribute_group_1(world, set_nft.contract_address);
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        RegisterShapeVerifierData {
-            attribute_id: 0x1,
-            class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
-                .try_into()
-                .unwrap()
-        }
-            .serialize(ref calldata);
-        world.execute('register_shape_verifier', (calldata));
-    }
+    register_shape_verifier_shape_1(world);
 
     impersonate(DEFAULT_OWNER());
 
@@ -388,12 +389,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         array![0xcafe],
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
-        array![
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
-        ],
+        valid_shape_1(),
         array![0x1],
     );
     assert(
@@ -429,28 +425,9 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
 fn test_simple_mint_attribute_bad_shape_item() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::System('shape_verifier_system'),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
-    }
+    create_attribute_group_1(world, set_nft.contract_address);
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        RegisterShapeVerifierData {
-            attribute_id: 0x1,
-            class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
-                .try_into()
-                .unwrap()
-        }
-            .serialize(ref calldata);
-        world.execute('register_shape_verifier', (calldata));
-    }
+    register_shape_verifier_shape_1(world);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -490,28 +467,9 @@ fn test_simple_mint_attribute_bad_shape_item() {
 fn test_simple_mint_attribute_shape_fts_mismatch() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::System('shape_verifier_system'),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
-    }
+    create_attribute_group_1(world, set_nft.contract_address);
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        RegisterShapeVerifierData {
-            attribute_id: 0x1,
-            class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
-                .try_into()
-                .unwrap()
-        }
-            .serialize(ref calldata);
-        world.execute('register_shape_verifier', (calldata));
-    }
+    register_shape_verifier_shape_1(world);
 
     impersonate(DEFAULT_OWNER());
 
@@ -539,28 +497,9 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
 fn test_simple_mint_attribute_forgot_in_disassembly() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        CreateAttributeGroupData {
-            attribute_group_id: 1,
-            owner: AttributeGroupOwner::System('shape_verifier_system'),
-            briq_set_contract_address: set_nft.contract_address
-        }
-            .serialize(ref calldata);
-        world.execute('create_attribute_group', (calldata));
-    }
+    create_attribute_group_1(world, set_nft.contract_address);
 
-    {
-        let mut calldata: Array<felt252> = ArrayTrait::new();
-        RegisterShapeVerifierData {
-            attribute_id: 0x1,
-            class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
-                .try_into()
-                .unwrap()
-        }
-            .serialize(ref calldata);
-        world.execute('register_shape_verifier', (calldata));
-    }
+    register_shape_verifier_shape_1(world);
 
     impersonate(DEFAULT_OWNER());
 
@@ -573,12 +512,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         array![0xcafe],
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
-        array![
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
-            ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
-        ],
+        valid_shape_1(),
         array![0x1],
     );
     assert(
