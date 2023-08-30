@@ -50,10 +50,8 @@ mod SetupWorld {
     use array::ArrayTrait;
     use traits::Into;
 
-    use briq_protocol::world_config::AdminTrait;
-
     use dojo::world::Context;
-    use super::WorldConfig;
+    use super::{WorldConfig, AdminTrait};
     use super::SYSTEM_CONFIG_ID;
 
     fn execute(

@@ -38,11 +38,13 @@ mod BriqFactoryMint {
     use zeroable::Zeroable;
     use starknet::{ContractAddress, get_contract_address, get_caller_address, get_block_timestamp};
 
-    use briq_protocol::world_config::{AdminTrait, get_world_config};
+    use briq_protocol::world_config::{get_world_config};
     use briq_protocol::felt_math::{FeltOrd};
     use super::{
         BriqsBought, BriqFactoryTrait, BriqFactoryBuyParams, DECIMALS, MIN_PURCHASE, BRIQ_MATERIAL
     };
+    use briq_protocol::world_config::AdminTrait;
+
 
     #[starknet::interface]
     trait IERC20<TState> {
@@ -110,10 +112,9 @@ mod BriqFactoryInitialize {
     use zeroable::Zeroable;
     use starknet::ContractAddress;
 
-    use briq_protocol::world_config::AdminTrait;
-
     use super::BriqFactoryInitializeParams;
     use super::{BriqFactoryStore, BriqFactoryTrait};
+    use briq_protocol::world_config::AdminTrait;
 
 
     fn execute(ctx: Context, params: BriqFactoryInitializeParams) {

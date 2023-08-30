@@ -6,7 +6,6 @@ use serde::Serde;
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
 use briq_protocol::tests::test_utils::{
     DefaultWorld, DEFAULT_OWNER, USER1, deploy_default_world, impersonate
 };
