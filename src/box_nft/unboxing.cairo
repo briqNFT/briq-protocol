@@ -8,7 +8,7 @@ use starknet::ContractAddress;
 
 use dojo::world::IWorldDispatcher;
 
-use briq_protocol::world_config::{get_world_config, AdminTrait};
+use briq_protocol::world_config::{get_world_config};
 
 #[derive(Drop, Copy, Serde)]
 struct BoxData {

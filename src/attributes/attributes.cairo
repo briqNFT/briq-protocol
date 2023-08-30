@@ -14,10 +14,12 @@ use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTE
 
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc1155::components::ERC1155Balance;
-use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
+use briq_protocol::world_config::{WorldConfig};
 
 use briq_protocol::attributes::get_attribute_group_id;
-use briq_protocol::attributes::attribute_group::{AttributeGroup, AttributeGroupTrait, AttributeGroupOwner};
+use briq_protocol::attributes::attribute_group::{
+    AttributeGroup, AttributeGroupTrait, AttributeGroupOwner
+};
 
 use debug::PrintTrait;
 
@@ -106,7 +108,9 @@ fn inner_attribute_assign(
     assert(attribute_id != 0, 'Bad input');
 
     let attribute_group_id = get_attribute_group_id(attribute_id);
-    let attribute_group = AttributeGroupTrait::get_attribute_group(ctx.world, attribute_group_id.try_into().unwrap());
+    let attribute_group = AttributeGroupTrait::get_attribute_group(
+        ctx.world, attribute_group_id.try_into().unwrap()
+    );
 
     match attribute_group.owner {
         AttributeGroupOwner::Admin(address) => {
@@ -167,7 +171,9 @@ fn remove_attribute_inner(
     assert(attribute_id != 0, 'Bad input');
 
     let attribute_group_id = get_attribute_group_id(attribute_id);
-    let attribute_group = AttributeGroupTrait::get_attribute_group(ctx.world, attribute_group_id.try_into().unwrap());
+    let attribute_group = AttributeGroupTrait::get_attribute_group(
+        ctx.world, attribute_group_id.try_into().unwrap()
+    );
 
     match attribute_group.owner {
         AttributeGroupOwner::Admin(address) => {
@@ -186,8 +192,4 @@ fn remove_attribute_inner(
 
     emit!(ctx.world, AttributeRemoved { set_token_id: set_token_id.into(), attribute_id });
 }
-
-
-
-
 

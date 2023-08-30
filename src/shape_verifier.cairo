@@ -10,7 +10,7 @@ use serde::Serde;
 
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner};
-use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
+use briq_protocol::world_config::{AdminTrait, WorldConfig, get_world_config};
 
 use briq_protocol::types::{FTSpec, PackedShapeItem};
 
@@ -72,7 +72,7 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
         // TODO -> use update that sends events
         dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
             world,
-            get!(world, (SYSTEM_CONFIG_ID), WorldConfig).booklet,
+            get_world_config(world).booklet,
             set_owner,
             set_token_id.try_into().unwrap(),
             array![attribute_id].span(),
@@ -90,7 +90,7 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
         // TODO -> use update that sends events
         dojo_erc::erc1155::components::ERC1155BalanceTrait::transfer_tokens(
             world,
-            get!(world, (SYSTEM_CONFIG_ID), WorldConfig).booklet,
+            get_world_config(world).booklet,
             set_token_id.try_into().unwrap(),
             set_owner,
             array![attribute_id].span(),
@@ -111,7 +111,7 @@ mod register_shape_verifier {
     use super::RegisterShapeVerifierData;
     use super::ShapeVerifier;
 
-    use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, AdminTrait};
+    use briq_protocol::world_config::{WorldConfig, AdminTrait};
 
     fn execute(ctx: Context, data: RegisterShapeVerifierData,) {
         let RegisterShapeVerifierData{attribute_id, class_hash } = data;
@@ -125,7 +125,7 @@ mod register_shape_verifier {
 #[system]
 mod shape_verifier_system {
     use dojo::world::Context;
-    use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, AdminTrait};
+    use briq_protocol::world_config::{WorldConfig, AdminTrait};
 
     use super::{ShapeVerifier, ShapeVerifierTrait};
     use briq_protocol::attributes::attributes::{

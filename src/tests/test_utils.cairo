@@ -16,11 +16,10 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use briq_protocol::briq_token::BriqToken;
 use briq_protocol::set_nft::SetNft;
-use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
 
 use dojo_erc::erc721::interface::IERC721Dispatcher;
 use dojo_erc::erc1155::interface::IERC1155Dispatcher;
-
+use briq_protocol::world_config::{get_world_config};
 
 fn ETH_ADDRESS() -> ContractAddress {
     starknet::contract_address_const::<0xeeee>()
@@ -237,8 +236,8 @@ fn deploy_default_world() -> DefaultWorld {
 #[available_gas(30000000)]
 fn test_deploy_default_world() {
     let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
-    assert(get!(world, (SYSTEM_CONFIG_ID), WorldConfig).briq == 0x3.try_into().unwrap(), 'totoro');
-    assert(get!(world, (SYSTEM_CONFIG_ID), WorldConfig).set == 0x4.try_into().unwrap(), 'totoro');
+    assert(get_world_config(world).briq == 0x3.try_into().unwrap(), 'totoro');
+    assert(get_world_config(world).set == 0x4.try_into().unwrap(), 'totoro');
 }
 
 
@@ -251,7 +250,7 @@ fn mint_briqs(world: IWorldDispatcher, owner: ContractAddress, material: felt252
             'ERC1155MintBurn',
             (array![
                 WORLD_ADMIN().into(),
-                get!(world, (SYSTEM_CONFIG_ID), WorldConfig).briq.into(),
+                get_world_config(world).briq.into(),
                 0,
                 owner.into(),
                 1,

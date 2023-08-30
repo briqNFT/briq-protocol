@@ -98,7 +98,9 @@ mod SetNft {
     //
 
     #[constructor]
-    fn constructor(ref self: ContractState, world: IWorldDispatcher, name:felt252, symbol:felt252) {
+    fn constructor(
+        ref self: ContractState, world: IWorldDispatcher, name: felt252, symbol: felt252
+    ) {
         self.world.write(world);
         self.name_.write(name);
         self.symbol_.write(symbol);
@@ -296,6 +298,4 @@ mod SetNft {
             self.emit(event);
         }
     }
-
-  
 }

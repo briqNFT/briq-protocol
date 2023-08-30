@@ -8,7 +8,6 @@ use starknet::{ContractAddress, ClassHash};
 use briq_protocol::tests::test_utils::{
     deploy_default_world, impersonate, DefaultWorld, DEFAULT_OWNER, WORLD_ADMIN
 };
-use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::briq_token::BriqToken;
 use briq_protocol::briq_token::BriqToken::{Event, Upgraded};

@@ -34,7 +34,7 @@ enum AttributeGroupOwner {
 }
 
 #[derive(Component, Copy, Drop, Serde, SerdeLen)]
-struct AttributeGroup  {
+struct AttributeGroup {
     #[key]
     attribute_group_id: u64,
     owner: AttributeGroupOwner,
@@ -43,8 +43,8 @@ struct AttributeGroup  {
 
 
 trait AttributeGroupTrait {
-    fn get_attribute_group(world: IWorldDispatcher, attribute_group_id: u64) -> AttributeGroup ;
-    fn set_attribute_group(world: IWorldDispatcher, attribute_group: AttributeGroup );
+    fn get_attribute_group(world: IWorldDispatcher, attribute_group_id: u64) -> AttributeGroup;
+    fn set_attribute_group(world: IWorldDispatcher, attribute_group: AttributeGroup);
     fn exists(world: IWorldDispatcher, attribute_group_id: u64) -> bool;
 
     fn new_attribute_group(
@@ -52,16 +52,16 @@ trait AttributeGroupTrait {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         briq_set_contract_address: ContractAddress
-    ) -> AttributeGroup ;
+    ) -> AttributeGroup;
 }
 
 // #[generate_trait]
 impl AttributeGroupImpl of AttributeGroupTrait {
-    fn get_attribute_group(world: IWorldDispatcher, attribute_group_id: u64) -> AttributeGroup  {
+    fn get_attribute_group(world: IWorldDispatcher, attribute_group_id: u64) -> AttributeGroup {
         get!(world, (attribute_group_id), AttributeGroup)
     }
 
-    fn set_attribute_group(world: IWorldDispatcher, attribute_group: AttributeGroup ) {
+    fn set_attribute_group(world: IWorldDispatcher, attribute_group: AttributeGroup) {
         set!(world, (attribute_group));
     }
 
@@ -75,11 +75,16 @@ impl AttributeGroupImpl of AttributeGroupTrait {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         briq_set_contract_address: ContractAddress
-    ) -> AttributeGroup  {
+    ) -> AttributeGroup {
         assert(attribute_group_id > 0, 'invalid attribute_group_id');
-        assert(!AttributeGroupTrait::exists(world, attribute_group_id), 'attribute_group already exists');
+        assert(
+            !AttributeGroupTrait::exists(world, attribute_group_id),
+            'attribute_group already exists'
+        );
 
-        AttributeGroup { attribute_group_id: attribute_group_id, owner: owner, briq_set_contract_address }
+        AttributeGroup {
+            attribute_group_id: attribute_group_id, owner: owner, briq_set_contract_address
+        }
     }
 }
 
@@ -148,7 +153,10 @@ mod create_attribute_group {
 
         match owner {
             AttributeGroupOwner::Admin(address) => {
-                emit!(ctx.world, AttributeGroupCreated { attribute_group_id, owner: address, system: '' });
+                emit!(
+                    ctx.world,
+                    AttributeGroupCreated { attribute_group_id, owner: address, system: '' }
+                );
             },
             AttributeGroupOwner::System(system_name) => {
                 emit!(

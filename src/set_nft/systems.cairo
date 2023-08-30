@@ -10,7 +10,7 @@ use debug::PrintTrait;
 use dojo::world::Context;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, get_world_config};
+use briq_protocol::world_config::{WorldConfig, get_world_config};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 
 use dojo_erc::erc1155::components::OperatorApproval;
@@ -41,7 +41,7 @@ fn transfer_briqs(
     if fts.len() == 0 {
         return ();
     }
-    let address = get!(world, (SYSTEM_CONFIG_ID), WorldConfig).briq;
+    let address = get_world_config(world).briq;
     let ftspec = fts.pop_front().unwrap();
 
     briq_protocol::briq_token::systems::update_nocheck(
@@ -127,7 +127,7 @@ mod set_nft_assembly {
     use serde::Serde;
 
     use dojo::world::Context;
-    use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig};
+    use briq_protocol::world_config::{WorldConfig};
 
     use briq_protocol::types::{FTSpec, PackedShapeItem};
 
@@ -177,7 +177,7 @@ mod set_nft_disassembly {
     use dojo::world::Context;
     use dojo_erc::erc721::components::{ERC721Owner, ERC721TokenApproval};
     use dojo_erc::erc1155::components::OperatorApproval;
-    use briq_protocol::world_config::{SYSTEM_CONFIG_ID, WorldConfig, get_world_config};
+    use briq_protocol::world_config::{WorldConfig, get_world_config};
 
     use briq_protocol::types::{FTSpec, PackedShapeItem};
 

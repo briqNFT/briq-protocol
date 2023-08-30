@@ -8,7 +8,6 @@ use starknet::testing::{set_caller_address, set_contract_address};
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::world_config::{WorldConfig, SYSTEM_CONFIG_ID};
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
@@ -19,6 +18,7 @@ use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
 use briq_protocol::shape_verifier::RegisterShapeVerifierData;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem};
+use briq_protocol::world_config::get_world_config;
 
 use debug::PrintTrait;
 
@@ -292,7 +292,7 @@ fn test_simple_mint_attribute_ok() {
             'ERC1155MintBurn',
             (array![
                 WORLD_ADMIN().into(),
-                get!(world, (SYSTEM_CONFIG_ID), WorldConfig).booklet.into(),
+                get_world_config(world).booklet.into(),
                 0,
                 DEFAULT_OWNER().into(),
                 1,

@@ -1,4 +1,3 @@
-
 #[starknet::contract]
 mod ContractUpgrade {
     use array::ArrayTrait;
