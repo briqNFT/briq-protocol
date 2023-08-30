@@ -1,7 +1,6 @@
 use core::serde::Serde;
 use starknet::ContractAddress;
-use traits::Into;
-use traits::TryInto;
+use traits::{Into, TryInto};
 use array::ArrayTrait;
 use array::SpanTrait;
 use option::OptionTrait;
@@ -10,10 +9,10 @@ use clone::Clone;
 
 use briq_protocol::types::{FTSpec, PackedShapeItem};
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
-use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
+use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES};
 
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::erc1155::components::ERC1155Balance;
+use dojo_erc::erc1155::components::{ERC1155Balance, ERC1155BalanceTrait};
 use briq_protocol::world_config::{WorldConfig};
 
 use briq_protocol::attributes::get_attribute_group_id;
@@ -82,15 +81,19 @@ fn assign_attributes(
     };
 
     // Update the cumulative balance
+    // TODO: replace wen merge on dojo
+    // let balance = ERC1155BalanceTrait::balance_of(
+    //     ctx.world, CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id
+    // );
     let balance = get!(
-        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, set_token_id), ERC1155Balance
+        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id), ERC1155Balance
     )
         .amount;
     set!(
         ctx.world,
         ERC1155Balance {
             token: CUM_BALANCE_TOKEN(),
-            token_id: CB_ATTRIBUTES,
+            token_id: CB_ATTRIBUTES().into(),
             account: set_token_id.try_into().unwrap(),
             amount: balance + attributes.len().into()
         }
@@ -150,15 +153,21 @@ fn remove_attributes(
     };
 
     // Update the cumulative balance
+    // TODO: replace wen merge on dojo
+    // let balance = ERC1155BalanceTrait::balance_of(
+    //     ctx.world, CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id
+    // );
+
     let balance = get!(
-        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES, set_token_id), ERC1155Balance
+        ctx.world, (CUM_BALANCE_TOKEN(), CB_ATTRIBUTES(), set_token_id), ERC1155Balance
     )
         .amount;
+
     set!(
         ctx.world,
         ERC1155Balance {
             token: CUM_BALANCE_TOKEN(),
-            token_id: CB_ATTRIBUTES,
+            token_id: CB_ATTRIBUTES().into(),
             account: set_token_id.try_into().unwrap(),
             amount: balance - attributes.len().into()
         }

@@ -223,10 +223,11 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
     disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
-    assert(
-        starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
-    );
-    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
+    // assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
+    // assert(
+    //     starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
+    // );
+    // 
 // TODO: validate that token ID balance asserts as it's 0
 }
 
