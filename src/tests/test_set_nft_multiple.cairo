@@ -70,7 +70,7 @@ use briq_protocol::tests::test_set_nft::convenience_for_testing::{assemble, disa
 //         CreateAttributeGroupData {
 //             attribute_group_id: 1,
 //             owner: AttributeGroupOwner::System('shape_verifier_system'),
-//             briq_set_contract_address: set2_nft.contract_address
+//             briq_set_contract_address: ducks_set.contract_address
 //         }
 //             .serialize(ref calldata);
 //         world.execute('create_attribute_group', (calldata));
@@ -125,13 +125,13 @@ use briq_protocol::tests::test_set_nft::convenience_for_testing::{assemble, disa
 //         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
 //         'bad token id'
 //     );
-// // assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
-// // assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+// // assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
+// // assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
 // // assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 1, 'bad balance');
 // // assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 99, 'bad balance');
 
 // // disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
-// // assert(set_nft.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+// // assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
 // // assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
 
 // }

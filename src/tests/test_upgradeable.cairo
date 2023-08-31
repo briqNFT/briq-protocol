@@ -68,8 +68,8 @@ fn test_upgrade_with_non_admin_briq_token() {
 #[test]
 #[available_gas(30000000)]
 fn test_upgrade_with_admin_set_nft() {
-    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
-    test_upgrade_with_admin(set_nft.contract_address);
+    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
+    test_upgrade_with_admin(briq_set.contract_address);
 }
 
 
@@ -77,8 +77,8 @@ fn test_upgrade_with_admin_set_nft() {
 #[available_gas(30000000)]
 #[should_panic]
 fn test_upgrade_with_non_admin_set_nft() {
-    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
-    test_upgrade_with_non_admin(set_nft.contract_address);
+    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
+    test_upgrade_with_non_admin(briq_set.contract_address);
 }
 
 

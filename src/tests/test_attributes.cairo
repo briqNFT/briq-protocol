@@ -23,7 +23,7 @@ use dojo_erc::erc_common::utils::{system_calldata};
 #[test]
 #[available_gas(30000000)]
 fn test_create_attribute_groups() {
-    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
 
     {
         world
@@ -33,7 +33,7 @@ fn test_create_attribute_groups() {
                     CreateAttributeGroupData {
                         attribute_group_id: 1,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: set_nft.contract_address
+                        briq_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -47,7 +47,7 @@ fn test_create_attribute_groups() {
                     CreateAttributeGroupData {
                         attribute_group_id: 2,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: set_nft.contract_address
+                        briq_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -58,7 +58,7 @@ fn test_create_attribute_groups() {
 #[available_gas(30000000)]
 #[should_panic]
 fn test_create_attribute_group_collision() {
-    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
 
     {
         world
@@ -68,7 +68,7 @@ fn test_create_attribute_group_collision() {
                     CreateAttributeGroupData {
                         attribute_group_id: 1,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: set_nft.contract_address
+                        briq_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -82,7 +82,7 @@ fn test_create_attribute_group_collision() {
                     CreateAttributeGroupData {
                         attribute_group_id: 1,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: set_nft.contract_address
+                        briq_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -94,7 +94,7 @@ fn test_create_attribute_group_collision() {
 #[available_gas(30000000)]
 #[should_panic]
 fn test_create_attribute_group_with_non_world_admin() {
-    let DefaultWorld{world, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -105,7 +105,7 @@ fn test_create_attribute_group_with_non_world_admin() {
                 CreateAttributeGroupData {
                     attribute_group_id: 1,
                     owner: AttributeGroupOwner::Admin(USER1()),
-                    briq_set_contract_address: set_nft.contract_address
+                    briq_set_contract_address: briq_set.contract_address
                 }
             )
         );

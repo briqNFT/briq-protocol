@@ -84,7 +84,7 @@ fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) 
 fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
     // TODO: retrieve related collection
 
-    let token = get_world_config(ctx.world).set;
+    let token = get_world_config(ctx.world).briq_set;
     assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
     let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id);
@@ -97,7 +97,7 @@ fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
 
 fn destroy_token(ctx: Context, owner: ContractAddress, token_id: ContractAddress) {
     // TODO: retrieve related collection
-    let token = get_world_config(ctx.world).set;
+    let token = get_world_config(ctx.world).briq_set;
 
     // decrease token supply
     ERC721BalanceTrait::unchecked_decrease_balance(ctx.world, token, owner, 1);
@@ -210,7 +210,7 @@ mod set_nft_disassembly {
 
         assert(ctx.origin == caller, 'Only Caller');
 
-        let token = get_world_config(ctx.world).set;
+        let token = get_world_config(ctx.world).briq_set;
 
         let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id.into());
         assert(token_owner.is_non_zero(), 'ERC721: invalid token_id');
