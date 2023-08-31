@@ -163,21 +163,21 @@ fn deploy_contracts(
     world: IWorldDispatcher,
 ) -> (ContractAddress, ContractAddress, ContractAddress, ContractAddress, ContractAddress) {
     let constructor_calldata = array![world.contract_address.into()];
-    let set_constructor_calldata = array![world.contract_address.into(), 'briq set', 'B7'];
-    let set2_constructor_calldata = array![world.contract_address.into(), 'briq set2', 'B7'];
+    let briq_set_constructor_calldata = array![world.contract_address.into(), 'briq set', 'B7'];
+    let ducks_set_constructor_calldata = array![world.contract_address.into(), 'ducks set', 'D7'];
 
     let (briq, _) = deploy_syscall(
         BriqToken::TEST_CLASS_HASH.try_into().unwrap(), 0, constructor_calldata.span(), false
     )
         .expect('error deploying');
 
-    let (set, _) = deploy_syscall(
-        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, set_constructor_calldata.span(), false
+    let (briq_set, _) = deploy_syscall(
+        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, briq_set_constructor_calldata.span(), false
     )
         .expect('error deploying');
 
-    let (set2, _) = deploy_syscall(
-        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, set2_constructor_calldata.span(), false
+    let (ducks_set, _) = deploy_syscall(
+        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, ducks_set_constructor_calldata.span(), false
     )
         .expect('error deploying');
 
@@ -197,15 +197,15 @@ fn deploy_contracts(
     )
         .expect('error deploying');
 
-    (briq, set, set2, booklet, box)
+    (briq, briq_set, ducks_set, booklet, box)
 }
 
 #[derive(Copy, Drop)]
 struct DefaultWorld {
     world: IWorldDispatcher,
     briq_token: IERC1155Dispatcher,
-    set_nft: IERC721Dispatcher,
-    set2_nft: IERC721Dispatcher,
+    briq_set: IERC721Dispatcher,
+    ducks_set: IERC721Dispatcher,
     booklet: IERC1155Dispatcher,
     box_nft: IERC1155Dispatcher,
 }
@@ -214,19 +214,19 @@ fn deploy_default_world() -> DefaultWorld {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, set, set2, booklet, box) = deploy_contracts(world);
+    let (briq, briq_set, ducks_set, booklet, box) = deploy_contracts(world);
     world
         .execute(
             'SetupWorld',
             (array![
-                TREASURY().into(), briq.into(), set.into(), set2.into(), booklet.into(), box.into(),
+                TREASURY().into(), briq.into(), briq_set.into(), ducks_set.into(), booklet.into(), box.into(),
             ])
         );
     DefaultWorld {
         world,
         briq_token: IERC1155Dispatcher { contract_address: briq },
-        set_nft: IERC721Dispatcher { contract_address: set },
-        set2_nft: IERC721Dispatcher { contract_address: set2 },
+        briq_set: IERC721Dispatcher { contract_address: briq_set },
+        ducks_set: IERC721Dispatcher { contract_address: ducks_set },
         booklet: IERC1155Dispatcher { contract_address: booklet },
         box_nft: IERC1155Dispatcher { contract_address: box },
     }
@@ -235,9 +235,9 @@ fn deploy_default_world() -> DefaultWorld {
 #[test]
 #[available_gas(30000000)]
 fn test_deploy_default_world() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
     assert(get_world_config(world).briq == 0x3.try_into().unwrap(), 'totoro');
-    assert(get_world_config(world).set == 0x4.try_into().unwrap(), 'totoro');
+    assert(get_world_config(world).briq_set == 0x4.try_into().unwrap(), 'totoro');
 }
 
 

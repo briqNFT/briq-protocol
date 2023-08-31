@@ -137,7 +137,7 @@ use convenience_for_testing::{
 #[available_gas(30000000)]
 #[should_panic]
 fn test_empty_mint() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -156,7 +156,7 @@ fn test_empty_mint() {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_and_burn() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -178,15 +178,15 @@ fn test_simple_mint_and_burn() {
         'bad token id'
     );
 
-    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id, 1) == 1, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 99, 'bad balance');
 
     disassemble(
         world, DEFAULT_OWNER(), token_id.into(), array![FTSpec { token_id: 1, qty: 1 }], array![]
     );
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
 // TODO: validate that token ID balance asserts as it's 0
 }
@@ -195,7 +195,7 @@ fn test_simple_mint_and_burn() {
 #[available_gas(3000000000)]
 #[should_panic]
 fn test_simple_mint_and_burn_not_enough_briqs() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -214,7 +214,7 @@ fn test_simple_mint_and_burn_not_enough_briqs() {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_and_burn_2() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -236,15 +236,15 @@ fn test_simple_mint_and_burn_2() {
         'bad token id'
     );
 
-    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id, 1) == 4, 'bad token balance 1');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
     disassemble(
         world, DEFAULT_OWNER(), token_id.into(), array![FTSpec { token_id: 1, qty: 4 }], array![]
     );
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
 // TODO: validate that token ID balance asserts as it's 0
 }
@@ -255,7 +255,7 @@ fn test_simple_mint_and_burn_2() {
     expected: ('Set still has briqs', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED')
 )]
 fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -276,8 +276,8 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
         token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
-    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id, 1) == 4, 'bad token balance 1');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
@@ -291,7 +291,7 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
 #[available_gas(30000000)]
 #[should_panic]
 fn test_simple_mint_attribute_not_exist() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -312,9 +312,9 @@ fn test_simple_mint_attribute_not_exist() {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_attribute_ok() {
-    let DefaultWorld{world, briq_token, set_nft, booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, booklet, .. } = deploy_default_world();
 
-    create_attribute_group_1(world, set_nft.contract_address);
+    create_attribute_group_1(world, briq_set.contract_address);
 
     register_shape_verifier_shape_1(world);
 
@@ -351,8 +351,8 @@ fn test_simple_mint_attribute_ok() {
         token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
-    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(booklet.balance_of(token_id, 0x1) == 1, 'bad booklet balance 2');
     // TODO validate booklet balance of owner to 0
 
@@ -377,9 +377,9 @@ fn test_simple_mint_attribute_ok() {
     )
 )]
 fn test_simple_mint_attribute_dont_have_the_booklet() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
-    create_attribute_group_1(world, set_nft.contract_address);
+    create_attribute_group_1(world, briq_set.contract_address);
 
     register_shape_verifier_shape_1(world);
 
@@ -401,16 +401,16 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
-    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
 
     disassemble(
         world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![0x1]
     );
     assert(
-        starknet::contract_address_const::<0>() == set_nft.owner_of(token_id.into()), 'bad owner'
+        starknet::contract_address_const::<0>() == briq_set.owner_of(token_id.into()), 'bad owner'
     );
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
 }
 
 #[test]
@@ -428,9 +428,9 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     )
 )]
 fn test_simple_mint_attribute_bad_shape_item() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
-    create_attribute_group_1(world, set_nft.contract_address);
+    create_attribute_group_1(world, briq_set.contract_address);
 
     register_shape_verifier_shape_1(world);
 
@@ -470,9 +470,9 @@ fn test_simple_mint_attribute_bad_shape_item() {
     )
 )]
 fn test_simple_mint_attribute_shape_fts_mismatch() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
-    create_attribute_group_1(world, set_nft.contract_address);
+    create_attribute_group_1(world, briq_set.contract_address);
 
     register_shape_verifier_shape_1(world);
 
@@ -499,9 +499,9 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
 #[available_gas(3000000000)]
 #[should_panic]
 fn test_simple_mint_attribute_forgot_in_disassembly() {
-    let DefaultWorld{world, briq_token, set_nft, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
 
-    create_attribute_group_1(world, set_nft.contract_address);
+    create_attribute_group_1(world, briq_set.contract_address);
 
     register_shape_verifier_shape_1(world);
 
@@ -523,8 +523,8 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
-    assert(DEFAULT_OWNER() == set_nft.owner_of(token_id.into()), 'bad owner');
-    assert(set_nft.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
 
     disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
 }

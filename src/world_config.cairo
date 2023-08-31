@@ -14,8 +14,8 @@ struct WorldConfig {
     config_id: u32,
     treasury: ContractAddress,
     briq: ContractAddress,
-    set: ContractAddress,
-    set2: ContractAddress,
+    briq_set: ContractAddress,
+    ducks_set: ContractAddress,
     booklet: ContractAddress,
     box: ContractAddress,
 }
@@ -58,8 +58,8 @@ mod SetupWorld {
         ctx: Context,
         treasury: ContractAddress,
         briq: ContractAddress,
-        set: ContractAddress,
-        set2: ContractAddress,
+        briq_set: ContractAddress,
+        ducks_set: ContractAddress,
         booklet: ContractAddress,
         box: ContractAddress
     ) {
@@ -67,7 +67,7 @@ mod SetupWorld {
 
         set!(
             ctx.world,
-            (WorldConfig { config_id: SYSTEM_CONFIG_ID, treasury, briq, set, set2, booklet, box, })
+            (WorldConfig { config_id: SYSTEM_CONFIG_ID, treasury, briq, briq_set, ducks_set, booklet, box, })
         );
         return ();
     }
