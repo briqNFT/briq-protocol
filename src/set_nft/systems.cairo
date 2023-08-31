@@ -60,6 +60,11 @@ fn transfer_briqs(
 }
 
 
+// https://github.com/xJonathanLEI/starknet-rs/blob/master/starknet-accounts/src/factory/mod.rs#L36
+// 2 ** 251 - 256   
+// = 0x800000000000000000000000000000000000000000000000000000000000000 - 0x100
+// = 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00
+const ADDR_BOUND: u256 = 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00;
 
 // To prevent people from generating collisions, we need the token_id to be random.
 // However, we need it to be predictable for good UI.
@@ -70,8 +75,10 @@ fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) 
     let hash = pedersen(0, owner.into());
     let hash = pedersen(hash, token_id_hint);
     let hash = pedersen(hash, nb_briqs.into());
+    let hash_256: u256 = hash.into();
+    let hash_252: felt252 = (hash_256 % ADDR_BOUND).try_into().unwrap();
 
-    hash.try_into().unwrap()
+    hash_252.try_into().unwrap()
 }
 
 fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
