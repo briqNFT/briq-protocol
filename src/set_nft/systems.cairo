@@ -5,14 +5,9 @@ use array::SpanTrait;
 use option::{Option, OptionTrait};
 use zeroable::Zeroable;
 
-use dojo::world::Context;
+use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::world_config::{WorldConfig, get_world_config};
-use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
-
-use dojo_erc::erc1155::components::OperatorApproval;
-use dojo_erc::erc1155::components::{ERC1155Balance, ERC1155BalanceTrait};
+use dojo_erc::erc1155::components::{OperatorApproval, ERC1155Balance, ERC1155BalanceTrait};
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
 
 use dojo_erc::erc721::components::{
@@ -20,12 +15,14 @@ use dojo_erc::erc721::components::{
     ERC721TokenApprovalTrait
 };
 
+use briq_protocol::world_config::{WorldConfig, get_world_config};
+use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
+use briq_protocol::set_nft::systems_erc721::ALL_BRIQ_SETS;
 use briq_protocol::attributes::attributes::remove_attributes;
 use briq_protocol::attributes::attribute_group::AttributeGroupTrait;
 use briq_protocol::types::{FTSpec, PackedShapeItem, AttributeItem};
 use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::felt_math::FeltBitAnd;
-
 
 //###########
 //###########
@@ -72,6 +69,7 @@ const ADDR_BOUND: u256 = 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 // The solution adopted is to hash a hint. Our security becomes the chain hash security.
 // Hash on the # of briqs to avoid people being able to 'game' off-chain latency,
 // we had issues where people regenerated sets with the wrong # of briqs shown on marketplaces before a refresh.
+// The set will take ownership of briqs/booklet/attributes therefore we use a ContractAddress.
 fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) -> ContractAddress {
     let hash = pedersen(0, owner.into());
     let hash = pedersen(hash, token_id_hint);
@@ -82,16 +80,14 @@ fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) 
     hash_252.try_into().unwrap()
 }
 
-fn get_token_from_attributes(
+fn get_target_contract_from_attributes(
     world: IWorldDispatcher, arr: @Array<AttributeItem>
 ) -> ContractAddress {
     let mut token = get_world_config(world).briq_set;
-
     let mut span = arr.span();
     loop {
         match span.pop_front() {
             Option::Some(attribute_item) => {
-                // attribute_item.attribute_group_id
                 let attribute_group = AttributeGroupTrait::get_attribute_group(
                     world, *attribute_item.attribute_group_id
                 );
@@ -105,7 +101,6 @@ fn get_token_from_attributes(
             }
         };
     };
-
     token
 }
 
@@ -113,15 +108,14 @@ fn create_token(
     ctx: Context, token: ContractAddress, recipient: ContractAddress, token_id: felt252
 ) {
     // TODO: retrieve related collection
-
     assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
-    let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id);
+    let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
     assert(token_owner.is_zero(), 'ERC721: already minted');
 
     // increase token supply
     ERC721BalanceTrait::unchecked_increase_balance(ctx.world, token, recipient, 1);
-    ERC721OwnerTrait::unchecked_set_owner(ctx.world, token, token_id, recipient);
+    ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, recipient);
 }
 
 fn destroy_token(
@@ -132,7 +126,7 @@ fn destroy_token(
 
     // decrease token supply
     ERC721BalanceTrait::unchecked_decrease_balance(ctx.world, token, owner, 1);
-    ERC721OwnerTrait::unchecked_set_owner(ctx.world, token, token_id.into(), Zeroable::zero());
+    ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id.into(), Zeroable::zero());
 }
 
 fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: ContractAddress) {
@@ -178,7 +172,7 @@ mod set_nft_assembly {
     use briq_protocol::types::{FTSpec, PackedShapeItem};
 
     use briq_protocol::attributes::attributes::assign_attributes;
-    use briq_protocol::set_nft::systems::get_token_from_attributes;
+    use briq_protocol::set_nft::systems::get_target_contract_from_attributes;
 
     use super::AssemblySystemData;
 
@@ -186,10 +180,9 @@ mod set_nft_assembly {
         let AssemblySystemData{caller, owner, token_id_hint, fts, shape, attributes } = data;
 
         assert(ctx.origin == caller, 'Only Caller');
-
         assert(shape.len() != 0, 'Cannot mint empty set');
 
-        let token = get_token_from_attributes(ctx.world, @attributes);
+        let token = get_target_contract_from_attributes(ctx.world, @attributes);
 
         let token_id = super::get_token_id(owner, token_id_hint, shape.len());
         super::create_token(ctx, token, owner, token_id.into());
@@ -224,16 +217,17 @@ mod set_nft_disassembly {
     use clone::Clone;
 
     use dojo::world::Context;
+   
     use dojo_erc::erc721::components::{
         ERC721Owner, ERC721OwnerTrait, ERC721TokenApproval, ERC721TokenApprovalTrait
     };
     use dojo_erc::erc1155::components::{OperatorApproval, OperatorApprovalTrait};
+   
     use briq_protocol::world_config::{WorldConfig, get_world_config};
-
     use briq_protocol::types::{FTSpec, PackedShapeItem};
-
     use briq_protocol::attributes::attributes::remove_attributes;
-    use briq_protocol::set_nft::systems::get_token_from_attributes;
+    use briq_protocol::set_nft::systems::get_target_contract_from_attributes;
+    use briq_protocol::set_nft::systems_erc721::ALL_BRIQ_SETS;
 
     use super::DisassemblySystemData;
 
@@ -242,9 +236,9 @@ mod set_nft_disassembly {
 
         assert(ctx.origin == caller, 'Only Caller');
 
-        let token = get_token_from_attributes(ctx.world,  @attributes);
-        let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id.into());
-        
+        let token = get_target_contract_from_attributes(ctx.world, @attributes);
+        let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id.into());
+
         assert(token_owner.is_non_zero(), 'ERC721: invalid token_id');
         assert(token_owner == owner, 'SetNft: invalid owner');
 
