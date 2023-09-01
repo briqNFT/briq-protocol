@@ -13,9 +13,9 @@ mod test_shape_1 {
     #[external(v0)]
     impl ShapeChecker of IShapeChecker<ContractState> {
         fn verify_shape(
-            self: @ContractState, token_id: felt252, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
+            self: @ContractState, attribute_id: u64, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
         ) {
-            if token_id == 1 {
+            if attribute_id == 0x69 {
                 basic_test_shape(shape, fts);
             }
         }
