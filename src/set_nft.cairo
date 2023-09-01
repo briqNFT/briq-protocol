@@ -30,6 +30,8 @@ mod SetNft {
     use briq_protocol::utils::PartialEqArray;
     use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
 
+    use super::systems_erc721::ALL_BRIQ_SETS;
+
 
     #[storage]
     struct Storage {
@@ -120,7 +122,7 @@ mod SetNft {
 
         fn owner_of(self: @ContractState, token_id: u256) -> ContractAddress {
             let owner = ERC721OwnerTrait::owner_of(
-                self.world.read(), get_contract_address(), token_id.try_into().unwrap()
+                self.world.read(), ALL_BRIQ_SETS(), token_id.try_into().unwrap()
             );
             assert(owner.is_non_zero(), 'ERC721: invalid token_id');
             owner

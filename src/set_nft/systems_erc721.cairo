@@ -17,8 +17,12 @@ use ERC721TransferFrom::ERC721TransferFromParams;
 use ERC721Mint::ERC721MintParams;
 use ERC721Burn::ERC721BurnParams;
 
-fn TOKEN_OVERRIDE() -> ContractAddress {
-    'briq set'.try_into().unwrap()
+
+// since sets token_id is an hash (into a ContractAddress) there is low collision probability
+// ERC721OwnerTrait overrides token (ercXXX contract address) with ALL_BRIQ_SETS
+// it allows to store ownership for all sets (briq_set, ducks_set, ...) under one contract_address (ALL_BRIQ_SETS)
+fn ALL_BRIQ_SETS() -> ContractAddress {
+    'all_briq_sets'.try_into().unwrap()
 }
 
 fn emit_transfer(
@@ -73,7 +77,7 @@ mod ERC721Approve {
     };
     use super::{IERC721EventsDispatcher, IERC721EventsDispatcherTrait, Approval};
     use zeroable::Zeroable;
-    use super::TOKEN_OVERRIDE;
+    use super::ALL_BRIQ_SETS;
 
     #[derive(Drop, Serde)]
     struct ERC721ApproveParams {
@@ -89,7 +93,7 @@ mod ERC721Approve {
         assert(token == ctx.origin, 'ERC721: not authorized');
         assert(caller != to, 'ERC721: invalid self approval');
 
-        let owner = ERC721OwnerTrait::owner_of(ctx.world, TOKEN_OVERRIDE(), token_id);
+        let owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
         assert(owner.is_non_zero(), 'ERC721: invalid token_id');
 
         let is_approved_for_all = OperatorApprovalTrait::is_approved_for_all(
@@ -97,7 +101,7 @@ mod ERC721Approve {
         );
         // // ERC721: approve caller is not token owner or approved for all 
         assert(caller == owner || is_approved_for_all, 'ERC721: unauthorized caller');
-        ERC721TokenApprovalTrait::unchecked_approve(ctx.world, TOKEN_OVERRIDE(), token_id, to,);
+        ERC721TokenApprovalTrait::unchecked_approve(ctx.world, token, token_id, to,);
 
         // emit events
         super::emit_approval(ctx.world, token, owner, to, token_id);
@@ -113,8 +117,6 @@ mod ERC721SetApprovalForAll {
     use array::{ArrayTrait, SpanTrait};
 
     use dojo_erc::erc721::components::{OperatorApprovalTrait};
-    use super::TOKEN_OVERRIDE;
-
 
     #[derive(Drop, Serde)]
     struct ERC721SetApprovalForAllParams {
@@ -148,7 +150,7 @@ mod ERC721TransferFrom {
     use dojo_erc::erc721::components::{
         OperatorApprovalTrait, ERC721BalanceTrait, ERC721TokenApprovalTrait, ERC721OwnerTrait,
     };
-    use super::TOKEN_OVERRIDE;
+    use super::ALL_BRIQ_SETS;
 
 
     #[derive(Drop, Serde)]
@@ -166,14 +168,14 @@ mod ERC721TransferFrom {
         assert(token == ctx.origin, 'ERC721: not authorized');
         assert(!to.is_zero(), 'ERC721: invalid receiver');
 
-        let owner = ERC721OwnerTrait::owner_of(ctx.world, TOKEN_OVERRIDE(), token_id);
+        let owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
         assert(owner.is_non_zero(), 'ERC721: invalid token_id');
 
         let is_approved_for_all = OperatorApprovalTrait::is_approved_for_all(
             ctx.world, token, owner, caller
         );
         let approved = ERC721TokenApprovalTrait::get_approved(
-            ctx.world, TOKEN_OVERRIDE(), token_id
+            ctx.world, token, token_id
         );
 
         assert(
@@ -181,9 +183,9 @@ mod ERC721TransferFrom {
             'ERC721: unauthorized caller'
         );
 
-        ERC721OwnerTrait::unchecked_set_owner(ctx.world, TOKEN_OVERRIDE(), token_id, to);
+        ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, to);
         ERC721BalanceTrait::unchecked_transfer_token(ctx.world, token, from, to, 1);
-        ERC721TokenApprovalTrait::unchecked_approve(ctx.world, TOKEN_OVERRIDE(), token_id, Zeroable::zero());
+        ERC721TokenApprovalTrait::unchecked_approve(ctx.world, token, token_id, Zeroable::zero());
 
         // emit events
         super::emit_transfer(ctx.world, token, from, to, token_id);
@@ -199,7 +201,7 @@ mod ERC721Mint {
 
     use dojo::world::Context;
     use dojo_erc::erc721::components::{ERC721BalanceTrait, ERC721OwnerTrait};
-    use super::TOKEN_OVERRIDE;
+    use super::ALL_BRIQ_SETS;
 
     #[derive(Drop, Serde)]
     struct ERC721MintParams {
@@ -214,11 +216,11 @@ mod ERC721Mint {
         assert(token == ctx.origin, 'ERC721: not authorized');
         assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
-        let owner = ERC721OwnerTrait::owner_of(ctx.world, TOKEN_OVERRIDE(), token_id);
+        let owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
         assert(owner.is_zero(), 'ERC721: already minted');
 
         ERC721BalanceTrait::unchecked_increase_balance(ctx.world, token, recipient, 1);
-        ERC721OwnerTrait::unchecked_set_owner(ctx.world, TOKEN_OVERRIDE(), token_id, recipient);
+        ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, recipient);
         // emit events
         super::emit_transfer(ctx.world, token, Zeroable::zero(), recipient, token_id);
     }
@@ -235,7 +237,7 @@ mod ERC721Burn {
     use dojo_erc::erc721::components::{
         ERC721BalanceTrait, ERC721OwnerTrait, ERC721TokenApprovalTrait, OperatorApprovalTrait,
     };
-    use super::TOKEN_OVERRIDE;
+    use super::ALL_BRIQ_SETS;
 
 
     #[derive(Drop, Serde)]
@@ -250,14 +252,14 @@ mod ERC721Burn {
 
         assert(token == ctx.origin, 'ERC721: not authorized');
 
-        let owner = ERC721OwnerTrait::owner_of(ctx.world, TOKEN_OVERRIDE(), token_id);
+        let owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
         assert(owner.is_non_zero(), 'ERC721: invalid token_id');
 
         let is_approved_for_all = OperatorApprovalTrait::is_approved_for_all(
             ctx.world, token, owner, caller
         );
         let approved = ERC721TokenApprovalTrait::get_approved(
-            ctx.world, TOKEN_OVERRIDE(), token_id
+            ctx.world, token, token_id
         );
 
         assert(
@@ -266,7 +268,7 @@ mod ERC721Burn {
         );
 
         ERC721BalanceTrait::unchecked_decrease_balance(ctx.world, token, owner, 1);
-        ERC721OwnerTrait::unchecked_set_owner(ctx.world, TOKEN_OVERRIDE(), token_id, Zeroable::zero());
+        ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, Zeroable::zero());
 
         //  emit events
         super::emit_transfer(ctx.world, token, owner, Zeroable::zero(), token_id);
@@ -282,8 +284,6 @@ mod ERC721SetBaseUri {
     use dojo::world::Context;
     use dojo_erc::erc_common::components::{BaseUri, BaseUriTrait};
     use starknet::ContractAddress;
-    use super::TOKEN_OVERRIDE;
-
 
     fn execute(ctx: Context, token: ContractAddress, uri: felt252) {
         assert(ctx.origin == token, 'ERC721: not authorized');
