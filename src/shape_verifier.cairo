@@ -13,13 +13,14 @@ use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner};
 use briq_protocol::world_config::{AdminTrait, WorldConfig, get_world_config};
 
 use briq_protocol::types::{FTSpec, PackedShapeItem};
+use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
 use debug::PrintTrait;
 
 #[starknet::interface]
 trait IShapeChecker<ContractState> {
     fn verify_shape(
-        self: @ContractState, token_id: felt252, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
+        self: @ContractState, attribute_id: u64, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
     );
 }
 
@@ -29,6 +30,8 @@ impl ClassHashPrint of PrintTrait<ClassHash> {
 
 #[derive(Component, Copy, Drop, Serde, SerdeLen)]
 struct ShapeVerifier {
+    #[key]
+    attribute_group_id: u64,
     #[key]
     attribute_id: u64,
     class_hash: ClassHash,
@@ -40,7 +43,7 @@ trait ShapeVerifierTrait {
         world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: ContractAddress,
-        attribute_id: felt252,
+        attribute_id: u64,
         shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
     );
@@ -50,7 +53,7 @@ trait ShapeVerifierTrait {
         world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: ContractAddress,
-        attribute_id: felt252,
+        attribute_id: u64,
     );
 }
 
@@ -60,7 +63,7 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
         world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: ContractAddress,
-        attribute_id: felt252,
+        attribute_id: u64,
         shape: @Array<PackedShapeItem>,
         fts: @Array<FTSpec>,
     ) {
@@ -70,12 +73,12 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
             .verify_shape(attribute_id, shape.span(), fts.span());
 
         // TODO -> use update that sends events
-        dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
+        ERC1155BalanceTrait::unchecked_transfer_tokens(
             world,
             get_world_config(world).booklet,
             set_owner,
             set_token_id,
-            array![attribute_id].span(),
+            array![attribute_id.into()].span(),
             array![1].span()
         );
     }
@@ -85,15 +88,15 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
         world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: ContractAddress,
-        attribute_id: felt252,
+        attribute_id: u64,
     ) {
         // TODO -> use update that sends events
-        dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
+        ERC1155BalanceTrait::unchecked_transfer_tokens(
             world,
             get_world_config(world).booklet,
             set_token_id,
             set_owner,
-            array![attribute_id].span(),
+            array![attribute_id.into()].span(),
             array![1].span()
         );
     }
@@ -101,6 +104,7 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
 
 #[derive(Drop, Copy, Serde)]
 struct RegisterShapeVerifierData {
+    attribute_group_id: u64,
     attribute_id: u64,
     class_hash: ClassHash,
 }
@@ -114,11 +118,11 @@ mod register_shape_verifier {
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
 
     fn execute(ctx: Context, data: RegisterShapeVerifierData,) {
-        let RegisterShapeVerifierData{attribute_id, class_hash } = data;
+        let RegisterShapeVerifierData{attribute_group_id, attribute_id, class_hash } = data;
 
         ctx.world.only_admins(@ctx.origin);
 
-        set!(ctx.world, ShapeVerifier { attribute_id, class_hash });
+        set!(ctx.world, ShapeVerifier { attribute_group_id, attribute_id, class_hash });
     }
 }
 
@@ -135,16 +139,30 @@ mod shape_verifier_system {
     fn execute(ctx: Context, data: AttributeHandlerData) {
         match data {
             AttributeHandlerData::Assign(d) => {
-                let AttributeAssignData{set_owner, set_token_id, attribute_id, shape, fts } = d;
-                let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
+                let AttributeAssignData{set_owner,
+                set_token_id,
+                attribute_group_id,
+                attribute_id,
+                shape,
+                fts } =
+                    d;
+                let shape_verifier = get!(
+                    ctx.world, (attribute_group_id, attribute_id), ShapeVerifier
+                );
                 shape_verifier
                     .assign_attribute(
                         ctx.world, set_owner, set_token_id, attribute_id, @shape, @fts
                     );
             },
             AttributeHandlerData::Remove(d) => {
-                let AttributeRemoveData{set_owner, set_token_id, attribute_id } = d;
-                let shape_verifier = get!(ctx.world, (attribute_id), ShapeVerifier);
+                let AttributeRemoveData{set_owner,
+                set_token_id,
+                attribute_group_id,
+                attribute_id } =
+                    d;
+                let shape_verifier = get!(
+                    ctx.world, (attribute_group_id, attribute_id), ShapeVerifier
+                );
                 shape_verifier.remove_attribute(ctx.world, set_owner, set_token_id, attribute_id);
             },
         }

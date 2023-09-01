@@ -33,7 +33,7 @@ fn test_create_attribute_groups() {
                     CreateAttributeGroupData {
                         attribute_group_id: 1,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: briq_set.contract_address
+                        target_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -47,7 +47,7 @@ fn test_create_attribute_groups() {
                     CreateAttributeGroupData {
                         attribute_group_id: 2,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: briq_set.contract_address
+                        target_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -68,7 +68,7 @@ fn test_create_attribute_group_collision() {
                     CreateAttributeGroupData {
                         attribute_group_id: 1,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: briq_set.contract_address
+                        target_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -82,7 +82,7 @@ fn test_create_attribute_group_collision() {
                     CreateAttributeGroupData {
                         attribute_group_id: 1,
                         owner: AttributeGroupOwner::Admin(USER1()),
-                        briq_set_contract_address: briq_set.contract_address
+                        target_set_contract_address: briq_set.contract_address
                     }
                 )
             );
@@ -105,7 +105,7 @@ fn test_create_attribute_group_with_non_world_admin() {
                 CreateAttributeGroupData {
                     attribute_group_id: 1,
                     owner: AttributeGroupOwner::Admin(USER1()),
-                    briq_set_contract_address: briq_set.contract_address
+                    target_set_contract_address: briq_set.contract_address
                 }
             )
         );

@@ -41,6 +41,10 @@ fn USER1() -> ContractAddress {
     starknet::contract_address_const::<0xfafa>()
 }
 
+fn ZERO() -> ContractAddress {
+    starknet::contract_address_const::<0x0>()
+}
+
 fn impersonate(address: ContractAddress) {
     set_contract_address(address);
     set_account_contract_address(address);

@@ -5,12 +5,18 @@ use option::OptionTrait;
 
 use briq_protocol::felt_math::FeltBitAnd;
 
+
+#[derive(Copy, Drop, Serde)]
+struct AttributeItem {
+    attribute_group_id: u64,
+    attribute_id: u64,
+}
+
 #[derive(Copy, Drop, Serde)]
 struct FTSpec {
     token_id: felt252,
     qty: u128,
 }
-
 
 #[derive(Copy, Drop, Serde, Store)]
 struct ShapeItem {

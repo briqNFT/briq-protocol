@@ -4,134 +4,122 @@ use result::ResultTrait;
 use array::ArrayTrait;
 use serde::Serde;
 
-use starknet::testing::{set_caller_address, set_contract_address};
-use starknet::ContractAddress;
+use starknet::testing::{set_caller_address, set_contract_address,};
+use starknet::{ContractAddress, get_contract_address};
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, DefaultWorld, deploy_default_world, mint_briqs, impersonate
-};
-
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
+use dojo_erc::erc_common::utils::system_calldata;
 
+use briq_protocol::tests::test_utils::{
+    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
+};
+use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
 use briq_protocol::shape_verifier::RegisterShapeVerifierData;
-use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem};
+use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
+use briq_protocol::utils::IntoContractAddressU256;
+
+use briq_protocol::tests::test_set_nft::convenience_for_testing::{
+    assemble, disassemble, create_attribute_group_1, register_shape_verifier_shape_69, valid_shape_1, mint_booklet
+};
 
 use debug::PrintTrait;
 
-use briq_protocol::tests::test_set_nft::convenience_for_testing::{assemble, disassemble};
 
+#[test]
+#[available_gas(3000000000)]
+fn test_multiple_set() {
+    let DefaultWorld{world, briq_token, briq_set, ducks_set, booklet, .. } = deploy_default_world();
 
-// //   fn assemble(
-// //         world: IWorldDispatcher,
-// //         owner: ContractAddress,
-// //         token_id_hint: felt252,
-// //         name: Array<felt252>, // TODO string
-// //         description: Array<felt252>, // TODO string
-// //         fts: Array<FTSpec>,
-// //         shape: Array<PackedShapeItem>,
-// //         attributes: Array<felt252>
-// //     ) -> felt252 {
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
+
+    let token_id = assemble(
+        world,
+        DEFAULT_OWNER(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 1 }],
+        array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
+        array![],
+    );
+
+    assert(
+        token_id == starknet::contract_address_const::<0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2>(),
+        'bad token id'
+    );
+
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
+    assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
+
+    // create attribute_group for ducks_set
+    create_attribute_group_1(world, ducks_set.contract_address);
+    // register shape verifier for attribute_id = 0x69
+    register_shape_verifier_shape_69(world);
+
+    // mint a booklet for DEFAULT_OWNER
+    mint_booklet(world,booklet.contract_address,DEFAULT_OWNER(), array![0x69],array![1]);
+    
+    // lets assemble a duck
+    let token_id_duck = assemble(
+        world,
+        DEFAULT_OWNER(),
+        0xfade,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 4 }],
+        valid_shape_1(),
+        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x69 }],
+    );
+
+    assert(
+        token_id_duck == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        'bad token id'
+    );
+
+    assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
+    assert(ducks_set.owner_of(token_id_duck.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
+
+    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
+    assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
+}
+//////////////////////////////////////////////// 
+//////////// TODO try to make it buggy 
+// error: Failed setting up runner.
+// Caused by:
+//  #36142->#36143: Got 'Unknown ap change' error while moving [8].
+
+// #[derive(Serde, Drop)]
+// struct MyStruct {
+//     caller: ContractAddress,
+//     addr: ContractAddress,
+//     arr: Array<felt252>,
+// }
+
+// fn aaa(addr: ContractAddress) -> felt252 {
+//     let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![] });
+//     123
+// }
+
+// fn bbb(addr: ContractAddress) -> felt252 {
+//     let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![]  });
+//     1234
+// }
 
 // #[test]
 // #[available_gas(3000000000)]
-// fn test_simple_double_briq_set() {
-//     let DefaultWorld{world, briq_token, set_nft, set2_nft, .. } = deploy_default_world();
+// fn test_ap_move() {
+//     let DefaultWorld{world, briq_token, briq_set, ducks_set, .. } = deploy_default_world();
 
-//     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
+//     let res = aaa(briq_set.contract_address);
 
-//     impersonate(DEFAULT_OWNER());
+//     assert(res == 123, 'qqq');
+//     assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
 
-//     // assemble set_nft without attribute 
-
-//     let token_id = assemble(
-//         world,
-//         DEFAULT_OWNER(),
-//         0xfade,
-//         array![0xcafe],
-//         array![0xfade],
-//         array![FTSpec { token_id: 1, qty: 1 }],
-//         array![ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 })],
-//         array![],
-//     );
-//     assert(
-//         token_id == 0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2,
-//         'bad token id'
-//     );
-
-//     /////////////////////////////////////////
-
-//     // create attribute_group : id 1, set_nft2
-//     {
-//         let mut calldata: Array<felt252> = ArrayTrait::new();
-//         CreateAttributeGroupData {
-//             attribute_group_id: 1,
-//             owner: AttributeGroupOwner::System('shape_verifier_system'),
-//             briq_set_contract_address: ducks_set.contract_address
-//         }
-//             .serialize(ref calldata);
-//         world.execute('create_attribute_group', (calldata));
-//     }
-
-//     // register shape verifier
-//     {
-//         let mut calldata: Array<felt252> = ArrayTrait::new();
-//         RegisterShapeVerifierData {
-//             attribute_id: 0x1,
-//             class_hash: briq_protocol::tests::shapes::test_shape_1::TEST_CLASS_HASH
-//                 .try_into()
-//                 .unwrap()
-//         }
-//             .serialize(ref calldata);
-//         world.execute('register_shape_verifier', (calldata));
-//     }
-
-//     // create booklet
-//     world
-//         .execute(
-//             'ERC1155MintBurn',
-//             (array![
-//                 WORLD_ADMIN().into(),
-//                 get_world_config(world).booklet.into(),
-//                 0,
-//                 DEFAULT_OWNER().into(),
-//                 1,
-//                 0x1,
-//                 1,
-//                 1
-//             ])
-//         );
-
-//     // assemble set_nft with attribute --> set2_nft
-//     let token_id = assemble(
-//         world,
-//         DEFAULT_OWNER(),
-//         0xfade,
-//         array![0xcafe],
-//         array![0xfade],
-//         array![FTSpec { token_id: 1, qty: 4 }],
-//         array![
-//             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
-//             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 3, y: 4, z: -2 }),
-//             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
-//             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
-//         ],
-//         array![0x1],
-//     );
-//     assert(
-//         token_id == 0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3,
-//         'bad token id'
-//     );
-// // assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
-// // assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-// // assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 1, 'bad balance');
-// // assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 99, 'bad balance');
-
-// // disassemble(world, DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 1 }], array![]);
-// // assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
-// // assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
-
+//     let res2 = bbb(briq_set.contract_address);
 // }
+
+

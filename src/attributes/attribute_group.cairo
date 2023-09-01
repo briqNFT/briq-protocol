@@ -38,7 +38,7 @@ struct AttributeGroup {
     #[key]
     attribute_group_id: u64,
     owner: AttributeGroupOwner,
-    briq_set_contract_address: ContractAddress
+    target_set_contract_address: ContractAddress
 }
 
 
@@ -51,7 +51,7 @@ trait AttributeGroupTrait {
         world: IWorldDispatcher,
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
-        briq_set_contract_address: ContractAddress
+        target_set_contract_address: ContractAddress
     ) -> AttributeGroup;
 }
 
@@ -67,14 +67,14 @@ impl AttributeGroupImpl of AttributeGroupTrait {
 
     fn exists(world: IWorldDispatcher, attribute_group_id: u64) -> bool {
         let attribute_group = AttributeGroupTrait::get_attribute_group(world, attribute_group_id);
-        attribute_group.briq_set_contract_address.is_non_zero()
+        attribute_group.target_set_contract_address.is_non_zero()
     }
 
     fn new_attribute_group(
         world: IWorldDispatcher,
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
-        briq_set_contract_address: ContractAddress
+        target_set_contract_address: ContractAddress
     ) -> AttributeGroup {
         assert(attribute_group_id > 0, 'invalid attribute_group_id');
         assert(
@@ -83,7 +83,7 @@ impl AttributeGroupImpl of AttributeGroupTrait {
         );
 
         AttributeGroup {
-            attribute_group_id: attribute_group_id, owner: owner, briq_set_contract_address
+            attribute_group_id: attribute_group_id, owner: owner, target_set_contract_address
         }
     }
 }
@@ -93,7 +93,7 @@ impl AttributeGroupImpl of AttributeGroupTrait {
 struct CreateAttributeGroupData {
     attribute_group_id: u64,
     owner: AttributeGroupOwner,
-    briq_set_contract_address: ContractAddress
+    target_set_contract_address: ContractAddress
 }
 
 #[system]
@@ -113,7 +113,6 @@ mod create_attribute_group {
 
     use briq_protocol::types::{FTSpec, ShapeItem};
 
-    use briq_protocol::attributes::get_attribute_group_id;
     use super::AttributeGroup;
 
     use debug::PrintTrait;
@@ -128,9 +127,9 @@ mod create_attribute_group {
     }
 
     fn execute(ctx: Context, data: CreateAttributeGroupData) {
-        let CreateAttributeGroupData{attribute_group_id, owner, briq_set_contract_address } = data;
+        let CreateAttributeGroupData{attribute_group_id, owner, target_set_contract_address } = data;
 
-        assert(briq_set_contract_address.is_non_zero(), 'Invalid briq_set_contract_addr');
+        assert(target_set_contract_address.is_non_zero(), 'Invalid briq_set_contract_addr');
 
         match owner {
             AttributeGroupOwner::Admin(address) => {
@@ -145,7 +144,7 @@ mod create_attribute_group {
         ctx.world.only_admins(@ctx.origin);
 
         let attribute_group = AttributeGroupTrait::new_attribute_group(
-            ctx.world, attribute_group_id, owner, briq_set_contract_address
+            ctx.world, attribute_group_id, owner, target_set_contract_address
         );
 
         AttributeGroupTrait::set_attribute_group(ctx.world, attribute_group);

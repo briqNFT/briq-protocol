@@ -21,7 +21,8 @@ use dojo_erc::erc721::components::{
 };
 
 use briq_protocol::attributes::attributes::remove_attributes;
-use briq_protocol::types::{FTSpec, PackedShapeItem};
+use briq_protocol::attributes::attribute_group::AttributeGroupTrait;
+use briq_protocol::types::{FTSpec, PackedShapeItem, AttributeItem};
 use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::felt_math::FeltBitAnd;
 
@@ -81,10 +82,38 @@ fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) 
     hash_252.try_into().unwrap()
 }
 
-fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
+fn get_token_from_attributes(
+    world: IWorldDispatcher, arr: @Array<AttributeItem>
+) -> ContractAddress {
+    let mut token = get_world_config(world).briq_set;
+
+    let mut span = arr.span();
+    loop {
+        match span.pop_front() {
+            Option::Some(attribute_item) => {
+                // attribute_item.attribute_group_id
+                let attribute_group = AttributeGroupTrait::get_attribute_group(
+                    world, *attribute_item.attribute_group_id
+                );
+                if attribute_group.target_set_contract_address.is_non_zero() {
+                    token = attribute_group.target_set_contract_address;
+                    break;
+                }
+            },
+            Option::None => {
+                break;
+            }
+        };
+    };
+
+    token
+}
+
+fn create_token(
+    ctx: Context, token: ContractAddress, recipient: ContractAddress, token_id: felt252
+) {
     // TODO: retrieve related collection
 
-    let token = get_world_config(ctx.world).briq_set;
     assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
     let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id);
@@ -95,7 +124,9 @@ fn create_token(ctx: Context, recipient: ContractAddress, token_id: felt252) {
     ERC721OwnerTrait::unchecked_set_owner(ctx.world, token, token_id, recipient);
 }
 
-fn destroy_token(ctx: Context, owner: ContractAddress, token_id: ContractAddress) {
+fn destroy_token(
+    ctx: Context, token: ContractAddress, owner: ContractAddress, token_id: ContractAddress
+) {
     // TODO: retrieve related collection
     let token = get_world_config(ctx.world).briq_set;
 
@@ -106,7 +137,6 @@ fn destroy_token(ctx: Context, owner: ContractAddress, token_id: ContractAddress
 
 fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: ContractAddress) {
     // Check that we gave back all briqs (the user might attempt to lie).
-
     let balance = ERC1155BalanceTrait::balance_of(
         ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
     );
@@ -114,7 +144,6 @@ fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: ContractAddress) 
     assert(balance == 0, 'Set still has briqs');
 
     // Check that we no longer have any attributes active.
-
     let balance = ERC1155BalanceTrait::balance_of(
         ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
     );
@@ -129,7 +158,7 @@ struct AssemblySystemData {
     token_id_hint: felt252,
     fts: Array<FTSpec>,
     shape: Array<PackedShapeItem>,
-    attributes: Array<felt252>
+    attributes: Array<AttributeItem>
 }
 
 #[system]
@@ -137,8 +166,7 @@ mod set_nft_assembly {
     use starknet::ContractAddress;
     use traits::Into;
     use traits::TryInto;
-    use array::ArrayTrait;
-    use array::SpanTrait;
+    use array::{ArrayTrait, SpanTrait};
     use option::OptionTrait;
     use zeroable::Zeroable;
     use clone::Clone;
@@ -150,8 +178,8 @@ mod set_nft_assembly {
     use briq_protocol::types::{FTSpec, PackedShapeItem};
 
     use briq_protocol::attributes::attributes::assign_attributes;
+    use briq_protocol::set_nft::systems::get_token_from_attributes;
 
-    use debug::PrintTrait;
     use super::AssemblySystemData;
 
     fn execute(ctx: Context, data: AssemblySystemData) {
@@ -161,15 +189,17 @@ mod set_nft_assembly {
 
         assert(shape.len() != 0, 'Cannot mint empty set');
 
+        let token = get_token_from_attributes(ctx.world, @attributes);
+
         let token_id = super::get_token_id(owner, token_id_hint, shape.len());
-        super::create_token(ctx, owner, token_id.into());
+        super::create_token(ctx, token, owner, token_id.into());
         super::transfer_briqs(ctx.world, owner, token_id, fts.clone());
 
         if attributes.len() == 0 {
             return;
         }
 
-        assign_attributes(ctx, owner, token_id, attributes, @shape, @fts,);
+        assign_attributes(ctx, owner, token_id, @attributes, @shape, @fts,);
     }
 }
 
@@ -180,7 +210,7 @@ struct DisassemblySystemData {
     owner: ContractAddress,
     token_id: ContractAddress,
     fts: Array<FTSpec>,
-    attributes: Array<felt252>
+    attributes: Array<AttributeItem>
 }
 
 
@@ -188,6 +218,7 @@ struct DisassemblySystemData {
 mod set_nft_disassembly {
     use starknet::ContractAddress;
     use traits::{TryInto, Into};
+    use array::{ArrayTrait, SpanTrait};
     use option::OptionTrait;
     use zeroable::Zeroable;
     use clone::Clone;
@@ -202,6 +233,7 @@ mod set_nft_disassembly {
     use briq_protocol::types::{FTSpec, PackedShapeItem};
 
     use briq_protocol::attributes::attributes::remove_attributes;
+    use briq_protocol::set_nft::systems::get_token_from_attributes;
 
     use super::DisassemblySystemData;
 
@@ -210,9 +242,9 @@ mod set_nft_disassembly {
 
         assert(ctx.origin == caller, 'Only Caller');
 
-        let token = get_world_config(ctx.world).briq_set;
-
+        let token = get_token_from_attributes(ctx.world,  @attributes);
         let token_owner = ERC721OwnerTrait::owner_of(ctx.world, token, token_id.into());
+        
         assert(token_owner.is_non_zero(), 'ERC721: invalid token_id');
         assert(token_owner == owner, 'SetNft: invalid owner');
 
@@ -234,6 +266,6 @@ mod set_nft_disassembly {
 
         super::check_briqs_and_attributes_are_zero(ctx, token_id);
 
-        super::destroy_token(ctx, owner, token_id);
+        super::destroy_token(ctx, token, owner, token_id);
     }
 }

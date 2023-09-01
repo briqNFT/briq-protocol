@@ -49,7 +49,9 @@ fn update_nocheck(
         };
     };
 
-    ERC1155BalanceTrait::unchecked_transfer_tokens(world, token, from, to, ids.span(), amounts.span());
+    ERC1155BalanceTrait::unchecked_transfer_tokens(
+        world, token, from, to, ids.span(), amounts.span()
+    );
 
     let mut ids_span = ids.span();
     let mut amounts_span = amounts.span();
@@ -165,6 +167,16 @@ mod BriqTokenSafeBatchTransferFrom {
 }
 
 
+#[derive(Drop, Serde)]
+struct ERC1155MintBurnParams {
+    operator: ContractAddress,
+    token: ContractAddress,
+    from: ContractAddress,
+    to: ContractAddress,
+    ids: Array<felt252>,
+    amounts: Array<u128>,
+}
+
 #[system]
 mod ERC1155MintBurn {
     use traits::{Into, TryInto};
@@ -175,18 +187,12 @@ mod ERC1155MintBurn {
     use starknet::ContractAddress;
 
     use briq_protocol::world_config::AdminTrait;
+    use super::ERC1155MintBurnParams;
 
-    fn execute(
-        ctx: Context,
-        operator: ContractAddress,
-        token: ContractAddress,
-        from: ContractAddress,
-        to: ContractAddress,
-        ids: Array<felt252>,
-        amounts: Array<u128>,
-    ) {
+    fn execute(ctx: Context, params: ERC1155MintBurnParams) {
         ctx.world.only_admins(@ctx.origin);
-
+        
+        let ERC1155MintBurnParams{operator, token, from, to, ids, amounts } = params;
         super::update_nocheck(ctx.world, operator, token, from, to, ids, amounts, array![]);
     }
 }
