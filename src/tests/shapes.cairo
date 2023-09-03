@@ -4,7 +4,7 @@ mod test_shape_1 {
     use array::{SpanTrait, ArrayTrait};
     use option::OptionTrait;
     use briq_protocol::types::{PackedShapeItem, FTSpec};
-    use briq_protocol::attributes::shape_verifier::IShapeChecker;
+    use briq_protocol::attributes::attribute_manager::IShapeChecker;
 
     #[storage]
     struct Storage {}

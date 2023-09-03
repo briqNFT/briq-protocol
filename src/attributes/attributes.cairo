@@ -1,7 +1,7 @@
 use serde::Serde;
 use starknet::ContractAddress;
 use traits::{Into, TryInto};
-use array::{ArrayTrait,SpanTrait};
+use array::{ArrayTrait, SpanTrait};
 use option::OptionTrait;
 use zeroable::Zeroable;
 use clone::Clone;

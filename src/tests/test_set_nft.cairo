@@ -17,7 +17,7 @@ use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
-use briq_protocol::attributes::shape_verifier::RegisterShapeVerifierData;
+use briq_protocol::attributes::attribute_manager::RegisterAttributeManagerParams;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::utils::IntoContractAddressU256;
@@ -36,7 +36,7 @@ mod convenience_for_testing {
     use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
     use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData, get_token_id};
     use dojo_erc::erc_common::utils::{system_calldata};
-    use briq_protocol::attributes::shape_verifier::RegisterShapeVerifierData;
+    use briq_protocol::attributes::attribute_manager::RegisterAttributeManagerParams;
     use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
     use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
     use briq_protocol::tests::test_utils::{WORLD_ADMIN, ZERO};
@@ -87,20 +87,20 @@ mod convenience_for_testing {
     }
 
 
-    fn register_shape_verifier(
+    fn register_attribute_manager(
         world: IWorldDispatcher, attribute_group_id: u64, attribute_id: u64, class_hash: ClassHash
     ) {
         world
             .execute(
-                'register_shape_verifier',
+                'register_attribute_manager',
                 system_calldata(
-                    RegisterShapeVerifierData { attribute_group_id, attribute_id, class_hash }
+                    RegisterAttributeManagerParams { attribute_group_id, attribute_id, class_hash }
                 )
             );
     }
 
-    fn register_shape_verifier_shape_69(world: IWorldDispatcher) {
-        register_shape_verifier(
+    fn register_attribute_manager_shape_69(world: IWorldDispatcher) {
+        register_attribute_manager(
             world,
             0x1,
             0x69,
@@ -127,7 +127,7 @@ mod convenience_for_testing {
                 system_calldata(
                     CreateAttributeGroupParams {
                         attribute_group_id: 1,
-                        owner: AttributeGroupOwner::System('shape_verifier_system'),
+                        owner: AttributeGroupOwner::System('attribute_manager_booklet'),
                         target_set_contract_address: target_set_contract_address
                     }
                 )
@@ -159,7 +159,7 @@ mod convenience_for_testing {
     }
 }
 use convenience_for_testing::{
-    assemble, disassemble, register_shape_verifier_shape_69, valid_shape_1,
+    assemble, disassemble, register_attribute_manager_shape_69, valid_shape_1,
     create_attribute_group_1, mint_booklet
 };
 
@@ -346,7 +346,7 @@ fn test_simple_mint_attribute_ok() {
 
     create_attribute_group_1(world, briq_set.contract_address);
 
-    register_shape_verifier_shape_69(world);
+    register_attribute_manager_shape_69(world);
 
     mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x69], array![1]);
 
@@ -410,7 +410,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
 
     create_attribute_group_1(world, briq_set.contract_address);
 
-    register_shape_verifier_shape_69(world);
+    register_attribute_manager_shape_69(world);
 
     impersonate(DEFAULT_OWNER());
 
@@ -447,7 +447,7 @@ fn test_simple_mint_attribute_bad_shape_item() {
 
     create_attribute_group_1(world, briq_set.contract_address);
 
-    register_shape_verifier_shape_69(world);
+    register_attribute_manager_shape_69(world);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -489,7 +489,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
 
     create_attribute_group_1(world, briq_set.contract_address);
 
-    register_shape_verifier_shape_69(world);
+    register_attribute_manager_shape_69(world);
 
     impersonate(DEFAULT_OWNER());
 
@@ -522,7 +522,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
 
     create_attribute_group_1(world, briq_set.contract_address);
 
-    register_shape_verifier_shape_69(world);
+    register_attribute_manager_shape_69(world);
 
     mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x69], array![1]);
 
