@@ -8,18 +8,16 @@ use starknet::testing::{set_caller_address, set_contract_address};
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
 use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait};
 use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
-
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
-use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
-use briq_protocol::shape_verifier::RegisterShapeVerifierData;
+use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
+use briq_protocol::attributes::shape_verifier::RegisterShapeVerifierData;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::utils::IntoContractAddressU256;
@@ -38,8 +36,8 @@ mod convenience_for_testing {
     use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
     use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData, get_token_id};
     use dojo_erc::erc_common::utils::{system_calldata};
-    use briq_protocol::shape_verifier::RegisterShapeVerifierData;
-    use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
+    use briq_protocol::attributes::shape_verifier::RegisterShapeVerifierData;
+    use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
     use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
     use briq_protocol::tests::test_utils::{WORLD_ADMIN, ZERO};
 
@@ -127,7 +125,7 @@ mod convenience_for_testing {
             .execute(
                 'create_attribute_group',
                 system_calldata(
-                    CreateAttributeGroupData {
+                    CreateAttributeGroupParams {
                         attribute_group_id: 1,
                         owner: AttributeGroupOwner::System('shape_verifier_system'),
                         target_set_contract_address: target_set_contract_address

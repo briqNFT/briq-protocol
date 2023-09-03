@@ -107,7 +107,6 @@ fn get_target_contract_from_attributes(
 fn create_token(
     ctx: Context, token: ContractAddress, recipient: ContractAddress, token_id: felt252
 ) {
-    // TODO: retrieve related collection
     assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
     let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
@@ -121,9 +120,6 @@ fn create_token(
 fn destroy_token(
     ctx: Context, token: ContractAddress, owner: ContractAddress, token_id: ContractAddress
 ) {
-    // TODO: retrieve related collection
-    let token = get_world_config(ctx.world).briq_set;
-
     // decrease token supply
     ERC721BalanceTrait::unchecked_decrease_balance(ctx.world, token, owner, 1);
     ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id.into(), Zeroable::zero());
@@ -187,10 +183,6 @@ mod set_nft_assembly {
         let token_id = super::get_token_id(owner, token_id_hint, shape.len());
         super::create_token(ctx, token, owner, token_id.into());
         super::transfer_briqs(ctx.world, owner, token_id, fts.clone());
-
-        if attributes.len() == 0 {
-            return;
-        }
 
         assign_attributes(ctx, owner, token_id, @attributes, @shape, @fts,);
     }

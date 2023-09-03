@@ -1,5 +1,4 @@
 use starknet::ContractAddress;
-
 use traits::{Into, TryInto};
 use option::OptionTrait;
 use clone::Clone;
@@ -7,6 +6,7 @@ use serde::Serde;
 use zeroable::Zeroable;
 
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
+
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 
 use debug::PrintTrait;
@@ -90,7 +90,7 @@ impl AttributeGroupImpl of AttributeGroupTrait {
 
 
 #[derive(Clone, Drop, Serde)]
-struct CreateAttributeGroupData {
+struct CreateAttributeGroupParams {
     attribute_group_id: u64,
     owner: AttributeGroupOwner,
     target_set_contract_address: ContractAddress
@@ -100,8 +100,7 @@ struct CreateAttributeGroupData {
 mod create_attribute_group {
     use starknet::ContractAddress;
     use traits::{Into,TryInto};
-    use array::ArrayTrait;
-    use array::SpanTrait;
+    use array::{ArrayTrait, SpanTrait};
     use option::OptionTrait;
     use zeroable::Zeroable;
     use clone::Clone;
@@ -109,15 +108,13 @@ mod create_attribute_group {
 
     use dojo::world::Context;
     use dojo_erc::erc1155::components::ERC1155Balance;
+   
     use briq_protocol::world_config::AdminTrait;
-
     use briq_protocol::types::{FTSpec, ShapeItem};
-
-    use super::AttributeGroup;
 
     use debug::PrintTrait;
 
-    use super::{CreateAttributeGroupData, AttributeGroupOwner, AttributeGroupTrait};
+    use super::{CreateAttributeGroupParams, AttributeGroupOwner, AttributeGroupTrait, AttributeGroup};
 
     #[derive(Drop, starknet::Event)]
     struct AttributeGroupCreated {
@@ -126,10 +123,10 @@ mod create_attribute_group {
         system: felt252,
     }
 
-    fn execute(ctx: Context, data: CreateAttributeGroupData) {
-        let CreateAttributeGroupData{attribute_group_id, owner, target_set_contract_address } = data;
+    fn execute(ctx: Context, data: CreateAttributeGroupParams) {
+        let CreateAttributeGroupParams{attribute_group_id, owner, target_set_contract_address } = data;
 
-        assert(target_set_contract_address.is_non_zero(), 'Invalid briq_set_contract_addr');
+        assert(target_set_contract_address.is_non_zero(), 'Invalid target_contract_address');
 
         match owner {
             AttributeGroupOwner::Admin(address) => {
@@ -167,3 +164,17 @@ mod create_attribute_group {
         };
     }
 }
+
+
+// maybe use felt252 short strings for attribute_group_id / attribute_id
+// could allow naming / could collide for attribute_group_id
+
+
+// TODO ?
+// allow delete ?
+// allow update --> update AttributeGroupOwner::Admin, AttributeGroupOwner::System
+
+// #[system]
+// mod delete_attribute_group { }
+// #[system]
+// mod update_attribute_group { }

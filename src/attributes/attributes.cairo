@@ -1,26 +1,22 @@
-use core::serde::Serde;
+use serde::Serde;
 use starknet::ContractAddress;
 use traits::{Into, TryInto};
-use array::ArrayTrait;
-use array::SpanTrait;
+use array::{ArrayTrait,SpanTrait};
 use option::OptionTrait;
 use zeroable::Zeroable;
 use clone::Clone;
 
+use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
+use dojo_erc::erc1155::components::{ERC1155Balance, ERC1155BalanceTrait};
+use dojo_erc::erc_common::utils::system_calldata;
+
 use briq_protocol::types::{FTSpec, PackedShapeItem, AttributeItem};
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES};
-
-use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::erc1155::components::{ERC1155Balance, ERC1155BalanceTrait};
 use briq_protocol::world_config::{WorldConfig};
-
 use briq_protocol::attributes::attribute_group::{
     AttributeGroup, AttributeGroupTrait, AttributeGroupOwner
 };
-
-use dojo_erc::erc_common::utils::system_calldata;
-
 
 use debug::PrintTrait;
 
@@ -71,10 +67,10 @@ fn assign_attributes(
     fts: @Array<FTSpec>,
 ) {
     if attributes.len() == 0 {
-        return ();
+        return;
     }
-    assert(set_owner.is_non_zero(), 'Bad input');
-    assert(set_token_id.is_non_zero(), 'Bad input');
+    assert(set_owner.is_non_zero(), 'owner cannot be zero');
+    assert(set_token_id.is_non_zero(), 'token_id cannot be zero');
 
     let mut attr_span = attributes.span();
     loop {
@@ -83,7 +79,7 @@ fn assign_attributes(
                 inner_attribute_assign(ctx, set_owner, set_token_id, *attribute, shape, fts);
             },
             Option::None => {
-                break ();
+                break;
             }
         };
     };
@@ -102,7 +98,7 @@ fn inner_attribute_assign(
     shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
 ) {
-    assert(attribute.attribute_id != 0, 'Bad input');
+    assert(attribute.attribute_id != 0, 'attribute_id cannot be zero');
 
     let attribute_group = AttributeGroupTrait::get_attribute_group(
         ctx.world, attribute.attribute_group_id
@@ -154,8 +150,8 @@ fn remove_attributes(
         return ();
     }
 
-    assert(set_owner.is_non_zero(), 'Bad input');
-    assert(set_token_id.is_non_zero(), 'Bad input');
+    assert(set_owner.is_non_zero(), 'owner cannot be zero');
+    assert(set_token_id.is_non_zero(), 'token_id cannt be zero');
 
     let mut attr_span = attributes.span();
     loop {
@@ -164,7 +160,7 @@ fn remove_attributes(
                 remove_attribute_inner(ctx, set_owner, set_token_id, *attribute);
             },
             Option::None => {
-                break ();
+                break;
             }
         };
     };
@@ -181,7 +177,7 @@ fn remove_attribute_inner(
     set_token_id: ContractAddress,
     attribute: AttributeItem,
 ) {
-    assert(attribute.attribute_id != 0, 'Bad input');
+    assert(attribute.attribute_id != 0, 'attribute_id cannot be zero');
 
     let attribute_group = AttributeGroupTrait::get_attribute_group(
         ctx.world, attribute.attribute_group_id

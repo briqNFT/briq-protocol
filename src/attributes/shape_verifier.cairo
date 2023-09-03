@@ -1,8 +1,6 @@
 use starknet::{ContractAddress, ClassHash};
-use traits::Into;
-use traits::TryInto;
-use array::ArrayTrait;
-use array::SpanTrait;
+use traits::{Into,TryInto};
+use array::{ArrayTrait, SpanTrait};
 use option::OptionTrait;
 use zeroable::Zeroable;
 use clone::Clone;
@@ -10,10 +8,10 @@ use serde::Serde;
 
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner};
-use briq_protocol::world_config::{AdminTrait, WorldConfig, get_world_config};
-
-use briq_protocol::types::{FTSpec, PackedShapeItem};
 use dojo_erc::erc1155::components::ERC1155BalanceTrait;
+
+use briq_protocol::world_config::{AdminTrait, WorldConfig, get_world_config};
+use briq_protocol::types::{FTSpec, PackedShapeItem};
 
 use debug::PrintTrait;
 
@@ -73,6 +71,7 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
             .verify_shape(attribute_id, shape.span(), fts.span());
 
         // TODO -> use update that sends events
+        // Transfer booklet with corresponding attribute_id from set_owner to set_token_id
         ERC1155BalanceTrait::unchecked_transfer_tokens(
             world,
             get_world_config(world).booklet,
@@ -91,6 +90,7 @@ impl ShapeVerifierImpl of ShapeVerifierTrait {
         attribute_id: u64,
     ) {
         // TODO -> use update that sends events
+        // Transfer booklet with corresponding attribute_id from set_token_id to set_owner
         ERC1155BalanceTrait::unchecked_transfer_tokens(
             world,
             get_world_config(world).booklet,
@@ -112,10 +112,8 @@ struct RegisterShapeVerifierData {
 #[system]
 mod register_shape_verifier {
     use dojo::world::Context;
-    use super::RegisterShapeVerifierData;
-    use super::ShapeVerifier;
-
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
+    use super::{ShapeVerifier, RegisterShapeVerifierData};
 
     fn execute(ctx: Context, data: RegisterShapeVerifierData,) {
         let RegisterShapeVerifierData{attribute_group_id, attribute_id, class_hash } = data;
@@ -130,11 +128,10 @@ mod register_shape_verifier {
 mod shape_verifier_system {
     use dojo::world::Context;
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
-
-    use super::{ShapeVerifier, ShapeVerifierTrait};
     use briq_protocol::attributes::attributes::{
         AttributeHandlerData, AttributeAssignData, AttributeRemoveData,
     };
+    use super::{ShapeVerifier, ShapeVerifierTrait};
 
     fn execute(ctx: Context, data: AttributeHandlerData) {
         match data {
