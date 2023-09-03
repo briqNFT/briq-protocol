@@ -91,6 +91,7 @@ fn spawn_world() -> IWorldDispatcher {
         briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
         // attribute_manager
         briq_protocol::attributes::attribute_manager::register_attribute_manager::TEST_CLASS_HASH,
+        briq_protocol::attributes::attribute_manager::register_attr_group_manager::TEST_CLASS_HASH,
         briq_protocol::attributes::attribute_manager::attribute_manager_checker::TEST_CLASS_HASH,
         briq_protocol::attributes::attribute_manager::attribute_manager_booklet::TEST_CLASS_HASH,
         // briq_factory

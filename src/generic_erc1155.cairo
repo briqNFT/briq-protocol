@@ -1,3 +1,4 @@
+// TODO : check if booklet should be ERC721 
 #[starknet::contract]
 mod GenericERC1155 {
     use array::ArrayTrait;
@@ -10,7 +11,7 @@ mod GenericERC1155 {
     use zeroable::Zeroable;
     use serde::Serde;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
+    use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait, system_calldata};
     use dojo_erc::erc1155::components::{
         Uri, ERC1155BalanceTrait, OperatorApproval, OperatorApprovalTrait
     };
@@ -20,9 +21,6 @@ mod GenericERC1155 {
         IERC1155_RECEIVER_ID
     };
     use dojo_erc::erc165::interface::{IERC165, IERC165_ID};
-
-    use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait, system_calldata};
-
     use dojo_erc::erc1155::systems::{
         ERC1155SetApprovalForAllParams, ERC1155SafeTransferFromParams,
         ERC1155SafeBatchTransferFromParams, ERC1155MintParams, ERC1155BurnParams
@@ -32,11 +30,7 @@ mod GenericERC1155 {
     use briq_protocol::utils::PartialEqArray;
     use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
 
-
-    const UNLIMITED_ALLOWANCE: felt252 =
-        3618502788666131213697322783095070105623107215331596699973092056135872020480;
-
-
+   
     #[derive(Clone, Drop, Serde, starknet::Event)]
     struct TransferSingle {
         operator: ContractAddress,

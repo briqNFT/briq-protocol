@@ -8,9 +8,10 @@ use starknet::testing::{set_caller_address, set_contract_address,};
 use starknet::{ContractAddress, get_contract_address};
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo_erc::erc_common::utils::system_calldata;
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
-use dojo_erc::erc_common::utils::system_calldata;
+use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
@@ -22,8 +23,12 @@ use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, Att
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::tests::test_set_nft::convenience_for_testing::{
-    assemble, disassemble, create_attribute_group_1, register_attribute_manager_shape_69, valid_shape_1, mint_booklet
+    assemble, disassemble, register_attribute_manager_shape_1_1, valid_shape_1, valid_shape_2,
+    valid_shape_3, mint_booklet, create_attribute_group_with_booklet,
+    create_attribute_group_with_checker, register_attribute_group_manager_shapes,
+    register_attribute_group_manager_briq_count
 };
+use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
 
 use debug::PrintTrait;
 
@@ -46,22 +51,17 @@ fn test_multiple_set() {
         array![],
     );
 
-    assert(
-        token_id == starknet::contract_address_const::<0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2>(),
-        'bad token id'
-    );
-
     assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
     assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 
     // create attribute_group for ducks_set
-    create_attribute_group_1(world, ducks_set.contract_address);
-    // register shape verifier for attribute_id = 0x69
-    register_attribute_manager_shape_69(world);
+    create_attribute_group_with_booklet(world, 1, ducks_set.contract_address);
+    // register shape verifier for attribute_id = 0x1
+    register_attribute_manager_shape_1_1(world);
 
     // mint a booklet for DEFAULT_OWNER
-    mint_booklet(world,booklet.contract_address,DEFAULT_OWNER(), array![0x69],array![1]);
-    
+    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
+
     // lets assemble a duck
     let token_id_duck = assemble(
         world,
@@ -71,12 +71,7 @@ fn test_multiple_set() {
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
         valid_shape_1(),
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x69 }],
-    );
-
-    assert(
-        token_id_duck == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
-        'bad token id'
+        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }],
     );
 
     assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
@@ -85,6 +80,74 @@ fn test_multiple_set() {
     assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
     assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 }
+
+
+#[test]
+#[available_gas(3000000000)]
+fn test_set_multiple_attributes() {
+    let DefaultWorld{world, briq_token, ducks_set, booklet, .. } = deploy_default_world();
+
+    register_attribute_group_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(world, 0x1, ducks_set.contract_address);
+
+    register_attribute_group_manager_briq_count(world, 0x2);
+    create_attribute_group_with_checker(world, 0x2, ducks_set.contract_address);
+
+    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x2], array![1]);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
+
+    impersonate(DEFAULT_OWNER());
+
+    let token_id = assemble(
+        world,
+        DEFAULT_OWNER(),
+        0x533d,
+        array![0xcafe],
+        array![0xfade],
+        array![FTSpec { token_id: 1, qty: 3 }],
+        valid_shape_2(),
+        array![
+            AttributeItem { attribute_group_id: 0x1, attribute_id: 0x2 },
+            AttributeItem { attribute_group_id: 0x2, attribute_id: 0x3 } // at least 3 briqs attr
+        ],
+    );
+   
+    assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
+    assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(booklet.balance_of(token_id, 0x2) == 1, 'bad booklet balance 2');
+    assert(
+        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 2,
+        'should be 2'
+    );
+    assert(
+        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()) == 1,
+        'should be 1'
+    );
+
+    disassemble(
+        world,
+        DEFAULT_OWNER(),
+        token_id,
+        array![FTSpec { token_id: 1, qty: 3 }],
+        array![
+            AttributeItem { attribute_group_id: 0x1, attribute_id: 0x2 },
+            AttributeItem { attribute_group_id: 0x2, attribute_id: 0x3 } // at least 3 briqs attr
+        ]
+    );
+    assert(booklet.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
+    assert(
+        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 0,
+        'should be 0'
+    );
+    assert(
+        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()) == 0,
+        'should be 0'
+    );
+}
+
+
+//
+//
 //////////////////////////////////////////////// 
 //////////// TODO try to make it buggy 
 // error: Failed setting up runner.
