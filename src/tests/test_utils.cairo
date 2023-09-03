@@ -64,8 +64,9 @@ fn spawn_world() -> IWorldDispatcher {
         dojo_erc::erc721::components::erc_721_token_approval::TEST_CLASS_HASH,
         // attribute_group
         briq_protocol::attributes::attribute_group::attribute_group::TEST_CLASS_HASH,
-        // shape_verifier
-        briq_protocol::attributes::shape_verifier::shape_verifier::TEST_CLASS_HASH,
+        // attribute_manager
+        briq_protocol::attributes::attribute_manager::attribute_manager::TEST_CLASS_HASH,
+        briq_protocol::attributes::attribute_manager::attribute_group_manager::TEST_CLASS_HASH,
     ];
     // systems
     let mut systems = array![
@@ -88,9 +89,10 @@ fn spawn_world() -> IWorldDispatcher {
         // set_nft
         briq_protocol::set_nft::systems::set_nft_assembly::TEST_CLASS_HASH,
         briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
-        // shape_verifier
-        briq_protocol::attributes::shape_verifier::register_shape_verifier::TEST_CLASS_HASH,
-        briq_protocol::attributes::shape_verifier::shape_verifier_system::TEST_CLASS_HASH,
+        // attribute_manager
+        briq_protocol::attributes::attribute_manager::register_attribute_manager::TEST_CLASS_HASH,
+        briq_protocol::attributes::attribute_manager::attribute_manager_checker::TEST_CLASS_HASH,
+        briq_protocol::attributes::attribute_manager::attribute_manager_booklet::TEST_CLASS_HASH,
         // briq_factory
         briq_protocol::briq_factory::systems::BriqFactoryMint::TEST_CLASS_HASH,
         briq_protocol::briq_factory::systems::BriqFactoryInitialize::TEST_CLASS_HASH,
@@ -154,10 +156,10 @@ fn spawn_world() -> IWorldDispatcher {
     world.grant_writer('ERC1155Balance', 'box_unboxing');
 
     // ***************************
-    // **** shape_verifier
+    // **** attribute_manager
     // ***************************
 
-    world.grant_writer('ERC1155Balance', 'shape_verifier_system');
+    world.grant_writer('ERC1155Balance', 'attribute_manager_booklet');
 
     world
 }

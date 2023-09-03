@@ -15,15 +15,15 @@ use briq_protocol::types::{FTSpec, PackedShapeItem};
 
 use debug::PrintTrait;
 
+impl ClassHashPrint of PrintTrait<ClassHash> {
+    fn print(self: ClassHash) {}
+}
+
 #[starknet::interface]
 trait IShapeChecker<ContractState> {
     fn verify_shape(
         self: @ContractState, attribute_id: u64, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
     );
-}
-
-impl ClassHashPrint of PrintTrait<ClassHash> {
-    fn print(self: ClassHash) {}
 }
 
 #[derive(Component, Copy, Drop, Serde, SerdeLen)]

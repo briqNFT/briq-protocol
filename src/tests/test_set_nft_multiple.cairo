@@ -17,12 +17,12 @@ use briq_protocol::tests::test_utils::{
 };
 use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
-use briq_protocol::attributes::shape_verifier::RegisterShapeVerifierData;
+use briq_protocol::attributes::attribute_manager::RegisterAttributeManagerParams;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::tests::test_set_nft::convenience_for_testing::{
-    assemble, disassemble, create_attribute_group_1, register_shape_verifier_shape_69, valid_shape_1, mint_booklet
+    assemble, disassemble, create_attribute_group_1, register_attribute_manager_shape_69, valid_shape_1, mint_booklet
 };
 
 use debug::PrintTrait;
@@ -57,7 +57,7 @@ fn test_multiple_set() {
     // create attribute_group for ducks_set
     create_attribute_group_1(world, ducks_set.contract_address);
     // register shape verifier for attribute_id = 0x69
-    register_shape_verifier_shape_69(world);
+    register_attribute_manager_shape_69(world);
 
     // mint a booklet for DEFAULT_OWNER
     mint_booklet(world,booklet.contract_address,DEFAULT_OWNER(), array![0x69],array![1]);
