@@ -23,7 +23,7 @@ mod test_shapes {
             } else if attribute_id == 0x3 {
                 test_shape_3(shape, fts);
             } else {
-                panic(array!['invalid attribute_id'])
+                panic(array!['unhandled attribute_id'])
             }
         }
     }
@@ -83,44 +83,3 @@ mod test_shapes {
         );
     }
 }
-
-
-// This contract is only declared, and call via LibraryDispatcher & class_hash
-#[starknet::contract]
-mod test_briq_count {
-    use traits::{Into, TryInto};
-    use array::{SpanTrait, ArrayTrait};
-    use option::OptionTrait;
-    use briq_protocol::types::{PackedShapeItem, FTSpec};
-    use briq_protocol::attributes::attribute_manager::IShapeChecker;
-
-    #[storage]
-    struct Storage {}
-
-    use debug::PrintTrait;
-
-    #[external(v0)]
-    impl ShapeChecker of IShapeChecker<ContractState> {
-        fn verify_shape(
-            self: @ContractState, attribute_id: u64, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
-        ) {
-            assert(shape.len().into() >= attribute_id, 'not enought briq');
-
-            let mut total = 0_u128;
-            let mut fts = fts;
-            loop {
-                match fts.pop_front() {
-                    Option::Some(ft) => {
-                        total += *ft.qty;
-                    },
-                    Option::None => {
-                        break;
-                    }
-                };
-            };
-
-            assert(total >= attribute_id.into(), 'not enought briq');
-        }
-    }
-}
-
