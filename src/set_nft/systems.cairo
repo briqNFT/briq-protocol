@@ -122,7 +122,9 @@ fn destroy_token(
 ) {
     // decrease token supply
     ERC721BalanceTrait::unchecked_decrease_balance(ctx.world, token, owner, 1);
-    ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id.into(), Zeroable::zero());
+    ERC721OwnerTrait::unchecked_set_owner(
+        ctx.world, ALL_BRIQ_SETS(), token_id.into(), Zeroable::zero()
+    );
 }
 
 fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: ContractAddress) {
@@ -172,10 +174,14 @@ mod set_nft_assembly {
 
     use super::AssemblySystemData;
 
+    use debug::PrintTrait;
+
     fn execute(ctx: Context, data: AssemblySystemData) {
         let AssemblySystemData{caller, owner, token_id_hint, fts, shape, attributes } = data;
 
+        // TODO : better check ?
         assert(ctx.origin == caller, 'Only Caller');
+       // assert(owner == caller, 'Only Owner');
         assert(shape.len() != 0, 'Cannot mint empty set');
 
         let token = get_target_contract_from_attributes(ctx.world, @attributes);
@@ -209,12 +215,12 @@ mod set_nft_disassembly {
     use clone::Clone;
 
     use dojo::world::Context;
-   
+
     use dojo_erc::erc721::components::{
         ERC721Owner, ERC721OwnerTrait, ERC721TokenApproval, ERC721TokenApprovalTrait
     };
     use dojo_erc::erc1155::components::{OperatorApproval, OperatorApprovalTrait};
-   
+
     use briq_protocol::world_config::{WorldConfig, get_world_config};
     use briq_protocol::types::{FTSpec, PackedShapeItem};
     use briq_protocol::attributes::attributes::remove_attributes;
@@ -226,7 +232,9 @@ mod set_nft_disassembly {
     fn execute(ctx: Context, data: DisassemblySystemData) {
         let DisassemblySystemData{caller, owner, token_id, fts, attributes } = data;
 
+        // TODO : better check ?
         assert(ctx.origin == caller, 'Only Caller');
+        //assert(owner == caller, 'Only Owner');
 
         let token = get_target_contract_from_attributes(ctx.world, @attributes);
         let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id.into());
@@ -249,9 +257,7 @@ mod set_nft_disassembly {
         remove_attributes(ctx, owner, token_id, attributes.clone(),);
 
         super::transfer_briqs(ctx.world, token_id, owner, fts.clone());
-
         super::check_briqs_and_attributes_are_zero(ctx, token_id);
-
         super::destroy_token(ctx, token, owner, token_id);
     }
 }

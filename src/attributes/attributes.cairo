@@ -104,6 +104,9 @@ fn inner_attribute_assign(
         ctx.world, attribute.attribute_group_id
     );
 
+    // check attribute_group exists
+    assert(attribute_group.target_set_contract_address.is_non_zero(), 'unregistered attribute_group_id');
+
     match attribute_group.owner {
         AttributeGroupOwner::Admin(address) => {
             //library_erc1155::transferability::Transferability::_transfer_burnable(0, set_token_id, attribute_id, 1);
