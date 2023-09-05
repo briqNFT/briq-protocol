@@ -16,12 +16,20 @@ fn test_world_admin_can_setup_world() {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, set, set2, booklet, box) = deploy_contracts(world);
+    let (briq, briq_set, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
+        deploy_contracts(
+        world
+    );
     world
         .execute(
             'SetupWorld',
             (array![
-                TREASURY().into(), briq.into(), set.into(), set2.into(), booklet.into(), box.into(),
+                TREASURY().into(),
+                briq.into(),
+                briq_set.into(),
+                ducks_set.into(),
+                ducks_booklet.into(),
+                box.into(),
             ])
         );
 }
@@ -34,7 +42,10 @@ fn test_not_world_admin_cannot_setup_world() {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, set, set2, booklet, box) = deploy_contracts(world);
+    let (briq, briq_set, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
+        deploy_contracts(
+        world
+    );
 
     impersonate(DEFAULT_OWNER());
 
@@ -42,7 +53,12 @@ fn test_not_world_admin_cannot_setup_world() {
         .execute(
             'SetupWorld',
             (array![
-                TREASURY().into(), briq.into(), set.into(), set2.into(), booklet.into(), box.into(),
+                TREASURY().into(),
+                briq.into(),
+                briq_set.into(),
+                ducks_set.into(),
+                ducks_booklet.into(),
+                box.into(),
             ])
         );
 }

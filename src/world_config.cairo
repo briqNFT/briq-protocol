@@ -16,7 +16,7 @@ struct WorldConfig {
     briq: ContractAddress,
     briq_set: ContractAddress,
     ducks_set: ContractAddress,
-    booklet: ContractAddress,
+    ducks_booklet: ContractAddress,
     box: ContractAddress,
 }
 
@@ -60,14 +60,14 @@ mod SetupWorld {
         briq: ContractAddress,
         briq_set: ContractAddress,
         ducks_set: ContractAddress,
-        booklet: ContractAddress,
+        ducks_booklet: ContractAddress,
         box: ContractAddress
     ) {
         ctx.world.only_admins(@ctx.origin);
 
         set!(
             ctx.world,
-            (WorldConfig { config_id: SYSTEM_CONFIG_ID, treasury, briq, briq_set, ducks_set, booklet, box, })
+            (WorldConfig { config_id: SYSTEM_CONFIG_ID, treasury, briq, briq_set, ducks_set, ducks_booklet, box, })
         );
         return ();
     }

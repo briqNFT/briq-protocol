@@ -10,9 +10,12 @@ mod agm_booklet {
     use briq_protocol::attributes::attributes::{
         AttributeHandlerData, AttributeAssignData, AttributeRemoveData,
     };
+    use briq_protocol::attributes::attribute_group::{AttributeGroupTrait};
+
     use briq_protocol::attributes::attribute_manager::{
         AttributeManager, AttributeManagerTrait, AttributeManagerImpl, assert_valid_caller
     };
+
 
     use debug::PrintTrait;
 
@@ -87,11 +90,20 @@ mod agm_booklet {
                     }
                 );
 
+                // find booklet collection related to this attribute group
+                let attribute_group = AttributeGroupTrait::get_attribute_group(
+                    ctx.world, attribute_group_id
+                );
+                assert(
+                    attribute_group.booklet_contract_address.is_non_zero(),
+                    'invalid booklet_address'
+                );
+
                 // TODO : use update that sends events
                 // Transfer booklet with corresponding attribute_id from set_owner to set_token_id
                 ERC1155BalanceTrait::unchecked_transfer_tokens(
                     ctx.world,
-                    get_world_config(ctx.world).booklet,
+                    attribute_group.booklet_contract_address,
                     set_owner,
                     set_token_id,
                     array![attribute_id.into()].span(),
@@ -112,11 +124,20 @@ mod agm_booklet {
                     }
                 );
 
+                // find booklet collection related to this attribute group
+                let attribute_group = AttributeGroupTrait::get_attribute_group(
+                    ctx.world, attribute_group_id
+                );
+                assert(
+                    attribute_group.booklet_contract_address.is_non_zero(),
+                    'invalid booklet_address'
+                );
+
                 // TODO : use update that sends events
                 // Transfer booklet with corresponding attribute_id from set_token_id to set_owner
                 ERC1155BalanceTrait::unchecked_transfer_tokens(
                     ctx.world,
-                    get_world_config(ctx.world).booklet,
+                    attribute_group.booklet_contract_address,
                     set_token_id,
                     set_owner,
                     array![attribute_id.into()].span(),

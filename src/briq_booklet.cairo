@@ -1,40 +1,41 @@
-mod systems;
+#[starknet::interface]
+trait IERC1155MetadataExtended<TState> {
+    fn uri(self: @TState, token_id: u256) -> felt252;
+    fn name(self: @TState) -> felt252;
+    fn symbol(self: @TState) -> felt252;
+}
 
 #[starknet::contract]
-mod BriqToken {
+mod briq_booklet {
     use array::ArrayTrait;
     use option::OptionTrait;
     use clone::Clone;
     use array::ArrayTCloneImpl;
-    use starknet::{ContractAddress, ClassHash, get_caller_address, get_contract_address};
+    use starknet::{ContractAddress,ClassHash, get_caller_address, get_contract_address};
     use traits::{Into, TryInto};
     use zeroable::Zeroable;
-    use briq_protocol::utils::PartialEqArray;
-    use briq_protocol::world_config::AdminTrait;
-
     use serde::Serde;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo_erc::erc1155::components::{
         Uri, ERC1155BalanceTrait, OperatorApproval, OperatorApprovalTrait
     };
     use dojo_erc::erc1155::interface::{
-        IERC1155, IERC1155Metadata, IERC1155TokenReceiver, IERC1155TokenReceiverDispatcher,
+        IERC1155, IERC1155TokenReceiver, IERC1155TokenReceiverDispatcher,
         IERC1155TokenReceiverDispatcherTrait, IERC1155_ID, IERC1155_METADATA_ID,
         IERC1155_RECEIVER_ID
     };
     use dojo_erc::erc165::interface::{IERC165, IERC165_ID};
-
-    use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait, system_calldata};
-
     use dojo_erc::erc1155::systems::{
         ERC1155SetApprovalForAllParams, ERC1155SafeTransferFromParams,
         ERC1155SafeBatchTransferFromParams, ERC1155MintParams, ERC1155BurnParams
     };
+    use dojo_erc::erc_common::utils::{
+        to_calldata, ToCallDataTrait, system_calldata, PartialEqArray
+    };
 
+    use briq_protocol::world_config::AdminTrait;
     use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
-
-    const UNLIMITED_ALLOWANCE: felt252 =
-        3618502788666131213697322783095070105623107215331596699973092056135872020480;
+    use super::IERC1155MetadataExtended;
 
 
     #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
@@ -81,6 +82,8 @@ mod BriqToken {
     #[storage]
     struct Storage {
         world: IWorldDispatcher,
+        name_: felt252,
+        symbol_: felt252,
     }
 
     //
@@ -101,8 +104,15 @@ mod BriqToken {
     //
 
     #[constructor]
-    fn constructor(ref self: ContractState, world: ContractAddress) {
+    fn constructor(
+        ref self: ContractState,
+        world: ContractAddress,
+        name: felt252,
+        symbol: felt252,
+    ) {
         self.world.write(IWorldDispatcher { contract_address: world });
+        self.name_.write(name);
+        self.symbol_.write(symbol);
     }
 
     #[external(v0)]
@@ -115,10 +125,20 @@ mod BriqToken {
     }
 
     #[external(v0)]
-    impl ERC1155Metadata of IERC1155Metadata<ContractState> {
+    impl ERC1155Metadata of IERC1155MetadataExtended<ContractState> {
         fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            //TODO
-            0
+            let token = get_contract_address();
+            let token_id_felt: felt252 = token_id.try_into().unwrap();
+            get!(self.world.read(), (token), Uri).uri
+        // TODO : handle uri
+        }
+
+        fn name(self: @ContractState) -> felt252 {
+            self.name_.read()
+        }
+
+        fn symbol(self: @ContractState) -> felt252 {
+            self.symbol_.read()
         }
     }
 
@@ -196,7 +216,7 @@ mod BriqToken {
                 .world
                 .read()
                 .execute(
-                    'BriqTokenSafeTransferFrom',
+                    'ERC1155SafeTransferFrom',
                     system_calldata(
                         ERC1155SafeTransferFromParams {
                             token: get_contract_address(),
@@ -233,7 +253,7 @@ mod BriqToken {
                 .world
                 .read()
                 .execute(
-                    'BriqTokenSafeBatchTransferFrom',
+                    'ERC1155SafeBatchTransferFrom',
                     system_calldata(
                         ERC1155SafeBatchTransferFromParams {
                             token: get_contract_address(),
@@ -268,16 +288,13 @@ mod BriqToken {
 
     #[external(v0)]
     #[generate_trait]
-    impl ERC721Custom of ERC721CustomTrait {
-        // TODO: use systems directly for these instead.
-        fn owner(self: @ContractState) -> ContractAddress {
-            assert(false, 'TODO remove');
-            Zeroable::zero()
-        }
-
+    impl ERC1155Custom of ERC1155CustomTrait {
         fn mint(
             ref self: ContractState, to: ContractAddress, id: felt252, amount: u128, data: Array<u8>
         ) {
+            // only admin can mint
+            self.world.read().only_admins(@get_caller_address());
+
             self
                 .world
                 .read()
@@ -295,23 +312,8 @@ mod BriqToken {
                     )
                 );
         }
-
         fn burn(ref self: ContractState, from: ContractAddress, id: felt252, amount: u128) {
-            self
-                .world
-                .read()
-                .execute(
-                    'ERC1155Burn',
-                    system_calldata(
-                        ERC1155BurnParams {
-                            token: get_contract_address(),
-                            operator: get_caller_address(),
-                            from,
-                            ids: array![id],
-                            amounts: array![amount]
-                        }
-                    )
-                );
+            panic(array!['not implemented']);
         }
     }
 }

@@ -9,17 +9,21 @@ use starknet::ContractAddress;
 use starknet::get_contract_address;
 use starknet::syscalls::deploy_syscall;
 
-use debug::PrintTrait;
 
 use dojo::test_utils::spawn_test_world;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use briq_protocol::briq_token::BriqToken;
-use briq_protocol::set_nft::SetNft;
-
+use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721Dispatcher;
 use dojo_erc::erc1155::interface::IERC1155Dispatcher;
+
 use briq_protocol::world_config::{get_world_config};
+use briq_protocol::briq_token::BriqToken;
+use briq_protocol::set_nft::SetNft;
+use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
+
+use debug::PrintTrait;
+
 
 fn ETH_ADDRESS() -> ContractAddress {
     starknet::contract_address_const::<0xeeee>()
@@ -73,7 +77,7 @@ fn spawn_world() -> IWorldDispatcher {
         briq_protocol::world_config::SetupWorld::TEST_CLASS_HASH,
         // erc1155
         dojo_erc::erc1155::systems::ERC1155SetApprovalForAll::TEST_CLASS_HASH,
-        briq_protocol::briq_token::systems::ERC1155MintBurn::TEST_CLASS_HASH,
+        dojo_erc::erc1155::systems::ERC1155Mint::TEST_CLASS_HASH,
         // // erc721
         // dojo_erc::erc721::systems::ERC721Approve::TEST_CLASS_HASH,
         // dojo_erc::erc721::systems::ERC721SetApprovalForAll::TEST_CLASS_HASH,
@@ -85,6 +89,7 @@ fn spawn_world() -> IWorldDispatcher {
         // briq_token
         briq_protocol::briq_token::systems::BriqTokenSafeTransferFrom::TEST_CLASS_HASH,
         briq_protocol::briq_token::systems::BriqTokenSafeBatchTransferFrom::TEST_CLASS_HASH,
+        briq_protocol::briq_token::systems::BriqTokenERC1155MintBurn::TEST_CLASS_HASH,
         // set_nft
         briq_protocol::set_nft::systems::set_nft_assembly::TEST_CLASS_HASH,
         briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
@@ -97,6 +102,7 @@ fn spawn_world() -> IWorldDispatcher {
         briq_protocol::briq_factory::systems::BriqFactoryInitialize::TEST_CLASS_HASH,
         // attribute_group
         briq_protocol::attributes::attribute_group::create_attribute_group::TEST_CLASS_HASH,
+        briq_protocol::attributes::attribute_group::update_attribute_group::TEST_CLASS_HASH,
         // unboxing
         briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
     ];
@@ -115,7 +121,7 @@ fn spawn_world() -> IWorldDispatcher {
     // ***************************
 
     //  erc_1155_balance
-    world.grant_writer('ERC1155Balance', 'ERC1155MintBurn');
+    world.grant_writer('ERC1155Balance', 'BriqTokenERC1155MintBurn');
 
     // operator_approval
     world.grant_writer('OperatorApproval', 'ERC1155SetApprovalForAll');
@@ -166,16 +172,40 @@ fn spawn_world() -> IWorldDispatcher {
 
 fn deploy_contracts(
     world: IWorldDispatcher,
-) -> (ContractAddress, ContractAddress, ContractAddress, ContractAddress, ContractAddress) {
+) -> (
+    ContractAddress,
+    ContractAddress,
+    ContractAddress,
+    ContractAddress,
+    ContractAddress,
+    ContractAddress,
+    ContractAddress
+) {
     let constructor_calldata = array![world.contract_address.into()];
+
+    // sets
     let briq_set_constructor_calldata = array![world.contract_address.into(), 'briq set', 'B7'];
     let ducks_set_constructor_calldata = array![world.contract_address.into(), 'ducks set', 'D7'];
+    let planets_set_constructor_calldata = array![
+        world.contract_address.into(), 'planets set', 'P7'
+    ];
+
+    // booklets
+    let ducks_booklet_constructor_calldata = array![
+        world.contract_address.into(), 'ducks booklet', 'BDUCKS'
+    ];
+    let planets_booklet_constructor_calldata = array![
+        world.contract_address.into(), 'planets booklet', 'BPLANETS'
+    ];
+
+    // briq token
 
     let (briq, _) = deploy_syscall(
         BriqToken::TEST_CLASS_HASH.try_into().unwrap(), 0, constructor_calldata.span(), false
     )
         .expect('error deploying');
 
+    // sets 
     let (briq_set, _) = deploy_syscall(
         SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, briq_set_constructor_calldata.span(), false
     )
@@ -186,14 +216,32 @@ fn deploy_contracts(
     )
         .expect('error deploying');
 
-    let (booklet, _) = deploy_syscall(
-        briq_protocol::generic_erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
+    let (planets_set, _) = deploy_syscall(
+        SetNft::TEST_CLASS_HASH.try_into().unwrap(),
         0,
-        constructor_calldata.span(),
+        planets_set_constructor_calldata.span(),
         false
     )
         .expect('error deploying');
 
+    // booklets 
+    let (ducks_booklet, _) = deploy_syscall(
+        briq_protocol::briq_booklet::briq_booklet::TEST_CLASS_HASH.try_into().unwrap(),
+        0,
+        ducks_booklet_constructor_calldata.span(),
+        false
+    )
+        .expect('error deploying');
+
+    let (planets_booklet, _) = deploy_syscall(
+        briq_protocol::briq_booklet::briq_booklet::TEST_CLASS_HASH.try_into().unwrap(),
+        0,
+        planets_booklet_constructor_calldata.span(),
+        false
+    )
+        .expect('error deploying');
+
+    // boxes 
     let (box, _) = deploy_syscall(
         briq_protocol::generic_erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
         0,
@@ -202,16 +250,23 @@ fn deploy_contracts(
     )
         .expect('error deploying');
 
-    (briq, briq_set, ducks_set, booklet, box)
+    // briq factory ???
+
+    (briq, briq_set, ducks_set, planets_set, ducks_booklet, planets_booklet, box)
 }
 
 #[derive(Copy, Drop)]
 struct DefaultWorld {
     world: IWorldDispatcher,
     briq_token: IERC1155Dispatcher,
+    //sets
     briq_set: IERC721Dispatcher,
     ducks_set: IERC721Dispatcher,
-    booklet: IERC1155Dispatcher,
+    planets_set: IERC721Dispatcher,
+    //booklets
+    ducks_booklet: IERC1155Dispatcher,
+    planets_booklet: IERC1155Dispatcher,
+    // boxes
     box_nft: IERC1155Dispatcher,
 }
 
@@ -219,20 +274,43 @@ fn deploy_default_world() -> DefaultWorld {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, briq_set, ducks_set, booklet, box) = deploy_contracts(world);
+    let (briq, briq_set, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
+        deploy_contracts(
+        world
+    );
+
+    //   treasury: ContractAddress,
+    //     briq: ContractAddress,
+    //     briq_set: ContractAddress,
+    //     ducks_set: ContractAddress,
+    //     ducks_booklet: ContractAddress,
+    //     box: ContractAddress
+
     world
         .execute(
             'SetupWorld',
             (array![
-                TREASURY().into(), briq.into(), briq_set.into(), ducks_set.into(), booklet.into(), box.into(),
+                TREASURY().into(),
+                briq.into(),
+                //sets
+                briq_set.into(),
+                ducks_set.into(),
+                // planets_set.into(),
+                //booklets
+                ducks_booklet.into(),
+                //planets_booklet.into(),
+                //boxes
+                box.into(),
             ])
         );
     DefaultWorld {
         world,
         briq_token: IERC1155Dispatcher { contract_address: briq },
         briq_set: IERC721Dispatcher { contract_address: briq_set },
+        planets_set: IERC721Dispatcher { contract_address: planets_set },
         ducks_set: IERC721Dispatcher { contract_address: ducks_set },
-        booklet: IERC1155Dispatcher { contract_address: booklet },
+        ducks_booklet: IERC1155Dispatcher { contract_address: ducks_booklet },
+        planets_booklet: IERC1155Dispatcher { contract_address: planets_booklet },
         box_nft: IERC1155Dispatcher { contract_address: box },
     }
 }
@@ -252,18 +330,18 @@ fn mint_briqs(world: IWorldDispatcher, owner: ContractAddress, material: felt252
 
     world
         .execute(
-            'ERC1155MintBurn',
-            (array![
-                WORLD_ADMIN().into(),
-                get_world_config(world).briq.into(),
-                0,
-                owner.into(),
-                1,
-                material,
-                1,
-                amount.into()
-            ])
+            'BriqTokenERC1155MintBurn',
+            system_calldata(
+                ERC1155MintBurnParams {
+                    token: get_world_config(world).briq.into(),
+                    operator: WORLD_ADMIN().into(),
+                    from: ZERO(),
+                    to: owner,
+                    ids: array![material.into()],
+                    amounts: array![amount],
+                }
+            )
         );
+
     set_contract_address(old_caller);
 }
-
