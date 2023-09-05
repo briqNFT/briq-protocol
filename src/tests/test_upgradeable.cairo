@@ -15,7 +15,6 @@ use briq_protocol::tests::contract_upgrade::ContractUpgrade;
 use briq_protocol::tests::contract_upgrade::ContractUpgrade::{
     IUselessContract, IUselessContractDispatcher, IUselessContractDispatcherTrait
 };
-
 use briq_protocol::upgradeable::{IUpgradeable, IUpgradeableDispatcher, IUpgradeableDispatcherTrait};
 
 
@@ -60,14 +59,13 @@ fn test_upgrade_with_non_admin_briq_token() {
     test_upgrade_with_non_admin(briq_token.contract_address);
 }
 
-
 //
 // set_nft
 //
 
 #[test]
 #[available_gas(30000000)]
-fn test_upgrade_with_admin_set_nft() {
+fn test_upgrade_with_admin_briq_set() {
     let DefaultWorld{world, briq_set, .. } = deploy_default_world();
     test_upgrade_with_admin(briq_set.contract_address);
 }
@@ -76,35 +74,69 @@ fn test_upgrade_with_admin_set_nft() {
 #[test]
 #[available_gas(30000000)]
 #[should_panic]
-fn test_upgrade_with_non_admin_set_nft() {
+fn test_upgrade_with_non_admin_briq_set() {
     let DefaultWorld{world, briq_set, .. } = deploy_default_world();
     test_upgrade_with_non_admin(briq_set.contract_address);
 }
 
 
-//
-// booklet
-//
-
 #[test]
 #[available_gas(30000000)]
-fn test_upgrade_with_admin_booklet() {
-    let DefaultWorld{world, booklet, .. } = deploy_default_world();
-    test_upgrade_with_admin(booklet.contract_address);
+fn test_upgrade_with_admin_ducks_set() {
+    let DefaultWorld{world, ducks_set, .. } = deploy_default_world();
+    test_upgrade_with_admin(ducks_set.contract_address);
 }
 
 
 #[test]
 #[available_gas(30000000)]
 #[should_panic]
-fn test_upgrade_with_non_admin_booklet() {
-    let DefaultWorld{world, booklet, .. } = deploy_default_world();
-    test_upgrade_with_non_admin(booklet.contract_address);
+fn test_upgrade_with_non_admin_ducks_set() {
+    let DefaultWorld{world, ducks_set, .. } = deploy_default_world();
+    test_upgrade_with_non_admin(ducks_set.contract_address);
 }
 
 
 //
 // booklet
+//
+
+#[test]
+#[available_gas(30000000)]
+fn test_upgrade_with_admin_ducks_booklet() {
+    let DefaultWorld{world, ducks_booklet, .. } = deploy_default_world();
+    test_upgrade_with_admin(ducks_booklet.contract_address);
+}
+
+
+#[test]
+#[available_gas(30000000)]
+#[should_panic]
+fn test_upgrade_with_non_admin_ducks_booklet() {
+    let DefaultWorld{world, ducks_booklet, .. } = deploy_default_world();
+    test_upgrade_with_non_admin(ducks_booklet.contract_address);
+}
+
+
+#[test]
+#[available_gas(30000000)]
+fn test_upgrade_with_admin_planets_booklet() {
+    let DefaultWorld{world, planets_booklet, .. } = deploy_default_world();
+    test_upgrade_with_admin(planets_booklet.contract_address);
+}
+
+
+#[test]
+#[available_gas(30000000)]
+#[should_panic]
+fn test_upgrade_with_non_admin_planets_booklet() {
+    let DefaultWorld{world, planets_booklet, .. } = deploy_default_world();
+    test_upgrade_with_non_admin(planets_booklet.contract_address);
+}
+
+
+//
+// boxes
 //
 
 #[test]

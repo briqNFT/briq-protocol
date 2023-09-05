@@ -16,7 +16,6 @@ use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
-use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
 use briq_protocol::attributes::attribute_manager::RegisterAttributeManagerParams;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
@@ -34,7 +33,7 @@ use debug::PrintTrait;
 #[test]
 #[available_gas(3000000000)]
 fn test_multiple_set() {
-    let DefaultWorld{world, briq_token, briq_set, ducks_set, booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -53,11 +52,11 @@ fn test_multiple_set() {
     assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 
     // create attribute_group for ducks_set & register shapes
-    create_attribute_group_with_booklet(world, 0x1, ducks_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address);
+    register_attribute_manager_shapes(world, 0x69);
 
     // mint a booklet for DEFAULT_OWNER
-    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
+    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
 
     // lets assemble a duck
     let token_id_duck = assemble(
@@ -68,7 +67,7 @@ fn test_multiple_set() {
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
         valid_shape_1(),
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
 
     assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
@@ -81,14 +80,14 @@ fn test_multiple_set() {
 #[test]
 #[available_gas(3000000000)]
 fn test_multiple_attributes() {
-    let DefaultWorld{world, briq_token, ducks_set, booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, ducks_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address);
+    register_attribute_manager_shapes(world, 0x69);
 
-    create_attribute_group_with_briq_counter(world, 0x2);
+    create_attribute_group_with_briq_counter(world, 0x420);
 
-    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x2], array![1]);
+    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x2], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -102,14 +101,14 @@ fn test_multiple_attributes() {
         array![FTSpec { token_id: 1, qty: 3 }],
         valid_shape_2(),
         array![
-            AttributeItem { attribute_group_id: 0x1, attribute_id: 0x2 },
-            AttributeItem { attribute_group_id: 0x2, attribute_id: 0x3 } // at least 3 briqs attr
+            AttributeItem { attribute_group_id: 0x69, attribute_id: 0x2 },
+            AttributeItem { attribute_group_id: 0x420, attribute_id: 0x3 } // at least 3 briqs attr
         ],
     );
 
     assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
     assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-    assert(booklet.balance_of(token_id, 0x2) == 1, 'bad booklet balance 2');
+    assert(ducks_booklet.balance_of(token_id, 0x2) == 1, 'bad booklet balance 2');
     assert(
         ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 2,
         'should be 2'
@@ -125,11 +124,11 @@ fn test_multiple_attributes() {
         token_id,
         array![FTSpec { token_id: 1, qty: 3 }],
         array![
-            AttributeItem { attribute_group_id: 0x1, attribute_id: 0x2 },
-            AttributeItem { attribute_group_id: 0x2, attribute_id: 0x3 } // at least 3 briqs attr
+            AttributeItem { attribute_group_id: 0x69, attribute_id: 0x2 },
+            AttributeItem { attribute_group_id: 0x420, attribute_id: 0x3 } // at least 3 briqs attr
         ]
     );
-    assert(booklet.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
+    assert(ducks_booklet.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
     assert(
         ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 0,
         'should be 0'

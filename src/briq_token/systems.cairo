@@ -12,7 +12,10 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc1155::erc1155::ERC1155::{TransferSingle, TransferBatch};
 use dojo_erc::erc1155::erc1155::ERC1155::{IERC1155EventsDispatcher, IERC1155EventsDispatcherTrait};
 use dojo_erc::erc1155::components::{ERC1155BalanceTrait, OperatorApprovalTrait};
-use dojo_erc::erc1155::systems::{emit_transfer_batch, emit_transfer_single};
+use dojo_erc::erc1155::systems::{
+    emit_transfer_batch, emit_transfer_single, ERC1155SafeTransferFromParams,
+    ERC1155SafeBatchTransferFromParams
+};
 
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ};
 
@@ -122,17 +125,10 @@ mod BriqTokenSafeTransferFrom {
     use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::ContractAddress;
+    use super::ERC1155SafeTransferFromParams;
 
-    fn execute(
-        ctx: Context,
-        operator: ContractAddress,
-        token: ContractAddress,
-        from: ContractAddress,
-        to: ContractAddress,
-        id: felt252,
-        amount: u128,
-        data: Array<u8>
-    ) {
+    fn execute(ctx: Context, params: ERC1155SafeTransferFromParams) {
+        let ERC1155SafeTransferFromParams{token, operator, from, to, id, amount, data } = params;
         assert(ctx.origin == operator || ctx.origin == token, 'ERC1155: not authorized');
         assert(to.is_non_zero(), 'ERC1155: to cannot be 0');
 
@@ -148,17 +144,13 @@ mod BriqTokenSafeBatchTransferFrom {
     use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::ContractAddress;
+    use super::ERC1155SafeBatchTransferFromParams;
 
-    fn execute(
-        ctx: Context,
-        operator: ContractAddress,
-        token: ContractAddress,
-        from: ContractAddress,
-        to: ContractAddress,
-        ids: Array<felt252>,
-        amounts: Array<u128>,
-        data: Array<u8>
-    ) {
+
+    fn execute(ctx: Context, params: ERC1155SafeBatchTransferFromParams) {
+        let ERC1155SafeBatchTransferFromParams{token, operator, from, to, ids, amounts, data } =
+            params;
+
         assert(ctx.origin == operator || ctx.origin == token, 'ERC1155: not authorized');
         assert(to.is_non_zero(), 'ERC1155: to cannot be 0');
 
@@ -178,7 +170,7 @@ struct ERC1155MintBurnParams {
 }
 
 #[system]
-mod ERC1155MintBurn {
+mod BriqTokenERC1155MintBurn {
     use traits::{Into, TryInto};
     use option::OptionTrait;
     use array::ArrayTrait;
@@ -191,7 +183,7 @@ mod ERC1155MintBurn {
 
     fn execute(ctx: Context, params: ERC1155MintBurnParams) {
         ctx.world.only_admins(@ctx.origin);
-        
+
         let ERC1155MintBurnParams{operator, token, from, to, ids, amounts } = params;
         super::update_nocheck(ctx.world, operator, token, from, to, ids, amounts, array![]);
     }

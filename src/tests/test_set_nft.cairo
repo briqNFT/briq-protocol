@@ -35,6 +35,7 @@ mod convenience_for_testing {
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo_erc::erc_common::utils::{system_calldata};
+    use dojo_erc::erc1155::systems::ERC1155MintParams;
 
     use briq_protocol::world_config::get_world_config;
     use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
@@ -43,7 +44,6 @@ mod convenience_for_testing {
     use briq_protocol::attributes::attribute_group::{
         CreateAttributeGroupParams, AttributeGroupOwner
     };
-    use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
     use briq_protocol::tests::test_utils::{WORLD_ADMIN, ZERO};
 
     fn assemble(
@@ -95,7 +95,8 @@ mod convenience_for_testing {
     fn create_attribute_group_with_booklet(
         world: IWorldDispatcher,
         attribute_group_id: u64,
-        target_set_contract_address: ContractAddress
+        target_set_contract_address: ContractAddress,
+        booklet_contract_address: ContractAddress
     ) {
         world
             .execute(
@@ -104,7 +105,8 @@ mod convenience_for_testing {
                     CreateAttributeGroupParams {
                         attribute_group_id,
                         owner: AttributeGroupOwner::System('agm_booklet'),
-                        target_set_contract_address: target_set_contract_address
+                        target_set_contract_address,
+                        booklet_contract_address
                     }
                 )
             );
@@ -114,6 +116,7 @@ mod convenience_for_testing {
     fn create_attribute_group_with_briq_counter(world: IWorldDispatcher, attribute_group_id: u64) {
         // briq_counter is not related to a specific collection so we link it to briq_set
         let target_set_contract_address = get_world_config(world).briq_set;
+        let booklet_contract_address = ZERO();
         world
             .execute(
                 'create_attribute_group',
@@ -121,7 +124,8 @@ mod convenience_for_testing {
                     CreateAttributeGroupParams {
                         attribute_group_id,
                         owner: AttributeGroupOwner::System('agm_briq_counter'),
-                        target_set_contract_address
+                        target_set_contract_address,
+                        booklet_contract_address
                     }
                 )
             );
@@ -198,15 +202,15 @@ mod convenience_for_testing {
     ) {
         world
             .execute(
-                'ERC1155MintBurn',
+                'ERC1155Mint',
                 system_calldata(
-                    ERC1155MintBurnParams {
+                    ERC1155MintParams {
                         operator: WORLD_ADMIN(),
                         token: booklet_address,
-                        from: ZERO(),
                         to,
                         ids, //  booklet_id == attribute_id
                         amounts,
+                        data: array![],
                     }
                 )
             );
@@ -216,6 +220,7 @@ use convenience_for_testing::{
     assemble, disassemble, mint_booklet, valid_shape_1, valid_shape_2,
     create_attribute_group_with_booklet, register_attribute_manager_shapes
 };
+
 
 #[test]
 #[available_gas(30000000)]
@@ -403,12 +408,14 @@ fn test_simple_mint_attribute_not_exist() {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_attribute_ok_1() {
-    let DefaultWorld{world, briq_token, briq_set, booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, briq_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_attribute_manager_shapes(world, 0x69);
 
-    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
+    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -421,15 +428,15 @@ fn test_simple_mint_attribute_ok_1() {
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
         valid_shape_1(),
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
     assert(
         token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
-    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-    assert(booklet.balance_of(token_id, 0x1) == 1, 'bad booklet balance 2');
+    assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
+    assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(ducks_booklet.balance_of(token_id, 0x1) == 1, 'bad booklet balance 2');
     assert(
         ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 1,
         'should be 1'
@@ -445,9 +452,9 @@ fn test_simple_mint_attribute_ok_1() {
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 4 }],
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }]
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }]
     );
-    assert(booklet.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad booklet balance 3');
+    assert(ducks_booklet.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad booklet balance 3');
 // TODO: validate that token ID balance asserts as it's 0
 }
 
@@ -455,12 +462,14 @@ fn test_simple_mint_attribute_ok_1() {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_attribute_ok_2() {
-    let DefaultWorld{world, briq_token, ducks_set, booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, ducks_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_attribute_manager_shapes(world, 0x69);
 
-    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x2], array![1]);
+    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x2], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -473,7 +482,7 @@ fn test_simple_mint_attribute_ok_2() {
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 3 }],
         valid_shape_2(),
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x2 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x2 }],
     );
 
     assert(
@@ -482,7 +491,7 @@ fn test_simple_mint_attribute_ok_2() {
     );
     assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
     assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-    assert(booklet.balance_of(token_id, 0x2) == 1, 'bad booklet balance 2');
+    assert(ducks_booklet.balance_of(token_id, 0x2) == 1, 'bad booklet balance 2');
     assert(
         ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 1,
         'should be 1'
@@ -498,9 +507,9 @@ fn test_simple_mint_attribute_ok_2() {
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 3 }],
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x2 }]
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x2 }]
     );
-    assert(booklet.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
+    assert(ducks_booklet.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
 // TODO: validate that token ID balance asserts as it's 0
 }
 
@@ -518,10 +527,12 @@ fn test_simple_mint_attribute_ok_2() {
     )
 )]
 fn test_simple_mint_attribute_dont_have_the_booklet() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, briq_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_attribute_manager_shapes(world, 0x69);
 
     impersonate(DEFAULT_OWNER());
 
@@ -535,7 +546,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
         valid_shape_1(),
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
 }
 
@@ -554,10 +565,12 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     )
 )]
 fn test_simple_mint_attribute_bad_shape_item() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, briq_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_attribute_manager_shapes(world, 0x69);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -576,7 +589,7 @@ fn test_simple_mint_attribute_bad_shape_item() {
             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 5, y: 4, z: -2 }),
         ],
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
 }
 
@@ -595,10 +608,12 @@ fn test_simple_mint_attribute_bad_shape_item() {
     )
 )]
 fn test_simple_mint_attribute_shape_fts_mismatch() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, briq_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_attribute_manager_shapes(world, 0x69);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -615,7 +630,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 1, y: 4, z: -2 }),
             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 4, y: 4, z: -2 }),
         ],
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
 }
 
@@ -627,12 +642,14 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
     )
 )]
 fn test_simple_mint_attribute_forgot_in_disassembly() {
-    let DefaultWorld{world, booklet, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, briq_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_attribute_manager_shapes(world, 0x69);
 
-    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
+    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -645,14 +662,14 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
         valid_shape_1(),
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x1 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
     assert(
         token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
-    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
+    assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(
         ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 1,
         'should be 1'
@@ -677,12 +694,14 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     )
 )]
 fn test_simple_mint_registered_but_unhandled_shape() {
-    let DefaultWorld{world, booklet, briq_token, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x1, ducks_set.contract_address);
-    register_attribute_manager_shapes(world, 0x1); // register shape 1/2/3/4 (4 not handled)
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_attribute_manager_shapes(world, 0x69); // register shape 1/2/3/4 (4 not handled)
 
-    mint_booklet(world, booklet.contract_address, DEFAULT_OWNER(), array![0x4], array![1]);
+    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x4], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -697,8 +716,7 @@ fn test_simple_mint_registered_but_unhandled_shape() {
         array![
             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: -100, y: 4, z: -2 }),
         ],
-        array![AttributeItem { attribute_group_id: 0x1, attribute_id: 0x4 }],
+        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x4 }],
     );
 }
-
 
