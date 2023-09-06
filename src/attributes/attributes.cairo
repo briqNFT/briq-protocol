@@ -20,18 +20,25 @@ use briq_protocol::attributes::attribute_group::{
 
 use debug::PrintTrait;
 
-#[derive(Drop, starknet::Event)]
+#[derive(Drop, PartialEq, starknet::Event)]
 struct AttributeAssigned {
     set_token_id: ContractAddress,
     attribute_group_id: u64,
     attribute_id: u64
 }
 
-#[derive(Drop, starknet::Event)]
+#[derive(Drop, PartialEq, starknet::Event)]
 struct AttributeRemoved {
     set_token_id: ContractAddress,
     attribute_group_id: u64,
     attribute_id: u64
+}
+
+#[event]
+#[derive(Drop, PartialEq, starknet::Event)]
+enum Event {
+    AttributeAssigned: AttributeAssigned,
+    AttributeRemoved: AttributeRemoved,
 }
 
 #[derive(Drop, Serde)]

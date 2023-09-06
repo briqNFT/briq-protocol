@@ -16,7 +16,7 @@ mod migrate_assets {
     use dojo::world::Context;
     use super::MigrateAssetsParams;
 
-    use core::pedersen;
+    use core::pedersen::pedersen;
     use core::ecdsa::check_ecdsa_signature;
     use traits::Into;
     use starknet::ContractAddress;

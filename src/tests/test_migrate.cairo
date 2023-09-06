@@ -14,16 +14,10 @@ use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait};
 use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
-
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
-use briq_protocol::attributes::attribute_group::{CreateAttributeGroupData, AttributeGroupOwner};
-use briq_protocol::shape_verifier::RegisterShapeVerifierData;
-use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
-use briq_protocol::utils::IntoContractAddressU256;
-use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
 
 use debug::PrintTrait;
 
