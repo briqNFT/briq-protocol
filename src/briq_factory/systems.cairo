@@ -16,11 +16,17 @@ use briq_protocol::briq_factory::constants::{
 
 use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
 
-#[derive(Drop, starknet::Event)]
+#[derive(Drop, PartialEq, starknet::Event)]
 struct BriqsBought {
     buyer: ContractAddress,
     amount: u32,
     price: u128
+}
+
+#[event]
+#[derive(Drop, starknet::Event)]
+enum Event {
+    BriqsBought: BriqsBought,
 }
 
 #[derive(Drop, Serde)]
@@ -43,6 +49,8 @@ mod BriqFactoryMint {
     use super::{
         BriqsBought, BriqFactoryTrait, BriqFactoryBuyParams, DECIMALS, MIN_PURCHASE, BRIQ_MATERIAL
     };
+    #[event]
+    use super::Event;
     use briq_protocol::world_config::AdminTrait;
 
 

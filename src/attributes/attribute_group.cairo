@@ -91,6 +91,26 @@ impl AttributeGroupImpl of AttributeGroupTrait {
     }
 }
 
+#[derive(Drop, PartialEq, starknet::Event)]
+struct AttributeGroupCreated {
+    attribute_group_id: u64,
+    owner: ContractAddress,
+    system: felt252,
+}
+
+#[derive(Drop, PartialEq, starknet::Event)]
+struct AttributeGroupUpdated {
+    attribute_group_id: u64,
+    owner: ContractAddress,
+    system: felt252,
+}
+
+#[event]
+#[derive(Drop, PartialEq, starknet::Event)]
+enum Event {
+    AttributeGroupCreated: AttributeGroupCreated,
+    AttributeGroupUpdated: AttributeGroupUpdated,
+}
 
 #[derive(Clone, Drop, Serde)]
 struct CreateAttributeGroupParams {
@@ -122,13 +142,9 @@ mod create_attribute_group {
         CreateAttributeGroupParams, AttributeGroupOwner, AttributeGroupTrait, AttributeGroup
     };
 
-    #[derive(Drop, starknet::Event)]
-    struct AttributeGroupCreated {
-        attribute_group_id: u64,
-        owner: ContractAddress,
-        system: felt252,
-
-    }
+    use super::{AttributeGroupCreated};
+    #[event]
+    use super::Event;
 
     fn execute(ctx: Context, data: CreateAttributeGroupParams) {
          // TODO: check ctx.origin is actually the origin
@@ -204,12 +220,9 @@ mod update_attribute_group {
         UpdateAttributeGroupParams, AttributeGroupOwner, AttributeGroupTrait, AttributeGroup
     };
 
-    #[derive(Drop, starknet::Event)]
-    struct AttributeGroupUpdated {
-        attribute_group_id: u64,
-        owner: ContractAddress,
-        system: felt252,
-    }
+    use super::{AttributeGroupUpdated};
+    #[event]
+    use super::Event;
 
     fn execute(ctx: Context, data: UpdateAttributeGroupParams) {
         // TODO: check ctx.origin is actually the origin

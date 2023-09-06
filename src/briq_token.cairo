@@ -9,7 +9,6 @@ mod BriqToken {
     use starknet::{ContractAddress, ClassHash, get_caller_address, get_contract_address};
     use traits::{Into, TryInto};
     use zeroable::Zeroable;
-    use briq_protocol::utils::PartialEqArray;
     use briq_protocol::world_config::AdminTrait;
 
     use serde::Serde;

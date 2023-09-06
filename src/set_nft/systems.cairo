@@ -5,6 +5,7 @@ use array::SpanTrait;
 use option::{Option, OptionTrait};
 use zeroable::Zeroable;
 
+use core::pedersen::pedersen;
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 
 use dojo_erc::erc1155::components::{OperatorApproval, ERC1155Balance, ERC1155BalanceTrait};

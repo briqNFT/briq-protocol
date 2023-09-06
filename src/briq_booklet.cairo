@@ -30,7 +30,7 @@ mod briq_booklet {
         ERC1155SafeBatchTransferFromParams, ERC1155MintParams, ERC1155BurnParams
     };
     use dojo_erc::erc_common::utils::{
-        to_calldata, ToCallDataTrait, system_calldata, PartialEqArray
+        to_calldata, ToCallDataTrait, system_calldata
     };
 
     use briq_protocol::world_config::AdminTrait;
