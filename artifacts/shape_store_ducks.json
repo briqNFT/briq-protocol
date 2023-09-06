@@ -248,37 +248,37 @@
     "entry_points_by_type": {
         "CONSTRUCTOR": [
             {
-                "offset": "0xd7de",
+                "offset": 55262,
                 "selector": "0x28ffe4ff0f226a9107253e17a904099aa4f63a02a5621de0576e5aa71bc5194"
             }
         ],
         "EXTERNAL": [
             {
-                "offset": "0xd896",
+                "offset": 55446,
                 "selector": "0x222cde1c893f24fb4bf6beb830c54e83e32650f5a9cd0f56fa025872c60bdb"
             },
             {
-                "offset": "0xd84a",
+                "offset": 55370,
                 "selector": "0xf2f9a15cce1138e4662a6b19766daa149d92fbd132129eb8c6eca89342f1cc"
             },
             {
-                "offset": "0xd1",
+                "offset": 209,
                 "selector": "0x17c87e93a46af58ee4925fef032a3b895cc0753bc73103ffe06c0a36ad24643"
             },
             {
-                "offset": "0xd9d7",
+                "offset": 55767,
                 "selector": "0x2265e9cb4d0ca5983c569b39e7a1a523d6ea342207bb700f558a588f6922f38"
             },
             {
-                "offset": "0x80",
+                "offset": 128,
                 "selector": "0x252a680fd5c4d1d8bb0ac1fcd579a4f1278b01e7163b2d8fb21f309c6b4588a"
             },
             {
-                "offset": "0xd97e",
+                "offset": 55678,
                 "selector": "0x36a11a8f2996c62518d0ed7e540cf0e445da69073c946f36b290ccc85ece26c"
             },
             {
-                "offset": "0x18c",
+                "offset": 396,
                 "selector": "0x38c2e003590ee855bf118f953919e88525efe71c13b7f158e3bf0fd8d1bfbcc"
             }
         ],
@@ -484,7 +484,7 @@
             "range_check",
             "bitwise"
         ],
-        "compiler_version": "0.10.3",
+        "compiler_version": "0.11.0.1",
         "data": [
             "0x40780017fff7fff",
             "0x1",
@@ -58258,6 +58258,10 @@
                 "type": "const",
                 "value": 1
             },
+            "contracts.ecosystem.genesis_collection.ZENDUCKS_COLLECTION": {
+                "type": "const",
+                "value": 4
+            },
             "contracts.shape.construction_guards.BitwiseBuiltin": {
                 "destination": "starkware.cairo.common.cairo_builtins.BitwiseBuiltin",
                 "type": "alias"
@@ -58941,6 +58945,25 @@
                 "destination": "starkware.cairo.common.keccak_state.KeccakBuiltinState",
                 "type": "alias"
             },
+            "starkware.cairo.common.cairo_builtins.PoseidonBuiltin": {
+                "full_name": "starkware.cairo.common.cairo_builtins.PoseidonBuiltin",
+                "members": {
+                    "input": {
+                        "cairo_type": "starkware.cairo.common.poseidon_state.PoseidonBuiltinState",
+                        "offset": 0
+                    },
+                    "output": {
+                        "cairo_type": "starkware.cairo.common.poseidon_state.PoseidonBuiltinState",
+                        "offset": 3
+                    }
+                },
+                "size": 6,
+                "type": "struct"
+            },
+            "starkware.cairo.common.cairo_builtins.PoseidonBuiltinState": {
+                "destination": "starkware.cairo.common.poseidon_state.PoseidonBuiltinState",
+                "type": "alias"
+            },
             "starkware.cairo.common.cairo_builtins.SignatureBuiltin": {
                 "full_name": "starkware.cairo.common.cairo_builtins.SignatureBuiltin",
                 "members": {
@@ -59440,6 +59463,25 @@
             "starkware.cairo.common.memcpy.memcpy.loop": {
                 "pc": 8,
                 "type": "label"
+            },
+            "starkware.cairo.common.poseidon_state.PoseidonBuiltinState": {
+                "full_name": "starkware.cairo.common.poseidon_state.PoseidonBuiltinState",
+                "members": {
+                    "s0": {
+                        "cairo_type": "felt",
+                        "offset": 0
+                    },
+                    "s1": {
+                        "cairo_type": "felt",
+                        "offset": 1
+                    },
+                    "s2": {
+                        "cairo_type": "felt",
+                        "offset": 2
+                    }
+                },
+                "size": 3,
+                "type": "struct"
             },
             "starkware.cairo.common.registers.get_ap": {
                 "destination": "starkware.cairo.lang.compiler.lib.registers.get_ap",
@@ -60032,6 +60074,25 @@
                     }
                 },
                 "size": 5,
+                "type": "struct"
+            },
+            "starkware.starknet.common.syscalls.REPLACE_CLASS_SELECTOR": {
+                "type": "const",
+                "value": 25500403217443378527601783667
+            },
+            "starkware.starknet.common.syscalls.ReplaceClass": {
+                "full_name": "starkware.starknet.common.syscalls.ReplaceClass",
+                "members": {
+                    "class_hash": {
+                        "cairo_type": "felt",
+                        "offset": 1
+                    },
+                    "selector": {
+                        "cairo_type": "felt",
+                        "offset": 0
+                    }
+                },
+                "size": 2,
                 "type": "struct"
             },
             "starkware.starknet.common.syscalls.SEND_MESSAGE_TO_L1_SELECTOR": {
