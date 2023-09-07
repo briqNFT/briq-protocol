@@ -16,9 +16,8 @@ mod SetNft {
         ERC721Owner, ERC721OwnerTrait, BaseUri, BaseUriTrait, ERC721Balance, ERC721BalanceTrait,
         ERC721TokenApproval, ERC721TokenApprovalTrait, OperatorApproval, OperatorApprovalTrait
     };
-    use super::systems_erc721::{
-        ERC721ApproveParams, ERC721SetApprovalForAllParams, ERC721TransferFromParams,
-        ERC721MintParams, ERC721BurnParams
+    use dojo_erc::erc721::systems::{
+        ERC721ApproveParams, ERC721SetApprovalForAllParams, ERC721TransferFromParams
     };
 
     use dojo_erc::erc165::interface::{IERC165, IERC165_ID};
@@ -128,7 +127,7 @@ mod SetNft {
         }
 
         fn get_approved(self: @ContractState, token_id: u256) -> ContractAddress {
-            assert(self.exists(token_id), 'ERC721: invalid token_id');
+            assert(self.owner_of(token_id).is_non_zero(), 'ERC721: invalid token_id');
 
             let token_id_felt: felt252 = token_id.try_into().unwrap();
             ERC721TokenApprovalTrait::get_approved(
@@ -227,57 +226,6 @@ mod SetNft {
             0
         }
     }
-
-
-    #[external(v0)]
-    #[generate_trait]
-    impl ERC721Custom of ERC721CustomTrait {
-        fn exists(self: @ContractState, token_id: u256) -> bool {
-            self.owner_of(token_id).is_non_zero()
-        }
-
-        fn owner(self: @ContractState) -> ContractAddress {
-            assert(false, 'TODO remove');
-            Zeroable::zero()
-        }
-
-        fn transfer(ref self: ContractState, to: ContractAddress, token_id: u256) {
-            self.transfer_from(get_caller_address(), to, token_id);
-        }
-
-        fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
-            self
-                .world
-                .read()
-                .execute(
-                    'ERC721Mint',
-                    system_calldata(
-                        ERC721MintParams {
-                            token: get_contract_address(),
-                            recipient: to,
-                            token_id: token_id.try_into().unwrap()
-                        }
-                    )
-                );
-        }
-
-        fn burn(ref self: ContractState, token_id: u256) {
-            self
-                .world
-                .read()
-                .execute(
-                    'ERC721Burn',
-                    system_calldata(
-                        ERC721BurnParams {
-                            token: get_contract_address(),
-                            caller: get_caller_address(),
-                            token_id: token_id.try_into().unwrap()
-                        }
-                    )
-                );
-        }
-    }
-
 
     #[external(v0)]
     impl ERC721EventEmitter of IERC721Events<ContractState> {
