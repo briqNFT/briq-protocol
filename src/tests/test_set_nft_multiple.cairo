@@ -38,6 +38,8 @@ fn test_multiple_set() {
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
+    impersonate(DEFAULT_OWNER());
+
     let token_id = assemble(
         world,
         DEFAULT_OWNER(),
@@ -52,6 +54,8 @@ fn test_multiple_set() {
     assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
     assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 
+    impersonate(WORLD_ADMIN());
+
     // create attribute_group for ducks_set & register shapes
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
@@ -60,6 +64,8 @@ fn test_multiple_set() {
 
     // mint a booklet for DEFAULT_OWNER
     mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
+
+    impersonate(DEFAULT_OWNER());
 
     // lets assemble a duck
     let token_id_duck = assemble(
