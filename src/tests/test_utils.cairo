@@ -75,36 +75,37 @@ fn spawn_world() -> IWorldDispatcher {
     let mut systems = array![
         // world_config
         briq_protocol::world_config::SetupWorld::TEST_CLASS_HASH,
+        
+        // erc721
+        dojo_erc::erc721::systems::ERC721Approve::TEST_CLASS_HASH,
+        dojo_erc::erc721::systems::ERC721SetApprovalForAll::TEST_CLASS_HASH,
+        briq_protocol::set_nft::systems_erc721::ERC721TransferFrom::TEST_CLASS_HASH,
+        // erc721 specifics - set_nft
+        briq_protocol::set_nft::systems::set_nft_assembly::TEST_CLASS_HASH,
+        briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
+
         // erc1155
         dojo_erc::erc1155::systems::ERC1155SetApprovalForAll::TEST_CLASS_HASH,
         dojo_erc::erc1155::systems::ERC1155Mint::TEST_CLASS_HASH,
-        // // erc721
-        // dojo_erc::erc721::systems::ERC721Approve::TEST_CLASS_HASH,
-        // dojo_erc::erc721::systems::ERC721SetApprovalForAll::TEST_CLASS_HASH,
-        // dojo_erc::erc721::systems::ERC721TransferFrom::TEST_CLASS_HASH,
-        // erc721
-        briq_protocol::set_nft::systems_erc721::ERC721Approve::TEST_CLASS_HASH,
-        briq_protocol::set_nft::systems_erc721::ERC721SetApprovalForAll::TEST_CLASS_HASH,
-        briq_protocol::set_nft::systems_erc721::ERC721TransferFrom::TEST_CLASS_HASH,
         // briq_token
         briq_protocol::briq_token::systems::BriqTokenSafeTransferFrom::TEST_CLASS_HASH,
         briq_protocol::briq_token::systems::BriqTokenSafeBatchTransferFrom::TEST_CLASS_HASH,
         briq_protocol::briq_token::systems::BriqTokenERC1155MintBurn::TEST_CLASS_HASH,
-        // set_nft
-        briq_protocol::set_nft::systems::set_nft_assembly::TEST_CLASS_HASH,
-        briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
+        // unboxing
+        briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
+
+        // attribute_group
+        briq_protocol::attributes::attribute_group::create_attribute_group::TEST_CLASS_HASH,
+        briq_protocol::attributes::attribute_group::update_attribute_group::TEST_CLASS_HASH,
         // attributes
         briq_protocol::attributes::group_systems::booklet::RegisterShapeValidator::TEST_CLASS_HASH,
         briq_protocol::attributes::group_systems::agm_booklet::TEST_CLASS_HASH,
         briq_protocol::attributes::group_systems::agm_briq_counter::TEST_CLASS_HASH,
+        
         // briq_factory
         briq_protocol::briq_factory::systems::BriqFactoryMint::TEST_CLASS_HASH,
         briq_protocol::briq_factory::systems::BriqFactoryInitialize::TEST_CLASS_HASH,
-        // attribute_group
-        briq_protocol::attributes::attribute_group::create_attribute_group::TEST_CLASS_HASH,
-        briq_protocol::attributes::attribute_group::update_attribute_group::TEST_CLASS_HASH,
-        // unboxing
-        briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
+
         // Migration
         briq_protocol::migrate::migrate_assets::TEST_CLASS_HASH,
     ];
