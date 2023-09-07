@@ -17,7 +17,7 @@ use briq_protocol::utils::IntoContractAddressU256;
 
 // since sets token_id is an hash (into a ContractAddress) there is low collision probability
 // ERC721OwnerTrait overrides token (ercXXX contract address) with ALL_BRIQ_SETS
-// it allows to store ownership for all sets (briq_set, ducks_set, ...) under one contract_address (ALL_BRIQ_SETS)
+// it allows to store ownership for all sets (generic_sets, ducks_set, ...) under one contract_address (ALL_BRIQ_SETS)
 fn ALL_BRIQ_SETS() -> ContractAddress {
     'all_briq_sets'.try_into().unwrap()
 }

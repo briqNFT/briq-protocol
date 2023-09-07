@@ -89,18 +89,18 @@ fn test_briq_token_upgrade_emit_event() {
 
 #[test]
 #[available_gas(30000000)]
-fn test_upgrade_with_admin_briq_set() {
-    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
-    test_upgrade_with_admin(briq_set.contract_address);
+fn test_upgrade_with_admin_generic_sets() {
+    let DefaultWorld{world, generic_sets, .. } = deploy_default_world();
+    test_upgrade_with_admin(generic_sets.contract_address);
 }
 
 
 #[test]
 #[available_gas(30000000)]
 #[should_panic]
-fn test_upgrade_with_non_admin_briq_set() {
-    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
-    test_upgrade_with_non_admin(briq_set.contract_address);
+fn test_upgrade_with_non_admin_generic_sets() {
+    let DefaultWorld{world, generic_sets, .. } = deploy_default_world();
+    test_upgrade_with_non_admin(generic_sets.contract_address);
 }
 
 

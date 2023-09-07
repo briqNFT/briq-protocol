@@ -177,7 +177,7 @@ fn deploy_contracts(
     let constructor_calldata = array![world.contract_address.into()];
 
     // sets
-    let briq_set_constructor_calldata = array![world.contract_address.into(), 'briq set', 'B7'];
+    let generic_sets_constructor_calldata = array![world.contract_address.into(), 'briq set', 'B7'];
     let ducks_set_constructor_calldata = array![world.contract_address.into(), 'ducks set', 'D7'];
     let planets_set_constructor_calldata = array![
         world.contract_address.into(), 'planets set', 'P7'
@@ -199,8 +199,8 @@ fn deploy_contracts(
         .expect('error deploying');
 
     // sets 
-    let (briq_set, _) = deploy_syscall(
-        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, briq_set_constructor_calldata.span(), false
+    let (generic_sets, _) = deploy_syscall(
+        SetNft::TEST_CLASS_HASH.try_into().unwrap(), 0, generic_sets_constructor_calldata.span(), false
     )
         .expect('error deploying');
 
@@ -245,7 +245,7 @@ fn deploy_contracts(
 
     // briq factory ???
 
-    (briq, briq_set, ducks_set, planets_set, ducks_booklet, planets_booklet, box)
+    (briq, generic_sets, ducks_set, planets_set, ducks_booklet, planets_booklet, box)
 }
 
 #[derive(Copy, Drop)]
@@ -253,7 +253,7 @@ struct DefaultWorld {
     world: IWorldDispatcher,
     briq_token: IERC1155Dispatcher,
     //sets
-    briq_set: IERC721Dispatcher,
+    generic_sets: IERC721Dispatcher,
     ducks_set: IERC721Dispatcher,
     planets_set: IERC721Dispatcher,
     //booklets
@@ -267,14 +267,14 @@ fn deploy_default_world() -> DefaultWorld {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, briq_set, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
+    let (briq, generic_sets, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
         deploy_contracts(
         world
     );
 
     //   treasury: ContractAddress,
     //     briq: ContractAddress,
-    //     briq_set: ContractAddress,
+    //     generic_sets: ContractAddress,
     //     ducks_set: ContractAddress,
     //     ducks_booklet: ContractAddress,
     //     box: ContractAddress
@@ -285,13 +285,7 @@ fn deploy_default_world() -> DefaultWorld {
             (array![
                 TREASURY().into(),
                 briq.into(),
-                //sets
-                briq_set.into(),
-                ducks_set.into(),
-                // planets_set.into(),
-                //booklets
-                ducks_booklet.into(),
-                //planets_booklet.into(),
+                generic_sets.into(),
                 //boxes
                 box.into(),
             ])
@@ -299,7 +293,7 @@ fn deploy_default_world() -> DefaultWorld {
     DefaultWorld {
         world,
         briq_token: IERC1155Dispatcher { contract_address: briq },
-        briq_set: IERC721Dispatcher { contract_address: briq_set },
+        generic_sets: IERC721Dispatcher { contract_address: generic_sets },
         planets_set: IERC721Dispatcher { contract_address: planets_set },
         ducks_set: IERC721Dispatcher { contract_address: ducks_set },
         ducks_booklet: IERC1155Dispatcher { contract_address: ducks_booklet },
@@ -311,9 +305,9 @@ fn deploy_default_world() -> DefaultWorld {
 #[test]
 #[available_gas(30000000)]
 fn test_deploy_default_world() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, .. } = deploy_default_world();
     assert(get_world_config(world).briq == 0x3.try_into().unwrap(), 'totoro');
-    assert(get_world_config(world).briq_set == 0x4.try_into().unwrap(), 'totoro');
+    assert(get_world_config(world).generic_sets == 0x4.try_into().unwrap(), 'totoro');
 }
 
 

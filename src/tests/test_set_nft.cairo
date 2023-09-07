@@ -113,8 +113,8 @@ mod convenience_for_testing {
 
 
     fn create_attribute_group_with_briq_counter(world: IWorldDispatcher, attribute_group_id: u64) {
-        // briq_counter is not related to a specific collection so we link it to briq_set
-        let target_set_contract_address = get_world_config(world).briq_set;
+        // briq_counter is not related to a specific collection so we link it to generic_sets
+        let target_set_contract_address = get_world_config(world).generic_sets;
         let booklet_contract_address = ZERO();
         world
             .execute(
@@ -225,7 +225,7 @@ use convenience_for_testing::{
 #[available_gas(30000000)]
 #[should_panic]
 fn test_empty_mint() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -244,7 +244,7 @@ fn test_empty_mint() {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_and_burn() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, .. } = deploy_default_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -266,15 +266,15 @@ fn test_simple_mint_and_burn() {
         'bad token id'
     );
 
-    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == generic_sets.owner_of(token_id.into()), 'bad owner');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id, 1) == 1, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 99, 'bad balance');
 
     disassemble(
         world, DEFAULT_OWNER(), token_id.into(), array![FTSpec { token_id: 1, qty: 1 }], array![]
     );
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
 // TODO: validate that token ID balance asserts as it's 0
 }
@@ -283,7 +283,7 @@ fn test_simple_mint_and_burn() {
 #[available_gas(3000000000)]
 #[should_panic]
 fn test_simple_mint_and_burn_not_enough_briqs() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -302,7 +302,7 @@ fn test_simple_mint_and_burn_not_enough_briqs() {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_and_burn_2() {
-    let DefaultWorld{world, briq_token, briq_set, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = deploy_default_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -324,15 +324,15 @@ fn test_simple_mint_and_burn_2() {
         'bad token id'
     );
 
-    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == generic_sets.owner_of(token_id.into()), 'bad owner');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id, 1) == 4, 'bad token balance 1');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
     disassemble(
         world, DEFAULT_OWNER(), token_id.into(), array![FTSpec { token_id: 1, qty: 4 }], array![]
     );
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
 // TODO: validate that token ID balance asserts as it's 0
 }
@@ -343,7 +343,7 @@ fn test_simple_mint_and_burn_2() {
     expected: ('Set still has briqs', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED')
 )]
 fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
-    let DefaultWorld{world, briq_token, briq_set, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -364,8 +364,8 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
         token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
         'bad token id'
     );
-    assert(DEFAULT_OWNER() == briq_set.owner_of(token_id.into()), 'bad owner');
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(DEFAULT_OWNER() == generic_sets.owner_of(token_id.into()), 'bad owner');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id, 1) == 4, 'bad token balance 1');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 96, 'bad briq balance 1');
 
@@ -386,7 +386,7 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     )
 )]
 fn test_simple_mint_attribute_not_exist() {
-    let DefaultWorld{world, briq_token, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 

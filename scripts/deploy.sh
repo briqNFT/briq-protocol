@@ -4,8 +4,8 @@ sozo build
 
 sozo migrate --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
-export WORLD_ADDRESS=0x598f57e84be4279ff74e7ba389be4d46ec2b1c7974088caad07ebd5a3e8baaa
-export EXECUTOR_ADDRESS=0x75f86ab304522ccf46e65201024f9abbe708ac76639bece351921fae1831f7d
+export WORLD_ADDRESS=0x4ccc29ef7f190f202e5947c0458bb1699a2406599e559a6b1626096f3820da1
+export EXECUTOR_ADDRESS=0x1c24cd47ab41ad1140f624ed133db38411bfa44d7f34e41551af819da9a78eb
   
 echo "\nDeclaring class hashes ...\n"
 
@@ -22,16 +22,18 @@ echo "*************************************"
 echo "\nDeploying contracts ...\n"
 
 export BRIQ_ADDR=$(starkli deploy $BRIQ_HASH $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD)
-export BOOKLET_ADDR=$(starkli deploy $ERC1155_HASH $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD)
+export SET_ADDR=$(starkli deploy $SET_HASH $WORLD_ADDRESS 'str:briq sets' 'str:B7' --keystore-password $KEYSTORE_PWD)
+export DUCKS_ADDR=$(starkli deploy $SET_HASH $WORLD_ADDRESS 'str:ducks everywhere' 'str:DUCKS' --keystore-password $KEYSTORE_PWD)
+export DUCK_BOOKLET_ADDR=$(starkli deploy $ERC1155_HASH $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD)
 export BOX_ADDR=$(starkli deploy $ERC1155_HASH $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD)
-export SET_ADDR=$(starkli deploy $SET_HASH $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD)
 
 echo "\n*************************************"
 echo FEE_TOKEN_ADDR=$FEE_TOKEN_ADDR
 echo BRIQ_ADDR=$BRIQ_ADDR
-echo BOOKLET_ADDR=$BOOKLET_ADDR
-echo BOX_ADDR=$BOX_ADDR
 echo SET_ADDR=$SET_ADDR
+echo DUCKS_ADDR=$DUCKS_ADDR
+echo DUCK_BOOKLET_ADDR=$DUCK_BOOKLET_ADDR
+echo BOX_ADDR=$BOX_ADDR
 echo "*************************************"
 
 

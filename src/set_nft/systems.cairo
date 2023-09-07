@@ -84,7 +84,7 @@ fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32,) 
 fn get_target_contract_from_attributes(
     world: IWorldDispatcher, arr: @Array<AttributeItem>
 ) -> ContractAddress {
-    let mut token = get_world_config(world).briq_set;
+    let mut token = get_world_config(world).generic_sets;
     let mut span = arr.span();
     loop {
         match span.pop_front() {

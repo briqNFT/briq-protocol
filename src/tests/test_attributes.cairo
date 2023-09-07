@@ -102,7 +102,7 @@ fn test_create_attribute_groups_with_systems() {
     )
 )]
 fn test_create_attribute_group_collision() {
-    let DefaultWorld{world, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = deploy_default_world();
     create_attribute_group(
         world,
         CreateAttributeGroupParams {
@@ -135,14 +135,14 @@ fn test_create_attribute_group_collision() {
     )
 )]
 fn test_create_attribute_group_collision_2() {
-    let DefaultWorld{world, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
     create_attribute_group(
         world,
         CreateAttributeGroupParams {
             attribute_group_id: 1,
             owner: AttributeGroupOwner::Admin(USER1()),
-            target_set_contract_address: briq_set.contract_address,
+            target_set_contract_address: generic_sets.contract_address,
             booklet_contract_address: ducks_booklet.contract_address
         }
     );
@@ -166,14 +166,14 @@ fn test_create_attribute_group_collision_2() {
 #[test]
 #[available_gas(30000000)]
 fn test_update_attribute_group_ok() {
-    let DefaultWorld{world, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
     create_attribute_group(
         world,
         CreateAttributeGroupParams {
             attribute_group_id: 0x69,
             owner: AttributeGroupOwner::System('system_not_created'),
-            target_set_contract_address: briq_set.contract_address,
+            target_set_contract_address: generic_sets.contract_address,
             booklet_contract_address: ducks_booklet.contract_address
         }
     );
@@ -217,7 +217,7 @@ fn test_update_attribute_group_ok() {
     )
 )]
 fn test_update_attribute_group_non_existing() {
-    let DefaultWorld{world, briq_set, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, .. } = deploy_default_world();
 
     update_attribute_group(
         world,
@@ -241,7 +241,7 @@ fn test_update_attribute_group_non_existing() {
     expected: ('Not authorized', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED')
 )]
 fn test_create_attribute_group_with_non_world_admin() {
-    let DefaultWorld{world, briq_set, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, .. } = deploy_default_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -250,7 +250,7 @@ fn test_create_attribute_group_with_non_world_admin() {
         CreateAttributeGroupParams {
             attribute_group_id: 1,
             owner: AttributeGroupOwner::Admin(USER1()),
-            target_set_contract_address: briq_set.contract_address,
+            target_set_contract_address: generic_sets.contract_address,
             booklet_contract_address: ZERO()
         }
     );
@@ -263,14 +263,14 @@ fn test_create_attribute_group_with_non_world_admin() {
     expected: ('Not authorized', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED')
 )]
 fn test_update_attribute_group_with_non_world_admin() {
-    let DefaultWorld{world, briq_set, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, .. } = deploy_default_world();
 
     create_attribute_group(
         world,
         CreateAttributeGroupParams {
             attribute_group_id: 0x69,
             owner: AttributeGroupOwner::System('system_not_created'),
-            target_set_contract_address: briq_set.contract_address,
+            target_set_contract_address: generic_sets.contract_address,
             booklet_contract_address: ZERO()
         }
     );

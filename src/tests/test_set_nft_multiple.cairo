@@ -33,7 +33,7 @@ use debug::PrintTrait;
 #[test]
 #[available_gas(3000000000)]
 fn test_multiple_set() {
-    let DefaultWorld{world, briq_token, briq_set, ducks_set, ducks_booklet, .. } =
+    let DefaultWorld{world, briq_token, generic_sets, ducks_set, ducks_booklet, .. } =
         deploy_default_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
@@ -51,8 +51,8 @@ fn test_multiple_set() {
         array![],
     );
 
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
-    assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
+    assert(generic_sets.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 
     impersonate(WORLD_ADMIN());
 
@@ -82,8 +82,8 @@ fn test_multiple_set() {
     assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
     assert(ducks_set.owner_of(token_id_duck.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 
-    assert(briq_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
-    assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
+    assert(generic_sets.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 }
 
 #[test]
@@ -177,14 +177,14 @@ fn test_multiple_attributes() {
 // #[test]
 // #[available_gas(3000000000)]
 // fn test_ap_move() {
-//     let DefaultWorld{world, briq_token, briq_set, ducks_set, .. } = deploy_default_world();
+//     let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = deploy_default_world();
 
-//     let res = aaa(briq_set.contract_address);
+//     let res = aaa(generic_sets.contract_address);
 
 //     assert(res == 123, 'qqq');
-//     assert(briq_set.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+//     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
 
-//     let res2 = bbb(briq_set.contract_address);
+//     let res2 = bbb(generic_sets.contract_address);
 // }
 
 
