@@ -21,7 +21,7 @@ use briq_protocol::tests::contract_upgrade::ContractUpgrade::{
 #[test]
 #[available_gas(30000000)]
 fn test_briq_token_upgrade_emit_event() {
-    let DefaultWorld{world, briq_token,  .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, .. } = deploy_default_world();
 
     impersonate(WORLD_ADMIN());
 

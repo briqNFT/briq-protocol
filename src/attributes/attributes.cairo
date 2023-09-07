@@ -112,7 +112,9 @@ fn inner_attribute_assign(
     );
 
     // check attribute_group exists
-    assert(attribute_group.target_set_contract_address.is_non_zero(), 'unregistered attribute_group_id');
+    assert(
+        attribute_group.target_set_contract_address.is_non_zero(), 'unregistered attribute_group_id'
+    );
 
     match attribute_group.owner {
         AttributeGroupOwner::Admin(address) => {

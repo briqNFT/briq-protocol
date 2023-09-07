@@ -9,7 +9,6 @@ mod attributes;
 mod box_nft;
 
 
-
 // ERC721
 mod set_nft;
 

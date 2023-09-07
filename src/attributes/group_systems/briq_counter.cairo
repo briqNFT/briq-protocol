@@ -9,9 +9,6 @@ mod agm_briq_counter {
         AttributeHandlerData, AttributeAssignData, AttributeRemoveData,
     };
     use briq_protocol::types::{PackedShapeItem, FTSpec};
-    use briq_protocol::attributes::attribute_manager::{
-        AttributeManager, AttributeManagerTrait, AttributeManagerImpl, assert_valid_caller
-    };
 
     // check that there is at least attribute_id count of briq in set
     fn verify_briq_count(attribute_id: u64, shape: Span<PackedShapeItem>, fts: Span<FTSpec>) {
@@ -34,8 +31,6 @@ mod agm_briq_counter {
     }
 
     fn execute(ctx: Context, data: AttributeHandlerData) {
-        assert_valid_caller(ctx);
-
         match data {
             AttributeHandlerData::Assign(d) => {
                 let AttributeAssignData{set_owner,

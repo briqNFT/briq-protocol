@@ -17,7 +17,6 @@ use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
-use briq_protocol::attributes::attribute_manager::RegisterAttributeManagerParams;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::utils::IntoContractAddressU256;
@@ -40,7 +39,7 @@ mod convenience_for_testing {
     use briq_protocol::world_config::get_world_config;
     use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
     use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData, get_token_id};
-    use briq_protocol::attributes::attribute_manager::{RegisterAttributeManagerParams};
+    use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
     use briq_protocol::attributes::attribute_group::{
         CreateAttributeGroupParams, AttributeGroupOwner
     };
@@ -143,23 +142,23 @@ mod convenience_for_testing {
     // Attribute Manager
     //
 
-    fn register_attribute_manager(
+    fn register_shape_validator(
         world: IWorldDispatcher, attribute_group_id: u64, attribute_id: u64, class_hash: ClassHash
     ) {
         world
             .execute(
-                'register_attribute_manager',
+                'RegisterShapeValidator',
                 system_calldata(
-                    RegisterAttributeManagerParams { attribute_group_id, attribute_id, class_hash }
+                    RegisterShapeValidatorParams { attribute_group_id, attribute_id, class_hash }
                 )
             );
     }
 
-    fn register_attribute_manager_shapes(world: IWorldDispatcher, attribute_group_id: u64) {
-        register_attribute_manager(world, attribute_group_id, 0x1, get_test_shapes_class_hash());
-        register_attribute_manager(world, attribute_group_id, 0x2, get_test_shapes_class_hash());
-        register_attribute_manager(world, attribute_group_id, 0x3, get_test_shapes_class_hash());
-        register_attribute_manager(
+    fn register_shape_validator_shapes(world: IWorldDispatcher, attribute_group_id: u64) {
+        register_shape_validator(world, attribute_group_id, 0x1, get_test_shapes_class_hash());
+        register_shape_validator(world, attribute_group_id, 0x2, get_test_shapes_class_hash());
+        register_shape_validator(world, attribute_group_id, 0x3, get_test_shapes_class_hash());
+        register_shape_validator(
             world, attribute_group_id, 0x4, get_test_shapes_class_hash()
         ); // not handled !
     }
@@ -218,7 +217,7 @@ mod convenience_for_testing {
 }
 use convenience_for_testing::{
     assemble, disassemble, mint_booklet, valid_shape_1, valid_shape_2,
-    create_attribute_group_with_booklet, register_attribute_manager_shapes
+    create_attribute_group_with_booklet, register_shape_validator_shapes
 };
 
 
@@ -413,7 +412,7 @@ fn test_simple_mint_attribute_ok_1() {
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
     );
-    register_attribute_manager_shapes(world, 0x69);
+    register_shape_validator_shapes(world, 0x69);
 
     mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
@@ -467,7 +466,7 @@ fn test_simple_mint_attribute_ok_2() {
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
     );
-    register_attribute_manager_shapes(world, 0x69);
+    register_shape_validator_shapes(world, 0x69);
 
     mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x2], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
@@ -532,7 +531,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
     );
-    register_attribute_manager_shapes(world, 0x69);
+    register_shape_validator_shapes(world, 0x69);
 
     impersonate(DEFAULT_OWNER());
 
@@ -570,7 +569,7 @@ fn test_simple_mint_attribute_bad_shape_item() {
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
     );
-    register_attribute_manager_shapes(world, 0x69);
+    register_shape_validator_shapes(world, 0x69);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -613,7 +612,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
     );
-    register_attribute_manager_shapes(world, 0x69);
+    register_shape_validator_shapes(world, 0x69);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -647,7 +646,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
     );
-    register_attribute_manager_shapes(world, 0x69);
+    register_shape_validator_shapes(world, 0x69);
 
     mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
@@ -699,7 +698,7 @@ fn test_simple_mint_registered_but_unhandled_shape() {
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
     );
-    register_attribute_manager_shapes(world, 0x69); // register shape 1/2/3/4 (4 not handled)
+    register_shape_validator_shapes(world, 0x69); // register shape 1/2/3/4 (4 not handled)
 
     mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x4], array![1]);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);

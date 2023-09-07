@@ -132,7 +132,9 @@ mod ERC721SetApprovalForAll {
         assert(token == ctx.origin, 'ERC721: not authorized');
         assert(owner != operator, 'ERC721: self approval');
 
-        OperatorApprovalTrait::unchecked_set_approval_for_all(ctx.world, token, owner, operator, approved);
+        OperatorApprovalTrait::unchecked_set_approval_for_all(
+            ctx.world, token, owner, operator, approved
+        );
 
         // emit event
         super::emit_approval_for_all(ctx.world, token, owner, operator, approved);
@@ -174,9 +176,7 @@ mod ERC721TransferFrom {
         let is_approved_for_all = OperatorApprovalTrait::is_approved_for_all(
             ctx.world, token, owner, caller
         );
-        let approved = ERC721TokenApprovalTrait::get_approved(
-            ctx.world, token, token_id
-        );
+        let approved = ERC721TokenApprovalTrait::get_approved(ctx.world, token, token_id);
 
         assert(
             owner == caller || is_approved_for_all || approved == caller,
@@ -258,9 +258,7 @@ mod ERC721Burn {
         let is_approved_for_all = OperatorApprovalTrait::is_approved_for_all(
             ctx.world, token, owner, caller
         );
-        let approved = ERC721TokenApprovalTrait::get_approved(
-            ctx.world, token, token_id
-        );
+        let approved = ERC721TokenApprovalTrait::get_approved(ctx.world, token, token_id);
 
         assert(
             owner == caller || is_approved_for_all || approved == caller,
@@ -268,7 +266,9 @@ mod ERC721Burn {
         );
 
         ERC721BalanceTrait::unchecked_decrease_balance(ctx.world, token, owner, 1);
-        ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, Zeroable::zero());
+        ERC721OwnerTrait::unchecked_set_owner(
+            ctx.world, ALL_BRIQ_SETS(), token_id, Zeroable::zero()
+        );
 
         //  emit events
         super::emit_transfer(ctx.world, token, owner, Zeroable::zero(), token_id);

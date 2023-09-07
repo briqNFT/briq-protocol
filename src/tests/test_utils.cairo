@@ -68,8 +68,8 @@ fn spawn_world() -> IWorldDispatcher {
         dojo_erc::erc721::components::erc_721_token_approval::TEST_CLASS_HASH,
         // attribute_group
         briq_protocol::attributes::attribute_group::attribute_group::TEST_CLASS_HASH,
-        // attribute_manager
-        briq_protocol::attributes::attribute_manager::attribute_manager::TEST_CLASS_HASH,
+        // shape_validator
+        briq_protocol::attributes::group_systems::booklet::shape_validator::TEST_CLASS_HASH,
     ];
     // systems
     let mut systems = array![
@@ -93,8 +93,8 @@ fn spawn_world() -> IWorldDispatcher {
         // set_nft
         briq_protocol::set_nft::systems::set_nft_assembly::TEST_CLASS_HASH,
         briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
-        // attribute_manager
-        briq_protocol::attributes::attribute_manager::register_attribute_manager::TEST_CLASS_HASH,
+        // attributes
+        briq_protocol::attributes::group_systems::booklet::RegisterShapeValidator::TEST_CLASS_HASH,
         briq_protocol::attributes::group_systems::agm_booklet::TEST_CLASS_HASH,
         briq_protocol::attributes::group_systems::agm_briq_counter::TEST_CLASS_HASH,
         // briq_factory

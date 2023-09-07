@@ -10,7 +10,7 @@ use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 
 use briq_protocol::tests::test_utils::{
-    DefaultWorld, DEFAULT_OWNER, USER1,ZERO, deploy_default_world, impersonate
+    DefaultWorld, DEFAULT_OWNER, USER1, ZERO, deploy_default_world, impersonate
 };
 
 use briq_protocol::types::{FTSpec, ShapeItem};
@@ -67,7 +67,7 @@ fn test_create_attribute_groups_with_users() {
 #[test]
 #[available_gas(30000000)]
 fn test_create_attribute_groups_with_systems() {
-    let DefaultWorld{world, ducks_set, ducks_booklet,  .. } = deploy_default_world();
+    let DefaultWorld{world, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
     create_attribute_group(
         world,
@@ -102,7 +102,7 @@ fn test_create_attribute_groups_with_systems() {
     )
 )]
 fn test_create_attribute_group_collision() {
-    let DefaultWorld{world, briq_set, ducks_set,ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
     create_attribute_group(
         world,
         CreateAttributeGroupParams {
@@ -110,7 +110,6 @@ fn test_create_attribute_group_collision() {
             owner: AttributeGroupOwner::Admin(USER1()),
             target_set_contract_address: ducks_set.contract_address,
             booklet_contract_address: ducks_booklet.contract_address
-
         }
     );
 
@@ -121,7 +120,6 @@ fn test_create_attribute_group_collision() {
             owner: AttributeGroupOwner::Admin(USER1()),
             target_set_contract_address: ducks_set.contract_address,
             booklet_contract_address: ducks_booklet.contract_address
-
         }
     );
 }
@@ -137,7 +135,7 @@ fn test_create_attribute_group_collision() {
     )
 )]
 fn test_create_attribute_group_collision_2() {
-    let DefaultWorld{world, briq_set, ducks_set,ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
     create_attribute_group(
         world,
@@ -156,7 +154,6 @@ fn test_create_attribute_group_collision_2() {
             owner: AttributeGroupOwner::System('system_not_created'),
             target_set_contract_address: ducks_set.contract_address,
             booklet_contract_address: ducks_booklet.contract_address
-
         }
     );
 }
@@ -169,7 +166,7 @@ fn test_create_attribute_group_collision_2() {
 #[test]
 #[available_gas(30000000)]
 fn test_update_attribute_group_ok() {
-    let DefaultWorld{world, briq_set, ducks_set,ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
     create_attribute_group(
         world,
@@ -178,7 +175,6 @@ fn test_update_attribute_group_ok() {
             owner: AttributeGroupOwner::System('system_not_created'),
             target_set_contract_address: briq_set.contract_address,
             booklet_contract_address: ducks_booklet.contract_address
-
         }
     );
 
@@ -206,10 +202,7 @@ fn test_update_attribute_group_ok() {
         attribute_group.target_set_contract_address == ducks_set.contract_address,
         'invalid target_address'
     );
-     assert(
-        attribute_group.booklet_contract_address == ZERO(),
-        'invalid booklet_address'
-    );
+    assert(attribute_group.booklet_contract_address == ZERO(), 'invalid booklet_address');
 }
 
 

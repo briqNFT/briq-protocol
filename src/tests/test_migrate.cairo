@@ -28,18 +28,20 @@ use briq_protocol::migrate::MigrateAssetsParams;
 fn test_migrate_signature() {
     let DefaultWorld{world, .. } = deploy_default_world();
 
-    world.execute(
-        'migrate_assets',
-        system_calldata(
-            MigrateAssetsParams {
-                    migrator: 0x69cfa382ea9d2e81aea2d868b0dd372f70f523fa49a765f4da320f38f9343b3.try_into().unwrap(),
+    world
+        .execute(
+            'migrate_assets',
+            system_calldata(
+                MigrateAssetsParams {
+                    migrator: 0x69cfa382ea9d2e81aea2d868b0dd372f70f523fa49a765f4da320f38f9343b3
+                        .try_into()
+                        .unwrap(),
                     current_briqs: 271,
                     briqs_to_migrate: 50,
                     set_to_migrate: 0x0,
-
                     backend_signature_r: 0x7e3ef759fe84319b8b2bf01d0bad2e9a3f7ca015a7f79d31427a06a5dcd1021,
                     backend_signature_s: 0x3518d16d1abf68e6d5dc93c9461cb84750a1f181084837dba7b1568daa2a135,
-            }
-        )
-    );
+                }
+            )
+        );
 }

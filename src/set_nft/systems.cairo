@@ -182,7 +182,7 @@ mod set_nft_assembly {
 
         // TODO : better check ?
         assert(ctx.origin == caller, 'Only Caller');
-       // assert(owner == caller, 'Only Owner');
+        // assert(owner == caller, 'Only Owner');
         assert(shape.len() != 0, 'Cannot mint empty set');
 
         let token = get_target_contract_from_attributes(ctx.world, @attributes);

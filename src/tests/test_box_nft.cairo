@@ -12,7 +12,7 @@ use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
 use dojo_erc::erc1155::systems::ERC1155MintParams;
 
 use briq_protocol::world_config::get_world_config;
-use briq_protocol::attributes::attribute_manager::RegisterAttributeManagerParams;
+use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
 use briq_protocol::types::{FTSpec, ShapeItem};
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate

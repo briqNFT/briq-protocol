@@ -86,7 +86,10 @@ impl AttributeGroupImpl of AttributeGroupTrait {
         );
 
         AttributeGroup {
-            attribute_group_id: attribute_group_id, owner: owner, target_set_contract_address, booklet_contract_address
+            attribute_group_id: attribute_group_id,
+            owner: owner,
+            target_set_contract_address,
+            booklet_contract_address
         }
     }
 }
@@ -147,10 +150,13 @@ mod create_attribute_group {
     use super::Event;
 
     fn execute(ctx: Context, data: CreateAttributeGroupParams) {
-         // TODO: check ctx.origin is actually the origin
+        // TODO: check ctx.origin is actually the origin
         ctx.world.only_admins(@ctx.origin);
 
-        let CreateAttributeGroupParams{attribute_group_id, owner, target_set_contract_address, booklet_contract_address } =
+        let CreateAttributeGroupParams{attribute_group_id,
+        owner,
+        target_set_contract_address,
+        booklet_contract_address } =
             data;
 
         assert(target_set_contract_address.is_non_zero(), 'Invalid target_contract_address');
@@ -165,7 +171,11 @@ mod create_attribute_group {
         };
 
         let attribute_group = AttributeGroupTrait::new_attribute_group(
-            ctx.world, attribute_group_id, owner, target_set_contract_address, booklet_contract_address
+            ctx.world,
+            attribute_group_id,
+            owner,
+            target_set_contract_address,
+            booklet_contract_address
         );
 
         AttributeGroupTrait::set_attribute_group(ctx.world, attribute_group);
@@ -228,7 +238,10 @@ mod update_attribute_group {
         // TODO: check ctx.origin is actually the origin
         ctx.world.only_admins(@ctx.origin);
 
-        let UpdateAttributeGroupParams{attribute_group_id, owner, target_set_contract_address ,booklet_contract_address } =
+        let UpdateAttributeGroupParams{attribute_group_id,
+        owner,
+        target_set_contract_address,
+        booklet_contract_address } =
             data;
         assert(target_set_contract_address.is_non_zero(), 'Invalid target_contract_address');
 
@@ -249,7 +262,10 @@ mod update_attribute_group {
 
         // update attribute_group
         AttributeGroupTrait::set_attribute_group(
-            ctx.world, AttributeGroup { attribute_group_id, owner, target_set_contract_address, booklet_contract_address }
+            ctx.world,
+            AttributeGroup {
+                attribute_group_id, owner, target_set_contract_address, booklet_contract_address
+            }
         );
 
         match owner {

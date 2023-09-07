@@ -1,6 +1,6 @@
-use traits::{Into,TryInto};
+use traits::{Into, TryInto};
 use option::OptionTrait;
-use array::{ArrayTrait,SpanTrait};
+use array::{ArrayTrait, SpanTrait};
 use starknet::ContractAddress;
 
 use dojo::world::IWorldDispatcher;
@@ -12,48 +12,47 @@ use briq_protocol::attributes::attribute_group::{AttributeGroup, AttributeGroupT
 // ducks            : attribute_group_id: 
 // lil ducks        : attribute_group_id: 
 
-
 #[derive(Drop, Copy, Serde)]
-struct BoxInfos {
+struct BoxInfo {
     briq_1: u128, // nb of briqs of material 0x1
     attribute_group_id: u64,
     attribute_id: u64,
 }
 
-fn get_box_infos(box_id: felt252) -> BoxInfos {
-
+fn get_box_infos(box_id: felt252) -> BoxInfo {
     // starknet planets
     if box_id == 1 {
-        return BoxInfos { briq_1: 434, attribute_group_id: 1, attribute_id: 1 };
+        return BoxInfo { briq_1: 434, attribute_group_id: 1, attribute_id: 1 };
     } else if box_id == 2 {
-        return BoxInfos { briq_1: 1252, attribute_group_id: 1, attribute_id: 2 };
+        return BoxInfo { briq_1: 1252, attribute_group_id: 1, attribute_id: 2 };
     } else if box_id == 3 {
-        return BoxInfos { briq_1: 2636, attribute_group_id: 1, attribute_id: 3 };
+        return BoxInfo { briq_1: 2636, attribute_group_id: 1, attribute_id: 3 };
     } else if box_id == 4 {
-        return BoxInfos { briq_1: 431, attribute_group_id: 1, attribute_id: 4 };
+        return BoxInfo { briq_1: 431, attribute_group_id: 1, attribute_id: 4 };
     } else if box_id == 5 {
-        return BoxInfos { briq_1: 1246, attribute_group_id: 1, attribute_id: 5 };
+        return BoxInfo { briq_1: 1246, attribute_group_id: 1, attribute_id: 5 };
     } else if box_id == 6 {
-        return BoxInfos { briq_1: 2287, attribute_group_id: 1, attribute_id: 6 };
+        return BoxInfo { briq_1: 2287, attribute_group_id: 1, attribute_id: 6 };
     } else if box_id == 7 {
-        return BoxInfos { briq_1: 431, attribute_group_id: 1, attribute_id: 7 };
+        return BoxInfo { briq_1: 431, attribute_group_id: 1, attribute_id: 7 };
     } else if box_id == 8 {
-        return BoxInfos { briq_1: 1286, attribute_group_id: 1, attribute_id: 8 };
+        return BoxInfo { briq_1: 1286, attribute_group_id: 1, attribute_id: 8 };
     } else if box_id == 9 {
-        return BoxInfos { briq_1: 2392, attribute_group_id: 1, attribute_id: 9 };
+        return BoxInfo { briq_1: 2392, attribute_group_id: 1, attribute_id: 9 };
     } else if box_id == 10 {
         // briqmas
-        return BoxInfos { briq_1: 60, attribute_group_id: 2, attribute_id: 10 };
+        return BoxInfo { briq_1: 60, attribute_group_id: 2, attribute_id: 1 };
     }
 
     assert(false, 'invalid box id');
-    BoxInfos { briq_1: 0, attribute_group_id: 0, attribute_id: 0 }
+    BoxInfo { briq_1: 0, attribute_group_id: 0, attribute_id: 0 }
 }
 
 fn unbox(world: IWorldDispatcher, owner: ContractAddress, box_id: felt252) {
-
     let box_infos = get_box_infos(box_id);
-    let attribute_group = AttributeGroupTrait::get_attribute_group(world, box_infos.attribute_group_id);
+    let attribute_group = AttributeGroupTrait::get_attribute_group(
+        world, box_infos.attribute_group_id
+    );
 
     // Burn the box
     // TODO: use event-emitting variant

@@ -11,7 +11,7 @@ mod briq_booklet {
     use option::OptionTrait;
     use clone::Clone;
     use array::ArrayTCloneImpl;
-    use starknet::{ContractAddress,ClassHash, get_caller_address, get_contract_address};
+    use starknet::{ContractAddress, ClassHash, get_caller_address, get_contract_address};
     use traits::{Into, TryInto};
     use zeroable::Zeroable;
     use serde::Serde;
@@ -29,9 +29,7 @@ mod briq_booklet {
         ERC1155SetApprovalForAllParams, ERC1155SafeTransferFromParams,
         ERC1155SafeBatchTransferFromParams, ERC1155MintParams, ERC1155BurnParams
     };
-    use dojo_erc::erc_common::utils::{
-        to_calldata, ToCallDataTrait, system_calldata
-    };
+    use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait, system_calldata};
 
     use briq_protocol::world_config::AdminTrait;
     use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
@@ -105,10 +103,7 @@ mod briq_booklet {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState,
-        world: ContractAddress,
-        name: felt252,
-        symbol: felt252,
+        ref self: ContractState, world: ContractAddress, name: felt252, symbol: felt252,
     ) {
         self.world.write(IWorldDispatcher { contract_address: world });
         self.name_.write(name);

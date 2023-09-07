@@ -17,13 +17,13 @@ use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
-use briq_protocol::attributes::attribute_manager::RegisterAttributeManagerParams;
+use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::tests::test_set_nft::convenience_for_testing::{
     assemble, disassemble, valid_shape_1, valid_shape_2, valid_shape_3, mint_booklet,
-    create_attribute_group_with_booklet, register_attribute_manager_shapes,
+    create_attribute_group_with_booklet, register_shape_validator_shapes,
     create_attribute_group_with_briq_counter
 };
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
@@ -33,7 +33,8 @@ use debug::PrintTrait;
 #[test]
 #[available_gas(3000000000)]
 fn test_multiple_set() {
-    let DefaultWorld{world, briq_token, briq_set, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, briq_set, ducks_set, ducks_booklet, .. } =
+        deploy_default_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -52,8 +53,10 @@ fn test_multiple_set() {
     assert(briq_set.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 
     // create attribute_group for ducks_set & register shapes
-    create_attribute_group_with_booklet(world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address);
-    register_attribute_manager_shapes(world, 0x69);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_shape_validator_shapes(world, 0x69);
 
     // mint a booklet for DEFAULT_OWNER
     mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
@@ -82,8 +85,10 @@ fn test_multiple_set() {
 fn test_multiple_attributes() {
     let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
 
-    create_attribute_group_with_booklet(world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address);
-    register_attribute_manager_shapes(world, 0x69);
+    create_attribute_group_with_booklet(
+        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    );
+    register_shape_validator_shapes(world, 0x69);
 
     create_attribute_group_with_briq_counter(world, 0x420);
 

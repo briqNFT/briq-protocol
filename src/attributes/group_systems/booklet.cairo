@@ -1,3 +1,63 @@
+use starknet::{ContractAddress, ClassHash, get_caller_address};
+use traits::{Into, TryInto};
+use array::{ArrayTrait, SpanTrait};
+use option::OptionTrait;
+use zeroable::Zeroable;
+use clone::Clone;
+use serde::Serde;
+
+use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
+use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner};
+use dojo_erc::erc1155::components::ERC1155BalanceTrait;
+
+use briq_protocol::world_config::{AdminTrait, WorldConfig, get_world_config};
+use briq_protocol::types::{FTSpec, PackedShapeItem};
+
+use debug::PrintTrait;
+
+impl ClassHashPrint of PrintTrait<ClassHash> {
+    fn print(self: ClassHash) {}
+}
+
+#[derive(Component, Copy, Drop, Serde, SerdeLen)]
+struct ShapeValidator {
+    #[key]
+    attribute_group_id: u64,
+    #[key]
+    attribute_id: u64,
+    class_hash: ClassHash,
+}
+
+// Must be implemented by the class hash pointed to by ShapeValidator
+#[starknet::interface]
+trait IShapeChecker<ContractState> {
+    fn verify_shape(
+        self: @ContractState, attribute_id: u64, shape: Span<PackedShapeItem>, fts: Span<FTSpec>
+    );
+}
+
+#[derive(Drop, Copy, Serde)]
+struct RegisterShapeValidatorParams {
+    attribute_group_id: u64,
+    attribute_id: u64,
+    class_hash: ClassHash,
+}
+
+#[system]
+mod RegisterShapeValidator {
+    use dojo::world::Context;
+    use briq_protocol::world_config::{WorldConfig, AdminTrait};
+    use super::{ShapeValidator, RegisterShapeValidatorParams};
+
+    fn execute(ctx: Context, params: RegisterShapeValidatorParams) {
+        ctx.world.only_admins(@ctx.origin);
+
+        let RegisterShapeValidatorParams{attribute_group_id, attribute_id, class_hash } = params;
+        set!(ctx.world, ShapeValidator { attribute_group_id, attribute_id, class_hash });
+    }
+}
+
+
 #[system]
 mod agm_booklet {
     use zeroable::Zeroable;
@@ -12,9 +72,7 @@ mod agm_booklet {
     };
     use briq_protocol::attributes::attribute_group::{AttributeGroupTrait};
 
-    use briq_protocol::attributes::attribute_manager::{
-        AttributeManager, AttributeManagerTrait, AttributeManagerImpl, assert_valid_caller
-    };
+    use super::{ShapeValidator, IShapeCheckerDispatcherTrait, IShapeCheckerLibraryDispatcher};
 
 
     use debug::PrintTrait;
@@ -29,45 +87,17 @@ mod agm_booklet {
         fts } =
             data;
 
-        let attribute_manager: AttributeManager = get!(
-            ctx.world, (attribute_group_id, attribute_id), AttributeManager
+        let shape_validator: ShapeValidator = get!(
+            ctx.world, (attribute_group_id, attribute_id), ShapeValidator
         );
-        // check if there is an AttributeManager registered for attribute_group_id/attribute_id
-        if (attribute_manager.class_hash.is_non_zero()) {
-            attribute_manager
-                .assign_attribute(
-                    ctx.world,
-                    set_owner,
-                    set_token_id,
-                    attribute_group_id,
-                    attribute_id,
-                    @shape,
-                    @fts
-                );
-        } else {
-            panic(array!['should not happen']);
+        if shape_validator.class_hash.is_zero() {
+            panic(array!['no shape verifier']);
         }
-    }
-
-    fn remove_check(ctx: Context, data: AttributeRemoveData) {
-        let AttributeRemoveData{set_owner, set_token_id, attribute_group_id, attribute_id } = data;
-        let attribute_manager: AttributeManager = get!(
-            ctx.world, (attribute_group_id, attribute_id), AttributeManager
-        );
-        // check if there is an AttributeManager registered for attribute_group_id/attribute_id
-        if (attribute_manager.class_hash.is_non_zero()) {
-            attribute_manager
-                .remove_attribute(
-                    ctx.world, set_owner, set_token_id, attribute_group_id, attribute_id
-                );
-        } else {
-            panic(array!['should not happen']);
-        }
+        IShapeCheckerLibraryDispatcher { class_hash: shape_validator.class_hash }
+            .verify_shape(attribute_id, shape.span(), fts.span());
     }
 
     fn execute(ctx: Context, data: AttributeHandlerData) {
-        assert_valid_caller(ctx);
-
         match data {
             AttributeHandlerData::Assign(d) => {
                 let AttributeAssignData{set_owner,
@@ -116,13 +146,6 @@ mod agm_booklet {
                 attribute_group_id,
                 attribute_id } =
                     d;
-
-                remove_check(
-                    ctx,
-                    AttributeRemoveData {
-                        set_owner, set_token_id, attribute_group_id, attribute_id
-                    }
-                );
 
                 // find booklet collection related to this attribute group
                 let attribute_group = AttributeGroupTrait::get_attribute_group(

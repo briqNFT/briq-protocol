@@ -28,7 +28,7 @@ mod GenericERC1155 {
 
     use briq_protocol::world_config::AdminTrait;
     use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
-   
+
     #[derive(Clone, Drop, Serde, starknet::Event)]
     struct TransferSingle {
         operator: ContractAddress,
@@ -54,7 +54,7 @@ mod GenericERC1155 {
         approved: bool
     }
 
-   
+
     #[starknet::interface]
     trait IERC1155Events<ContractState> {
         fn on_transfer_single(ref self: ContractState, event: TransferSingle);

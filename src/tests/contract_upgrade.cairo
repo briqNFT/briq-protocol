@@ -3,7 +3,7 @@ mod ContractUpgrade {
     use starknet::ContractAddress;
 
     #[storage]
-    struct Storage { }
+    struct Storage {}
 
     #[starknet::interface]
     trait IUselessContract<TState> {

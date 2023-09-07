@@ -67,7 +67,15 @@ mod SetupWorld {
 
         set!(
             ctx.world,
-            (WorldConfig { config_id: SYSTEM_CONFIG_ID, treasury, briq, briq_set, ducks_set, ducks_booklet, box, })
+            (WorldConfig {
+                config_id: SYSTEM_CONFIG_ID,
+                treasury,
+                briq,
+                briq_set,
+                ducks_set,
+                ducks_booklet,
+                box,
+            })
         );
         return ();
     }
