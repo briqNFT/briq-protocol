@@ -9,7 +9,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
-use dojo_erc::erc1155::systems::ERC1155MintParams;
+use briq_protocol::erc1155::mint_burn::ERC1155MintBurnParams;
 
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
@@ -42,15 +42,15 @@ fn test_mint_and_unbox() {
     // mint a box id = 1  -->  starknet planets (BoxInfos { briq_1: 434, attribute_group_id: 1, attribute_id: 1 })
     world
         .execute(
-            'ERC1155Mint',
+            'ERC1155MintBurn',
             system_calldata(
-                ERC1155MintParams {
+                ERC1155MintBurnParams {
                     token: get_world_config(world).box.into(),
                     operator: WORLD_ADMIN().into(),
+                    from: starknet::contract_address_const::<0>(),
                     to: DEFAULT_OWNER().into(),
                     ids: array![0x1], //  booklet_id == attribute_id
                     amounts: array![1],
-                    data: array![],
                 }
             )
         );

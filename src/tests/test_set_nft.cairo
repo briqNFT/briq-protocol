@@ -34,7 +34,7 @@ mod convenience_for_testing {
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo_erc::erc_common::utils::{system_calldata};
-    use dojo_erc::erc1155::systems::ERC1155MintParams;
+    use briq_protocol::erc1155::mint_burn::ERC1155MintBurnParams;
 
     use briq_protocol::world_config::get_world_config;
     use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
@@ -201,15 +201,15 @@ mod convenience_for_testing {
     ) {
         world
             .execute(
-                'ERC1155Mint',
+                'ERC1155MintBurn',
                 system_calldata(
-                    ERC1155MintParams {
+                    ERC1155MintBurnParams {
                         operator: WORLD_ADMIN(),
                         token: booklet_address,
+                        from: starknet::contract_address_const::<0>(),
                         to,
                         ids, //  booklet_id == attribute_id
                         amounts,
-                        data: array![],
                     }
                 )
             );

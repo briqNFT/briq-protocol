@@ -80,7 +80,7 @@ fn unbox(world: IWorldDispatcher, owner: ContractAddress, box_id: felt252) {
     // Or will that be handled directly by a different system maybe...
 
     // Mint briqs
-    briq_protocol::briq_token::systems::update_nocheck(
+    briq_protocol::erc1155::briq_transfer::update_nocheck(
         world,
         owner,
         get_world_config(world).briq,

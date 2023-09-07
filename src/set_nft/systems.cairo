@@ -40,7 +40,7 @@ fn transfer_briqs(
     loop {
         match fts.pop_front() {
             Option::Some(ftspec) => {
-                briq_protocol::briq_token::systems::update_nocheck(
+                briq_protocol::erc1155::briq_transfer::update_nocheck(
                     world,
                     'set_contract_TODO'.try_into().unwrap(),
                     address,

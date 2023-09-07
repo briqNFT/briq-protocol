@@ -87,7 +87,7 @@ mod BriqFactoryMint {
 
         //  mint briqs to buyer
         let amount_u128: u128 = amount.try_into().unwrap();
-        briq_protocol::briq_token::systems::update_nocheck(
+        briq_protocol::erc1155::briq_transfer::update_nocheck(
             ctx.world,
             buyer,
             world_config.briq,

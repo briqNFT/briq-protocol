@@ -1,3 +1,6 @@
+mod briq_transfer;
+mod mint_burn;
+
 // TODO : check if booklet should be ERC721 
 #[starknet::contract]
 mod GenericERC1155 {
@@ -23,7 +26,7 @@ mod GenericERC1155 {
     use dojo_erc::erc165::interface::{IERC165, IERC165_ID};
     use dojo_erc::erc1155::systems::{
         ERC1155SetApprovalForAllParams, ERC1155SafeTransferFromParams,
-        ERC1155SafeBatchTransferFromParams, ERC1155MintParams, ERC1155BurnParams
+        ERC1155SafeBatchTransferFromParams
     };
 
     use briq_protocol::world_config::AdminTrait;

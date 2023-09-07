@@ -20,7 +20,7 @@ use dojo_erc::erc1155::interface::IERC1155Dispatcher;
 use briq_protocol::world_config::{get_world_config};
 use briq_protocol::briq_token::BriqToken;
 use briq_protocol::set_nft::SetNft;
-use briq_protocol::briq_token::systems::ERC1155MintBurnParams;
+use briq_protocol::erc1155::mint_burn::ERC1155MintBurnParams;
 
 use debug::PrintTrait;
 
@@ -86,11 +86,11 @@ fn spawn_world() -> IWorldDispatcher {
 
         // erc1155
         dojo_erc::erc1155::systems::ERC1155SetApprovalForAll::TEST_CLASS_HASH,
-        dojo_erc::erc1155::systems::ERC1155Mint::TEST_CLASS_HASH,
+        briq_protocol::erc1155::mint_burn::ERC1155MintBurn::TEST_CLASS_HASH,
         // briq_token
-        briq_protocol::briq_token::systems::BriqTokenSafeTransferFrom::TEST_CLASS_HASH,
-        briq_protocol::briq_token::systems::BriqTokenSafeBatchTransferFrom::TEST_CLASS_HASH,
-        briq_protocol::briq_token::systems::BriqTokenERC1155MintBurn::TEST_CLASS_HASH,
+        briq_protocol::erc1155::briq_transfer::BriqTokenSafeTransferFrom::TEST_CLASS_HASH,
+        briq_protocol::erc1155::briq_transfer::BriqTokenSafeBatchTransferFrom::TEST_CLASS_HASH,
+        briq_protocol::erc1155::mint_burn::BriqTokenERC1155MintBurn::TEST_CLASS_HASH,
         // unboxing
         briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
 
@@ -117,42 +117,31 @@ fn spawn_world() -> IWorldDispatcher {
     //
 
     world.grant_writer('WorldConfig', 'SetupWorld');
-    world.grant_writer('AttributeGroup', 'create_attribute_group');
 
     // ***************************
-    // ****  erc1155   
+    // ****  erc1155
     // ***************************
 
-    //  erc_1155_balance
     world.grant_writer('ERC1155Balance', 'BriqTokenERC1155MintBurn');
-
-    // operator_approval
     world.grant_writer('OperatorApproval', 'ERC1155SetApprovalForAll');
 
     // ***************************
-    // ****  erc721 
+    // ****  erc721
     // ***************************
 
-    //  erc_721_balance
     world.grant_writer('ERC721Balance', 'ERC721TransferFrom');
-
-    // erc_721_owner
     world.grant_writer('ERC721Owner', 'ERC721TransferFrom');
-
-    // erc_721_token_approval
     world.grant_writer('ERC721TokenApproval', 'ERC721Approve');
     world.grant_writer('ERC721TokenApproval', 'ERC721TransferFrom');
 
     // ***************************
-    // **** set_nft (erc721) 
+    // **** set_nft (erc721)
     // ***************************
 
-    //  set_nft_assembly
     world.grant_writer('ERC721Balance', 'set_nft_assembly');
     world.grant_writer('ERC721Owner', 'set_nft_assembly');
     world.grant_writer('ERC1155Balance', 'set_nft_assembly');
 
-    // set_nft_disassembly
     world.grant_writer('ERC721Owner', 'set_nft_disassembly');
     world.grant_writer('ERC721Balance', 'set_nft_disassembly');
     world.grant_writer('ERC1155Balance', 'set_nft_disassembly');
@@ -167,7 +156,8 @@ fn spawn_world() -> IWorldDispatcher {
     // **** attributes
     // ***************************
 
-    world.grant_writer('ERC1155Balance', 'agm_booklet');
+    world.grant_writer('AttributeGroup', 'create_attribute_group');
+    world.grant_writer('ERC1155Balance', 'agm_booklet'); // for cumulative balance
 
     world
 }
@@ -229,7 +219,7 @@ fn deploy_contracts(
 
     // booklets 
     let (ducks_booklet, _) = deploy_syscall(
-        briq_protocol::generic_erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
+        briq_protocol::erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
         0,
         ducks_booklet_constructor_calldata.span(),
         false
@@ -237,7 +227,7 @@ fn deploy_contracts(
         .expect('error deploying');
 
     let (planets_booklet, _) = deploy_syscall(
-        briq_protocol::generic_erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
+        briq_protocol::erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
         0,
         planets_booklet_constructor_calldata.span(),
         false
@@ -246,7 +236,7 @@ fn deploy_contracts(
 
     // boxes 
     let (box, _) = deploy_syscall(
-        briq_protocol::generic_erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
+        briq_protocol::erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
         0,
         constructor_calldata.span(),
         false
