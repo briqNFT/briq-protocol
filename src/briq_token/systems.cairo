@@ -83,16 +83,12 @@ fn update_nocheck(
         let amount = *amounts.at(0);
 
         emit_transfer_single(world, token, operator, from, to, id, amount);
-
-        if (to
-            .is_non_zero()) { //do_safe_transfer_acceptance_check(operator, from, to, id.into(), amount.into(), data);
-        } else {
-            emit_transfer_batch(world, token, operator, from, to, ids.span(), amounts.span());
-            if (to.is_non_zero()) { //do_safe_batch_transfer_acceptance_check(
-            //    operator, from, to, ids, amounts, data
-            //);
-            }
-        }
+    // TODO: call do_safe_transfer_acceptance_check
+    // (not done as it would break tests).
+    } else {
+        emit_transfer_batch(world, token, operator, from, to, ids.span(), amounts.span());
+    // TODO: call do_safe_batch_transfer_acceptance_check
+    // (not done as it would break tests).
     }
 }
 

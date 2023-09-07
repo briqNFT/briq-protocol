@@ -27,7 +27,7 @@ mod BriqToken {
 
     use dojo_erc::erc1155::systems::{
         ERC1155SetApprovalForAllParams, ERC1155SafeTransferFromParams,
-        ERC1155SafeBatchTransferFromParams, ERC1155MintParams, ERC1155BurnParams
+        ERC1155SafeBatchTransferFromParams
     };
 
     use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
@@ -261,56 +261,6 @@ mod BriqToken {
         fn on_approval_for_all(ref self: ContractState, event: ApprovalForAll) {
             assert(get_caller_address() == self.world.read().executor(), 'ERC1155: not authorized');
             self.emit(event);
-        }
-    }
-
-
-    #[external(v0)]
-    #[generate_trait]
-    impl ERC721Custom of ERC721CustomTrait {
-        // TODO: use systems directly for these instead.
-        fn owner(self: @ContractState) -> ContractAddress {
-            assert(false, 'TODO remove');
-            Zeroable::zero()
-        }
-
-        fn mint(
-            ref self: ContractState, to: ContractAddress, id: felt252, amount: u128, data: Array<u8>
-        ) {
-            self
-                .world
-                .read()
-                .execute(
-                    'ERC1155Mint',
-                    system_calldata(
-                        ERC1155MintParams {
-                            token: get_contract_address(),
-                            operator: get_caller_address(),
-                            to,
-                            ids: array![id],
-                            amounts: array![amount],
-                            data: data
-                        }
-                    )
-                );
-        }
-
-        fn burn(ref self: ContractState, from: ContractAddress, id: felt252, amount: u128) {
-            self
-                .world
-                .read()
-                .execute(
-                    'ERC1155Burn',
-                    system_calldata(
-                        ERC1155BurnParams {
-                            token: get_contract_address(),
-                            operator: get_caller_address(),
-                            from,
-                            ids: array![id],
-                            amounts: array![amount]
-                        }
-                    )
-                );
         }
     }
 }
