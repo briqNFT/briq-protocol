@@ -30,7 +30,11 @@ mod GenericERC1155 {
     };
 
     use briq_protocol::world_config::AdminTrait;
-    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
+    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
+    struct Upgraded {
+        class_hash: ClassHash,
+    }
 
     #[derive(Clone, Drop, Serde, starknet::Event)]
     struct TransferSingle {

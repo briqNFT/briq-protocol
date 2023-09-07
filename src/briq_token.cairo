@@ -28,7 +28,11 @@ mod BriqToken {
         ERC1155SafeBatchTransferFromParams
     };
 
-    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
+    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
+    struct Upgraded {
+        class_hash: ClassHash,
+    }
 
     const UNLIMITED_ALLOWANCE: felt252 =
         3618502788666131213697322783095070105623107215331596699973092056135872020480;

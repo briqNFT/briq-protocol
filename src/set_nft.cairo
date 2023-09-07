@@ -26,7 +26,11 @@ mod SetNft {
     use dojo_erc::erc_common::utils::{to_calldata, ToCallDataTrait, system_calldata};
 
     use briq_protocol::world_config::AdminTrait;
-    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait, Upgraded};
+    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
+    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
+    struct Upgraded {
+        class_hash: ClassHash,
+    }
 
     use super::systems_erc721::ALL_BRIQ_SETS;
 

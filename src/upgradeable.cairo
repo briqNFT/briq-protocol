@@ -14,11 +14,6 @@ trait UpgradeableTrait {
     fn upgrade(new_class_hash: ClassHash);
 }
 
-#[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
-struct Upgraded {
-    class_hash: ClassHash,
-}
-
 impl UpgradeableTraitImpl of UpgradeableTrait {
     fn upgrade(new_class_hash: ClassHash) {
         assert(new_class_hash.is_non_zero(), 'class_hash cannot be zero');
