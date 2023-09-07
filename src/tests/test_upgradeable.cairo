@@ -59,6 +59,30 @@ fn test_upgrade_with_non_admin_briq_token() {
     test_upgrade_with_non_admin(briq_token.contract_address);
 }
 
+
+#[test]
+#[available_gas(30000000)]
+fn test_briq_token_upgrade_emit_event() {
+    let DefaultWorld{world, briq_token, .. } = deploy_default_world();
+
+    impersonate(WORLD_ADMIN());
+
+    let new_class_hash: ClassHash = ContractUpgrade::TEST_CLASS_HASH.try_into().unwrap();
+
+    let briq_token_upgradable = IUpgradeableDispatcher {
+        contract_address: briq_token.contract_address
+    };
+
+    briq_token_upgradable.upgrade(new_class_hash);
+
+    // Upgraded
+    assert(
+        @starknet::testing::pop_log(briq_token_upgradable.contract_address)
+            .unwrap() == @Event::Upgraded(Upgraded { class_hash: new_class_hash }),
+        'invalid Upgraded event'
+    );
+}
+
 //
 // set_nft
 //
