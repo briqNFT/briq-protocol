@@ -149,6 +149,8 @@ struct AssemblySystemData {
     caller: ContractAddress,
     owner: ContractAddress,
     token_id_hint: felt252,
+    name: Array<felt252>, // todo string
+    description: Array<felt252>, // todo string
     fts: Array<FTSpec>,
     shape: Array<PackedShapeItem>,
     attributes: Array<AttributeItem>
@@ -178,7 +180,7 @@ mod set_nft_assembly {
     use debug::PrintTrait;
 
     fn execute(ctx: Context, data: AssemblySystemData) {
-        let AssemblySystemData{caller, owner, token_id_hint, fts, shape, attributes } = data;
+        let AssemblySystemData{caller, owner, token_id_hint, name, description, fts, shape, attributes } = data;
 
         // TODO : better check ?
         assert(ctx.origin == caller, 'Only Caller');

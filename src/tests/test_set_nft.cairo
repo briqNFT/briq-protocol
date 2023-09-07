@@ -63,7 +63,7 @@ mod convenience_for_testing {
             .execute(
                 'set_nft_assembly',
                 system_calldata(
-                    AssemblySystemData { caller, owner, token_id_hint, fts, shape, attributes }
+                    AssemblySystemData { caller, owner, token_id_hint, name: array!['test'], description: array!['test'], fts, shape, attributes }
                 )
             );
 

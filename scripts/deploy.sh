@@ -38,13 +38,13 @@ echo "*************************************"
 
 
 ## Setup World config
-sozo execute SetupWorld --world $WORLD_ADDRESS --calldata $TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$BOOKLET_ADDR,$BOX_ADDR 
+sozo execute SetupWorld --world $WORLD_ADDRESS --calldata $TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$BOX_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 ## Return World config
-sozo component entity WorldConfig 1 --world $WORLD_ADDRESS 
+sozo component entity WorldConfig 1 --world $WORLD_ADDRESS
 
 ## Setup briq_factory
-sozo execute BriqFactoryInitialize --world $WORLD_ADDRESS --calldata 0,0,$FEE_TOKEN_ADDR
+sozo execute BriqFactoryInitialize --world $WORLD_ADDRESS --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 ## Return briq_factory config
 sozo component entity BriqFactoryStore 1 --world $WORLD_ADDRESS 
@@ -54,13 +54,16 @@ starkli invoke $FEE_TOKEN_ADDR approve $EXECUTOR_ADDRESS u256:100000000000000000
 starkli call $FEE_TOKEN_ADDR allowance $ACCOUNT_ADDRESS $EXECUTOR_ADDRESS
 
 ## Buy 10000 briqs with material_id=1 in briq_factory
-sozo execute BriqFactoryMint --world $WORLD_ADDRESS --calldata 1,10000
-
-return
-
+sozo execute BriqFactoryMint --world $WORLD_ADDRESS --calldata 1,10000 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 ## ACCOUNT_ADDRESS balance : BRIQ
 starkli call $BRIQ_ADDR balance_of $ACCOUNT_ADDRESS u256:1
 
-## ACCOUNT_ADDRESS balance : ETH
-# starkli balance $ACCOUNT_ADDRESS
+sozo execute set_nft_assembly --world $WORLD_ADDRESS \
+    --calldata "$ACCOUNT_ADDRESS,\
+$ACCOUNT_ADDRESS,\
+341987491384,\
+1,1,1,\
+1,1,1,\
+0"\
+    --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
