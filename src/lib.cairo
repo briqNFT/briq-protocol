@@ -16,8 +16,6 @@ mod set_nft;
 // ERC1155
 mod briq_token;
 mod briq_factory;
-mod briq_booklet;
-
 
 // boxes
 // mod briq_box;

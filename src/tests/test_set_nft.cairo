@@ -139,7 +139,7 @@ mod convenience_for_testing {
     }
 
     //
-    // Attribute Manager
+    // Shape Validator
     //
 
     fn register_shape_validator(

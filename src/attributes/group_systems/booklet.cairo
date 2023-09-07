@@ -8,7 +8,6 @@ use serde::Serde;
 
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc721::components::{ERC721Balance, ERC721Owner};
-use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
 use briq_protocol::world_config::{AdminTrait, WorldConfig, get_world_config};
 use briq_protocol::types::{FTSpec, PackedShapeItem};
@@ -65,7 +64,7 @@ mod agm_booklet {
     use traits::Into;
     use array::{ArrayTrait, SpanTrait};
     use dojo::world::{Context};
-    use dojo_erc::erc1155::components::ERC1155BalanceTrait;
+    use dojo_erc::erc1155::systems::unchecked_update;
     use briq_protocol::world_config::{WorldConfig, AdminTrait, get_world_config};
     use briq_protocol::attributes::attributes::{
         AttributeHandlerData, AttributeAssignData, AttributeRemoveData,
@@ -77,7 +76,7 @@ mod agm_booklet {
 
     use debug::PrintTrait;
 
-    // should panic if check fails, or no manager found
+    // should panic if check fails, or no validator found
     fn assign_check(ctx: Context, data: AttributeAssignData) {
         let AttributeAssignData{set_owner,
         set_token_id,
@@ -98,6 +97,8 @@ mod agm_booklet {
     }
 
     fn execute(ctx: Context, data: AttributeHandlerData) {
+        // TODO: auth
+
         match data {
             AttributeHandlerData::Assign(d) => {
                 let AttributeAssignData{set_owner,
@@ -131,13 +132,15 @@ mod agm_booklet {
 
                 // TODO : use update that sends events
                 // Transfer booklet with corresponding attribute_id from set_owner to set_token_id
-                ERC1155BalanceTrait::unchecked_transfer_tokens(
+                unchecked_update(
                     ctx.world,
+                    ctx.origin,
                     attribute_group.booklet_contract_address,
                     set_owner,
                     set_token_id,
-                    array![attribute_id.into()].span(),
-                    array![1].span()
+                    array![attribute_id.into()],
+                    array![1],
+                    array![],
                 );
             },
             AttributeHandlerData::Remove(d) => {
@@ -158,13 +161,15 @@ mod agm_booklet {
 
                 // TODO : use update that sends events
                 // Transfer booklet with corresponding attribute_id from set_token_id to set_owner
-                ERC1155BalanceTrait::unchecked_transfer_tokens(
+                unchecked_update(
                     ctx.world,
+                    ctx.origin,
                     attribute_group.booklet_contract_address,
                     set_token_id,
                     set_owner,
-                    array![attribute_id.into()].span(),
-                    array![1].span()
+                    array![attribute_id.into()],
+                    array![1],
+                    array![],
                 );
             },
         }

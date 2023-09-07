@@ -164,7 +164,7 @@ fn spawn_world() -> IWorldDispatcher {
     world.grant_writer('ERC1155Balance', 'box_unboxing');
 
     // ***************************
-    // **** attribute_manager
+    // **** attributes
     // ***************************
 
     world.grant_writer('ERC1155Balance', 'agm_booklet');
@@ -195,10 +195,10 @@ fn deploy_contracts(
 
     // booklets
     let ducks_booklet_constructor_calldata = array![
-        world.contract_address.into(), 'ducks booklet', 'BDUCKS'
+        world.contract_address.into(),
     ];
     let planets_booklet_constructor_calldata = array![
-        world.contract_address.into(), 'planets booklet', 'BPLANETS'
+        world.contract_address.into(),
     ];
 
     // briq token
@@ -229,7 +229,7 @@ fn deploy_contracts(
 
     // booklets 
     let (ducks_booklet, _) = deploy_syscall(
-        briq_protocol::briq_booklet::briq_booklet::TEST_CLASS_HASH.try_into().unwrap(),
+        briq_protocol::generic_erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
         0,
         ducks_booklet_constructor_calldata.span(),
         false
@@ -237,7 +237,7 @@ fn deploy_contracts(
         .expect('error deploying');
 
     let (planets_booklet, _) = deploy_syscall(
-        briq_protocol::briq_booklet::briq_booklet::TEST_CLASS_HASH.try_into().unwrap(),
+        briq_protocol::generic_erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
         0,
         planets_booklet_constructor_calldata.span(),
         false
