@@ -39,13 +39,15 @@ fn test_mint_and_unbox() {
         world, 0x1, planets_set.contract_address, planets_booklet.contract_address
     );
 
+    let box_contract_address = box_nft.contract_address;
+
     // mint a box id = 1  -->  starknet planets (BoxInfos { briq_1: 434, attribute_group_id: 1, attribute_id: 1 })
     world
         .execute(
             'ERC1155MintBurn',
             system_calldata(
                 ERC1155MintBurnParams {
-                    token: get_world_config(world).box.into(),
+                    token: box_nft.contract_address,
                     operator: WORLD_ADMIN().into(),
                     from: starknet::contract_address_const::<0>(),
                     to: DEFAULT_OWNER().into(),
@@ -61,7 +63,7 @@ fn test_mint_and_unbox() {
     assert(planets_booklet.balance_of(DEFAULT_OWNER(), 0x1) == 0, 'bad balance 1');
     assert(box_nft.balance_of(DEFAULT_OWNER(), 1) == 1, 'bad balance 2');
 
-    world.execute('box_unboxing', (array![0x1]));
+    world.execute('box_unboxing', (array![box_contract_address.into(), 0x1]));
 
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 434, 'bad balance 2.5');
     assert(planets_booklet.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad balance 3');

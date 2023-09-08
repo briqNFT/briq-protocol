@@ -48,7 +48,7 @@ fn get_box_infos(box_id: felt252) -> BoxInfo {
     BoxInfo { briq_1: 0, attribute_group_id: 0, attribute_id: 0 }
 }
 
-fn unbox(world: IWorldDispatcher, owner: ContractAddress, box_id: felt252) {
+fn unbox(world: IWorldDispatcher, box_contract: ContractAddress, owner: ContractAddress, box_id: felt252) {
     let box_infos = get_box_infos(box_id);
     let attribute_group = AttributeGroupTrait::get_attribute_group(
         world, box_infos.attribute_group_id
@@ -58,7 +58,7 @@ fn unbox(world: IWorldDispatcher, owner: ContractAddress, box_id: felt252) {
     dojo_erc::erc1155::systems::unchecked_update(
         world,
         owner,
-        get_world_config(world).box,
+        box_contract,
         owner,
         Zeroable::zero(),
         array![box_id],
@@ -104,8 +104,8 @@ mod box_unboxing {
     use zeroable::Zeroable;
     use starknet::ContractAddress;
 
-    fn execute(ctx: Context, box_id: felt252,) {
+    fn execute(ctx: Context, box_contract: ContractAddress, box_id: felt252,) {
         // Only the owner may unbox their box, thus pass ctx.origin
-        super::unbox(ctx.world, ctx.origin, box_id);
+        super::unbox(ctx.world, box_contract, ctx.origin, box_id);
     }
 }

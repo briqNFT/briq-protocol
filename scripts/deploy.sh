@@ -2,7 +2,7 @@
 
 sozo build
 
-sozo migrate --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo migrate --name test-0 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 export WORLD_ADDRESS=0x4ccc29ef7f190f202e5947c0458bb1699a2406599e559a6b1626096f3820da1
 export EXECUTOR_ADDRESS=0x1c24cd47ab41ad1140f624ed133db38411bfa44d7f34e41551af819da9a78eb

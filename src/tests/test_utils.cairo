@@ -286,8 +286,6 @@ fn deploy_default_world() -> DefaultWorld {
                 TREASURY().into(),
                 briq.into(),
                 generic_sets.into(),
-                //boxes
-                box.into(),
             ])
         );
     DefaultWorld {

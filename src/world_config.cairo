@@ -16,8 +16,6 @@ struct WorldConfig {
     
     briq: ContractAddress,
     generic_sets: ContractAddress,
-    
-    box: ContractAddress,
 }
 
 fn get_world_config(world: IWorldDispatcher) -> WorldConfig {
@@ -59,7 +57,6 @@ mod SetupWorld {
         treasury: ContractAddress,
         briq: ContractAddress,
         generic_sets: ContractAddress,
-        box: ContractAddress
     ) {
         // The first time this is called, it'll rely on the world owner.
         ctx.world.only_admins(@ctx.origin);
@@ -71,7 +68,6 @@ mod SetupWorld {
                 treasury,
                 briq,
                 generic_sets,
-                box,
             })
         );
         return ();

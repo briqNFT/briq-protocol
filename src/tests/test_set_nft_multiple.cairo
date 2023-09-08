@@ -157,34 +157,36 @@ fn test_multiple_attributes() {
 // Caused by:
 //  #36142->#36143: Got 'Unknown ap change' error while moving [8].
 
-// #[derive(Serde, Drop)]
-// struct MyStruct {
-//     caller: ContractAddress,
-//     addr: ContractAddress,
-//     arr: Array<felt252>,
-// }
+#[derive(Serde, Drop)]
+struct MyStruct {
+    caller: ContractAddress,
+    addr: ContractAddress,
+    arr: Array<felt252>,
+}
 
-// fn aaa(addr: ContractAddress) -> felt252 {
-//     let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![] });
-//     123
-// }
+fn aaa(addr: ContractAddress) -> felt252 {
+    let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![] });
+    123
+}
 
-// fn bbb(addr: ContractAddress) -> felt252 {
-//     let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![]  });
-//     1234
-// }
+fn bbb(addr: ContractAddress) -> felt252 {
+    let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![]  });
+    1234
+}
 
-// #[test]
-// #[available_gas(3000000000)]
-// fn test_ap_move() {
-//     let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = deploy_default_world();
+#[test]
+#[available_gas(3000000000)]
+fn test_ap_move() {
+    let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = deploy_default_world();
 
-//     let res = aaa(generic_sets.contract_address);
+    let res = aaa(generic_sets.contract_address);
 
-//     assert(res == 123, 'qqq');
-//     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+    let ra = MyStruct { caller: get_contract_address(), addr: generic_sets.contract_address, arr:array![]  };
 
-//     let res2 = bbb(generic_sets.contract_address);
-// }
+    assert(res == 123, 'qqq');
+    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
+
+    let res2 = bbb(generic_sets.contract_address);
+}
 
 
