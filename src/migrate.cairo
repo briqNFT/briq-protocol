@@ -38,6 +38,8 @@ mod migrate_assets {
         backend_signature_s, } =
             data;
 
+        assert(ctx.origin == migrator, 'Not authorized');
+
         let mut hash = pedersen(0, migrator.into());
         hash = pedersen(hash, current_briqs.into());
         hash = pedersen(hash, briqs_to_migrate.into());

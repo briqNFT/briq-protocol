@@ -237,7 +237,7 @@ mod set_nft_disassembly {
 
         // TODO : better check ?
         assert(ctx.origin == caller, 'Only Caller');
-        //assert(owner == caller, 'Only Owner');
+        assert(owner == caller, 'Only Owner');
 
         let token = get_target_contract_from_attributes(ctx.world, @attributes);
         let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id.into());

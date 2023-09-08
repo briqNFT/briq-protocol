@@ -55,25 +55,27 @@ fn unbox(world: IWorldDispatcher, owner: ContractAddress, box_id: felt252) {
     );
 
     // Burn the box
-    // TODO: use event-emitting variant
-    dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
+    dojo_erc::erc1155::systems::unchecked_update(
         world,
+        owner,
         get_world_config(world).box,
         owner,
         Zeroable::zero(),
-        array![box_id].span(),
-        array![1].span(),
+        array![box_id],
+        array![1],
+        array![]
     );
 
     // Mint a booklet
-    // TODO: use event-emitting variant
-    dojo_erc::erc1155::components::ERC1155BalanceTrait::unchecked_transfer_tokens(
+    dojo_erc::erc1155::systems::unchecked_update(
         world,
+        owner,
         attribute_group.booklet_contract_address,
         Zeroable::zero(),
         owner,
-        array![box_infos.attribute_id.into()].span(),
-        array![1].span(),
+        array![box_infos.attribute_id.into()],
+        array![1],
+        array![],
     );
 
     // TODO: register a specific shape verifier for this booklet ?
@@ -103,7 +105,7 @@ mod box_unboxing {
     use starknet::ContractAddress;
 
     fn execute(ctx: Context, box_id: felt252,) {
-        // Only the owner may unbox their box.
+        // Only the owner may unbox their box, thus pass ctx.origin
         super::unbox(ctx.world, ctx.origin, box_id);
     }
 }

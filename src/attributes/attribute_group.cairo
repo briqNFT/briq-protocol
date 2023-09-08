@@ -150,7 +150,6 @@ mod create_attribute_group {
     use super::Event;
 
     fn execute(ctx: Context, data: CreateAttributeGroupParams) {
-        // TODO: check ctx.origin is actually the origin
         ctx.world.only_admins(@ctx.origin);
 
         let CreateAttributeGroupParams{attribute_group_id,
@@ -235,7 +234,6 @@ mod update_attribute_group {
     use super::Event;
 
     fn execute(ctx: Context, data: UpdateAttributeGroupParams) {
-        // TODO: check ctx.origin is actually the origin
         ctx.world.only_admins(@ctx.origin);
 
         let UpdateAttributeGroupParams{attribute_group_id,

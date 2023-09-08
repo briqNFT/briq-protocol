@@ -61,6 +61,7 @@ mod SetupWorld {
         generic_sets: ContractAddress,
         box: ContractAddress
     ) {
+        // The first time this is called, it'll rely on the world owner.
         ctx.world.only_admins(@ctx.origin);
 
         set!(

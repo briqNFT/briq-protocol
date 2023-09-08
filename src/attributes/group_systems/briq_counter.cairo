@@ -31,6 +31,7 @@ mod agm_briq_counter {
     }
 
     fn execute(ctx: Context, data: AttributeHandlerData) {
+        // TODO: auth
         match data {
             AttributeHandlerData::Assign(d) => {
                 let AttributeAssignData{set_owner,
