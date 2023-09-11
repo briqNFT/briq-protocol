@@ -38,7 +38,7 @@ echo "*************************************"
 
 
 ## Setup World config
-sozo execute SetupWorld --world $WORLD_ADDRESS --calldata $TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$BOX_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo execute SetupWorld --world $WORLD_ADDRESS --calldata $TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 ## Return World config
 sozo component entity WorldConfig 1 --world $WORLD_ADDRESS
@@ -53,8 +53,8 @@ sozo component entity BriqFactoryStore 1 --world $WORLD_ADDRESS
 starkli invoke $FEE_TOKEN_ADDR approve $EXECUTOR_ADDRESS u256:1000000000000000000 --keystore-password $KEYSTORE_PWD --watch
 starkli call $FEE_TOKEN_ADDR allowance $ACCOUNT_ADDRESS $EXECUTOR_ADDRESS
 
-## Buy 10000 briqs with material_id=1 in briq_factory
-sozo execute BriqFactoryMint --world $WORLD_ADDRESS --calldata 1,10000 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+## Buy 1000 briqs with material_id=1 in briq_factory
+sozo execute BriqFactoryMint --world $WORLD_ADDRESS --calldata 1,1000 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 ## ACCOUNT_ADDRESS balance : BRIQ
 starkli call $BRIQ_ADDR balance_of $ACCOUNT_ADDRESS u256:1
