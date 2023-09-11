@@ -11,7 +11,7 @@ use starknet::info::get_block_timestamp;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, ETH_ADDRESS, DefaultWorld, deploy_default_world, mint_briqs
+    WORLD_ADMIN, DEFAULT_OWNER, ETH_ADDRESS, DefaultWorld, deploy_default_world, mint_briqs, impersonate
 };
 
 use dojo_erc::erc_common::utils::system_calldata;
@@ -29,11 +29,13 @@ use debug::PrintTrait;
 
 
 fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252,) -> BriqFactoryStore {
+    impersonate(WORLD_ADMIN());
     world
         .execute(
             'BriqFactoryInitialize',
             system_calldata(BriqFactoryInitializeParams { t, surge_t, buy_token: ETH_ADDRESS() })
         );
+    impersonate(DEFAULT_OWNER());
     BriqFactoryTrait::get_briq_factory(world)
 }
 

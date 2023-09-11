@@ -119,6 +119,13 @@ fn spawn_world() -> IWorldDispatcher {
     world.grant_writer('WorldConfig', 'SetupWorld');
 
     // ***************************
+    // ****  Factory
+    // ***************************
+
+    world.grant_writer('ERC1155Balance', 'BriqFactoryMint');
+    world.grant_writer('BriqFactoryStore', 'BriqFactoryMint');
+
+    // ***************************
     // ****  erc1155
     // ***************************
 

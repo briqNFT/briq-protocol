@@ -10,6 +10,9 @@ use starknet::ContractAddress;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
+use dojo_erc::erc721::erc721::ERC721::{
+    Approval, Transfer, ApprovalForAll, Event
+};
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait};
 use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
@@ -276,7 +279,15 @@ fn test_simple_mint_and_burn() {
     );
     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
-// TODO: validate that token ID balance asserts as it's 0
+    // TODO: validate that token ID balance asserts as it's 0
+    let tev = starknet::testing::pop_log::<Transfer>(generic_sets.contract_address).unwrap();
+    assert(tev.from == ZERO(), 'bad from');
+    assert(tev.to == DEFAULT_OWNER(), 'bad to');
+    assert(tev.token_id == token_id.into(), 'bad token id');
+    let tev = starknet::testing::pop_log::<Transfer>(generic_sets.contract_address).unwrap();
+    assert(tev.from == DEFAULT_OWNER(), 'bad from');
+    assert(tev.to == ZERO(), 'bad to');
+    assert(tev.token_id == token_id.into(), 'bad token id');
 }
 
 #[test]

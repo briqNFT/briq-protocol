@@ -49,6 +49,17 @@ sozo execute BriqFactoryInitialize --world $WORLD_ADDRESS --calldata 0,0,$FEE_TO
 ## Return briq_factory config
 sozo component entity BriqFactoryStore 1 --world $WORLD_ADDRESS 
 
+sozo auth writer ERC1155Balance BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo auth writer BriqFactoryStore BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+
+sozo auth writer ERC721Balance set_nft_assembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo auth writer ERC721Owner set_nft_assembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo auth writer ERC1155Balance set_nft_assembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+
+sozo auth writer ERC721Balance set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo auth writer ERC721Owner set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo auth writer ERC1155Balance set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+
 ## approve EXECUTOR to spend 1eth FEE_TOKEN
 starkli invoke $FEE_TOKEN_ADDR approve $EXECUTOR_ADDRESS u256:1000000000000000000 --keystore-password $KEYSTORE_PWD --watch
 starkli call $FEE_TOKEN_ADDR allowance $ACCOUNT_ADDRESS $EXECUTOR_ADDRESS

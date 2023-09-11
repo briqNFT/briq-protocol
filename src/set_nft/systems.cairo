@@ -16,6 +16,8 @@ use dojo_erc::erc721::components::{
     ERC721TokenApprovalTrait
 };
 
+use briq_protocol::set_nft::systems_erc721::emit_transfer;
+
 use briq_protocol::world_config::{WorldConfig, get_world_config};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES};
 use briq_protocol::set_nft::systems_erc721::ALL_BRIQ_SETS;
@@ -116,6 +118,8 @@ fn create_token(
     // increase token supply
     ERC721BalanceTrait::unchecked_increase_balance(ctx.world, token, recipient, 1);
     ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, recipient);
+
+    emit_transfer(ctx.world, token, Zeroable::zero(), recipient, token_id.into());
 }
 
 fn destroy_token(
@@ -126,6 +130,7 @@ fn destroy_token(
     ERC721OwnerTrait::unchecked_set_owner(
         ctx.world, ALL_BRIQ_SETS(), token_id.into(), Zeroable::zero()
     );
+    emit_transfer(ctx.world, token, owner, Zeroable::zero(), token_id.into());
 }
 
 fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: ContractAddress) {
