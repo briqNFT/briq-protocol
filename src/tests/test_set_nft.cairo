@@ -226,6 +226,38 @@ use convenience_for_testing::{
 
 #[test]
 #[available_gas(30000000)]
+fn test_hash() {
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a0842138b2df81a3e6e88f8, 25
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365eca216cb1596940bf41083e2>(), 0x6111956b2a06e88f8, 1
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02bcc5d305f365e6388fe9501eca216cb1596940bf41083e2>(), 0x611195842138b2df81a3e6e88f8, 2
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e63801eca216cb1596940bf41083e2>(), 0x6111956b42138b2df81a3e6e88f8, 3
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2ae88f8, 4
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501e216cb1596940bf41083e2>(), 0x6111956b2a0842138b26e88f8, 5
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02b30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111938b2df81a3e6e88f8, 6
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b0388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a02138b2df81a3e6e88f8, 7
+    ).print();
+    briq_protocol::set_nft::systems::get_token_id(
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d5cb1596940bf41083e2>(), 0x611138b2df81a3e6e88f8, 8
+    ).print();
+}
+
+#[test]
+#[available_gas(30000000)]
 #[should_panic]
 fn test_empty_mint() {
     let DefaultWorld{world, briq_token, generic_sets, .. } = deploy_default_world();
