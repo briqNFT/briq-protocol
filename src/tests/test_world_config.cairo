@@ -27,6 +27,7 @@ fn test_world_admin_can_setup_world() {
                 TREASURY().into(),
                 briq.into(),
                 generic_sets.into(),
+                0
             ])
         );
 }
@@ -53,6 +54,7 @@ fn test_not_world_admin_cannot_setup_world() {
                 TREASURY().into(),
                 briq.into(),
                 generic_sets.into(),
+                0
             ])
         );
 }

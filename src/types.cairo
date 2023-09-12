@@ -12,7 +12,7 @@ struct AttributeItem {
     attribute_id: u64,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde,)]
 struct FTSpec {
     token_id: felt252,
     qty: u128,

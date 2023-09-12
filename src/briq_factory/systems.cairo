@@ -31,6 +31,7 @@ enum Event {
 
 #[derive(Drop, Serde)]
 struct BriqFactoryBuyParams {
+    caller: ContractAddress,
     material: u64,
     amount: u32
 }
@@ -62,7 +63,9 @@ mod BriqFactoryMint {
     }
 
     fn execute(ctx: Context, params: BriqFactoryBuyParams) {
-        let BriqFactoryBuyParams{material, amount: amount_u32 } = params;
+        let BriqFactoryBuyParams{caller, material, amount: amount_u32 } = params;
+        assert(ctx.origin == get_world_config(ctx.world).factory, 'only via factory');
+
         let amount: felt252 = amount_u32.into();
         assert(amount >= MIN_PURCHASE(), 'amount too low !');
 
@@ -75,7 +78,7 @@ mod BriqFactoryMint {
         // Transfer funds to receiver wallet
         // TODO: use something other than the super-admin address for this.
         let world_config = get_world_config(ctx.world);
-        let buyer = ctx.origin;
+        let buyer = caller;
         IERC20Dispatcher { contract_address: briq_factory.buy_token }
             .transferFrom(buyer, world_config.treasury, price.into());
 

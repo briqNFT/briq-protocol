@@ -227,33 +227,33 @@ use convenience_for_testing::{
 #[test]
 #[available_gas(30000000)]
 fn test_hash() {
-    briq_protocol::set_nft::systems::get_token_id(
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a0842138b2df81a3e6e88f8, 25
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0xc40763dbee89f284bf9215e353171229b4cbc645fa8c0932cb68c134ba8b24>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365eca216cb1596940bf41083e2>(), 0x6111956b2a06e88f8, 1
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0x3011789e95d63923025646fcbf5230513b8b347ff1371b871a996861def1621>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d305f365e6388fe9501eca216cb1596940bf41083e2>(), 0x611195842138b2df81a3e6e88f8, 2
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0x19d7b6f61cec829e2e1c424e11b40c8198912a71d75b14a781db838df69daa5>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e63801eca216cb1596940bf41083e2>(), 0x6111956b42138b2df81a3e6e88f8, 3
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0x7805905ca794dd2afcf54520b89b0a5520f51614e3ce357c7c285279f874b29>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d30f3f35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2ae88f8, 4
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0x6f003d687db73af9b0675080e87208027881dccf5a6fd35eed4f88568ed7f37>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501e216cb1596940bf41083e2>(), 0x6111956b2a0842138b26e88f8, 5
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0x3f7dc95b8ce50f4c0e75d7c2c6cf04190e45c3cb4c26e52b9993df08ffb7e5a>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02b30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111938b2df81a3e6e88f8, 6
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0x5289ebc74ed85b93bd3f2da93cb3b836b0b8bd6c3924b29d916f6882998dc06>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b0388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a02138b2df81a3e6e88f8, 7
-    ).print();
-    briq_protocol::set_nft::systems::get_token_id(
+    ) == starknet::contract_address_const::<0x7e49695c97a0b7779bfcc0f532866b5f8ed03999a7d3cd093d585dd5eb23c39>(), 'Bad token Id');
+    assert(briq_protocol::set_nft::systems::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d5cb1596940bf41083e2>(), 0x611138b2df81a3e6e88f8, 8
-    ).print();
+    ) == starknet::contract_address_const::<0x1fcea5dd923ed43f376c2ff1fc86fecf221b1fad82d6caf6221f5b71a787573>(), 'Bad token Id');
 }
 
 #[test]

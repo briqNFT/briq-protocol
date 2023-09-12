@@ -187,12 +187,13 @@ mod set_nft_assembly {
     fn execute(ctx: Context, data: AssemblySystemData) {
         let AssemblySystemData{caller, owner, token_id_hint, name, description, fts, shape, attributes } = data;
 
-        // TODO : better check ?
-        assert(ctx.origin == caller, 'Only Caller');
+        let token = get_target_contract_from_attributes(ctx.world, @attributes);
+
+        if ctx.origin != owner {
+            assert(ctx.origin == token, 'Only Caller');
+        }
         assert(owner == caller, 'Only Owner');
         assert(shape.len() != 0, 'Cannot mint empty set');
-
-        let token = get_target_contract_from_attributes(ctx.world, @attributes);
 
         let token_id = super::get_token_id(owner, token_id_hint, shape.len());
         super::create_token(ctx, token, owner, token_id.into());
@@ -240,11 +241,14 @@ mod set_nft_disassembly {
     fn execute(ctx: Context, data: DisassemblySystemData) {
         let DisassemblySystemData{caller, owner, token_id, fts, attributes } = data;
 
-        // TODO : better check ?
-        assert(ctx.origin == caller, 'Only Caller');
-        assert(owner == caller, 'Only Owner');
 
         let token = get_target_contract_from_attributes(ctx.world, @attributes);
+
+        if ctx.origin != owner {
+            assert(ctx.origin == token, 'Only Caller');
+        }
+        assert(owner == caller, 'Only Owner');
+
         let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id.into());
 
         assert(token_owner.is_non_zero(), 'ERC721: invalid token_id');

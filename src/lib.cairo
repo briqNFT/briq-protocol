@@ -17,11 +17,7 @@ mod box_nft;
 
 mod attributes;
 
-mod briq_factory {
-    mod components;
-    mod systems;
-    mod constants;
-}
+mod briq_factory;
 
 
 #[cfg(test)]

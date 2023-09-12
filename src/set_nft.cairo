@@ -246,4 +246,69 @@ mod SetNft {
             self.emit(event);
         }
     }
+
+    use briq_protocol::types::{FTSpec, PackedShapeItem, AttributeItem};
+    use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData};
+
+    #[external(v0)]
+    fn assemble(
+        self: @ContractState,
+        owner: ContractAddress,
+        token_id_hint: felt252,
+        name: Array<felt252>, // todo string
+        description: Array<felt252>, // todo string
+        fts: Array<FTSpec>,
+        shape: Array<PackedShapeItem>,
+        attributes: Array<AttributeItem>
+    ) {
+        let caller = get_caller_address();
+        assert(caller == owner, 'Only owner');
+
+        self
+            .world
+            .read()
+            .execute(
+                'set_nft_assembly',
+                system_calldata(
+                    AssemblySystemData {
+                        caller: caller,
+                        owner,
+                        token_id_hint,
+                        name,
+                        description,
+                        fts,
+                        shape,
+                        attributes
+                    }
+                )
+            );
+    }
+
+    #[external(v0)]
+    fn disassemble(
+        self: @ContractState,
+        owner: ContractAddress,
+        token_id: ContractAddress,
+        fts: Array<FTSpec>,
+        attributes: Array<AttributeItem>
+    ) {
+        let caller = get_caller_address();
+        assert(caller == owner, 'Only owner');
+
+        self
+            .world
+            .read()
+            .execute(
+                'set_nft_disassembly',
+                system_calldata(
+                    DisassemblySystemData {
+                        caller: caller,
+                        owner,
+                        token_id,
+                        fts,
+                        attributes
+                    }
+                )
+            );
+    }
 }
