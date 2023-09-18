@@ -20,6 +20,7 @@ use dojo_erc::erc1155::interface::IERC1155Dispatcher;
 use briq_protocol::world_config::{get_world_config};
 use briq_protocol::briq_token::BriqToken;
 use briq_protocol::set_nft::SetNft;
+use briq_protocol::set_nft_1155::SetNftERC1155;
 use briq_protocol::erc1155::mint_burn::ERC1155MintBurnParams;
 
 use debug::PrintTrait;
@@ -83,6 +84,9 @@ fn spawn_world() -> IWorldDispatcher {
         // erc721 specifics - set_nft
         briq_protocol::set_nft::systems::set_nft_assembly::TEST_CLASS_HASH,
         briq_protocol::set_nft::systems::set_nft_disassembly::TEST_CLASS_HASH,
+        // erc1155 specifics - set_nft
+        briq_protocol::set_nft::systems::set_nft_1155_assembly::TEST_CLASS_HASH,
+        briq_protocol::set_nft::systems::set_nft_1155_disassembly::TEST_CLASS_HASH,
 
         // erc1155
         dojo_erc::erc1155::systems::ERC1155SetApprovalForAll::TEST_CLASS_HASH,
@@ -142,7 +146,7 @@ fn spawn_world() -> IWorldDispatcher {
     world.grant_writer('ERC721TokenApproval', 'ERC721TransferFrom');
 
     // ***************************
-    // **** set_nft (erc721)
+    // **** set_nft (erc721 / 1155)
     // ***************************
 
     world.grant_writer('ERC721Balance', 'set_nft_assembly');
@@ -152,6 +156,9 @@ fn spawn_world() -> IWorldDispatcher {
     world.grant_writer('ERC721Owner', 'set_nft_disassembly');
     world.grant_writer('ERC721Balance', 'set_nft_disassembly');
     world.grant_writer('ERC1155Balance', 'set_nft_disassembly');
+
+    world.grant_writer('ERC1155Balance', 'set_nft_1155_assembly');
+    world.grant_writer('ERC1155Balance', 'set_nft_1155_disassembly');
 
     // ***************************
     // **** box_nft
@@ -173,6 +180,7 @@ fn spawn_world() -> IWorldDispatcher {
 fn deploy_contracts(
     world: IWorldDispatcher,
 ) -> (
+    ContractAddress,
     ContractAddress,
     ContractAddress,
     ContractAddress,
@@ -224,6 +232,11 @@ fn deploy_contracts(
     )
         .expect('error deploying');
 
+    let (lilducks_1155_set, _) = deploy_syscall(
+        SetNftERC1155::TEST_CLASS_HASH.try_into().unwrap(), 0, array![world.contract_address.into()].span(), false
+    )
+        .expect('error deploying');
+
     // booklets 
     let (ducks_booklet, _) = deploy_syscall(
         briq_protocol::erc1155::GenericERC1155::TEST_CLASS_HASH.try_into().unwrap(),
@@ -250,9 +263,9 @@ fn deploy_contracts(
     )
         .expect('error deploying');
 
-    // briq factory ???
+    // TODO: briq factory
 
-    (briq, generic_sets, ducks_set, planets_set, ducks_booklet, planets_booklet, box)
+    (briq, generic_sets, ducks_set, planets_set, lilducks_1155_set, ducks_booklet, planets_booklet, box)
 }
 
 #[derive(Copy, Drop)]
@@ -263,6 +276,7 @@ struct DefaultWorld {
     generic_sets: IERC721Dispatcher,
     ducks_set: IERC721Dispatcher,
     planets_set: IERC721Dispatcher,
+    lilducks_1155_set: IERC1155Dispatcher,
     //booklets
     ducks_booklet: IERC1155Dispatcher,
     planets_booklet: IERC1155Dispatcher,
@@ -274,7 +288,7 @@ fn deploy_default_world() -> DefaultWorld {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, generic_sets, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
+    let (briq, generic_sets, ducks_set, planets_set, lilducks_1155_set, ducks_booklet, planets_booklet, box) =
         deploy_contracts(
         world
     );
@@ -304,6 +318,7 @@ fn deploy_default_world() -> DefaultWorld {
         ducks_set: IERC721Dispatcher { contract_address: ducks_set },
         ducks_booklet: IERC1155Dispatcher { contract_address: ducks_booklet },
         planets_booklet: IERC1155Dispatcher { contract_address: planets_booklet },
+        lilducks_1155_set: IERC1155Dispatcher { contract_address: lilducks_1155_set },
         box_nft: IERC1155Dispatcher { contract_address: box },
     }
 }

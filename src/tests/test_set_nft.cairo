@@ -41,7 +41,7 @@ mod convenience_for_testing {
 
     use briq_protocol::world_config::get_world_config;
     use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
-    use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData, get_token_id};
+    use briq_protocol::set_nft::systems::{AssemblySystemData, DisassemblySystemData, get_token_id, get_target_contract_from_attributes};
     use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
     use briq_protocol::attributes::attribute_group::{
         CreateAttributeGroupParams, AttributeGroupOwner
@@ -61,6 +61,8 @@ mod convenience_for_testing {
         // The name/description is unused except to have them show up in calldata.
         let nb_briq = shape.len();
 
+        let (_, attrib) = get_target_contract_from_attributes(world, @attributes);
+
         let caller = starknet::get_tx_info().unbox().account_contract_address;
         world
             .execute(
@@ -69,8 +71,11 @@ mod convenience_for_testing {
                     AssemblySystemData { caller, owner, token_id_hint, name: array!['test'], description: array!['test'], fts, shape, attributes }
                 )
             );
-
-        let token_id = get_token_id(owner, token_id_hint, nb_briq);
+        let mut attribute_group_id = 0;
+        if attrib.is_some() {
+            attribute_group_id = attrib.unwrap().attribute_group_id;
+        }
+        let token_id = get_token_id(owner, token_id_hint, nb_briq, attribute_group_id);
         token_id
     }
 
@@ -228,32 +233,32 @@ use convenience_for_testing::{
 #[available_gas(30000000)]
 fn test_hash() {
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a0842138b2df81a3e6e88f8, 25
-    ) == starknet::contract_address_const::<0xc40763dbee89f284bf9215e353171229b4cbc645fa8c0932cb68c134ba8b24>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a0842138b2df81a3e6e88f8, 25, 0
+    ) == starknet::contract_address_const::<0xc40763dbee89f284bf9215e353171229b4cbc645fa8c0932cb68c100000000>(), 'Bad token Id');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365eca216cb1596940bf41083e2>(), 0x6111956b2a06e88f8, 1
-    ) == starknet::contract_address_const::<0x3011789e95d63923025646fcbf5230513b8b347ff1371b871a996861def1621>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365eca216cb1596940bf41083e2>(), 0x6111956b2a06e88f8, 1, 0
+    ) == starknet::contract_address_const::<0x3011789e95d63923025646fcbf5230513b8b347ff1371b871a9968600000000>(), 'Bad token Id 2');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02bcc5d305f365e6388fe9501eca216cb1596940bf41083e2>(), 0x611195842138b2df81a3e6e88f8, 2
-    ) == starknet::contract_address_const::<0x19d7b6f61cec829e2e1c424e11b40c8198912a71d75b14a781db838df69daa5>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02bcc5d305f365e6388fe9501eca216cb1596940bf41083e2>(), 0x611195842138b2df81a3e6e88f8, 2, 0
+    ) == starknet::contract_address_const::<0x19d7b6f61cec829e2e1c424e11b40c8198912a71d75b14a781db83800000000>(), 'Bad token Id 3');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e63801eca216cb1596940bf41083e2>(), 0x6111956b42138b2df81a3e6e88f8, 3
-    ) == starknet::contract_address_const::<0x7805905ca794dd2afcf54520b89b0a5520f51614e3ce357c7c285279f874b29>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e63801eca216cb1596940bf41083e2>(), 0x6111956b42138b2df81a3e6e88f8, 3, 0x34153
+    ) == starknet::contract_address_const::<0x7805905ca794dd2afcf54520b89b0a5520f51614e3ce357c7c2852700034153>(), 'Bad token Id 4');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2ae88f8, 4
-    ) == starknet::contract_address_const::<0x6f003d687db73af9b0675080e87208027881dccf5a6fd35eed4f88568ed7f37>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2ae88f8, 4, 0
+    ) == starknet::contract_address_const::<0x6f003d687db73af9b0675080e87208027881dccf5a6fd35eed4f88500000000>(), 'Bad token Id 5');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501e216cb1596940bf41083e2>(), 0x6111956b2a0842138b26e88f8, 5
-    ) == starknet::contract_address_const::<0x3f7dc95b8ce50f4c0e75d7c2c6cf04190e45c3cb4c26e52b9993df08ffb7e5a>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501e216cb1596940bf41083e2>(), 0x6111956b2a0842138b26e88f8, 5, 0x3435
+    ) == starknet::contract_address_const::<0x3f7dc95b8ce50f4c0e75d7c2c6cf04190e45c3cb4c26e52b9993df000003435>(), 'Bad token Id 6');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02b30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111938b2df81a3e6e88f8, 6
-    ) == starknet::contract_address_const::<0x5289ebc74ed85b93bd3f2da93cb3b836b0b8bd6c3924b29d916f6882998dc06>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02b30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111938b2df81a3e6e88f8, 6, 0
+    ) == starknet::contract_address_const::<0x5289ebc74ed85b93bd3f2da93cb3b836b0b8bd6c3924b29d916f68800000000>(), 'Bad token Id 7');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b0388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a02138b2df81a3e6e88f8, 7
-    ) == starknet::contract_address_const::<0x7e49695c97a0b7779bfcc0f532866b5f8ed03999a7d3cd093d585dd5eb23c39>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b0388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a02138b2df81a3e6e88f8, 7, 0
+    ) == starknet::contract_address_const::<0x7e49695c97a0b7779bfcc0f532866b5f8ed03999a7d3cd093d585dd00000000>(), 'Bad token Id 8');
     assert(briq_protocol::set_nft::systems::get_token_id(
-        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d5cb1596940bf41083e2>(), 0x611138b2df81a3e6e88f8, 8
-    ) == starknet::contract_address_const::<0x1fcea5dd923ed43f376c2ff1fc86fecf221b1fad82d6caf6221f5b71a787573>(), 'Bad token Id');
+        starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d5cb1596940bf41083e2>(), 0x611138b2df81a3e6e88f8, 8, 0
+    ) == starknet::contract_address_const::<0x1fcea5dd923ed43f376c2ff1fc86fecf221b1fad82d6caf6221f5b700000000>(), 'Bad token Id 9');
 }
 
 #[test]
@@ -297,7 +302,7 @@ fn test_simple_mint_and_burn() {
     );
 
     assert(
-        token_id == starknet::contract_address_const::<0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a6470bfc2>(),
+        token_id == starknet::contract_address_const::<0x3fa51acc2defe858e3cb515b7e29c6e3ba22da5657e7cc33885860a00000000>(),
         'bad token id'
     );
 
@@ -363,7 +368,7 @@ fn test_simple_mint_and_burn_2() {
     );
 
     assert(
-        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057ae00000000>(),
         'bad token id'
     );
 
@@ -404,7 +409,7 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     );
 
     assert(
-        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057ae00000000>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == generic_sets.owner_of(token_id.into()), 'bad owner');
@@ -473,7 +478,7 @@ fn test_simple_mint_attribute_ok_1() {
         array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
     assert(
-        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057ae00000069>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
@@ -528,7 +533,7 @@ fn test_simple_mint_attribute_ok_2() {
     );
 
     assert(
-        token_id == starknet::contract_address_const::<0x76a2334b023640f0bc1be745cfa047fc4ba4fd7289e8a82690291da3ad04837>(),
+        token_id == starknet::contract_address_const::<0x76a2334b023640f0bc1be745cfa047fc4ba4fd7289e8a82690291da00000069>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
@@ -707,7 +712,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
     );
     assert(
-        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057aee0d6eda3>(),
+        token_id == starknet::contract_address_const::<0x2d4276d22e1b24bb462c255708ae8293302ff6b17691ed07f5057ae00000069>(),
         'bad token id'
     );
     assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');

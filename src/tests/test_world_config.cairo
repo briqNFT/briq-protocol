@@ -16,7 +16,7 @@ fn test_world_admin_can_setup_world() {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, generic_sets, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
+    let (briq, generic_sets, ducks_set, planets_set, lilducks_1155_set, ducks_booklet, planets_booklet, box) =
         deploy_contracts(
         world
     );
@@ -40,7 +40,7 @@ fn test_not_world_admin_cannot_setup_world() {
     impersonate(WORLD_ADMIN());
 
     let world = spawn_world();
-    let (briq, generic_sets, ducks_set, planets_set, ducks_booklet, planets_booklet, box) =
+    let (briq, generic_sets, ducks_set, planets_set, lilducks_1155_set, ducks_booklet, planets_booklet, box) =
         deploy_contracts(
         world
     );

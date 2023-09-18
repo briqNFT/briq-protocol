@@ -44,6 +44,7 @@ mod BriqFactory {
     use dojo_erc::erc_common::utils::{system_calldata};
     use briq_protocol::briq_factory::systems::BriqFactoryBuyParams;
     use briq_protocol::briq_factory::components::{BriqFactoryTrait};
+
     #[external(v0)]
     fn buy(
         self: @ContractState,
@@ -65,13 +66,13 @@ mod BriqFactory {
             );
     }
 
-    #[view]
+    #[external(v0)]
     fn get_current_t(self: @ContractState) -> felt252 {
         let briq_factory = BriqFactoryTrait::get_briq_factory(self.world.read());
         briq_factory.get_current_t()
     }
 
-    #[view]
+    #[external(v0)]
     fn get_surge_t(self: @ContractState) -> felt252 {
         let briq_factory = BriqFactoryTrait::get_briq_factory(self.world.read());
         briq_factory.get_surge_t()

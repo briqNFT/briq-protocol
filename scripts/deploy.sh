@@ -87,3 +87,8 @@ $ACCOUNT_ADDRESS,\
 1,1,1,\
 0"\
     --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+
+## Upgrade
+
+starkli invoke $FACTORY_ADDR upgrade $FACTORY_HASH --keystore-password $KEYSTORE_PWD
+starkli invoke $SET_ADDR upgrade $SET_HASH --keystore-password $KEYSTORE_PWD

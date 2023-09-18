@@ -10,6 +10,7 @@ mod world_config;
 mod migrate;
 
 mod set_nft;
+mod set_nft_1155;
 
 mod erc1155;
 mod briq_token;

@@ -13,3 +13,7 @@ fn CB_BRIQ() -> felt252 {
 fn CB_ATTRIBUTES() -> felt252 {
     'attributes'
 }
+
+fn CB_TOTAL_SUPPLY_1155() -> felt252 {
+    'supply_1155'
+}
