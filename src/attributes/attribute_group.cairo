@@ -6,15 +6,33 @@ use serde::Serde;
 use zeroable::Zeroable;
 
 use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::database::schema::{EnumMember, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type};
 
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 
 use debug::PrintTrait;
 
-impl SerdeLenAttributeGroupOwner of dojo::SerdeLen<AttributeGroupOwner> {
+impl SerdeLenAttributeGroupOwner of SchemaIntrospection<AttributeGroupOwner> {
     #[inline(always)]
-    fn len() -> usize {
+    fn size() -> usize {
         2
+    }
+
+    fn layout(ref layout: Array<u8>) {
+        layout.append(8);
+        layout.append(251);
+    }
+
+    #[inline(always)]
+    fn ty() -> Ty {
+        Ty::Enum(EnumMember{
+            name: 'AttributeGroupOwner',
+            attrs: array![].span(),
+            values: array![
+                serialize_member_type(@Ty::Simple('Admin')),
+                serialize_member_type(@Ty::Simple('System')),
+            ].span()
+        })
     }
 }
 
@@ -27,13 +45,13 @@ impl PrintTraitAttributeGroupOwner of PrintTrait<AttributeGroupOwner> {
     }
 }
 
-#[derive(Copy, Drop, Serde, SerdeLen)]
+#[derive(Copy, Drop, Serde)]
 enum AttributeGroupOwner {
     Admin: ContractAddress,
     System: felt252,
 }
 
-#[derive(Component, Copy, Drop, Serde, SerdeLen)]
+#[derive(Component, Copy, Drop, Serde)]
 struct AttributeGroup {
     #[key]
     attribute_group_id: u64,

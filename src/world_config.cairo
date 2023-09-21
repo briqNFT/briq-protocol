@@ -8,7 +8,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 const SYSTEM_CONFIG_ID: u32 = 1;
 
-#[derive(Component, Copy, Drop, Serde, SerdeLen)]
+#[derive(Component, Copy, Drop, Serde)]
 struct WorldConfig {
     #[key]
     config_id: u32,

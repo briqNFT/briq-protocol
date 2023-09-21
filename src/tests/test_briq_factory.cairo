@@ -164,7 +164,7 @@ fn test_inflection_point() {
 }
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(40000000)]
 fn test_overflows_ok() {
     let DefaultWorld{world, .. } = deploy_default_world();
 
