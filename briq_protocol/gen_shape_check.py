@@ -33,8 +33,8 @@ def item_check(item):
         "    let shapeItem = shape.pop_front().unwrap();",
     ]
     if item.material != ANY_MATERIAL_ANY_COLOR:
-        out.append(f"assert(shapeItem.color_material == {item.color_material}, 'bad shape item');")
-    out.append(f"assert(shapeItem.x_y_z == {item.x_y_z}, 'bad shape item');")
+        out.append(f"assert(shapeItem.color_material == @{item.color_material}, 'bad shape item');")
+    out.append(f"assert(shapeItem.x_y_z == @{item.x_y_z}, 'bad shape item');")
     return "\n    ".join(out)
 
 @dataclass

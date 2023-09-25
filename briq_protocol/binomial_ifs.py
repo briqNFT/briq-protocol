@@ -1,5 +1,31 @@
 from briq_protocol.gen_shape_check import ShapeItem, generate_shape_check
 
+HEADER = """
+// This contract is only declared, and call via LibraryDispatcher & class_hash
+#[starknet::contract]
+mod shapes_verifier {
+    use array::{SpanTrait, ArrayTrait};
+    use option::OptionTrait;
+
+    // Copied from briq_protocol to keep this simple.
+    #[derive(Copy, Drop, Serde,)]
+    struct FTSpec {
+        token_id: felt252,
+        qty: u128,
+    }
+
+    #[derive(Copy, Drop, Serde, Store)]
+    struct PackedShapeItem {
+        color_material: felt252,
+        x_y_z: felt252,
+    }
+
+    #[storage]
+    struct Storage {}
+
+    """
+
+
 def generate_binary_search_function(nft_ids, check_generator):
     """
     :param nft_ids: List of NFT IDs, sorted.
@@ -13,27 +39,28 @@ def generate_binary_search_function(nft_ids, check_generator):
         mid = (low + high) // 2
 
         if low == high:
-            return f"if nft_id == {nft_ids[mid]} {{\n    {check_generator(mid)}\n}}"
+            return f"if attribute_id == {nft_ids[mid]} {{\n    {check_generator(nft_ids[mid])}\n    return;\n}}"
 
         return f"""
-        if nft_id == {nft_ids[mid]} {{
+        if attribute_id == {nft_ids[mid]} {{
             {check_generator(mid)}
-        }} else if nft_id < {nft_ids[mid]} {{
+        }} else if attribute_id < {nft_ids[mid]} {{
             {recursive_search(low, mid - 1)}
-            return true;
         }} else {{
             {recursive_search(mid + 1, high)}
-            return true;
         }}
         """
 
     return f"""
-    pub fn check_nft(nft_id: u32) {{
+    #[external(v0)]
+    fn verify_shape(
+        self: @ContractState, attribute_id: u64, mut shape: Span<PackedShapeItem>, mut fts: Span<FTSpec>
+    ) {{
         {recursive_search(0, len(nft_ids) - 1)}
-        assert(false, 'bad token ID');
-        return false;
+        assert(false, 'bad attribute ID');
     }}
     """
+
 
 def shape_check(index):
     return generate_shape_check([
@@ -41,4 +68,4 @@ def shape_check(index):
         ShapeItem(0, 1, 0, "#ffaaff", 1),
     ])
 
-print(generate_binary_search_function([1, 2, 3, 10, 200], shape_check))
+#  print(HEADER + generate_binary_search_function([1, 2, 3, 10, 200], shape_check) + "\n}")
