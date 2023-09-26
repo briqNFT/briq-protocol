@@ -1,14 +1,7 @@
 use starknet::ContractAddress;
-use traits::{Into, TryInto};
-use option::OptionTrait;
-use clone::Clone;
-use serde::Serde;
-use zeroable::Zeroable;
 
-use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::database::schema::{EnumMember, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type};
-
-use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use debug::PrintTrait;
 
@@ -30,7 +23,7 @@ impl SerdeLenAttributeGroupOwner of SchemaIntrospection<AttributeGroupOwner> {
             attrs: array![].span(),
             values: array![
                 serialize_member_type(@Ty::Simple('Admin')),
-                serialize_member_type(@Ty::Simple('System')),
+                serialize_member_type(@Ty::Simple('Contract')),
             ].span()
         })
     }
@@ -40,7 +33,7 @@ impl PrintTraitAttributeGroupOwner of PrintTrait<AttributeGroupOwner> {
     fn print(self: AttributeGroupOwner) {
         match self {
             AttributeGroupOwner::Admin(addr) => addr.print(),
-            AttributeGroupOwner::System(system_name) => system_name.print(),
+            AttributeGroupOwner::Contract(contract) => contract.print(),
         };
     }
 }
@@ -48,7 +41,7 @@ impl PrintTraitAttributeGroupOwner of PrintTrait<AttributeGroupOwner> {
 #[derive(Copy, Drop, Serde)]
 enum AttributeGroupOwner {
     Admin: ContractAddress,
-    System: felt252,
+    Contract: ContractAddress,
 }
 
 #[derive(Component, Copy, Drop, Serde)]
@@ -112,69 +105,50 @@ impl AttributeGroupImpl of AttributeGroupTrait {
     }
 }
 
-#[derive(Drop, PartialEq, starknet::Event)]
-struct AttributeGroupCreated {
-    attribute_group_id: u64,
-    owner: ContractAddress,
-    system: felt252,
-}
-
-#[derive(Drop, PartialEq, starknet::Event)]
-struct AttributeGroupUpdated {
-    attribute_group_id: u64,
-    owner: ContractAddress,
-    system: felt252,
-}
-
-#[event]
-#[derive(Drop, PartialEq, starknet::Event)]
-enum Event {
-    AttributeGroupCreated: AttributeGroupCreated,
-    AttributeGroupUpdated: AttributeGroupUpdated,
-}
-
-#[derive(Clone, Drop, Serde)]
-struct CreateAttributeGroupParams {
-    attribute_group_id: u64,
-    owner: AttributeGroupOwner,
-    target_set_contract_address: ContractAddress,
-    booklet_contract_address: ContractAddress,
-}
-
 #[system]
-mod create_attribute_group {
+mod AttributeGroups {
     use starknet::ContractAddress;
-    use traits::{Into, TryInto};
-    use array::{ArrayTrait, SpanTrait};
-    use option::OptionTrait;
-    use zeroable::Zeroable;
-    use clone::Clone;
-    use serde::Serde;
+    use starknet::get_caller_address;
 
-    use dojo::world::Context;
-    use dojo_erc::erc1155::components::ERC1155Balance;
+    use briq_protocol::erc::erc1155::components::ERC1155Balance;
 
     use briq_protocol::world_config::AdminTrait;
     use briq_protocol::types::{FTSpec, ShapeItem};
+    use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
+    
+    use super::{AttributeGroupTrait, AttributeGroupOwner, AttributeGroup};
 
-    use debug::PrintTrait;
+    #[derive(Drop, PartialEq, starknet::Event)]
+    struct AttributeGroupCreated {
+        attribute_group_id: u64,
+        owner_admin: ContractAddress,
+        owner_contract: ContractAddress,
+    }
 
-    use super::{
-        CreateAttributeGroupParams, AttributeGroupOwner, AttributeGroupTrait, AttributeGroup
-    };
+    #[derive(Drop, PartialEq, starknet::Event)]
+    struct AttributeGroupUpdated {
+        attribute_group_id: u64,
+        owner_admin: ContractAddress,
+        owner_contract: ContractAddress,
+    }
 
-    use super::{AttributeGroupCreated};
     #[event]
-    use super::Event;
+    #[derive(Drop, PartialEq, starknet::Event)]
+    enum Event {
+        AttributeGroupCreated: AttributeGroupCreated,
+        AttributeGroupUpdated: AttributeGroupUpdated,
+    }
 
-    fn execute(ctx: Context, data: CreateAttributeGroupParams) {
-        ctx.world.only_admins(@ctx.origin);
-
-        let CreateAttributeGroupParams{attribute_group_id,
-        owner,
-        target_set_contract_address,
-        booklet_contract_address } =
-            data;
+    #[external(v0)]
+    fn create_attribute_group(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        owner: AttributeGroupOwner,
+        target_set_contract_address: ContractAddress,
+        booklet_contract_address: ContractAddress,
+    ) {
+        world.only_admins(@get_caller_address());
 
         assert(target_set_contract_address.is_non_zero(), 'Invalid target_contract_address');
 
@@ -182,103 +156,70 @@ mod create_attribute_group {
             AttributeGroupOwner::Admin(address) => {
                 assert(address.is_non_zero(), 'Must have admin');
             },
-            AttributeGroupOwner::System(system_name) => {
-                assert(system_name.is_non_zero(), 'Must have admin');
+            AttributeGroupOwner::Contract(contract) => {
+                assert(contract.is_non_zero(), 'Must have admin');
             },
         };
 
         let attribute_group = AttributeGroupTrait::new_attribute_group(
-            ctx.world,
+            world,
             attribute_group_id,
             owner,
             target_set_contract_address,
             booklet_contract_address
         );
 
-        AttributeGroupTrait::set_attribute_group(ctx.world, attribute_group);
+        AttributeGroupTrait::set_attribute_group(world, attribute_group);
 
         match owner {
             AttributeGroupOwner::Admin(address) => {
                 emit!(
-                    ctx.world,
-                    AttributeGroupCreated { attribute_group_id, owner: address, system: '' }
+                    world,
+                    AttributeGroupCreated { attribute_group_id, owner_admin: address, owner_contract: Zeroable::zero() }
                 );
             },
-            AttributeGroupOwner::System(system_name) => {
+            AttributeGroupOwner::Contract(contract) => {
                 emit!(
-                    ctx.world,
+                    world,
                     AttributeGroupCreated {
-                        attribute_group_id, owner: Zeroable::zero(), system: system_name
+                        attribute_group_id, owner_admin: Zeroable::zero(), owner_contract: contract
                     }
                 );
             },
         };
     }
-}
 
+    #[external(v0)]
+    fn update_attribute_group(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        owner: AttributeGroupOwner,
+        target_set_contract_address: ContractAddress,
+        booklet_contract_address: ContractAddress,
+    ) {
+        world.only_admins(@get_caller_address());
 
-#[derive(Clone, Drop, Serde)]
-struct UpdateAttributeGroupParams {
-    attribute_group_id: u64,
-    owner: AttributeGroupOwner,
-    target_set_contract_address: ContractAddress,
-    booklet_contract_address: ContractAddress,
-}
-
-#[system]
-mod update_attribute_group {
-    use starknet::ContractAddress;
-    use traits::{Into, TryInto};
-    use array::{ArrayTrait, SpanTrait};
-    use option::OptionTrait;
-    use zeroable::Zeroable;
-    use clone::Clone;
-    use serde::Serde;
-
-    use dojo::world::Context;
-    use dojo_erc::erc1155::components::ERC1155Balance;
-
-    use briq_protocol::world_config::AdminTrait;
-    use briq_protocol::types::{FTSpec, ShapeItem};
-
-    use debug::PrintTrait;
-
-    use super::{
-        UpdateAttributeGroupParams, AttributeGroupOwner, AttributeGroupTrait, AttributeGroup
-    };
-
-    use super::{AttributeGroupUpdated};
-    #[event]
-    use super::Event;
-
-    fn execute(ctx: Context, data: UpdateAttributeGroupParams) {
-        ctx.world.only_admins(@ctx.origin);
-
-        let UpdateAttributeGroupParams{attribute_group_id,
-        owner,
-        target_set_contract_address,
-        booklet_contract_address } =
-            data;
         assert(target_set_contract_address.is_non_zero(), 'Invalid target_contract_address');
 
         match owner {
             AttributeGroupOwner::Admin(address) => {
                 assert(address.is_non_zero(), 'Must have admin');
             },
-            AttributeGroupOwner::System(system_name) => {
-                assert(system_name.is_non_zero(), 'Must have admin');
+            AttributeGroupOwner::Contract(contract) => {
+                assert(contract.is_non_zero(), 'Must have admin');
             },
         };
 
         // check that attribute group already exists
         assert(
-            AttributeGroupTrait::exists(ctx.world, attribute_group_id),
+            AttributeGroupTrait::exists(world, attribute_group_id),
             'unexisting attribute_group_id'
         );
 
         // update attribute_group
         AttributeGroupTrait::set_attribute_group(
-            ctx.world,
+            world,
             AttributeGroup {
                 attribute_group_id, owner, target_set_contract_address, booklet_contract_address
             }
@@ -287,15 +228,15 @@ mod update_attribute_group {
         match owner {
             AttributeGroupOwner::Admin(address) => {
                 emit!(
-                    ctx.world,
-                    AttributeGroupUpdated { attribute_group_id, owner: address, system: '' }
+                    world,
+                    AttributeGroupUpdated { attribute_group_id, owner_admin: address, owner_contract: Zeroable::zero() }
                 );
             },
-            AttributeGroupOwner::System(system_name) => {
+            AttributeGroupOwner::Contract(contract) => {
                 emit!(
-                    ctx.world,
+                    world,
                     AttributeGroupUpdated {
-                        attribute_group_id, owner: Zeroable::zero(), system: system_name
+                        attribute_group_id, owner_admin: Zeroable::zero(), owner_contract: contract
                     }
                 );
             },

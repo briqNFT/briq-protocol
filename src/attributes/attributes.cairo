@@ -6,9 +6,8 @@ use option::OptionTrait;
 use zeroable::Zeroable;
 use clone::Clone;
 
-use dojo::world::{Context, IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::erc1155::components::{ERC1155Balance, ERC1155BalanceTrait};
-use dojo_erc::erc_common::utils::system_calldata;
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use briq_protocol::erc::erc1155::components::{ERC1155Balance, increase_balance, decrease_balance};
 
 use briq_protocol::types::{FTSpec, PackedShapeItem, AttributeItem};
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
@@ -19,6 +18,24 @@ use briq_protocol::attributes::attribute_group::{
 };
 
 use debug::PrintTrait;
+
+#[starknet::interface]
+trait IAttributeHandler<ContractState> {
+    fn assign(ref self: ContractState,
+        set_owner: ContractAddress,
+        set_token_id: ContractAddress,
+        attribute_group_id: u64,
+        attribute_id: u64,
+        shape: Array<PackedShapeItem>,
+        fts: Array<FTSpec>,
+    );
+    fn remove(ref self: ContractState,
+        set_owner: ContractAddress,
+        set_token_id: ContractAddress,
+        attribute_group_id: u64,
+        attribute_id: u64
+    );
+}
 
 #[derive(Drop, PartialEq, starknet::Event)]
 struct AttributeAssigned {
@@ -41,32 +58,8 @@ enum Event {
     AttributeRemoved: AttributeRemoved,
 }
 
-#[derive(Drop, Serde)]
-struct AttributeAssignData {
-    set_owner: ContractAddress,
-    set_token_id: ContractAddress,
-    attribute_group_id: u64,
-    attribute_id: u64,
-    shape: Array<PackedShapeItem>,
-    fts: Array<FTSpec>,
-}
-
-#[derive(Drop, Serde)]
-struct AttributeRemoveData {
-    set_owner: ContractAddress,
-    set_token_id: ContractAddress,
-    attribute_group_id: u64,
-    attribute_id: u64
-}
-
-#[derive(Drop, Serde)]
-enum AttributeHandlerData {
-    Assign: AttributeAssignData,
-    Remove: AttributeRemoveData,
-}
-
 fn assign_attributes(
-    ctx: Context,
+    world: IWorldDispatcher,
     set_owner: ContractAddress,
     set_token_id: ContractAddress,
     attributes: @Array<AttributeItem>,
@@ -83,7 +76,7 @@ fn assign_attributes(
     loop {
         match attr_span.pop_front() {
             Option::Some(attribute) => {
-                inner_attribute_assign(ctx, set_owner, set_token_id, *attribute, shape, fts);
+                inner_attribute_assign(world, set_owner, set_token_id, *attribute, shape, fts);
             },
             Option::None => {
                 break;
@@ -92,13 +85,11 @@ fn assign_attributes(
     };
 
     // Update the cumulative balance
-    ERC1155BalanceTrait::unchecked_increase_balance(
-        ctx.world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into()
-    );
+    increase_balance(world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into());
 }
 
 fn inner_attribute_assign(
-    ctx: Context,
+    world: IWorldDispatcher,
     set_owner: ContractAddress,
     set_token_id: ContractAddress,
     attribute: AttributeItem,
@@ -108,7 +99,7 @@ fn inner_attribute_assign(
     assert(attribute.attribute_id != 0, 'attribute_id cannot be zero');
 
     let attribute_group = AttributeGroupTrait::get_attribute_group(
-        ctx.world, attribute.attribute_group_id
+        world, attribute.attribute_group_id
     );
 
     // check attribute_group exists
@@ -121,29 +112,20 @@ fn inner_attribute_assign(
             //library_erc1155::transferability::Transferability::_transfer_burnable(0, set_token_id, attribute_id, 1);
             assert(0 == 1, 'TODO assign');
         },
-        AttributeGroupOwner::System(system_name) => {
-            ctx
-                .world
-                .execute(
-                    system_name,
-                    system_calldata(
-                        AttributeHandlerData::Assign(
-                            AttributeAssignData {
-                                set_owner,
-                                set_token_id,
-                                attribute_group_id: attribute.attribute_group_id,
-                                attribute_id: attribute.attribute_id,
-                                shape: shape.clone(),
-                                fts: fts.clone()
-                            }
-                        )
-                    )
-                );
+        AttributeGroupOwner::Contract(contract_address) => {
+            IAttributeHandlerDispatcher { contract_address }.assign(
+                set_owner,
+                set_token_id,
+                attribute.attribute_group_id,
+                attribute.attribute_id,
+                shape.clone(),
+                fts.clone()
+            )
         },
     };
 
     emit!(
-        ctx.world,
+        world,
         AttributeAssigned {
             set_token_id: set_token_id,
             attribute_group_id: attribute.attribute_group_id,
@@ -153,7 +135,7 @@ fn inner_attribute_assign(
 }
 
 fn remove_attributes(
-    ctx: Context,
+    world: IWorldDispatcher,
     set_owner: ContractAddress,
     set_token_id: ContractAddress,
     attributes: Array<AttributeItem>
@@ -169,7 +151,7 @@ fn remove_attributes(
     loop {
         match attr_span.pop_front() {
             Option::Some(attribute) => {
-                remove_attribute_inner(ctx, set_owner, set_token_id, *attribute);
+                remove_attribute_inner(world, set_owner, set_token_id, *attribute);
             },
             Option::None => {
                 break;
@@ -178,13 +160,11 @@ fn remove_attributes(
     };
 
     // Update the cumulative balance
-    ERC1155BalanceTrait::unchecked_decrease_balance(
-        ctx.world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into()
-    );
+    decrease_balance(world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into());
 }
 
 fn remove_attribute_inner(
-    ctx: Context,
+    world: IWorldDispatcher,
     set_owner: ContractAddress,
     set_token_id: ContractAddress,
     attribute: AttributeItem,
@@ -192,7 +172,7 @@ fn remove_attribute_inner(
     assert(attribute.attribute_id != 0, 'attribute_id cannot be zero');
 
     let attribute_group = AttributeGroupTrait::get_attribute_group(
-        ctx.world, attribute.attribute_group_id
+        world, attribute.attribute_group_id
     );
 
     match attribute_group.owner {
@@ -200,27 +180,18 @@ fn remove_attribute_inner(
             //library_erc1155::transferability::Transferability::_transfer_burnable(set_token_id, 0, attribute_id, 1);
             assert(0 == 1, 'TODO remove');
         },
-        AttributeGroupOwner::System(system_name) => {
-            ctx
-                .world
-                .execute(
-                    system_name,
-                    system_calldata(
-                        AttributeHandlerData::Remove(
-                            AttributeRemoveData {
-                                set_owner,
-                                set_token_id,
-                                attribute_group_id: attribute.attribute_group_id,
-                                attribute_id: attribute.attribute_id
-                            }
-                        )
-                    )
-                );
+        AttributeGroupOwner::Contract(contract_address) => {
+            IAttributeHandlerDispatcher { contract_address }.remove(
+                set_owner,
+                set_token_id,
+                attribute.attribute_group_id,
+                attribute.attribute_id,
+            );
         },
     }
 
     emit!(
-        ctx.world,
+        world,
         AttributeRemoved {
             set_token_id,
             attribute_group_id: attribute.attribute_group_id,

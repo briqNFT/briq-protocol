@@ -15,18 +15,18 @@ mod ERC1155MintBurn {
     use traits::{Into, TryInto};
     use option::OptionTrait;
     use array::ArrayTrait;
-    use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
 
     use briq_protocol::world_config::AdminTrait;
     use super::ERC1155MintBurnParams;
 
-    fn execute(ctx: Context, params: ERC1155MintBurnParams) {
-        ctx.world.only_admins(@ctx.origin);
+    fn execute(world: IWorldDispatcher, params: ERC1155MintBurnParams) {
+        world.only_admins(@get_caller_address());
 
         let ERC1155MintBurnParams{operator, token, from, to, ids, amounts } = params;
-        dojo_erc::erc1155::systems::unchecked_update(ctx.world, operator, token, from, to, ids, amounts, array![]);
+        dojo_erc::erc1155::systems::unchecked_update(world, operator, token, from, to, ids, amounts, array![]);
     }
 }
 
@@ -35,17 +35,17 @@ mod BriqTokenERC1155MintBurn {
     use traits::{Into, TryInto};
     use option::OptionTrait;
     use array::ArrayTrait;
-    use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
 
     use briq_protocol::world_config::AdminTrait;
     use super::ERC1155MintBurnParams;
 
-    fn execute(ctx: Context, params: ERC1155MintBurnParams) {
-        ctx.world.only_admins(@ctx.origin);
+    fn execute(world: IWorldDispatcher, params: ERC1155MintBurnParams) {
+        world.only_admins(@get_caller_address());
 
         let ERC1155MintBurnParams{operator, token, from, to, ids, amounts } = params;
-        briq_protocol::erc1155::briq_transfer::update_nocheck(ctx.world, operator, token, from, to, ids, amounts, array![]);
+        briq_protocol::erc1155::briq_transfer::update_nocheck(world, operator, token, from, to, ids, amounts, array![]);
     }
 }

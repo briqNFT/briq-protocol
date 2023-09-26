@@ -7,8 +7,8 @@ cairo-version = "2.2.0"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", rev="e0054e712b4cd9b3ca325e7b31cb8445afe116e4" }
-dojo_erc = { git = "https://github.com/dojoengine/dojo", rev="e0054e712b4cd9b3ca325e7b31cb8445afe116e4" }
+dojo = { git = "https://github.com/notV4l/dojo", branch="erc1155_dojotized" }
+dojo_erc = { git = "https://github.com/notV4l/dojo", branch="erc1155_dojotized" }
 
 [[target.dojo]]
 build-external-contracts = [

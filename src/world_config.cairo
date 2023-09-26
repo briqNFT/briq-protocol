@@ -46,25 +46,25 @@ impl AdminTraitImpl of AdminTrait {
 #[system]
 mod SetupWorld {
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use array::ArrayTrait;
     use traits::Into;
 
-    use dojo::world::Context;
     use super::{WorldConfig, AdminTrait};
     use super::SYSTEM_CONFIG_ID;
 
     fn execute(
-        ctx: Context,
+        world: IWorldDispatcher,
         treasury: ContractAddress,
         briq: ContractAddress,
         generic_sets: ContractAddress,
         factory: ContractAddress,
     ) {
         // The first time this is called, it'll rely on the world owner.
-        ctx.world.only_admins(@ctx.origin);
+        world.only_admins(@get_caller_address());
 
         set!(
-            ctx.world,
+            world,
             (WorldConfig {
                 config_id: SYSTEM_CONFIG_ID,
                 treasury,

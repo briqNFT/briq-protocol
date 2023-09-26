@@ -48,64 +48,32 @@ fn get_box_infos(box_id: felt252) -> BoxInfo {
     BoxInfo { briq_1: 0, attribute_group_id: 0, attribute_id: 0 }
 }
 
-fn unbox(world: IWorldDispatcher, box_contract: ContractAddress, owner: ContractAddress, box_id: felt252) {
+
+use briq_protocol::erc::erc1155::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
+use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
+fn unbox<
+    T, impl TR: InternalTrait1155<T>, impl TD: Drop<T>
+>(ref self: T, world: IWorldDispatcher, box_contract: ContractAddress, owner: ContractAddress, box_id: felt252) {
     let box_infos = get_box_infos(box_id);
     let attribute_group = AttributeGroupTrait::get_attribute_group(
         world, box_infos.attribute_group_id
     );
 
     // Burn the box
-    dojo_erc::erc1155::systems::unchecked_update(
-        world,
-        owner,
-        box_contract,
-        owner,
-        Zeroable::zero(),
-        array![box_id],
-        array![1],
-        array![]
-    );
-
-    // Mint a booklet
-    dojo_erc::erc1155::systems::unchecked_update(
-        world,
-        owner,
-        attribute_group.booklet_contract_address,
-        Zeroable::zero(),
-        owner,
-        array![box_infos.attribute_id.into()],
-        array![1],
+    self._safe_transfer_from(
+        owner, Zeroable::zero(),
+        box_id.into(),
+        1,
         array![],
     );
 
-    // TODO: register a specific shape verifier for this booklet ?
-    // Or will that be handled directly by a different system maybe...
+    // Mint a booklet
+    MintBurnDispatcher { contract_address: attribute_group.booklet_contract_address }.mint(
+        owner, box_infos.attribute_id.into(), 1
+    );
 
     // Mint briqs
-    briq_protocol::erc1155::briq_transfer::update_nocheck(
-        world,
-        owner,
-        get_world_config(world).briq,
-        from: Zeroable::zero(),
-        to: owner,
-        ids: array![1],
-        amounts: array![box_infos.briq_1],
-        data: array![]
+    MintBurnDispatcher { contract_address: get_world_config(world).briq }.mint(
+        owner, 1, box_infos.briq_1
     );
-}
-
-// Unbox burns the box NFT, and mints briqs & attributes_registry corresponding to the token URI.
-#[system]
-mod box_unboxing {
-    use traits::{Into, TryInto};
-    use option::OptionTrait;
-    use array::ArrayTrait;
-    use dojo::world::Context;
-    use zeroable::Zeroable;
-    use starknet::ContractAddress;
-
-    fn execute(ctx: Context, box_contract: ContractAddress, box_id: felt252,) {
-        // Only the owner may unbox their box, thus pass ctx.origin
-        super::unbox(ctx.world, box_contract, ctx.origin, box_id);
-    }
 }

@@ -1,13 +1,9 @@
 #[system]
 mod agm_briq_counter {
-    use zeroable::Zeroable;
-    use dojo::world::Context;
-    use traits::{Into, TryInto};
-    use array::{ArrayTrait, SpanTrait};
+    use starknet::ContractAddress;
+
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
-    use briq_protocol::attributes::attributes::{
-        AttributeHandlerData, AttributeAssignData, AttributeRemoveData,
-    };
+
     use briq_protocol::types::{PackedShapeItem, FTSpec};
 
     // check that there is at least attribute_id count of briq in set
@@ -30,22 +26,27 @@ mod agm_briq_counter {
         assert(total >= attribute_id.into(), 'not enought briq');
     }
 
-    fn execute(ctx: Context, data: AttributeHandlerData) {
-        // TODO: auth
-        match data {
-            AttributeHandlerData::Assign(d) => {
-                let AttributeAssignData{set_owner,
-                set_token_id,
-                attribute_group_id,
-                attribute_id,
-                shape,
-                fts } =
-                    d;
-
-                verify_briq_count(attribute_id, shape.span(), fts.span());
-            },
-            AttributeHandlerData::Remove(d) => { // do nothing ? 
-            },
-        }
+    #[external(v0)]
+    fn assign(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        set_owner: ContractAddress,
+        set_token_id: ContractAddress,
+        attribute_group_id: u64,
+        attribute_id: u64,
+        shape: Array<PackedShapeItem>,
+        fts: Array<FTSpec>,
+    ) {
+        verify_briq_count(attribute_id, shape.span(), fts.span());
     }
+
+    #[external(v0)]
+    fn remove(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        set_owner: ContractAddress,
+        set_token_id: ContractAddress,
+        attribute_group_id: u64,
+        attribute_id: u64
+    ) {}
 }

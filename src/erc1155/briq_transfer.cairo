@@ -118,17 +118,18 @@ mod BriqTokenSafeTransferFrom {
     use traits::{Into, TryInto};
     use option::OptionTrait;
     use array::ArrayTrait;
-    use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use super::ERC1155SafeTransferFromParams;
 
-    fn execute(ctx: Context, params: ERC1155SafeTransferFromParams) {
+    fn execute(world: IWorldDispatcher, params: ERC1155SafeTransferFromParams) {
         let ERC1155SafeTransferFromParams{token, operator, from, to, id, amount, data } = params;
-        assert(ctx.origin == operator || ctx.origin == token, 'ERC1155: not authorized');
+        let origin = get_caller_address();
+        assert(origin == operator || origin == token, 'ERC1155: not authorized');
         assert(to.is_non_zero(), 'ERC1155: to cannot be 0');
 
-        super::update(ctx.world, operator, token, from, to, array![id], array![amount], data);
+        super::update(world, operator, token, from, to, array![id], array![amount], data);
     }
 }
 
@@ -137,19 +138,20 @@ mod BriqTokenSafeBatchTransferFrom {
     use traits::{Into, TryInto};
     use option::OptionTrait;
     use array::ArrayTrait;
-    use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use super::ERC1155SafeBatchTransferFromParams;
 
 
-    fn execute(ctx: Context, params: ERC1155SafeBatchTransferFromParams) {
+    fn execute(world: IWorldDispatcher, params: ERC1155SafeBatchTransferFromParams) {
         let ERC1155SafeBatchTransferFromParams{token, operator, from, to, ids, amounts, data } =
             params;
 
-        assert(ctx.origin == operator || ctx.origin == token, 'ERC1155: not authorized');
+        let origin = get_caller_address();
+        assert(origin == operator || origin == token, 'ERC1155: not authorized');
         assert(to.is_non_zero(), 'ERC1155: to cannot be 0');
 
-        super::update(ctx.world, operator, token, from, to, ids, amounts, data);
+        super::update(world, operator, token, from, to, ids, amounts, data);
     }
 }

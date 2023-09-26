@@ -36,11 +36,11 @@ fn emit_transfer(
 #[system]
 mod ERC721TransferFrom {
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use traits::Into;
     use zeroable::Zeroable;
     use array::SpanTrait;
 
-    use dojo::world::Context;
     use dojo_erc::erc721::components::{
         OperatorApprovalTrait, ERC721BalanceTrait, ERC721TokenApprovalTrait, ERC721OwnerTrait,
     };
@@ -56,30 +56,30 @@ mod ERC721TransferFrom {
         token_id: felt252
     }
 
-    fn execute(ctx: Context, params: ERC721TransferFromParams) {
+    fn execute(world: IWorldDispatcher, params: ERC721TransferFromParams) {
         let ERC721TransferFromParams{caller, token, from, to, token_id } = params;
 
-        assert(token == ctx.origin, 'ERC721: not authorized');
+        assert(token == get_caller_address(), 'ERC721: not authorized');
         assert(!to.is_zero(), 'ERC721: invalid receiver');
 
-        let owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
+        let owner = ERC721OwnerTrait::owner_of(world, ALL_BRIQ_SETS(), token_id);
         assert(owner.is_non_zero(), 'ERC721: invalid token_id');
 
         let is_approved_for_all = OperatorApprovalTrait::is_approved_for_all(
-            ctx.world, token, owner, caller
+            world, token, owner, caller
         );
-        let approved = ERC721TokenApprovalTrait::get_approved(ctx.world, token, token_id);
+        let approved = ERC721TokenApprovalTrait::get_approved(world, token, token_id);
 
         assert(
             owner == caller || is_approved_for_all || approved == caller,
             'ERC721: unauthorized caller'
         );
 
-        ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, to);
-        ERC721BalanceTrait::unchecked_transfer_token(ctx.world, token, from, to, 1);
-        ERC721TokenApprovalTrait::unchecked_approve(ctx.world, token, token_id, Zeroable::zero());
+        ERC721OwnerTrait::unchecked_set_owner(world, ALL_BRIQ_SETS(), token_id, to);
+        ERC721BalanceTrait::unchecked_transfer_token(world, token, from, to, 1);
+        ERC721TokenApprovalTrait::unchecked_approve(world, token, token_id, Zeroable::zero());
 
         // emit events
-        super::emit_transfer(ctx.world, token, from, to, token_id);
+        super::emit_transfer(world, token, from, to, token_id);
     }
 }

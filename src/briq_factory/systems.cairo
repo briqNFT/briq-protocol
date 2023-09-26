@@ -41,7 +41,6 @@ mod BriqFactoryMint {
     use traits::{Into, TryInto};
     use option::OptionTrait;
     use array::ArrayTrait;
-    use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::{ContractAddress, get_contract_address, get_caller_address, get_block_timestamp};
 
@@ -62,14 +61,14 @@ mod BriqFactoryMint {
         );
     }
 
-    fn execute(ctx: Context, params: BriqFactoryBuyParams) {
+    fn execute(world: IWorldDispatcher, params: BriqFactoryBuyParams) {
         let BriqFactoryBuyParams{caller, material, amount: amount_u32 } = params;
-        assert(ctx.origin == get_world_config(ctx.world).factory, 'only via factory');
+        assert(get_caller_address() == get_world_config(world).factory, 'only via factory');
 
         let amount: felt252 = amount_u32.into();
         assert(amount >= MIN_PURCHASE(), 'amount too low !');
 
-        let mut briq_factory = BriqFactoryTrait::get_briq_factory(ctx.world);
+        let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
 
         let price = briq_factory.get_price(amount);
         let t = briq_factory.get_current_t();
@@ -77,7 +76,7 @@ mod BriqFactoryMint {
 
         // Transfer funds to receiver wallet
         // TODO: use something other than the super-admin address for this.
-        let world_config = get_world_config(ctx.world);
+        let world_config = get_world_config(world);
         let buyer = caller;
         IERC20Dispatcher { contract_address: briq_factory.buy_token }
             .transferFrom(buyer, world_config.treasury, price.into());
@@ -86,12 +85,12 @@ mod BriqFactoryMint {
         briq_factory.last_purchase_time = get_block_timestamp();
         briq_factory.last_stored_t = t + amount * DECIMALS();
         briq_factory.surge_t = surge_t + amount * DECIMALS();
-        BriqFactoryTrait::set_briq_factory(ctx.world, briq_factory);
+        BriqFactoryTrait::set_briq_factory(world, briq_factory);
 
         //  mint briqs to buyer
         let amount_u128: u128 = amount.try_into().unwrap();
         briq_protocol::erc1155::briq_transfer::update_nocheck(
-            ctx.world,
+            world,
             buyer,
             world_config.briq,
             from: Zeroable::zero(),
@@ -102,7 +101,7 @@ mod BriqFactoryMint {
         );
 
         emit!(
-            ctx.world, BriqsBought { buyer, amount: amount_u32, price: price.try_into().unwrap() }
+            world, BriqsBought { buyer, amount: amount_u32, price: price.try_into().unwrap() }
         );
     }
 }
@@ -119,28 +118,28 @@ mod BriqFactoryInitialize {
     use traits::{Into, TryInto};
     use option::OptionTrait;
     use array::ArrayTrait;
-    use dojo::world::Context;
     use zeroable::Zeroable;
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
 
     use super::BriqFactoryInitializeParams;
     use super::{BriqFactoryStore, BriqFactoryTrait};
     use briq_protocol::world_config::AdminTrait;
 
 
-    fn execute(ctx: Context, params: BriqFactoryInitializeParams) {
-        ctx.world.only_admins(@ctx.origin);
+    fn execute(world: IWorldDispatcher, params: BriqFactoryInitializeParams) {
+        world.only_admins(@get_caller_address());
 
         let BriqFactoryInitializeParams{t, surge_t, buy_token } = params;
 
-        let mut briq_factory = BriqFactoryTrait::get_briq_factory(ctx.world);
+        let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
 
         briq_factory.last_stored_t = t;
         briq_factory.surge_t = surge_t;
         briq_factory.buy_token = buy_token;
         briq_factory.last_purchase_time = starknet::info::get_block_timestamp();
 
-        BriqFactoryTrait::set_briq_factory(ctx.world, briq_factory);
+        BriqFactoryTrait::set_briq_factory(world, briq_factory);
     }
 }
 

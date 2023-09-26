@@ -12,13 +12,13 @@ struct MigrateAssetsParams {
 
 #[system]
 mod migrate_assets {
-    use dojo::world::Context;
     use super::MigrateAssetsParams;
 
     use core::pedersen::pedersen;
     use core::ecdsa::check_ecdsa_signature;
     use traits::Into;
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
 
     use debug::PrintTrait;
 
@@ -29,7 +29,7 @@ mod migrate_assets {
     };
     use briq_protocol::set_nft::systems_erc721::ALL_BRIQ_SETS;
 
-    fn execute(ctx: Context, data: MigrateAssetsParams) {
+    fn execute(data: MigrateAssetsParams) {
         let MigrateAssetsParams{migrator,
         current_briqs,
         briqs_to_migrate,
@@ -38,7 +38,7 @@ mod migrate_assets {
         backend_signature_s, } =
             data;
 
-        assert(ctx.origin == migrator, 'Not authorized');
+        assert(get_caller_address() == migrator, 'Not authorized');
 
         let mut hash = pedersen(0, migrator.into());
         hash = pedersen(hash, current_briqs.into());
@@ -51,9 +51,9 @@ mod migrate_assets {
         );
 
         if set_to_migrate == 0 {// TODO: burn old token
-        //ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, to);
-        //ERC721BalanceTrait::unchecked_transfer_token(ctx.world, token, from, to, 1);
-        //ERC721TokenApprovalTrait::unchecked_approve(ctx.world, token, token_id, Zeroable::zero());
+        //ERC721OwnerTrait::unchecked_set_owner(world, ALL_BRIQ_SETS(), token_id, to);
+        //ERC721BalanceTrait::unchecked_transfer_token(world, token, from, to, 1);
+        //ERC721TokenApprovalTrait::unchecked_approve(world, token, token_id, Zeroable::zero());
         } else {// TODO: burn old briqs
         }
     }

@@ -124,42 +124,42 @@ fn get_target_contract_from_attributes(
 }
 
 fn create_token(
-    ctx: Context, token: ContractAddress, recipient: ContractAddress, token_id: felt252
+    world: IWorldDispatcher, token: ContractAddress, recipient: ContractAddress, token_id: felt252
 ) {
     assert(recipient.is_non_zero(), 'ERC721: mint to 0');
 
-    let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id);
+    let token_owner = ERC721OwnerTrait::owner_of(world, ALL_BRIQ_SETS(), token_id);
     assert(token_owner.is_zero(), 'ERC721: already minted');
 
     // increase token supply
-    ERC721BalanceTrait::unchecked_increase_balance(ctx.world, token, recipient, 1);
-    ERC721OwnerTrait::unchecked_set_owner(ctx.world, ALL_BRIQ_SETS(), token_id, recipient);
+    ERC721BalanceTrait::unchecked_increase_balance(world, token, recipient, 1);
+    ERC721OwnerTrait::unchecked_set_owner(world, ALL_BRIQ_SETS(), token_id, recipient);
 
-    emit_transfer(ctx.world, token, Zeroable::zero(), recipient, token_id.into());
+    emit_transfer(world, token, Zeroable::zero(), recipient, token_id.into());
 }
 
 fn destroy_token(
-    ctx: Context, token: ContractAddress, owner: ContractAddress, token_id: ContractAddress
+    world: IWorldDispatcher, token: ContractAddress, owner: ContractAddress, token_id: ContractAddress
 ) {
     // decrease token supply
-    ERC721BalanceTrait::unchecked_decrease_balance(ctx.world, token, owner, 1);
+    ERC721BalanceTrait::unchecked_decrease_balance(world, token, owner, 1);
     ERC721OwnerTrait::unchecked_set_owner(
-        ctx.world, ALL_BRIQ_SETS(), token_id.into(), Zeroable::zero()
+        world, ALL_BRIQ_SETS(), token_id.into(), Zeroable::zero()
     );
-    emit_transfer(ctx.world, token, owner, Zeroable::zero(), token_id.into());
+    emit_transfer(world, token, owner, Zeroable::zero(), token_id.into());
 }
 
-fn check_briqs_and_attributes_are_zero(ctx: Context, token_id: ContractAddress) {
+fn check_briqs_and_attributes_are_zero(world: IWorldDispatcher, token_id: ContractAddress) {
     // Check that we gave back all briqs (the user might attempt to lie).
     let balance = ERC1155BalanceTrait::balance_of(
-        ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
+        world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
     );
 
     assert(balance == 0, 'Set still has briqs');
 
     // Check that we no longer have any attributes active.
     let balance = ERC1155BalanceTrait::balance_of(
-        ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
+        world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
     );
 
     assert(balance == 0, 'Set still attributed');
@@ -180,6 +180,7 @@ struct AssemblySystemData {
 #[system]
 mod set_nft_assembly {
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use traits::Into;
     use traits::TryInto;
     use array::{ArrayTrait, SpanTrait};
@@ -188,7 +189,6 @@ mod set_nft_assembly {
     use clone::Clone;
     use serde::Serde;
 
-    use dojo::world::Context;
     use briq_protocol::world_config::{WorldConfig};
 
     use briq_protocol::types::{FTSpec, PackedShapeItem};
@@ -200,13 +200,14 @@ mod set_nft_assembly {
 
     use debug::PrintTrait;
 
-    fn execute(ctx: Context, data: AssemblySystemData) {
+    fn execute(world: IWorldDispatcher, data: AssemblySystemData) {
         let AssemblySystemData{caller, owner, token_id_hint, name, description, fts, shape, attributes } = data;
 
-        let (token, attrib_option) = get_target_contract_from_attributes(ctx.world, @attributes);
-
-        if ctx.origin != owner {
-            assert(ctx.origin == token, 'Only Caller');
+        let (token, attrib_option) = get_target_contract_from_attributes(world, @attributes);
+        
+        let origin = get_caller_address();
+        if origin != owner {
+            assert(origin == token, 'Only Caller');
         }
         assert(owner == caller, 'Only Owner');
         assert(shape.len() != 0, 'Cannot mint empty set');
@@ -218,7 +219,7 @@ mod set_nft_assembly {
 
         let token_id = super::get_token_id(owner, token_id_hint, shape.len(), attribute_group_id);
         super::create_token(ctx, token, owner, token_id.into());
-        super::transfer_briqs(ctx.world, owner, token_id, fts.clone());
+        super::transfer_briqs(world, owner, token_id, fts.clone());
 
         assign_attributes(ctx, owner, token_id, @attributes, @shape, @fts,);
     }
@@ -238,13 +239,12 @@ struct DisassemblySystemData {
 #[system]
 mod set_nft_disassembly {
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use traits::{TryInto, Into};
     use array::{ArrayTrait, SpanTrait};
     use option::OptionTrait;
     use zeroable::Zeroable;
     use clone::Clone;
-
-    use dojo::world::Context;
 
     use dojo_erc::erc721::components::{
         ERC721Owner, ERC721OwnerTrait, ERC721TokenApproval, ERC721TokenApprovalTrait
@@ -259,25 +259,25 @@ mod set_nft_disassembly {
 
     use super::DisassemblySystemData;
 
-    fn execute(ctx: Context, data: DisassemblySystemData) {
+    fn execute(world: IWorldDispatcher, data: DisassemblySystemData) {
         let DisassemblySystemData{caller, owner, token_id, fts, attributes } = data;
 
+        let (token, _) = get_target_contract_from_attributes(world, @attributes);
 
-        let (token, _) = get_target_contract_from_attributes(ctx.world, @attributes);
-
-        if ctx.origin != owner {
-            assert(ctx.origin == token, 'Only Caller');
+        let origin = get_caller_address();
+        if origin != owner {
+            assert(origin == token, 'Only Caller');
         }
         assert(owner == caller, 'Only Owner');
 
-        let token_owner = ERC721OwnerTrait::owner_of(ctx.world, ALL_BRIQ_SETS(), token_id.into());
+        let token_owner = ERC721OwnerTrait::owner_of(world, ALL_BRIQ_SETS(), token_id.into());
 
         assert(token_owner.is_non_zero(), 'ERC721: invalid token_id');
         assert(token_owner == owner, 'SetNft: invalid owner');
 
         remove_attributes(ctx, owner, token_id, attributes.clone(),);
 
-        super::transfer_briqs(ctx.world, token_id, owner, fts.clone());
+        super::transfer_briqs(world, token_id, owner, fts.clone());
         super::check_briqs_and_attributes_are_zero(ctx, token_id);
         super::destroy_token(ctx, token, owner, token_id);
     }
@@ -287,6 +287,7 @@ mod set_nft_disassembly {
 #[system]
 mod set_nft_1155_assembly {
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use traits::Into;
     use traits::TryInto;
     use array::{ArrayTrait, SpanTrait};
@@ -295,7 +296,6 @@ mod set_nft_1155_assembly {
     use clone::Clone;
     use serde::Serde;
 
-    use dojo::world::Context;
     use briq_protocol::world_config::{WorldConfig};
 
     use briq_protocol::types::{FTSpec, PackedShapeItem};
@@ -310,14 +310,14 @@ mod set_nft_1155_assembly {
 
     use debug::PrintTrait;
 
-    fn execute(ctx: Context, data: AssemblySystemData) {
+    fn execute(world: IWorldDispatcher, data: AssemblySystemData) {
         let AssemblySystemData{caller, owner, token_id_hint, name, description, fts, shape, attributes } = data;
 
         // Check that we are asking for the attribute group that matches this contract
         // (could be hardcoded instead?)
-        let (token, attrib_option) = get_target_contract_from_attributes(ctx.world, @attributes);
+        let (token, attrib_option) = get_target_contract_from_attributes(world, @attributes);
         let attrib = attrib_option.unwrap().into();
-        assert(token == ctx.origin, 'Not the correct caller');
+        assert(token == get_caller_address(), 'Not the correct caller');
         assert(owner == caller, 'Only Owner');
         assert(shape.len() != 0, 'Cannot mint empty set');
 
@@ -325,14 +325,14 @@ mod set_nft_1155_assembly {
         let token_id: felt252 = get_1155_token_id(attrib).into();
 
         dojo_erc::erc1155::systems::unchecked_update(
-            ctx.world, caller, token, Zeroable::zero(), owner, array![token_id], array![1], array![]
+            world, caller, token, Zeroable::zero(), owner, array![token_id], array![1], array![]
         );
 
-        super::transfer_briqs(ctx.world, owner, token_id.try_into().unwrap(), fts.clone());
+        super::transfer_briqs(world, owner, token_id.try_into().unwrap(), fts.clone());
 
         // no events
         ERC1155BalanceTrait::unchecked_increase_balance(
-            ctx.world, CUM_BALANCE_TOKEN(), token_id.try_into().unwrap(), CB_TOTAL_SUPPLY_1155(), 1
+            world, CUM_BALANCE_TOKEN(), token_id.try_into().unwrap(), CB_TOTAL_SUPPLY_1155(), 1
         );
 
         assign_attributes(ctx, owner, token_id.try_into().unwrap(), @attributes, @shape, @fts,);
@@ -342,13 +342,12 @@ mod set_nft_1155_assembly {
 #[system]
 mod set_nft_1155_disassembly {
     use starknet::ContractAddress;
+    use starknet::get_caller_address;
     use traits::{TryInto, Into};
     use array::{ArrayTrait, SpanTrait};
     use option::OptionTrait;
     use zeroable::Zeroable;
     use clone::Clone;
-
-    use dojo::world::Context;
 
     use dojo_erc::erc721::components::{
         ERC721Owner, ERC721OwnerTrait, ERC721TokenApproval, ERC721TokenApprovalTrait
@@ -368,18 +367,18 @@ mod set_nft_1155_disassembly {
 
     use debug::PrintTrait;
 
-    fn execute(ctx: Context, data: DisassemblySystemData) {
+    fn execute(world: IWorldDispatcher, data: DisassemblySystemData) {
         let DisassemblySystemData{caller, owner, token_id, fts, attributes } = data;
 
         // Check that we are asking for the attribute group that matches this contract
         // (could be hardcoded instead?)
-        let (token, o_attribute_id) = get_target_contract_from_attributes(ctx.world, @attributes);
-        assert(token == ctx.origin, 'Not the correct caller');
+        let (token, o_attribute_id) = get_target_contract_from_attributes(world, @attributes);
+        assert(token == get_caller_address(), 'Not the correct caller');
         assert(owner == caller, 'Only Owner');
 
 
         let nb_briq_tokens = ERC1155BalanceTrait::balance_of(
-            ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
+            world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
         );
         assert(fts.len().into() == nb_briq_tokens, 'not enough fts');
         let mut prev_briqs = ArrayTrait::<FTSpec>::new();
@@ -390,32 +389,32 @@ mod set_nft_1155_disassembly {
             }
             let ftspec = *ftsp.pop_front().unwrap();
             prev_briqs.append(FTSpec { token_id: ftspec.token_id, qty: ERC1155BalanceTrait::balance_of(
-                ctx.world, get_world_config(ctx.world).briq, token_id, ftspec.token_id
+                world, get_world_config(world).briq, token_id, ftspec.token_id
             )});
         };
 
         let prev_attrib = ERC1155BalanceTrait::balance_of(
-            ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
+            world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
         );
 
-        super::transfer_briqs(ctx.world, token_id, owner, fts.clone());
+        super::transfer_briqs(world, token_id, owner, fts.clone());
 
         dojo_erc::erc1155::systems::unchecked_update(
-            ctx.world, caller, token, owner, Zeroable::zero(), array![token_id.into()], array![1], array![]
+            world, caller, token, owner, Zeroable::zero(), array![token_id.into()], array![1], array![]
         );
 
         ERC1155BalanceTrait::unchecked_decrease_balance(
-            ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155(), 1
+            world, CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155(), 1
         );
 
         remove_attributes(ctx, owner, token_id, attributes.clone(),);
 
         let post_attrib = ERC1155BalanceTrait::balance_of(
-            ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
+            world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
         );
 
         let remaining_supply = ERC1155BalanceTrait::balance_of(
-            ctx.world, CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155()
+            world, CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155()
         );
 
         assert(post_attrib / (prev_attrib - post_attrib) == remaining_supply, 'Set still has attribs');
@@ -426,7 +425,7 @@ mod set_nft_1155_disassembly {
             }
             let pre_briq = prev_briqs.pop_front().unwrap();
             let post_briq = ERC1155BalanceTrait::balance_of(
-                ctx.world, get_world_config(ctx.world).briq, token_id, pre_briq.token_id
+                world, get_world_config(world).briq, token_id, pre_briq.token_id
             );
             assert(post_briq / (pre_briq.qty - post_briq) == remaining_supply, 'Set still has briqs');
         };
