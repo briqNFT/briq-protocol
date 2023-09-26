@@ -22,7 +22,6 @@ use briq_protocol::tests::test_utils::{
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
-use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
 
 use debug::PrintTrait;
@@ -37,7 +36,7 @@ mod convenience_for_testing {
 
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo_erc::erc_common::utils::{system_calldata};
-    use briq_protocol::erc1155::mint_burn::ERC1155MintBurnParams;
+    use briq_protocol::mint_burn::ERC1155MintBurnParams;
 
     use briq_protocol::world_config::get_world_config;
     use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};

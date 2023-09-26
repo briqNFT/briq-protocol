@@ -9,7 +9,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
-use briq_protocol::erc1155::mint_burn::ERC1155MintBurnParams;
+use briq_protocol::mint_burn::ERC1155MintBurnParams;
 
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;

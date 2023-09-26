@@ -49,7 +49,7 @@ fn get_box_infos(box_id: felt252) -> BoxInfo {
 }
 
 
-use briq_protocol::erc::erc1155::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
+use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
 fn unbox<
     T, impl TR: InternalTrait1155<T>, impl TD: Drop<T>

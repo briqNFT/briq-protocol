@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod DucksBookletNft {
+mod SetNft1155 {
     use briq_protocol::erc::erc1155::components::{
         ERC1155OperatorApproval, ERC1155Balance
     };
@@ -93,52 +93,57 @@ mod DucksBookletNft {
     //     }
     // }
 
+    //#[external(v0)]
+    //impl Assembly = briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState>;
+    // Until the above is feasible, the following workaround is needed:
+    mod tempfix2 {
+        use briq_protocol::set_nft::assembly::SetNftAssembly1155;
+    }
+    use briq_protocol::types::{PackedShapeItem, FTSpec, AttributeItem};
+    #[external(v0)]
+    impl tempFix of briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState> {
+        fn assemble(
+            ref self: ContractState,
+            owner: ContractAddress,
+            token_id_hint: felt252,
+            name: Array<felt252>, // todo string
+            description: Array<felt252>, // todo string
+            fts: Array<FTSpec>,
+            shape: Array<PackedShapeItem>,
+            attributes: Array<AttributeItem>
+        ) -> felt252 {
+            tempfix2::SetNftAssembly1155::assemble(
+                ref self, owner, token_id_hint, name, description, fts, shape, attributes
+            )
+        }
+
+        fn disassemble(
+            ref self: ContractState,
+            owner: ContractAddress,
+            token_id: ContractAddress,
+            fts: Array<FTSpec>,
+            attributes: Array<AttributeItem>
+        ) {
+            tempfix2::SetNftAssembly1155::disassemble(
+                ref self, owner, token_id, fts, attributes
+            )
+        }
+    }
+
     #[external(v0)]
     impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briq ducks booklets'
+            'briq sets 1155'
         }
 
         fn symbol(self: @ContractState) -> felt252 {
-            'b00q'
+            'B7'
         }
 
         fn uri(self: @ContractState, token_id: u256) -> felt252 {
             //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
             // TODO : concat with id
             ''
-        }
-    }
-
-    //#[external(v0)]
-    //impl BookletAttribute = briq_protocol::booklet::attribute::BookletAttributeHolder<ContractState>;
-    // Until the above is feasible, the following workaround is needed:
-    mod tempfix2 {
-        use briq_protocol::booklet::attribute::BookletAttributeHolder;
-    }
-    use briq_protocol::types::{PackedShapeItem, FTSpec};
-    #[external(v0)]
-    impl tempFix of briq_protocol::attributes::attributes::IAttributeHandler<ContractState> {
-        fn assign(
-            ref self: ContractState,
-            set_owner: ContractAddress,
-            set_token_id: ContractAddress,
-            attribute_group_id: u64,
-            attribute_id: u64,
-            shape: Array<PackedShapeItem>,
-            fts: Array<FTSpec>,
-        ) {
-            tempfix2::BookletAttributeHolder::assign(ref self, set_owner, set_token_id, attribute_group_id, attribute_id, shape, fts)
-        }
-
-        fn remove(
-            ref self: ContractState,
-            set_owner: ContractAddress,
-            set_token_id: ContractAddress,
-            attribute_group_id: u64,
-            attribute_id: u64
-        ) {
-            tempfix2::BookletAttributeHolder::remove(ref self, set_owner, set_token_id, attribute_group_id, attribute_id)
         }
     }
 

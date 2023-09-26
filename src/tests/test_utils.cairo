@@ -21,7 +21,7 @@ use briq_protocol::world_config::{get_world_config};
 use briq_protocol::briq_token::BriqToken;
 use briq_protocol::set_nft::SetNft;
 use briq_protocol::set_nft_1155::SetNftERC1155;
-use briq_protocol::erc1155::mint_burn::ERC1155MintBurnParams;
+use briq_protocol::mint_burn::ERC1155MintBurnParams;
 
 use debug::PrintTrait;
 
@@ -90,11 +90,11 @@ fn spawn_world() -> IWorldDispatcher {
 
         // erc1155
         dojo_erc::erc1155::systems::ERC1155SetApprovalForAll::TEST_CLASS_HASH,
-        briq_protocol::erc1155::mint_burn::ERC1155MintBurn::TEST_CLASS_HASH,
+        briq_protocol::mint_burn::ERC1155MintBurn::TEST_CLASS_HASH,
         // briq_token
         briq_protocol::erc1155::briq_transfer::BriqTokenSafeTransferFrom::TEST_CLASS_HASH,
         briq_protocol::erc1155::briq_transfer::BriqTokenSafeBatchTransferFrom::TEST_CLASS_HASH,
-        briq_protocol::erc1155::mint_burn::BriqTokenERC1155MintBurn::TEST_CLASS_HASH,
+        briq_protocol::mint_burn::BriqTokenERC1155MintBurn::TEST_CLASS_HASH,
         // unboxing
         briq_protocol::box_nft::unboxing::box_unboxing::TEST_CLASS_HASH,
 

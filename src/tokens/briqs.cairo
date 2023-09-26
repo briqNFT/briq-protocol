@@ -1,10 +1,12 @@
 #[starknet::contract]
-mod DucksBookletNft {
+mod Briqs {
     use briq_protocol::erc::erc1155::components::{
-        ERC1155OperatorApproval, ERC1155Balance
+        ERC1155OperatorApproval, ERC1155Balance,
+        increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
     };
     use briq_protocol::erc::get_world::GetWorldTrait;
     use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
+    use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ};
     use dojo_erc::token::erc1155::interface;
     use dojo_erc::token::erc1155::interface::{IERC1155, IERC1155CamelOnly};
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -96,49 +98,17 @@ mod DucksBookletNft {
     #[external(v0)]
     impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briq ducks booklets'
+            'briq token'
         }
 
         fn symbol(self: @ContractState) -> felt252 {
-            'b00q'
+            'BRIQ'
         }
 
         fn uri(self: @ContractState, token_id: u256) -> felt252 {
             //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
             // TODO : concat with id
             ''
-        }
-    }
-
-    //#[external(v0)]
-    //impl BookletAttribute = briq_protocol::booklet::attribute::BookletAttributeHolder<ContractState>;
-    // Until the above is feasible, the following workaround is needed:
-    mod tempfix2 {
-        use briq_protocol::booklet::attribute::BookletAttributeHolder;
-    }
-    use briq_protocol::types::{PackedShapeItem, FTSpec};
-    #[external(v0)]
-    impl tempFix of briq_protocol::attributes::attributes::IAttributeHandler<ContractState> {
-        fn assign(
-            ref self: ContractState,
-            set_owner: ContractAddress,
-            set_token_id: ContractAddress,
-            attribute_group_id: u64,
-            attribute_id: u64,
-            shape: Array<PackedShapeItem>,
-            fts: Array<FTSpec>,
-        ) {
-            tempfix2::BookletAttributeHolder::assign(ref self, set_owner, set_token_id, attribute_group_id, attribute_id, shape, fts)
-        }
-
-        fn remove(
-            ref self: ContractState,
-            set_owner: ContractAddress,
-            set_token_id: ContractAddress,
-            attribute_group_id: u64,
-            attribute_id: u64
-        ) {
-            tempfix2::BookletAttributeHolder::remove(ref self, set_owner, set_token_id, attribute_group_id, attribute_id)
         }
     }
 
@@ -302,8 +272,15 @@ mod DucksBookletNft {
             id: u256,
             amount: u256,
         ) {
+            // WARNING: briq delta
+            if self.get_balance(to, id) == 0 && amount > 0 {
+                increase_balance_1155(self.world(), CUM_BALANCE_TOKEN(), to, CB_BRIQ(), 1);
+            }
             self.set_balance(from, id, self.get_balance(from, id) - amount);
             self.set_balance(to, id, self.get_balance(to, id) + amount);
+            if self.get_balance(from, id) == 0 && amount > 0 {
+                decrease_balance_1155(self.world(), CUM_BALANCE_TOKEN(), from, CB_BRIQ(), 1);
+            }
         }
 
         fn emit_event<

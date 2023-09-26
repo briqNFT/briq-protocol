@@ -238,34 +238,8 @@ mod BoxNftToken {
         }
     }
 
-    trait WorldInteractionsTrait<ContractState> {
-        fn get_balance(self: @ContractState, account: ContractAddress, id: u256) -> u256;
-        fn get_operator_approval(
-            self: @ContractState, owner: ContractAddress, operator: ContractAddress
-        ) -> ERC1155OperatorApproval;
-        fn set_operator_approval(
-            ref self: ContractState,
-            owner: ContractAddress,
-            operator: ContractAddress,
-            approved: bool
-        );
-        fn set_balance(ref self: ContractState, account: ContractAddress, id: u256, amount: u256);
-        fn update_balances(
-            ref self: ContractState,
-            from: ContractAddress,
-            to: ContractAddress,
-            id: u256,
-            amount: u256,
-        );
-
-        fn emit_event<
-            S, impl IntoImp: traits::Into<S, Event>, impl SDrop: Drop<S>, impl SClone: Clone<S>
-        >(
-            ref self: ContractState, event: S
-        );
-    }
-
-    impl WorldInteractionsImpl of WorldInteractionsTrait<ContractState> {
+    #[generate_trait]
+    impl WorldInteractionsImpl of WorldInteractionsTrait {
         fn get_balance(self: @ContractState, account: ContractAddress, id: u256) -> u256 {
             get!(self.world(), (get_contract_address(), account, TryInto::<u256, felt252>::try_into(id).unwrap()), ERC1155Balance).amount.into()
         }

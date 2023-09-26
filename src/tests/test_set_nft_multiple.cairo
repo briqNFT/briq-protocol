@@ -20,7 +20,6 @@ use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, Att
 use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
-use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::tests::test_set_nft::convenience_for_testing::{
     assemble, disassemble, valid_shape_1, valid_shape_2, valid_shape_3, mint_booklet,
     create_attribute_group_with_booklet, register_shape_validator_shapes,

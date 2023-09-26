@@ -22,7 +22,6 @@ use briq_protocol::tests::test_utils::{
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
-use briq_protocol::utils::IntoContractAddressU256;
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
 
 use debug::PrintTrait;
@@ -35,29 +34,6 @@ use briq_protocol::tests::test_set_nft::convenience_for_testing::{
     mint_booklet
 };
 use dojo_erc::erc1155::interface::IERC1155Dispatcher;
-
-#[starknet::interface]
-trait SetNftInterface<ContractState> {
-    fn assemble(
-        self: @ContractState,
-        owner: ContractAddress,
-        token_id_hint: felt252,
-        name: Array<felt252>, // todo string
-        description: Array<felt252>, // todo string
-        fts: Array<FTSpec>,
-        shape: Array<PackedShapeItem>,
-        attributes: Array<AttributeItem>
-    );
-
-    #[external(v0)]
-    fn disassemble(
-        self: @ContractState,
-        owner: ContractAddress,
-        token_id: ContractAddress,
-        fts: Array<FTSpec>,
-        attributes: Array<AttributeItem>
-    );
-}
 
 fn rewrap(d: IERC1155Dispatcher) -> SetNftInterfaceDispatcher {
     SetNftInterfaceDispatcher { contract_address: d.contract_address }
