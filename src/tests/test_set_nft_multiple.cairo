@@ -14,7 +14,7 @@ use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
 use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
+    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
 };
 use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
 use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
@@ -33,7 +33,7 @@ use debug::PrintTrait;
 #[available_gas(3000000000)]
 fn test_multiple_set() {
     let DefaultWorld{world, briq_token, generic_sets, ducks_set, ducks_booklet, .. } =
-        deploy_default_world();
+        spawn_briq_test_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -88,7 +88,7 @@ fn test_multiple_set() {
 #[test]
 #[available_gas(3000000000)]
 fn test_multiple_attributes() {
-    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = spawn_briq_test_world();
 
     create_attribute_group_with_booklet(
         world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
@@ -176,7 +176,7 @@ fn bbb(addr: ContractAddress) -> felt252 {
 #[test]
 #[available_gas(3000000000)]
 fn test_ap_move() {
-    let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = spawn_briq_test_world();
 
     let res = aaa(generic_sets.contract_address);
 

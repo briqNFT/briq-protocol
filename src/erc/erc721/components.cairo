@@ -1,6 +1,6 @@
 use starknet::ContractAddress;
 
-use dojo_erc::token::erc721::components::ERC721OperatorApproval;
+use dojo_erc::token::erc721::components::{ERC721OperatorApproval, erc_721_operator_approval};
 
 #[derive(Component, Copy, Drop, Serde)]
 struct ERC721Owner {

@@ -16,7 +16,7 @@ struct WorldConfig {
     
     briq: ContractAddress,
     generic_sets: ContractAddress,
-    factory: ContractAddress
+    factory: ContractAddress,
 }
 
 fn get_world_config(world: IWorldDispatcher) -> WorldConfig {
@@ -41,6 +41,18 @@ impl AdminTraitImpl of AdminTrait {
     fn only_admins(self: IWorldDispatcher, caller: @ContractAddress) {
         assert(self.is_admin(caller), 'Not authorized');
     }
+}
+
+#[starknet::interface]
+trait ISetupWorld<ContractState> {
+    fn execute(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        treasury: ContractAddress,
+        briq: ContractAddress,
+        generic_sets: ContractAddress,
+        factory: ContractAddress,
+    );
 }
 
 #[system]

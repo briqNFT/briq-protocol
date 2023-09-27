@@ -120,7 +120,7 @@ mod SetNft1155 {
         fn disassemble(
             ref self: ContractState,
             owner: ContractAddress,
-            token_id: ContractAddress,
+            token_id: felt252,
             fts: Array<FTSpec>,
             attributes: Array<AttributeItem>
         ) {

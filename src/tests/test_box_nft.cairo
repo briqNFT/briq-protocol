@@ -15,7 +15,7 @@ use briq_protocol::world_config::get_world_config;
 use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
 use briq_protocol::types::{FTSpec, ShapeItem};
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
+    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
 };
 use briq_protocol::tests::test_set_nft::create_attribute_group_with_booklet;
 
@@ -32,7 +32,7 @@ fn test_mint_and_unbox() {
     planets_booklet,
     box_nft,
     .. } =
-        deploy_default_world();
+        spawn_briq_test_world();
 
     // register attribute group 1
     create_attribute_group_with_booklet(

@@ -11,7 +11,7 @@ use starknet::info::get_block_timestamp;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, ETH_ADDRESS, DefaultWorld, deploy_default_world, mint_briqs, impersonate
+    WORLD_ADMIN, DEFAULT_OWNER, ETH_ADDRESS, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
 };
 
 use dojo_erc::erc_common::utils::system_calldata;
@@ -42,7 +42,7 @@ fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252,) -> 
 #[test]
 #[available_gas(90000000)]
 fn test_briq_factory_init() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
     let briq_factory = init_briq_factory(world, DECIMALS(), DECIMALS());
 
     assert(briq_factory.buy_token == ETH_ADDRESS(), 'invalid buy_token');
@@ -54,7 +54,7 @@ fn test_briq_factory_init() {
 #[test]
 #[available_gas(90000000)]
 fn test_briq_factory_integrate() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
 
     let briq_factory = init_briq_factory(world, 0, 0);
     assert(briq_factory.get_current_t() == 0, 'invalid current_t');
@@ -73,7 +73,7 @@ fn test_briq_factory_integrate() {
 #[test]
 #[available_gas(90000000)]
 fn test_briq_factory_integrate_above_inflection_point() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
 
     let briq_factory = init_briq_factory(world, INFLECTION_POINT(), 0);
     let price_for_1000 = briq_factory.get_price(1000);
@@ -98,7 +98,7 @@ fn test_briq_factory_integrate_above_inflection_point() {
 #[test]
 #[available_gas(90000000)]
 fn test_briq_factory_surge() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
 
     let briq_factory = init_briq_factory(world, 0, 0);
     let expected = 10000025000000; //price_below_ip(0, 1)
@@ -139,7 +139,7 @@ fn test_briq_factory_surge() {
 #[test]
 #[available_gas(30000000)]
 fn test_inflection_point() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
 
     let briq_factory = init_briq_factory(world, INFLECTION_POINT() - 100000 * DECIMALS(), 0);
 
@@ -166,7 +166,7 @@ fn test_inflection_point() {
 #[test]
 #[available_gas(40000000)]
 fn test_overflows_ok() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
 
     let briq_factory = init_briq_factory(world, INFLECTION_POINT(), 0);
 
@@ -191,7 +191,7 @@ fn test_overflows_ok() {
 #[available_gas(30000000)]
 #[should_panic(expected: ('t1-t2 >= 10**10',))]
 fn test_overflows_bad_max_amnt() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
     let briq_factory = init_briq_factory(world, INFLECTION_POINT(), 0);
 
     briq_factory.get_price(10000000000);
@@ -201,7 +201,7 @@ fn test_overflows_bad_max_amnt() {
 #[available_gas(30000000)]
 #[should_panic(expected: ('t2 >= 10**12',))]
 fn test_overflows_bad_max_t() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
     let briq_factory = init_briq_factory(world, 1000000000000 * DECIMALS(), 0);
 
     briq_factory.get_price(1);

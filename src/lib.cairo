@@ -43,12 +43,34 @@ mod tokens {
     mod box_nft;
     mod booklet_ducks;
     mod booklet_starknet_planet;
-    mod briqs;
+    mod briq_token;
     mod set_nft;
+    mod set_nft_ducks;
     mod set_nft_1155;
 }
 
 //mod migrate;
 
-//#[cfg(test)]
-//mod tests;
+#[cfg(test)]
+mod tests {
+    mod test_utils;
+
+    mod shapes;
+    // mod contract_upgrade;
+
+    // mod test_attributes;
+    // mod test_box_nft;
+
+    mod test_set_nft;
+    // mod test_set_nft_multiple;
+    // mod test_set_nft_1155;
+
+    mod test_world_config;
+    // mod test_briq_factory;
+
+    // mod test_hash;
+
+    // mod test_upgradeable;
+
+    // mod test_migrate;
+}

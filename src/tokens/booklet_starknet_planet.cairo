@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod StarknetPlanetBookletNft {
+mod BookletStarknetPlanet {
     use briq_protocol::erc::erc1155::components::{
         ERC1155OperatorApproval, ERC1155Balance
     };
@@ -122,7 +122,7 @@ mod StarknetPlanetBookletNft {
         fn assign(
             ref self: ContractState,
             set_owner: ContractAddress,
-            set_token_id: ContractAddress,
+            set_token_id: felt252,
             attribute_group_id: u64,
             attribute_id: u64,
             shape: Array<PackedShapeItem>,
@@ -134,7 +134,7 @@ mod StarknetPlanetBookletNft {
         fn remove(
             ref self: ContractState,
             set_owner: ContractAddress,
-            set_token_id: ContractAddress,
+            set_token_id: felt252,
             attribute_group_id: u64,
             attribute_id: u64
         ) {

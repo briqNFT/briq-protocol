@@ -105,6 +105,18 @@ impl AttributeGroupImpl of AttributeGroupTrait {
     }
 }
 
+#[starknet::interface]
+trait IAttributeGroups<ContractState> {
+    fn create_attribute_group(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        owner: AttributeGroupOwner,
+        target_set_contract_address: ContractAddress,
+        booklet_contract_address: ContractAddress,
+    );
+}
+
 #[system]
 mod AttributeGroups {
     use starknet::ContractAddress;

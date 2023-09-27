@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod Briqs {
+mod BriqToken {
     use briq_protocol::erc::erc1155::components::{
         ERC1155OperatorApproval, ERC1155Balance,
         increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
@@ -94,6 +94,19 @@ mod Briqs {
     //         src5::SRC5::SRC5CamelImpl::supportsInterface(@unsafe_state, interfaceId)
     //     }
     // }
+
+    use briq_protocol::world_config::{get_world_config, AdminTrait};
+    #[external(v0)]
+    impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
+        fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            self.world().only_admins(@get_caller_address());
+            self._mint(owner, token_id.into(), amount.into())
+        }
+        fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            self.world().only_admins(@get_caller_address());
+            self._burn(token_id.into(), amount.into())
+        }
+    }
 
     #[external(v0)]
     impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
@@ -297,7 +310,11 @@ mod Briqs {
         fn _is_approved_for_all_or_owner(
             self: @ContractState, from: ContractAddress, caller: ContractAddress
         ) -> bool {
-            caller == from || self.is_approved_for_all(from, caller)
+            // WARNING: briq delta
+            if !(caller == from || self.is_approved_for_all(from, caller)) {
+                return get_caller_address() == get_world_config(self.world()).generic_sets;
+            }
+            false
         }
 
         fn _set_approval_for_all(

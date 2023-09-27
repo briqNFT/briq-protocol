@@ -1,28 +1,18 @@
-use traits::{Into, TryInto, Default};
-use option::{Option, OptionTrait};
-use result::ResultTrait;
-use array::ArrayTrait;
-use serde::Serde;
-
 use starknet::testing::{set_caller_address, set_contract_address};
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::erc_common::utils::{system_calldata};
-use dojo_erc::erc721::interface::IERC721DispatcherTrait;
-use dojo_erc::erc721::erc721::ERC721::{
-    Approval, Transfer, ApprovalForAll, Event
-};
-use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait};
-use dojo_erc::erc1155::components::ERC1155BalanceTrait;
+
+use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
+use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
+    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
 };
-use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
+
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
-use briq_protocol::world_config::get_world_config;
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
+use briq_protocol::world_config::get_world_config;
 
 use debug::PrintTrait;
 
@@ -46,7 +36,7 @@ fn rewrap_safe(d: IERC1155Dispatcher) -> SetNftInterfaceSafeDispatcher {
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_and_burn_1155() {
-    let DefaultWorld{world, briq_token, generic_sets, lilducks_1155_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, briq_token, generic_sets, lilducks_1155_set, ducks_booklet, .. } = spawn_briq_test_world();
 
     let attribute_group = 0xcafafa;
     let attribute_id: u64 = 0x1;

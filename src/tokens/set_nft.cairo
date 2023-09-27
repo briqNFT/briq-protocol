@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod SetNFT {
+mod SetNft {
     use briq_protocol::erc::erc721::components::{
         ERC721OperatorApproval, ERC721Owner, ERC721Balance, ERC721TokenApproval
     };
@@ -119,7 +119,7 @@ mod SetNFT {
         fn disassemble(
             ref self: ContractState,
             owner: ContractAddress,
-            token_id: ContractAddress,
+            token_id: felt252,
             fts: Array<FTSpec>,
             attributes: Array<AttributeItem>
         ) {

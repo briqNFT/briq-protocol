@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod BoxNftToken {
+mod BoxNft {
     use briq_protocol::erc::erc1155::components::{
         ERC1155OperatorApproval, ERC1155Balance
     };

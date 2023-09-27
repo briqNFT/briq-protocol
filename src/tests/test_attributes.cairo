@@ -10,7 +10,7 @@ use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 
 use briq_protocol::tests::test_utils::{
-    DefaultWorld, DEFAULT_OWNER, USER1, ZERO, deploy_default_world, impersonate
+    DefaultWorld, DEFAULT_OWNER, USER1, ZERO, spawn_briq_test_world, impersonate
 };
 
 use briq_protocol::types::{FTSpec, ShapeItem};
@@ -40,7 +40,7 @@ fn update_attribute_group(world: IWorldDispatcher, params: UpdateAttributeGroupP
 #[test]
 #[available_gas(30000000)]
 fn test_create_attribute_groups_with_users() {
-    let DefaultWorld{world, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, ducks_set, ducks_booklet, .. } = spawn_briq_test_world();
 
     create_attribute_group(
         world,
@@ -67,7 +67,7 @@ fn test_create_attribute_groups_with_users() {
 #[test]
 #[available_gas(30000000)]
 fn test_create_attribute_groups_with_systems() {
-    let DefaultWorld{world, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, ducks_set, ducks_booklet, .. } = spawn_briq_test_world();
 
     create_attribute_group(
         world,
@@ -102,7 +102,7 @@ fn test_create_attribute_groups_with_systems() {
     )
 )]
 fn test_create_attribute_group_collision() {
-    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = spawn_briq_test_world();
     create_attribute_group(
         world,
         CreateAttributeGroupParams {
@@ -135,7 +135,7 @@ fn test_create_attribute_group_collision() {
     )
 )]
 fn test_create_attribute_group_collision_2() {
-    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = spawn_briq_test_world();
 
     create_attribute_group(
         world,
@@ -166,7 +166,7 @@ fn test_create_attribute_group_collision_2() {
 #[test]
 #[available_gas(30000000)]
 fn test_update_attribute_group_ok() {
-    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, ducks_booklet, .. } = spawn_briq_test_world();
 
     create_attribute_group(
         world,
@@ -217,7 +217,7 @@ fn test_update_attribute_group_ok() {
     )
 )]
 fn test_update_attribute_group_non_existing() {
-    let DefaultWorld{world, generic_sets, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, .. } = spawn_briq_test_world();
 
     update_attribute_group(
         world,
@@ -241,7 +241,7 @@ fn test_update_attribute_group_non_existing() {
     expected: ('Not authorized', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED')
 )]
 fn test_create_attribute_group_with_non_world_admin() {
-    let DefaultWorld{world, generic_sets, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, .. } = spawn_briq_test_world();
 
     impersonate(DEFAULT_OWNER());
 
@@ -263,7 +263,7 @@ fn test_create_attribute_group_with_non_world_admin() {
     expected: ('Not authorized', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED')
 )]
 fn test_update_attribute_group_with_non_world_admin() {
-    let DefaultWorld{world, generic_sets, ducks_set, .. } = deploy_default_world();
+    let DefaultWorld{world, generic_sets, ducks_set, .. } = spawn_briq_test_world();
 
     create_attribute_group(
         world,

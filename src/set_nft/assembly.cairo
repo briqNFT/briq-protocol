@@ -65,28 +65,28 @@ const TOKEN_ID_MASK: u256 = 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 // The solution adopted is to hash a hint. Our security becomes the chain hash security.
 // Hash on the # of briqs to avoid people being able to 'game' off-chain latency,
 // we had issues where people regenerated sets with the wrong # of briqs shown on marketplaces before a refresh.
-// The set will take ownership of briqs/booklet/attributes therefore we use a ContractAddress.
+// The set will take ownership of briqs/booklet/attributes.
 // To ensure there are no collisions with 1155 sets (or for that matter official sets)
 // reserve some bytes at the end.
-fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32, attribute_group_id: u64) -> ContractAddress {
+fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32, attribute_group_id: u64) -> felt252 {
     let hash = pedersen(0, owner.into());
     let hash = pedersen(hash, token_id_hint);
     let hash = pedersen(hash, nb_briqs.into());
     let two_power_32 = 0x100000000;
     let mut hash_256: u256 = hash.into();
     hash_256 = (hash_256 & TOKEN_ID_MASK) + attribute_group_id.into();
+    // Make sure we don't output something that can't fit inside a ContractAddress
     let hash_252: felt252 = (hash_256 % ADDR_BOUND).try_into().unwrap();
-
-    hash_252.try_into().unwrap()
+    hash_252
 }
 
-fn get_1155_token_id(attrib: AttributeItem) -> ContractAddress {
+fn get_1155_token_id(attrib: AttributeItem) -> felt252 {
     let two_power_32 = 0x100000000_u256;
     assert(attrib.attribute_group_id.into() < two_power_32, 'Attribute group too large');
     let token_256: u256 = (attrib.attribute_id.into() * two_power_32 + attrib.attribute_group_id.into());
+    // Make sure we don't output something that can't fit inside a ContractAddress
     let token_252: felt252 = (token_256 % ADDR_BOUND).try_into().unwrap();
-
-    token_252.try_into().unwrap()
+    token_252
 }
 
 fn get_target_contract_from_attributes(
@@ -150,14 +150,14 @@ fn destroy_token(
 fn check_briqs_and_attributes_are_zero(world: IWorldDispatcher, token_id: felt252) {
     // Check that we gave back all briqs (the user might attempt to lie).
     let balance = get!(world, (
-        world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
+        CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
     ), ERC1155Balance).amount;
 
     assert(balance == 0, 'Set still has briqs');
 
     // Check that we no longer have any attributes active.
     let balance = get!(world, (
-        world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
+        CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
     ), ERC1155Balance).amount;
 
     assert(balance == 0, 'Set still attributed');
@@ -179,7 +179,7 @@ trait ISetNftAssembly<ContractState> {
     fn disassemble(
         ref self: ContractState,
         owner: ContractAddress,
-        token_id: ContractAddress,
+        token_id: felt252,
         fts: Array<FTSpec>,
         attributes: Array<AttributeItem>
     );
@@ -221,7 +221,7 @@ impl SetNftAssembly721<ContractState,
 
         let token_id = get_token_id(owner, token_id_hint, shape.len(), attribute_group_id);
         create_token(world, token, owner, token_id.into());
-        transfer_briqs(world, owner, token_id, fts.span());
+        transfer_briqs(world, owner, token_id.try_into().unwrap(), fts.span());
 
         assign_attributes(world, owner, token_id, @attributes, @shape, @fts,);
         
@@ -231,7 +231,7 @@ impl SetNftAssembly721<ContractState,
     fn disassemble(
         ref self: ContractState,
         owner: ContractAddress,
-        token_id: ContractAddress,
+        token_id: felt252,
         fts: Array<FTSpec>,
         attributes: Array<AttributeItem>
     ) {
@@ -243,10 +243,10 @@ impl SetNftAssembly721<ContractState,
 
         remove_attributes(world, owner, token_id, attributes.clone(),);
 
-        transfer_briqs(world, token_id, owner, fts.span());
-        check_briqs_and_attributes_are_zero(world, token_id.into());
+        transfer_briqs(world, token_id.try_into().unwrap(), owner, fts.span());
+        check_briqs_and_attributes_are_zero(world, token_id);
 
-        destroy_token(world, token, owner, token_id.into());
+        destroy_token(world, token, owner, token_id);
     }
 }
 
@@ -293,7 +293,7 @@ impl SetNftAssembly1155<ContractState,
             world, CUM_BALANCE_TOKEN(), token_id.try_into().unwrap(), CB_TOTAL_SUPPLY_1155(), 1
         );
 
-        assign_attributes(world, owner, token_id.try_into().unwrap(), @attributes, @shape, @fts,);
+        assign_attributes(world, owner, token_id, @attributes, @shape, @fts,);
 
         return token_id;
     }
@@ -301,7 +301,7 @@ impl SetNftAssembly1155<ContractState,
     fn disassemble(
         ref self: ContractState,
         owner: ContractAddress,
-        token_id: ContractAddress,
+        token_id: felt252,
         fts: Array<FTSpec>,
         attributes: Array<AttributeItem>
     ) {
@@ -335,13 +335,13 @@ impl SetNftAssembly1155<ContractState,
             world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
         ), ERC1155Balance).amount;
 
-        transfer_briqs(world, token_id, owner, fts.span());
+        let token_id_as_address: ContractAddress = token_id.try_into().unwrap();
+        transfer_briqs(world, token_id_as_address, owner, fts.span());
 
-        let token_id_felt: felt252 = token_id.into();
-        self._safe_transfer_from(owner, Zeroable::zero(), token_id_felt.into(), 1, array![]);
+        self._safe_transfer_from(owner, Zeroable::zero(), token_id.into(), 1, array![]);
 
         decrease_balance_1155(
-            world, CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155(), 1
+            world, CUM_BALANCE_TOKEN(), token_id_as_address, CB_TOTAL_SUPPLY_1155(), 1
         );
 
         remove_attributes(world, owner, token_id, attributes.clone(),);

@@ -27,7 +27,7 @@ mod migrate_assets {
     use dojo_erc::erc721::components::{
         ERC721OwnerTrait, ERC721BalanceTrait, ERC721TokenApprovalTrait
     };
-    use briq_protocol::set_nft::systems_erc721::ALL_BRIQ_SETS;
+    use briq_protocol::set_nft::assembly_erc721::ALL_BRIQ_SETS;
 
     fn execute(data: MigrateAssetsParams) {
         let MigrateAssetsParams{migrator,

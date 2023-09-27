@@ -31,23 +31,30 @@ trait IShapeChecker<ContractState> {
     );
 }
 
-#[derive(Drop, Copy, Serde)]
-struct RegisterShapeValidatorParams {
-    attribute_group_id: u64,
-    attribute_id: u64,
-    class_hash: ClassHash,
+#[starknet::interface]
+trait IRegisterShapeValidator<ContractState> {
+    fn execute(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        attribute_id: u64,
+        class_hash: ClassHash,
+    );
 }
 
 #[system]
 mod RegisterShapeValidator {
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
-    use super::{ShapeValidator, RegisterShapeValidatorParams};
-    use starknet::get_caller_address;
+    use super::ShapeValidator;
+    use starknet::{ClassHash, get_caller_address};
 
-    fn execute(world: IWorldDispatcher, params: RegisterShapeValidatorParams) {
+    fn execute(
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        attribute_id: u64,
+        class_hash: ClassHash,
+    ) {
         world.only_admins(@get_caller_address());
-
-        let RegisterShapeValidatorParams{attribute_group_id, attribute_id, class_hash } = params;
         set!(world, ShapeValidator { attribute_group_id, attribute_id, class_hash });
     }
 }
@@ -55,8 +62,6 @@ mod RegisterShapeValidator {
 // should panic if check fails, or no validator found
 fn assign_check(
     world: IWorldDispatcher,
-    set_owner: ContractAddress,
-    set_token_id: ContractAddress,
     attribute_group_id: u64,
     attribute_id: u64,
     shape: Span<PackedShapeItem>,
@@ -83,7 +88,7 @@ impl BookletAttributeHolder<ContractState,
     fn assign(
         ref self: ContractState,
         set_owner: ContractAddress,
-        set_token_id: ContractAddress,
+        set_token_id: felt252,
         attribute_group_id: u64,
         attribute_id: u64,
         shape: Array<PackedShapeItem>,
@@ -94,8 +99,6 @@ impl BookletAttributeHolder<ContractState,
 
         assign_check(
             world,
-            set_owner,
-            set_token_id,
             attribute_group_id,
             attribute_id,
             shape: shape.span(),
@@ -105,7 +108,7 @@ impl BookletAttributeHolder<ContractState,
         // Transfer booklet with corresponding attribute_id from set_owner to set_token_id
         self._safe_transfer_from(
             set_owner,
-            set_token_id,
+            set_token_id.try_into().unwrap(),
             attribute_id.into(),
             1,
             array![],
@@ -115,7 +118,7 @@ impl BookletAttributeHolder<ContractState,
     fn remove(
         ref self: ContractState,
         set_owner: ContractAddress,
-        set_token_id: ContractAddress,
+        set_token_id: felt252,
         attribute_group_id: u64,
         attribute_id: u64
     ) {
@@ -123,7 +126,7 @@ impl BookletAttributeHolder<ContractState,
 
         // Transfer booklet with corresponding attribute_id from set_token_id to set_owner
         self._safe_transfer_from(
-            set_token_id,
+            set_token_id.try_into().unwrap(),
             set_owner,
             attribute_id.into(),
             1,

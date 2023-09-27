@@ -23,7 +23,7 @@ use debug::PrintTrait;
 trait IAttributeHandler<ContractState> {
     fn assign(ref self: ContractState,
         set_owner: ContractAddress,
-        set_token_id: ContractAddress,
+        set_token_id: felt252,
         attribute_group_id: u64,
         attribute_id: u64,
         shape: Array<PackedShapeItem>,
@@ -31,7 +31,7 @@ trait IAttributeHandler<ContractState> {
     );
     fn remove(ref self: ContractState,
         set_owner: ContractAddress,
-        set_token_id: ContractAddress,
+        set_token_id: felt252,
         attribute_group_id: u64,
         attribute_id: u64
     );
@@ -39,14 +39,14 @@ trait IAttributeHandler<ContractState> {
 
 #[derive(Drop, PartialEq, starknet::Event)]
 struct AttributeAssigned {
-    set_token_id: ContractAddress,
+    set_token_id: felt252,
     attribute_group_id: u64,
     attribute_id: u64
 }
 
 #[derive(Drop, PartialEq, starknet::Event)]
 struct AttributeRemoved {
-    set_token_id: ContractAddress,
+    set_token_id: felt252,
     attribute_group_id: u64,
     attribute_id: u64
 }
@@ -61,7 +61,7 @@ enum Event {
 fn assign_attributes(
     world: IWorldDispatcher,
     set_owner: ContractAddress,
-    set_token_id: ContractAddress,
+    set_token_id: felt252,
     attributes: @Array<AttributeItem>,
     shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
@@ -85,13 +85,13 @@ fn assign_attributes(
     };
 
     // Update the cumulative balance
-    increase_balance(world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into());
+    increase_balance(world, CUM_BALANCE_TOKEN(), set_token_id.try_into().unwrap(), CB_ATTRIBUTES(), attributes.len().into());
 }
 
 fn inner_attribute_assign(
     world: IWorldDispatcher,
     set_owner: ContractAddress,
-    set_token_id: ContractAddress,
+    set_token_id: felt252,
     attribute: AttributeItem,
     shape: @Array<PackedShapeItem>,
     fts: @Array<FTSpec>,
@@ -137,7 +137,7 @@ fn inner_attribute_assign(
 fn remove_attributes(
     world: IWorldDispatcher,
     set_owner: ContractAddress,
-    set_token_id: ContractAddress,
+    set_token_id: felt252,
     attributes: Array<AttributeItem>
 ) {
     if attributes.len() == 0 {
@@ -160,13 +160,13 @@ fn remove_attributes(
     };
 
     // Update the cumulative balance
-    decrease_balance(world, CUM_BALANCE_TOKEN(), set_token_id, CB_ATTRIBUTES(), attributes.len().into());
+    decrease_balance(world, CUM_BALANCE_TOKEN(), set_token_id.try_into().unwrap(), CB_ATTRIBUTES(), attributes.len().into());
 }
 
 fn remove_attribute_inner(
     world: IWorldDispatcher,
     set_owner: ContractAddress,
-    set_token_id: ContractAddress,
+    set_token_id: felt252,
     attribute: AttributeItem,
 ) {
     assert(attribute.attribute_id != 0, 'attribute_id cannot be zero');

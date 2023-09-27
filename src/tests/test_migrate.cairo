@@ -15,7 +15,7 @@ use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait};
 use dojo_erc::erc1155::components::ERC1155BalanceTrait;
 
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, deploy_default_world, mint_briqs, impersonate
+    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
 };
 use briq_protocol::world_config::get_world_config;
 
@@ -26,7 +26,7 @@ use briq_protocol::migrate::MigrateAssetsParams;
 #[test]
 #[available_gas(3000000000)]
 fn test_migrate_signature() {
-    let DefaultWorld{world, .. } = deploy_default_world();
+    let DefaultWorld{world, .. } = spawn_briq_test_world();
 
     world
         .execute(

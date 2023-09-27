@@ -1,35 +1,23 @@
-use traits::{Into, TryInto, Default};
-use option::{Option, OptionTrait};
-use result::ResultTrait;
-use array::ArrayTrait;
-use serde::Serde;
-
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::tests::test_utils::{
-    DefaultWorld, spawn_world, deploy_contracts, WORLD_ADMIN, TREASURY, DEFAULT_OWNER, impersonate,
-};
 
+use briq_protocol::tests::test_utils::{
+    DefaultWorld, spawn_briq_test_world, WORLD_ADMIN, DEFAULT_OWNER, impersonate,
+};
+use briq_protocol::world_config::ISetupWorldDispatcherTrait;
 
 #[test]
 #[available_gas(30000000)]
 fn test_world_admin_can_setup_world() {
     impersonate(WORLD_ADMIN());
 
-    let world = spawn_world();
-    let (briq, generic_sets, ducks_set, planets_set, lilducks_1155_set, ducks_booklet, planets_booklet, box) =
-        deploy_contracts(
-        world
+    let DefaultWorld { world, setup_world, .. } = spawn_briq_test_world();
+    setup_world.execute(
+        world,
+        starknet::contract_address_const::<1>(),
+        starknet::contract_address_const::<2>(),
+        starknet::contract_address_const::<3>(),
+        starknet::contract_address_const::<4>(),
     );
-    world
-        .execute(
-            'SetupWorld',
-            (array![
-                TREASURY().into(),
-                briq.into(),
-                generic_sets.into(),
-                0
-            ])
-        );
 }
 
 
@@ -38,23 +26,16 @@ fn test_world_admin_can_setup_world() {
 #[should_panic]
 fn test_not_world_admin_cannot_setup_world() {
     impersonate(WORLD_ADMIN());
-
-    let world = spawn_world();
-    let (briq, generic_sets, ducks_set, planets_set, lilducks_1155_set, ducks_booklet, planets_booklet, box) =
-        deploy_contracts(
-        world
-    );
+    
+    let DefaultWorld { world, setup_world, .. } = spawn_briq_test_world();
 
     impersonate(DEFAULT_OWNER());
 
-    world
-        .execute(
-            'SetupWorld',
-            (array![
-                TREASURY().into(),
-                briq.into(),
-                generic_sets.into(),
-                0
-            ])
-        );
+    setup_world.execute(
+        world,
+        starknet::contract_address_const::<1>(),
+        starknet::contract_address_const::<2>(),
+        starknet::contract_address_const::<3>(),
+        starknet::contract_address_const::<4>(),
+    );
 }
