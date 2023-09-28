@@ -121,6 +121,7 @@ mod BookletStarknetPlanet {
     impl tempFix of briq_protocol::attributes::attributes::IAttributeHandler<ContractState> {
         fn assign(
             ref self: ContractState,
+            world: IWorldDispatcher,
             set_owner: ContractAddress,
             set_token_id: felt252,
             attribute_group_id: u64,
@@ -128,17 +129,18 @@ mod BookletStarknetPlanet {
             shape: Array<PackedShapeItem>,
             fts: Array<FTSpec>,
         ) {
-            tempfix2::BookletAttributeHolder::assign(ref self, set_owner, set_token_id, attribute_group_id, attribute_id, shape, fts)
+            tempfix2::BookletAttributeHolder::assign(ref self, world, set_owner, set_token_id, attribute_group_id, attribute_id, shape, fts)
         }
 
         fn remove(
             ref self: ContractState,
+            world: IWorldDispatcher,
             set_owner: ContractAddress,
             set_token_id: felt252,
             attribute_group_id: u64,
             attribute_id: u64
         ) {
-            tempfix2::BookletAttributeHolder::remove(ref self, set_owner, set_token_id, attribute_group_id, attribute_id)
+            tempfix2::BookletAttributeHolder::remove(ref self, world, set_owner, set_token_id, attribute_group_id, attribute_id)
         }
     }
 

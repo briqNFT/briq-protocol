@@ -31,11 +31,10 @@ fn create_attribute_group(
     attribute_group_id: u64,
     owner: AttributeGroupOwner,
     target_set_contract_address: ContractAddress,
-    booklet_contract_address: ContractAddress
 ) {
     IAttributeGroupsDispatcher { contract_address: attr_groups_addr }
         .create_attribute_group(
-            world, attribute_group_id, owner, target_set_contract_address, booklet_contract_address
+            world, attribute_group_id, owner, target_set_contract_address
         )
 }
 
@@ -44,12 +43,11 @@ fn update_attribute_group(
     attr_groups_addr: ContractAddress,
     attribute_group_id: u64,
     owner: AttributeGroupOwner,
-    target_set_contract_address: ContractAddress,
-    booklet_contract_address: ContractAddress
+    target_set_contract_address: ContractAddress
 ) {
     IAttributeGroupsDispatcher { contract_address: attr_groups_addr }
         .update_attribute_group(
-            world, attribute_group_id, owner, target_set_contract_address, booklet_contract_address
+            world, attribute_group_id, owner, target_set_contract_address
         )
 }
 
@@ -69,7 +67,6 @@ fn test_create_attribute_groups_with_users() {
         attribute_group_id: 1,
         owner: AttributeGroupOwner::Admin(USER1()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 
     create_attribute_group(
@@ -78,7 +75,6 @@ fn test_create_attribute_groups_with_users() {
         attribute_group_id: 2,
         owner: AttributeGroupOwner::Admin(USER1()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 }
 
@@ -95,7 +91,6 @@ fn test_create_attribute_groups_with_systems() {
         attribute_group_id: 1,
         owner: AttributeGroupOwner::Contract(starknet::contract_address_const::<0xfafa>()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 
     create_attribute_group(
@@ -104,7 +99,6 @@ fn test_create_attribute_groups_with_systems() {
         attribute_group_id: 2,
         owner: AttributeGroupOwner::Contract(starknet::contract_address_const::<0xfafa>()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 }
 
@@ -126,7 +120,6 @@ fn test_create_attribute_group_collision() {
         attribute_group_id: 1,
         owner: AttributeGroupOwner::Admin(USER1()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 
     create_attribute_group(
@@ -135,7 +128,6 @@ fn test_create_attribute_group_collision() {
         attribute_group_id: 1,
         owner: AttributeGroupOwner::Admin(USER1()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 }
 
@@ -157,7 +149,6 @@ fn test_create_attribute_group_collision_2() {
         attribute_group_id: 1,
         owner: AttributeGroupOwner::Admin(USER1()),
         target_set_contract_address: generic_sets.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 
     create_attribute_group(
@@ -166,7 +157,6 @@ fn test_create_attribute_group_collision_2() {
         attribute_group_id: 1,
         owner: AttributeGroupOwner::Contract(starknet::contract_address_const::<0xfade>()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 }
 
@@ -187,7 +177,6 @@ fn test_update_attribute_group_ok() {
         attribute_group_id: 0x69,
         owner: AttributeGroupOwner::Contract(starknet::contract_address_const::<0xfafa>()),
         target_set_contract_address: generic_sets.contract_address,
-        booklet_contract_address: booklet_ducks.contract_address
     );
 
     update_attribute_group(
@@ -196,7 +185,6 @@ fn test_update_attribute_group_ok() {
         attribute_group_id: 0x69,
         owner: AttributeGroupOwner::Contract(starknet::contract_address_const::<0xfafade>()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: ZERO()
     );
 
     let attribute_group = AttributeGroupTrait::get_attribute_group(world, 0x69);
@@ -215,7 +203,6 @@ fn test_update_attribute_group_ok() {
         attribute_group.target_set_contract_address == sets_ducks.contract_address,
         'invalid target_address'
     );
-    assert(attribute_group.booklet_contract_address == ZERO(), 'invalid booklet_address');
 }
 
 
@@ -237,7 +224,6 @@ fn test_update_attribute_group_non_existing() {
         attribute_group_id: 0x69,
         owner: AttributeGroupOwner::Contract(starknet::contract_address_const::<0xfafade>()),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: ZERO()
     );
 }
 
@@ -262,7 +248,6 @@ fn test_create_attribute_group_with_non_world_admin() {
         attribute_group_id: 1,
         owner: AttributeGroupOwner::Admin(USER1()),
         target_set_contract_address: generic_sets.contract_address,
-        booklet_contract_address: ZERO()
     );
 }
 
@@ -282,7 +267,6 @@ fn test_update_attribute_group_with_non_world_admin() {
         attribute_group_id: 0x69,
         owner: AttributeGroupOwner::Contract(sets_ducks.contract_address),
         target_set_contract_address: generic_sets.contract_address,
-        booklet_contract_address: ZERO()
     );
 
     impersonate(DEFAULT_OWNER());
@@ -293,6 +277,5 @@ fn test_update_attribute_group_with_non_world_admin() {
         attribute_group_id: 0x69,
         owner: AttributeGroupOwner::Contract(sets_ducks.contract_address),
         target_set_contract_address: sets_ducks.contract_address,
-        booklet_contract_address: ZERO()
     );
 }

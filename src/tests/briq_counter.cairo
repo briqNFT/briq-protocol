@@ -26,13 +26,14 @@ mod TestBriqCounterAttributeHandler {
             };
         };
 
-        assert(total >= attribute_id.into(), 'not enought briq');
+        assert(total >= attribute_id.into(), 'not enough briq');
     }
 
     #[external(v0)]
     impl briqCounterHandler of briq_protocol::attributes::attributes::IAttributeHandler<ContractState> {
         fn assign(
             ref self: ContractState,
+            world: IWorldDispatcher,
             set_owner: ContractAddress,
             set_token_id: felt252,
             attribute_group_id: u64,
@@ -45,6 +46,7 @@ mod TestBriqCounterAttributeHandler {
 
         fn remove(
             ref self: ContractState,
+            world: IWorldDispatcher,
             set_owner: ContractAddress,
             set_token_id: felt252,
             attribute_group_id: u64,

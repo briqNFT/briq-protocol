@@ -74,7 +74,6 @@ struct AttributeGroup {
     attribute_group_id: u64,
     owner: AttributeGroupOwner,
     target_set_contract_address: ContractAddress,
-    booklet_contract_address: ContractAddress,
 }
 
 
@@ -88,7 +87,6 @@ trait AttributeGroupTrait {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         target_set_contract_address: ContractAddress,
-        booklet_contract_address: ContractAddress,
     ) -> AttributeGroup;
 }
 
@@ -112,7 +110,6 @@ impl AttributeGroupImpl of AttributeGroupTrait {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         target_set_contract_address: ContractAddress,
-        booklet_contract_address: ContractAddress,
     ) -> AttributeGroup {
         assert(attribute_group_id > 0, 'invalid attribute_group_id');
         assert(
@@ -124,7 +121,6 @@ impl AttributeGroupImpl of AttributeGroupTrait {
             attribute_group_id: attribute_group_id,
             owner: owner,
             target_set_contract_address,
-            booklet_contract_address
         }
     }
 }
@@ -137,7 +133,6 @@ trait IAttributeGroups<ContractState> {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         target_set_contract_address: ContractAddress,
-        booklet_contract_address: ContractAddress,
     );
     fn update_attribute_group(
         ref self: ContractState,
@@ -145,7 +140,6 @@ trait IAttributeGroups<ContractState> {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         target_set_contract_address: ContractAddress,
-        booklet_contract_address: ContractAddress,
     );
 }
 
@@ -190,12 +184,11 @@ mod AttributeGroups {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         target_set_contract_address: ContractAddress,
-        booklet_contract_address: ContractAddress,
     ) {
         world.only_admins(@get_caller_address());
 
         let attribute_group = AttributeGroupTrait::new_attribute_group(
-            world, attribute_group_id, owner, target_set_contract_address, booklet_contract_address
+            world, attribute_group_id, owner, target_set_contract_address
         );
 
         AttributeGroupTrait::set_attribute_group(world, attribute_group);
@@ -227,7 +220,6 @@ mod AttributeGroups {
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
         target_set_contract_address: ContractAddress,
-        booklet_contract_address: ContractAddress,
     ) {
         world.only_admins(@get_caller_address());
 
@@ -240,7 +232,7 @@ mod AttributeGroups {
         AttributeGroupTrait::set_attribute_group(
             world,
             AttributeGroup {
-                attribute_group_id, owner, target_set_contract_address, booklet_contract_address
+                attribute_group_id, owner, target_set_contract_address
             }
         );
 

@@ -43,8 +43,7 @@ fn test_simple_mint_and_burn_1155() {
         attribute_groups_addr,
         attribute_group,
         booklet_ducks.contract_address,
-        sets_1155.contract_address,
-        booklet_ducks.contract_address
+        sets_1155.contract_address
     );
 
     register_shape_validator_shapes(world, register_shape_validator_addr, attribute_group);

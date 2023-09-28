@@ -87,6 +87,7 @@ impl BookletAttributeHolder<ContractState,
 > of IAttributeHandler<ContractState> {
     fn assign(
         ref self: ContractState,
+        world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_group_id: u64,
@@ -95,7 +96,7 @@ impl BookletAttributeHolder<ContractState,
         fts: Array<FTSpec>,
     ) {
         // TODO: auth
-        let world = self.world();
+        assert(world.contract_address == self.world().contract_address, 'bad world');
 
         assign_check(
             world,
@@ -117,12 +118,14 @@ impl BookletAttributeHolder<ContractState,
 
     fn remove(
         ref self: ContractState,
+        world: IWorldDispatcher,
         set_owner: ContractAddress,
         set_token_id: felt252,
         attribute_group_id: u64,
         attribute_id: u64
     ) {
         // TODO: auth
+        assert(world.contract_address == self.world().contract_address, 'bad world');
 
         // Transfer booklet with corresponding attribute_id from set_token_id to set_owner
         self._safe_transfer_from(

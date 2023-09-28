@@ -26,24 +26,6 @@ mod convenience_for_testing {
         ISetNftAssemblySafeDispatcher { contract_address: dispatcher.contract_address() }
     }
 
-    // fn create_attribute_group_with_briq_counter(world: IWorldDispatcher, attribute_group_id: u64) {
-    //     // briq_counter is not related to a specific collection so we link it to generic_sets
-    //     let target_set_contract_address = get_world_config(world).generic_sets;
-    //     let booklet_contract_address = Zeroable::zero();
-    //     world
-    //         .execute(
-    //             'create_attribute_group',
-    //             system_calldata(
-    //                 CreateAttributeGroupParams {
-    //                     attribute_group_id,
-    //                     owner: AttributeGroupOwner::System('agm_briq_counter'),
-    //                     target_set_contract_address,
-    //                     booklet_contract_address
-    //                 }
-    //             )
-    //         );
-    // }
-
     //
     // Shapes ClassHash
     //
@@ -89,9 +71,9 @@ mod convenience_for_testing {
     }
 
     use briq_protocol::attributes::attribute_group::{IAttributeGroupsDispatcher, IAttributeGroupsDispatcherTrait, AttributeGroupOwner};
-    fn create_contract_attribute_group(world: IWorldDispatcher, attribute_groups_addr: ContractAddress, attribute_group_id: u64, owner: ContractAddress, target_sets: ContractAddress, target_booklet: ContractAddress) {
+    fn create_contract_attribute_group(world: IWorldDispatcher, attribute_groups_addr: ContractAddress, attribute_group_id: u64, owner: ContractAddress, target_sets: ContractAddress) {
         IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, attribute_group_id, AttributeGroupOwner::Contract(owner), target_sets, target_booklet
+        world, attribute_group_id, AttributeGroupOwner::Contract(owner), target_sets
     );
     }
 
@@ -136,7 +118,7 @@ use debug::PrintTrait;
 
 use convenience_for_testing::{
     as_set, as_set_safe, mint_booklet, valid_shape_1, valid_shape_2,
-    register_shape_validator_shapes
+    register_shape_validator_shapes, create_contract_attribute_group
 };
 
 
@@ -360,9 +342,7 @@ fn test_simple_mint_attribute_not_exist() {
 fn test_simple_mint_attribute_ok_1() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
     mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x1, 1);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
@@ -411,9 +391,7 @@ fn test_simple_mint_attribute_ok_1() {
 fn test_simple_mint_attribute_ok_2() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 
     mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x2, 1);
@@ -470,9 +448,7 @@ fn test_simple_mint_attribute_ok_2() {
 fn test_simple_mint_attribute_dont_have_the_booklet() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 
     impersonate(DEFAULT_OWNER());
@@ -503,9 +479,7 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
 fn test_simple_mint_attribute_bad_shape_item() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
@@ -541,9 +515,7 @@ fn test_simple_mint_attribute_bad_shape_item() {
 fn test_simple_mint_attribute_shape_fts_mismatch() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
@@ -574,9 +546,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
 fn test_simple_mint_attribute_forgot_in_disassembly() {
     let DefaultWorld{world, briq_token, generic_sets, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 
     mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x1, 1);
@@ -623,9 +593,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
 fn test_simple_mint_registered_but_unhandled_shape() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69); // register shape 1/2/3/4 (4 not handled)
 
     mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x4, 1);

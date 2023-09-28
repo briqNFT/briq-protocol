@@ -53,6 +53,7 @@ trait Unboxing<ContractState> {
     fn unbox(ref self: ContractState, box_id: felt252);
 }
 
+use briq_protocol::attributes::attribute_group::AttributeGroupOwner;
 use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
 fn unbox<
@@ -72,7 +73,12 @@ fn unbox<
     );
 
     // Mint a booklet
-    MintBurnDispatcher { contract_address: attribute_group.booklet_contract_address }.mint(
+    // (this trusts that the target contract is a mintable booklet, which is probably fine)
+    let address = match attribute_group.owner {
+        AttributeGroupOwner::Admin(address) => panic_with_felt252('Incorrect attrgroup'),
+        AttributeGroupOwner::Contract(address) => address,
+    };
+    MintBurnDispatcher { contract_address: address }.mint(
         owner, box_infos.attribute_id.into(), 1
     );
 

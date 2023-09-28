@@ -32,8 +32,8 @@ fn test_mint_and_unbox() {
     .. } =
         spawn_briq_test_world();
 
-    create_contract_attribute_group(world, attribute_groups_addr, 0x1, booklet_sp.contract_address, Zeroable::zero(), booklet_sp.contract_address);
-    create_contract_attribute_group(world, attribute_groups_addr, 0x2, booklet_ducks.contract_address, Zeroable::zero(), booklet_ducks.contract_address);
+    create_contract_attribute_group(world, attribute_groups_addr, 0x1, booklet_sp.contract_address, Zeroable::zero());
+    create_contract_attribute_group(world, attribute_groups_addr, 0x2, booklet_ducks.contract_address, Zeroable::zero());
 
     let box_contract_address = box_nft.contract_address;
 

@@ -20,7 +20,7 @@ use briq_protocol::attributes::attribute_group::{IAttributeGroupsDispatcher, IAt
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::tests::test_set_nft::convenience_for_testing::{
-    as_set, valid_shape_1, valid_shape_2, valid_shape_3, mint_booklet, register_shape_validator_shapes
+    as_set, valid_shape_1, valid_shape_2, valid_shape_3, mint_booklet, register_shape_validator_shapes, create_contract_attribute_group
 };
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
 use briq_protocol::set_nft::assembly::ISetNftAssemblyDispatcherTrait;
@@ -53,9 +53,7 @@ fn test_multiple_set() {
     impersonate(WORLD_ADMIN());
 
     // create attribute_group for ducks_set & register shapes
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0xbaba, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0xbaba, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0xbaba);
 
     // mint a booklet for DEFAULT_OWNER
@@ -86,9 +84,7 @@ fn test_multiple_set() {
 fn test_multiple_attributes() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0xbaba, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0xbaba, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0xbaba);
 
     // mint a booklet for DEFAULT_OWNER
@@ -96,9 +92,7 @@ fn test_multiple_attributes() {
 
     // Deploy another system for this test.
     let briq_counter_addr = deploy(briq_protocol::tests::briq_counter::TestBriqCounterAttributeHandler::TEST_CLASS_HASH, array![]);
-    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
-        world, 0xf00, AttributeGroupOwner::Contract(briq_counter_addr), Zeroable::zero(), Zeroable::zero()
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0xf00, briq_counter_addr, Zeroable::zero());
     
     // Test start
 
