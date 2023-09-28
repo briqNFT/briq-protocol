@@ -11,30 +11,24 @@ use starknet::info::get_block_timestamp;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, ETH_ADDRESS, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
+    WORLD_ADMIN, DEFAULT_OWNER, ETH_ADDRESS, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate, deploy
 };
 
-use dojo_erc::erc_common::utils::system_calldata;
-
-use briq_protocol::briq_factory::systems::{BriqFactoryInitializeParams};
 use briq_protocol::briq_factory::constants::{
     DECIMALS, LOWER_FLOOR, LOWER_SLOPE, INFLECTION_POINT, DECAY_PER_SECOND, MINIMAL_SURGE, SLOPE,
     RAW_FLOOR
 };
 use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
-
+use briq_protocol::briq_factory::{IBriqFactoryDispatcher, IBriqFactoryDispatcherTrait};
 use briq_protocol::felt_math::{FeltOrd, FeltDiv};
-
+use briq_protocol::world_config::get_world_config;
 use debug::PrintTrait;
-
 
 fn init_briq_factory(world: IWorldDispatcher, t: felt252, surge_t: felt252,) -> BriqFactoryStore {
     impersonate(WORLD_ADMIN());
-    world
-        .execute(
-            'BriqFactoryInitialize',
-            system_calldata(BriqFactoryInitializeParams { t, surge_t, buy_token: ETH_ADDRESS() })
-        );
+    IBriqFactoryDispatcher { contract_address: get_world_config(world).factory }.initialize(
+        t, surge_t, buy_token: ETH_ADDRESS()
+    );
     impersonate(DEFAULT_OWNER());
     BriqFactoryTrait::get_briq_factory(world)
 }
@@ -207,7 +201,14 @@ fn test_overflows_bad_max_t() {
     briq_factory.get_price(1);
 }
 
+use dojo_erc::token::erc20::{IERC20Dispatcher, IERC20DispatcherTrait};
 #[test]
 #[available_gas(90000000)]
-fn test_briq_factory_buy() { // TODO deploy buy token & test buy
+fn test_briq_factory_buy() {
+    let DefaultWorld{world, payment_addr, .. } = spawn_briq_test_world();
+    IBriqFactoryDispatcher { contract_address: get_world_config(world).factory }.initialize(0, 0, payment_addr);
+
+    impersonate(DEFAULT_OWNER());
+    IERC20Dispatcher { contract_address: payment_addr }.approve(get_world_config(world).factory, 2000000000000000);
+    IBriqFactoryDispatcher { contract_address: get_world_config(world).factory }.buy(1, 100);
 }

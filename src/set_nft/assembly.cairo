@@ -240,6 +240,7 @@ impl SetNftAssembly721<ContractState,
         assert(owner == caller, 'Only Owner');
 
         let (token, _) = get_target_contract_from_attributes(world, @attributes);
+        assert(token == get_contract_address(), 'Not the correct contract');
 
         remove_attributes(world, owner, token_id, attributes.clone(),);
 
@@ -282,8 +283,8 @@ impl SetNftAssembly1155<ContractState,
         // Token ID is the attribute ID for simplicity, and attribute group as bitpacking marker.
         let token_id: felt252 = get_1155_token_id(attrib).into();
 
-        self._safe_transfer_from(
-            Zeroable::zero(), owner, token_id.into(), 1, array![]
+        self._mint(
+            owner, token_id.into(), 1,
         );
 
         transfer_briqs(world, owner, token_id.try_into().unwrap(), fts.span());
@@ -312,13 +313,13 @@ impl SetNftAssembly1155<ContractState,
         // Check that we are asking for the attribute group that matches this contract
         // (could be hardcoded instead?)
         let (token, o_attribute_id) = get_target_contract_from_attributes(world, @attributes);
-        assert(token == get_caller_address(), 'Not the correct caller');
+        assert(token == get_contract_address(), 'Not the correct contract');
 
         let nb_briq_tokens = get!(world, (
-            world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
+            CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()
         ), ERC1155Balance).amount;
-
         assert(fts.len().into() == nb_briq_tokens, 'not enough fts');
+    
         let mut prev_briqs = ArrayTrait::<FTSpec>::new();
         let mut ftsp = fts.span();
         loop {
@@ -327,18 +328,18 @@ impl SetNftAssembly1155<ContractState,
             }
             let ftspec = *ftsp.pop_front().unwrap();
             prev_briqs.append(FTSpec { token_id: ftspec.token_id, qty: get!(world, (
-                world, get_world_config(world).briq, token_id, ftspec.token_id
+                get_world_config(world).briq, token_id, ftspec.token_id
             ), ERC1155Balance).amount });
         };
 
         let prev_attrib = get!(world, (
-            world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
+            CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
         ), ERC1155Balance).amount;
 
         let token_id_as_address: ContractAddress = token_id.try_into().unwrap();
         transfer_briqs(world, token_id_as_address, owner, fts.span());
 
-        self._safe_transfer_from(owner, Zeroable::zero(), token_id.into(), 1, array![]);
+        self._burn(token_id.into(), 1);
 
         decrease_balance_1155(
             world, CUM_BALANCE_TOKEN(), token_id_as_address, CB_TOTAL_SUPPLY_1155(), 1
@@ -347,11 +348,11 @@ impl SetNftAssembly1155<ContractState,
         remove_attributes(world, owner, token_id, attributes.clone(),);
 
         let post_attrib = get!(world, (
-            world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
+            CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()
         ), ERC1155Balance).amount;
 
         let remaining_supply = get!(world, (
-            world, CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155()
+            CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155()
         ), ERC1155Balance).amount;
 
         assert(post_attrib / (prev_attrib - post_attrib) == remaining_supply, 'Set still has attribs');
@@ -362,7 +363,7 @@ impl SetNftAssembly1155<ContractState,
             }
             let pre_briq = prev_briqs.pop_front().unwrap();
             let post_briq = get!(world, (
-                world, get_world_config(world).briq, token_id, pre_briq.token_id
+                get_world_config(world).briq, token_id, pre_briq.token_id
             ), ERC1155Balance).amount;
             assert(post_briq / (pre_briq.qty - post_briq) == remaining_supply, 'Set still has briqs');
         };

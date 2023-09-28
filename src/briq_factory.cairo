@@ -1,6 +1,18 @@
 mod components;
 mod constants;
 
+use starknet::ContractAddress;
+
+#[starknet::interface]
+trait IBriqFactory<ContractState> {
+    fn initialize(ref self: ContractState, t: felt252, surge_t: felt252, buy_token: ContractAddress);
+    fn buy(
+        self: @ContractState,
+        material: u64,
+        amount_u32: u32
+    );
+}
+
 #[starknet::contract]
 mod BriqFactory {
     use starknet::{get_caller_address, ContractAddress, ClassHash};
@@ -17,6 +29,7 @@ mod BriqFactory {
     };
 
     use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
+    use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 
     #[derive(Drop, PartialEq, starknet::Event)]
     struct BriqsBought {
@@ -59,13 +72,6 @@ mod BriqFactory {
         );
     }
 
-    #[starknet::interface]
-    trait BriqMint<TState> {
-        fn briq_mint(
-            ref self: TState, recipient: ContractAddress, material: felt252, amount: u128
-        );
-    }
-
     #[constructor]
     fn constructor(
         ref self: ContractState, world: IWorldDispatcher
@@ -74,62 +80,63 @@ mod BriqFactory {
     }
 
     #[external(v0)]
-    fn initialize(ref self: ContractState, t: felt252, surge_t: felt252, buy_token: ContractAddress) {
-        let world = self.world.read();
-        world.only_admins(@get_caller_address());
+    impl BriqFactory of super::IBriqFactory<ContractState> {
+        fn initialize(ref self: ContractState, t: felt252, surge_t: felt252, buy_token: ContractAddress) {
+            let world = self.world.read();
+            world.only_admins(@get_caller_address());
 
-        let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
+            let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
 
-        briq_factory.last_stored_t = t;
-        briq_factory.surge_t = surge_t;
-        briq_factory.buy_token = buy_token;
-        briq_factory.last_purchase_time = starknet::info::get_block_timestamp();
+            briq_factory.last_stored_t = t;
+            briq_factory.surge_t = surge_t;
+            briq_factory.buy_token = buy_token;
+            briq_factory.last_purchase_time = starknet::info::get_block_timestamp();
 
-        BriqFactoryTrait::set_briq_factory(world, briq_factory);
-    }
+            BriqFactoryTrait::set_briq_factory(world, briq_factory);
+        }
 
-    #[external(v0)]
-    fn buy(
-        self: @ContractState,
-        material: u64,
-        amount_u32: u32
-    ) {
-        let world = self.world.read();
+        fn buy(
+            self: @ContractState,
+            material: u64,
+            amount_u32: u32
+        ) {
+            let world = self.world.read();
 
-        let amount: felt252 = amount_u32.into();
-        assert(amount >= MIN_PURCHASE(), 'amount too low !');
+            let amount: felt252 = amount_u32.into();
+            assert(amount >= MIN_PURCHASE(), 'amount too low !');
 
-        let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
+            let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
 
-        let price = briq_factory.get_price(amount);
-        let t = briq_factory.get_current_t();
-        let surge_t = briq_factory.get_surge_t();
+            let price = briq_factory.get_price(amount);
+            let t = briq_factory.get_current_t();
+            let surge_t = briq_factory.get_surge_t();
 
-        // Transfer funds to receiver wallet
-        // TODO: use something other than the super-admin address for this.
-        let world_config = get_world_config(world);
-        let buyer = get_caller_address();
-        IERC20Dispatcher { contract_address: briq_factory.buy_token }
-            .transferFrom(buyer, world_config.treasury, price.into());
+            // Transfer funds to receiver wallet
+            // TODO: use something other than the super-admin address for this.
+            let world_config = get_world_config(world);
+            let buyer = get_caller_address();
+            IERC20Dispatcher { contract_address: briq_factory.buy_token }
+                .transferFrom(buyer, world_config.treasury, price.into());
 
-        // update store
-        briq_factory.last_purchase_time = get_block_timestamp();
-        briq_factory.last_stored_t = t + amount * DECIMALS();
-        briq_factory.surge_t = surge_t + amount * DECIMALS();
-        BriqFactoryTrait::set_briq_factory(world, briq_factory);
+            // update store
+            briq_factory.last_purchase_time = get_block_timestamp();
+            briq_factory.last_stored_t = t + amount * DECIMALS();
+            briq_factory.surge_t = surge_t + amount * DECIMALS();
+            BriqFactoryTrait::set_briq_factory(world, briq_factory);
 
-        //  mint briqs to buyer
-        let amount_u128: u128 = amount.try_into().unwrap();
+            //  mint briqs to buyer
+            let amount_u128: u128 = amount.try_into().unwrap();
 
-        BriqMintDispatcher { contract_address: world_config.briq }.briq_mint(
-            buyer,
-            BRIQ_MATERIAL(),
-            amount_u128,
-        );
+            MintBurnDispatcher { contract_address: world_config.briq }.mint(
+                buyer,
+                BRIQ_MATERIAL(),
+                amount_u128,
+            );
 
-        emit!(
-            world, BriqsBought { buyer, amount: amount_u32, price: price.try_into().unwrap() }
-        );
+            emit!(
+                world, BriqsBought { buyer, amount: amount_u32, price: price.try_into().unwrap() }
+            );
+        }
     }
 
     #[external(v0)]

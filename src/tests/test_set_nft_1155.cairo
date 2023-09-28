@@ -5,6 +5,9 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
+use dojo_erc::token::erc1155::interface::IERC1155Dispatcher;
+
+use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcherTrait, ISetNftAssemblySafeDispatcherTrait};
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
@@ -17,54 +20,48 @@ use briq_protocol::world_config::get_world_config;
 use debug::PrintTrait;
 
 use briq_protocol::tests::test_set_nft::convenience_for_testing::{
-    create_attribute_group_with_booklet,
+    create_contract_attribute_group,
     get_test_shapes_class_hash,
-    register_shape_validator,
+    register_shape_validator_shapes,
     valid_shape_1,
-    mint_booklet
+    mint_booklet,
+    as_set,
+    as_set_safe,
 };
-use dojo_erc::erc1155::interface::IERC1155Dispatcher;
 
-fn rewrap(d: IERC1155Dispatcher) -> SetNftInterfaceDispatcher {
-    SetNftInterfaceDispatcher { contract_address: d.contract_address }
-}
-
-fn rewrap_safe(d: IERC1155Dispatcher) -> SetNftInterfaceSafeDispatcher {
-    SetNftInterfaceSafeDispatcher { contract_address: d.contract_address }
-}
 
 #[test]
 #[available_gas(3000000000)]
 fn test_simple_mint_and_burn_1155() {
-    let DefaultWorld{world, briq_token, generic_sets, lilducks_1155_set, ducks_booklet, .. } = spawn_briq_test_world();
+    let DefaultWorld{world, briq_token, generic_sets, sets_1155, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
     let attribute_group = 0xcafafa;
     let attribute_id: u64 = 0x1;
 
-    mint_booklet(
+    create_contract_attribute_group(
         world,
-        ducks_booklet.contract_address, // doesn't matter it's not the right one
-        to: DEFAULT_OWNER(),
-        ids: array![attribute_id.into()],
-        amounts: array![3]
-    );
-
-    create_attribute_group_with_booklet(
-        world,
+        attribute_groups_addr,
         attribute_group,
-        target_set_contract_address: lilducks_1155_set.contract_address,
-        booklet_contract_address: ducks_booklet.contract_address,
+        booklet_ducks.contract_address,
+        sets_1155.contract_address,
+        booklet_ducks.contract_address
     );
 
-    register_shape_validator(world, attribute_group, attribute_id, get_test_shapes_class_hash());
+    register_shape_validator_shapes(world, register_shape_validator_addr, attribute_group);
 
+    mint_booklet(
+        booklet_ducks.contract_address,
+        to: DEFAULT_OWNER(),
+        id: attribute_id.into(),
+        amount: 3
+    );
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
 
-    let token_id = (0x1 * 0x100000000 + 0xcafafa).try_into().unwrap();
+    let token_id = (0x1 * 0x100000000 + 0xcafafa);
 
-    rewrap(lilducks_1155_set).assemble(
+    as_set(sets_1155).assemble(
         DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
@@ -74,12 +71,12 @@ fn test_simple_mint_and_burn_1155() {
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     );
 
-    assert(lilducks_1155_set.balance_of(DEFAULT_OWNER(), token_id.into()) == 1, 'Bad balance 1');
+    assert(sets_1155.balance_of(DEFAULT_OWNER(), token_id.into()) == 1, 'Bad balance 1');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 0x1.into()) == 96, 'Bad balance 2');
     // TODO: change this
-    assert(briq_token.balance_of(token_id, 0x1.into()) == 4, 'Bad balance 3');
+    assert(briq_token.balance_of(token_id.try_into().unwrap(), 0x1.into()) == 4, 'Bad balance 3');
 
-    rewrap(lilducks_1155_set).assemble(
+    as_set(sets_1155).assemble(
         DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
@@ -88,7 +85,8 @@ fn test_simple_mint_and_burn_1155() {
         valid_shape_1(),
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     );
-    rewrap(lilducks_1155_set).assemble(
+
+    as_set(sets_1155).assemble(
         DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
@@ -97,11 +95,12 @@ fn test_simple_mint_and_burn_1155() {
         valid_shape_1(),
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     );
-    assert(lilducks_1155_set.balance_of(DEFAULT_OWNER(), token_id.into()) == 3, 'Bad balance 4');
+
+    assert(sets_1155.balance_of(DEFAULT_OWNER(), token_id.into()) == 3, 'Bad balance 4');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 0x1.into()) == 88, 'Bad balance 5');
     //assert(briq_token.balance_of(DEFAULT_OWNER(), 0x1.into()) == 4, 'Bad balance 1');
     
-    assert(rewrap_safe(lilducks_1155_set).assemble(
+    assert(as_set_safe(sets_1155).assemble(
         DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
@@ -111,45 +110,44 @@ fn test_simple_mint_and_burn_1155() {
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     ).is_err(), 'fourth assembly shld fail');
 
-    assert(briq_token.balance_of(token_id, 0x1.into()) == 12, 'Bad balance a');
+    assert(briq_token.balance_of(token_id.try_into().unwrap(), 0x1.into()) == 12, 'Bad balance a');
 
-    rewrap(lilducks_1155_set).disassemble(
+    as_set(sets_1155).disassemble(
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 4 }],
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     );
 
-    assert(lilducks_1155_set.balance_of(DEFAULT_OWNER(), token_id.into()) == 2, 'Bad balance 4a');
+    assert(sets_1155.balance_of(DEFAULT_OWNER(), token_id.into()) == 2, 'Bad balance 4a');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 0x1.into()) == 92, 'Bad balance 5a');
 
-    rewrap(lilducks_1155_set).disassemble(
+    as_set(sets_1155).disassemble(
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 4 }],
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     );
-    assert(briq_token.balance_of(token_id, 0x1.into()) == 4, 'Bad balance b');
-    assert(rewrap_safe(lilducks_1155_set).disassemble(
+    assert(briq_token.balance_of(token_id.try_into().unwrap(), 0x1.into()) == 4, 'Bad balance b');
+    assert(as_set_safe(sets_1155).disassemble(
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 2 }],
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     ).is_err(), 'fourth disass shld fail');
-    rewrap_safe(lilducks_1155_set).disassemble(
+    as_set_safe(sets_1155).disassemble(
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 4 }],
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     );
-    assert(rewrap_safe(lilducks_1155_set).disassemble(
+    assert(as_set_safe(sets_1155).disassemble(
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 4 }],
         array![AttributeItem { attribute_group_id: attribute_group, attribute_id } ],
     ).is_err(), 'fourth disass shld fail');
 
-    assert(lilducks_1155_set.balance_of(DEFAULT_OWNER(), token_id.into()) == 0, 'Bad balance 4b');
+    assert(sets_1155.balance_of(DEFAULT_OWNER(), token_id.into()) == 0, 'Bad balance 4b');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 0x1.into()) == 100, 'Bad balance 5b');
-
 }

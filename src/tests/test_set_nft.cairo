@@ -14,13 +14,16 @@ mod convenience_for_testing {
 
     use dojo_erc::token::erc721::interface::IERC721Dispatcher;
     use dojo_erc::token::erc1155::interface::IERC1155Dispatcher;
-    use briq_protocol::set_nft::assembly::ISetNftAssemblyDispatcher;
+    use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcher, ISetNftAssemblySafeDispatcher};
 
     trait Dispatcher<T> { fn contract_address(self: T) -> ContractAddress; }
     impl D1155 of Dispatcher<IERC1155Dispatcher> { fn contract_address(self: IERC1155Dispatcher) -> ContractAddress { self.contract_address } }
     impl D721 of Dispatcher<IERC721Dispatcher> { fn contract_address(self: IERC721Dispatcher) -> ContractAddress { self.contract_address } }
     fn as_set<T, impl TD: Dispatcher<T>>(dispatcher: T) -> ISetNftAssemblyDispatcher {
         ISetNftAssemblyDispatcher { contract_address: dispatcher.contract_address() }
+    }
+    fn as_set_safe<T, impl TD: Dispatcher<T>>(dispatcher: T) -> ISetNftAssemblySafeDispatcher {
+        ISetNftAssemblySafeDispatcher { contract_address: dispatcher.contract_address() }
     }
 
     // fn create_attribute_group_with_briq_counter(world: IWorldDispatcher, attribute_group_id: u64) {
@@ -126,13 +129,13 @@ use briq_protocol::world_config::get_world_config;
 
 use briq_protocol::attributes::attribute_group::{IAttributeGroupsDispatcher, IAttributeGroupsDispatcherTrait, AttributeGroupOwner};
 
-use briq_protocol::set_nft::assembly::ISetNftAssemblyDispatcherTrait;
+use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcherTrait, ISetNftAssemblySafeDispatcherTrait};
 use briq_protocol::tokens::set_nft::SetNft::Transfer as SetNftTransfer;
 
 use debug::PrintTrait;
 
 use convenience_for_testing::{
-    as_set, mint_booklet, valid_shape_1, valid_shape_2,
+    as_set, as_set_safe, mint_booklet, valid_shape_1, valid_shape_2,
     register_shape_validator_shapes
 };
 
@@ -569,7 +572,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
     )
 )]
 fn test_simple_mint_attribute_forgot_in_disassembly() {
-    let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
+    let DefaultWorld{world, briq_token, generic_sets, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
     IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
         world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
@@ -600,8 +603,10 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()), ERC1155Balance).amount == 1,
         'should be 1'
     );
+    // This fails as 'not the correct contract', as expected
+    assert(as_set_safe(sets_ducks).disassemble(DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]).is_err(), 'should error');
 
-    as_set(sets_ducks).disassemble(DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
+    as_set(generic_sets).disassemble(DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]);
 }
 
 

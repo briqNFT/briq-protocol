@@ -51,15 +51,23 @@ fn impersonate(address: ContractAddress) {
 }
 
 fn deploy(class_hash: felt252, calldata: Array<felt252>) -> ContractAddress {
-    let (address, _) = deploy_syscall(
+    let res = deploy_syscall(
         class_hash.try_into().unwrap(), 0, calldata.span(), false
-    ).expect('error deploying');
-    address
+    );
+    if res.is_err() {
+        res.expect_err('').print();
+        Zeroable::zero()
+    } else {
+        let (address, _) = res.unwrap();
+        address
+    }
 }
 
 #[derive(Copy, Drop)]
 struct DefaultWorld {
     world: IWorldDispatcher,
+    payment_addr: ContractAddress,
+
     setup_world: ISetupWorldDispatcher,
     attribute_groups_addr: ContractAddress,
     register_shape_validator_addr: ContractAddress,
@@ -86,6 +94,10 @@ fn spawn_briq_test_world() -> DefaultWorld {
         // world_config
         briq_protocol::world_config::world_config::TEST_CLASS_HASH,
 
+        dojo_erc::token::erc20_components::erc_20_balance::TEST_CLASS_HASH,
+        dojo_erc::token::erc20_components::erc_20_allowance::TEST_CLASS_HASH,
+        dojo_erc::token::erc20_components::erc_20_meta::TEST_CLASS_HASH,
+
         briq_protocol::erc::erc1155::components::erc_1155_balance::TEST_CLASS_HASH,
         briq_protocol::erc::erc1155::components::erc_1155_operator_approval::TEST_CLASS_HASH,
 
@@ -100,6 +112,15 @@ fn spawn_briq_test_world() -> DefaultWorld {
     ];
 
     let world = spawn_test_world(components);
+
+    // ERC 20 token for payment
+    let payment_addr = deploy(dojo_erc::token::erc20::ERC20::TEST_CLASS_HASH, array![
+        world.contract_address.into(),
+        'cash',
+        'money',
+        0, 100000000000000000000,
+        DEFAULT_OWNER().into(),
+    ]);
 
     // systems
     let setup_world_addr = deploy(briq_protocol::world_config::SetupWorld::TEST_CLASS_HASH, array![]);
@@ -124,6 +145,10 @@ fn spawn_briq_test_world() -> DefaultWorld {
     //
     // set-up writer rights
     //
+
+    world.grant_writer('ERC20Balance', payment_addr);
+    world.grant_writer('ERC20Allowance', payment_addr);
+    world.grant_writer('ERC20Meta', payment_addr);
 
     world.grant_writer('WorldConfig', setup_world_addr);
     world.grant_writer('SetContracts', setup_world_addr);
@@ -178,6 +203,11 @@ fn spawn_briq_test_world() -> DefaultWorld {
         sets_ducks_addr,
         true,
     );
+    ISetupWorldDispatcher { contract_address: setup_world_addr }.register_set_contract(
+        world,
+        sets_1155_addr,
+        true,
+    );
     ISetupWorldDispatcher { contract_address: setup_world_addr }.register_box_contract(
         world,
         box_nft_addr,
@@ -186,6 +216,7 @@ fn spawn_briq_test_world() -> DefaultWorld {
 
     DefaultWorld {
         world,
+        payment_addr,
         setup_world: ISetupWorldDispatcher { contract_address: setup_world_addr },
         attribute_groups_addr,
         register_shape_validator_addr,
@@ -203,8 +234,8 @@ fn spawn_briq_test_world() -> DefaultWorld {
 #[available_gas(30000000)]
 fn test_spawn_briq_test_world() {
     let DefaultWorld{world, briq_token, generic_sets, .. } = spawn_briq_test_world();
-    assert(get_world_config(world).briq == 0x6.try_into().unwrap(), 'bad setup');
-    assert(get_world_config(world).generic_sets == 0x7.try_into().unwrap(), 'bad setup');
+    assert(get_world_config(world).briq == 0x8.try_into().unwrap(), 'bad setup');
+    assert(get_world_config(world).generic_sets == 0x9.try_into().unwrap(), 'bad setup');
 }
 
 // Convenience functions
