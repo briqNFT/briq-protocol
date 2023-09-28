@@ -1,6 +1,8 @@
 use starknet::ContractAddress;
 
-use dojo::database::schema::{EnumMember, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type};
+use dojo::database::schema::{
+    EnumMember, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type
+};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use debug::PrintTrait;
@@ -18,14 +20,17 @@ impl SerdeLenAttributeGroupOwner of SchemaIntrospection<AttributeGroupOwner> {
 
     #[inline(always)]
     fn ty() -> Ty {
-        Ty::Enum(EnumMember{
-            name: 'AttributeGroupOwner',
-            attrs: array![].span(),
-            values: array![
-                serialize_member_type(@Ty::Simple('Admin')),
-                serialize_member_type(@Ty::Simple('Contract')),
-            ].span()
-        })
+        Ty::Enum(
+            EnumMember {
+                name: 'AttributeGroupOwner',
+                attrs: array![].span(),
+                values: array![
+                    serialize_member_type(@Ty::Simple('Admin')),
+                    serialize_member_type(@Ty::Simple('Contract')),
+                ]
+                    .span()
+            }
+        )
     }
 }
 
@@ -134,6 +139,14 @@ trait IAttributeGroups<ContractState> {
         target_set_contract_address: ContractAddress,
         booklet_contract_address: ContractAddress,
     );
+    fn update_attribute_group(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        owner: AttributeGroupOwner,
+        target_set_contract_address: ContractAddress,
+        booklet_contract_address: ContractAddress,
+    );
 }
 
 #[system]
@@ -146,7 +159,7 @@ mod AttributeGroups {
     use briq_protocol::world_config::AdminTrait;
     use briq_protocol::types::{FTSpec, ShapeItem};
     use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
-    
+
     use super::{AttributeGroupTrait, AttributeGroupOwner, AttributeGroup};
 
     #[derive(Drop, PartialEq, starknet::Event)]
@@ -182,11 +195,7 @@ mod AttributeGroups {
         world.only_admins(@get_caller_address());
 
         let attribute_group = AttributeGroupTrait::new_attribute_group(
-            world,
-            attribute_group_id,
-            owner,
-            target_set_contract_address,
-            booklet_contract_address
+            world, attribute_group_id, owner, target_set_contract_address, booklet_contract_address
         );
 
         AttributeGroupTrait::set_attribute_group(world, attribute_group);
@@ -195,7 +204,9 @@ mod AttributeGroups {
             AttributeGroupOwner::Admin(address) => {
                 emit!(
                     world,
-                    AttributeGroupCreated { attribute_group_id, owner_admin: address, owner_contract: Zeroable::zero() }
+                    AttributeGroupCreated {
+                        attribute_group_id, owner_admin: address, owner_contract: Zeroable::zero()
+                    }
                 );
             },
             AttributeGroupOwner::Contract(contract) => {
@@ -222,8 +233,7 @@ mod AttributeGroups {
 
         // check that attribute group already exists
         assert(
-            AttributeGroupTrait::exists(world, attribute_group_id),
-            'unexisting attribute_group_id'
+            AttributeGroupTrait::exists(world, attribute_group_id), 'unexisting attribute_group_id'
         );
 
         // update attribute_group
@@ -238,7 +248,9 @@ mod AttributeGroups {
             AttributeGroupOwner::Admin(address) => {
                 emit!(
                     world,
-                    AttributeGroupUpdated { attribute_group_id, owner_admin: address, owner_contract: Zeroable::zero() }
+                    AttributeGroupUpdated {
+                        attribute_group_id, owner_admin: address, owner_contract: Zeroable::zero()
+                    }
                 );
             },
             AttributeGroupOwner::Contract(contract) => {
