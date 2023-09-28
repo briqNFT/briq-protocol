@@ -48,6 +48,10 @@ fn get_box_infos(box_id: felt252) -> BoxInfo {
     BoxInfo { briq_1: 0, attribute_group_id: 0, attribute_id: 0 }
 }
 
+#[starknet::interface]
+trait Unboxing<ContractState> {
+    fn unbox(ref self: ContractState, box_id: felt252);
+}
 
 use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;

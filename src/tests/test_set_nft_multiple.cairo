@@ -8,39 +8,36 @@ use starknet::testing::{set_caller_address, set_contract_address,};
 use starknet::{ContractAddress, get_contract_address};
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::erc_common::utils::system_calldata;
-use dojo_erc::erc721::interface::IERC721DispatcherTrait;
-use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
-use dojo_erc::erc1155::components::ERC1155BalanceTrait;
+use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
+use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
+
+use briq_protocol::erc::erc1155::components::ERC1155Balance;
 
 use briq_protocol::tests::test_utils::{
-    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
+    WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate, deploy
 };
-use briq_protocol::attributes::attribute_group::{CreateAttributeGroupParams, AttributeGroupOwner};
-use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
+use briq_protocol::attributes::attribute_group::{IAttributeGroupsDispatcher, IAttributeGroupsDispatcherTrait, AttributeGroupOwner};
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::tests::test_set_nft::convenience_for_testing::{
-    assemble, disassemble, valid_shape_1, valid_shape_2, valid_shape_3, mint_booklet,
-    create_attribute_group_with_booklet, register_shape_validator_shapes,
-    create_attribute_group_with_briq_counter
+    as_set, valid_shape_1, valid_shape_2, valid_shape_3, mint_booklet, register_shape_validator_shapes
 };
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
+use briq_protocol::set_nft::assembly::ISetNftAssemblyDispatcherTrait;
+use briq_protocol::tokens::set_nft::SetNft::Transfer as SetNftTransfer;
 
 use debug::PrintTrait;
 
 #[test]
 #[available_gas(3000000000)]
 fn test_multiple_set() {
-    let DefaultWorld{world, briq_token, generic_sets, ducks_set, ducks_booklet, .. } =
-        spawn_briq_test_world();
+    let DefaultWorld{world, briq_token, generic_sets, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
 
-    let token_id = assemble(
-        world,
+    let token_id = as_set(generic_sets).assemble(
         DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
@@ -56,30 +53,29 @@ fn test_multiple_set() {
     impersonate(WORLD_ADMIN());
 
     // create attribute_group for ducks_set & register shapes
-    create_attribute_group_with_booklet(
-        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
+        world, 0xbaba, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
     );
-    register_shape_validator_shapes(world, 0x69);
+    register_shape_validator_shapes(world, register_shape_validator_addr, 0xbaba);
 
     // mint a booklet for DEFAULT_OWNER
-    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x1], array![1]);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x1, 1);
 
     impersonate(DEFAULT_OWNER());
 
     // lets assemble a duck
-    let token_id_duck = assemble(
-        world,
+    let token_id_duck = as_set(sets_ducks).assemble(
         DEFAULT_OWNER(),
         0xfade,
         array![0xcafe],
         array![0xfade],
         array![FTSpec { token_id: 1, qty: 4 }],
         valid_shape_1(),
-        array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }],
+        array![AttributeItem { attribute_group_id: 0xbaba, attribute_id: 0x1 }],
     );
 
-    assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
-    assert(ducks_set.owner_of(token_id_duck.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
+    assert(sets_ducks.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
+    assert(sets_ducks.owner_of(token_id_duck.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
 
     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 1, 'should be 1');
     assert(generic_sets.owner_of(token_id.into()) == DEFAULT_OWNER(), 'should be DEFAULT_OWNER');
@@ -88,22 +84,29 @@ fn test_multiple_set() {
 #[test]
 #[available_gas(3000000000)]
 fn test_multiple_attributes() {
-    let DefaultWorld{world, briq_token, ducks_set, ducks_booklet, .. } = spawn_briq_test_world();
+    let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
-    create_attribute_group_with_booklet(
-        world, 0x69, ducks_set.contract_address, ducks_booklet.contract_address
+    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
+        world, 0xbaba, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
     );
-    register_shape_validator_shapes(world, 0x69);
+    register_shape_validator_shapes(world, register_shape_validator_addr, 0xbaba);
 
-    create_attribute_group_with_briq_counter(world, 0x420);
+    // mint a booklet for DEFAULT_OWNER
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x2, 1);
 
-    mint_booklet(world, ducks_booklet.contract_address, DEFAULT_OWNER(), array![0x2], array![1]);
+    // Deploy another system for this test.
+    let briq_counter_addr = deploy(briq_protocol::tests::briq_counter::TestBriqCounterAttributeHandler::TEST_CLASS_HASH, array![]);
+    IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
+        world, 0xf00, AttributeGroupOwner::Contract(briq_counter_addr), Zeroable::zero(), Zeroable::zero()
+    );
+    
+    // Test start
+
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
 
-    let token_id = assemble(
-        world,
+    let token_id = as_set(sets_ducks).assemble(
         DEFAULT_OWNER(),
         0x533d,
         array![0xcafe],
@@ -111,81 +114,39 @@ fn test_multiple_attributes() {
         array![FTSpec { token_id: 1, qty: 3 }],
         valid_shape_2(),
         array![
-            AttributeItem { attribute_group_id: 0x69, attribute_id: 0x2 },
-            AttributeItem { attribute_group_id: 0x420, attribute_id: 0x3 } // at least 3 briqs attr
+            AttributeItem { attribute_group_id: 0xbaba, attribute_id: 0x2 },
+            AttributeItem { attribute_group_id: 0xf00, attribute_id: 0x3 } // at least 3 briqs attr
         ],
     );
 
-    assert(DEFAULT_OWNER() == ducks_set.owner_of(token_id.into()), 'bad owner');
-    assert(ducks_set.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-    assert(ducks_booklet.balance_of(token_id, 0x2) == 1, 'bad booklet balance 2');
+    assert(DEFAULT_OWNER() == sets_ducks.owner_of(token_id.into()), 'bad owner');
+    assert(sets_ducks.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
+    assert(booklet_ducks.balance_of(token_id.try_into().unwrap(), 0x2) == 1, 'bad booklet balance 2');
     assert(
-        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 2,
+        get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()), ERC1155Balance).amount == 2,
         'should be 2'
     );
     assert(
-        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()) == 1,
+        get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()), ERC1155Balance).amount == 1,
         'should be 1'
     );
 
-    disassemble(
-        world,
+    as_set(sets_ducks).disassemble(
         DEFAULT_OWNER(),
         token_id,
         array![FTSpec { token_id: 1, qty: 3 }],
         array![
-            AttributeItem { attribute_group_id: 0x69, attribute_id: 0x2 },
-            AttributeItem { attribute_group_id: 0x420, attribute_id: 0x3 } // at least 3 briqs attr
+            AttributeItem { attribute_group_id: 0xbaba, attribute_id: 0x2 },
+            AttributeItem { attribute_group_id: 0xf00, attribute_id: 0x3 } // at least 3 briqs attr
         ]
     );
-    assert(ducks_booklet.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
+    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
     assert(
-        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()) == 0,
+        get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()), ERC1155Balance).amount == 0,
         'should be 0'
     );
     assert(
-        ERC1155BalanceTrait::balance_of(world, CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()) == 0,
+        get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()), ERC1155Balance).amount == 0,
         'should be 0'
     );
 }
-//
-//
-//////////////////////////////////////////////// 
-//////////// TODO try to make it buggy 
-// error: Failed setting up runner.
-// Caused by:
-//  #36142->#36143: Got 'Unknown ap change' error while moving [8].
-
-#[derive(Serde, Drop)]
-struct MyStruct {
-    caller: ContractAddress,
-    addr: ContractAddress,
-    arr: Array<felt252>,
-}
-
-fn aaa(addr: ContractAddress) -> felt252 {
-    let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![] });
-    123
-}
-
-fn bbb(addr: ContractAddress) -> felt252 {
-    let calldata = system_calldata(MyStruct { caller: get_contract_address(), addr: addr, arr:array![]  });
-    1234
-}
-
-#[test]
-#[available_gas(3000000000)]
-fn test_ap_move() {
-    let DefaultWorld{world, briq_token, generic_sets, ducks_set, .. } = spawn_briq_test_world();
-
-    let res = aaa(generic_sets.contract_address);
-
-    let ra = MyStruct { caller: get_contract_address(), addr: generic_sets.contract_address, arr:array![]  };
-
-    assert(res == 123, 'qqq');
-    assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
-
-    let res2 = bbb(generic_sets.contract_address);
-}
-
-

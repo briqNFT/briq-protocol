@@ -38,13 +38,32 @@ impl PrintTraitAttributeGroupOwner of PrintTrait<AttributeGroupOwner> {
     }
 }
 
+// Implemented for 'is_non_zero'
+impl AttributeGroupOwnerZeroable of Zeroable<AttributeGroupOwner> {
+    fn zero() -> AttributeGroupOwner {
+        AttributeGroupOwner::Admin(Zeroable::zero())
+    }
+    #[inline(always)]
+    fn is_zero(self: AttributeGroupOwner) -> bool {
+        match self {
+            AttributeGroupOwner::Admin(addr) => addr.is_zero(),
+            AttributeGroupOwner::Contract(contract) => contract.is_zero(),
+        }
+    }
+    #[inline(always)]
+    fn is_non_zero(self: AttributeGroupOwner) -> bool {
+        !self.is_zero()
+    }
+}
+
+
 #[derive(Copy, Drop, Serde)]
 enum AttributeGroupOwner {
     Admin: ContractAddress,
     Contract: ContractAddress,
 }
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct AttributeGroup {
     #[key]
     attribute_group_id: u64,
@@ -95,7 +114,7 @@ impl AttributeGroupImpl of AttributeGroupTrait {
             !AttributeGroupTrait::exists(world, attribute_group_id),
             'attribute_group already exists'
         );
-
+        assert(owner.is_non_zero(), 'Must have admin');
         AttributeGroup {
             attribute_group_id: attribute_group_id,
             owner: owner,
@@ -162,17 +181,6 @@ mod AttributeGroups {
     ) {
         world.only_admins(@get_caller_address());
 
-        assert(target_set_contract_address.is_non_zero(), 'Invalid target_contract_address');
-
-        match owner {
-            AttributeGroupOwner::Admin(address) => {
-                assert(address.is_non_zero(), 'Must have admin');
-            },
-            AttributeGroupOwner::Contract(contract) => {
-                assert(contract.is_non_zero(), 'Must have admin');
-            },
-        };
-
         let attribute_group = AttributeGroupTrait::new_attribute_group(
             world,
             attribute_group_id,
@@ -211,17 +219,6 @@ mod AttributeGroups {
         booklet_contract_address: ContractAddress,
     ) {
         world.only_admins(@get_caller_address());
-
-        assert(target_set_contract_address.is_non_zero(), 'Invalid target_contract_address');
-
-        match owner {
-            AttributeGroupOwner::Admin(address) => {
-                assert(address.is_non_zero(), 'Must have admin');
-            },
-            AttributeGroupOwner::Contract(contract) => {
-                assert(contract.is_non_zero(), 'Must have admin');
-            },
-        };
 
         // check that attribute group already exists
         assert(

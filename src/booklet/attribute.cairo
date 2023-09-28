@@ -14,7 +14,7 @@ impl ClassHashPrint of PrintTrait<ClassHash> {
     fn print(self: ClassHash) {}
 }
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct ShapeValidator {
     #[key]
     attribute_group_id: u64,

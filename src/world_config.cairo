@@ -8,7 +8,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 const SYSTEM_CONFIG_ID: u32 = 1;
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct WorldConfig {
     #[key]
     config_id: u32,
@@ -19,6 +19,20 @@ struct WorldConfig {
     factory: ContractAddress,
 }
 
+#[derive(Model, Copy, Drop, Serde)]
+struct SetContracts {
+    #[key]
+    contract: ContractAddress,
+    is_active: bool
+}
+
+#[derive(Model, Copy, Drop, Serde)]
+struct BoxContracts {
+    #[key]
+    contract: ContractAddress,
+    is_active: bool
+}
+
 fn get_world_config(world: IWorldDispatcher) -> WorldConfig {
     get!(world, (SYSTEM_CONFIG_ID), WorldConfig)
 }
@@ -27,6 +41,9 @@ fn get_world_config(world: IWorldDispatcher) -> WorldConfig {
 trait AdminTrait {
     fn is_admin(self: IWorldDispatcher, addr: @ContractAddress) -> bool;
     fn only_admins(self: IWorldDispatcher, caller: @ContractAddress);
+
+    fn is_set_contract(self: IWorldDispatcher, caller: ContractAddress) -> bool;
+    fn is_box_contract(self: IWorldDispatcher, caller: ContractAddress) -> bool;
 }
 
 
@@ -41,6 +58,13 @@ impl AdminTraitImpl of AdminTrait {
     fn only_admins(self: IWorldDispatcher, caller: @ContractAddress) {
         assert(self.is_admin(caller), 'Not authorized');
     }
+
+    fn is_set_contract(self: IWorldDispatcher, caller: ContractAddress) -> bool {
+        get!(self, (caller), SetContracts).is_active
+    }
+    fn is_box_contract(self: IWorldDispatcher, caller: ContractAddress) -> bool {
+        get!(self, (caller), BoxContracts).is_active
+    }
 }
 
 #[starknet::interface]
@@ -53,19 +77,36 @@ trait ISetupWorld<ContractState> {
         generic_sets: ContractAddress,
         factory: ContractAddress,
     );
+    fn register_set_contract(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        set_contract: ContractAddress,
+        active: bool,
+    );
+    fn register_box_contract(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        box_contract: ContractAddress,
+        active: bool,
+    );
 }
 
-#[system]
+#[starknet::contract]
 mod SetupWorld {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
     use array::ArrayTrait;
     use traits::Into;
-
-    use super::{WorldConfig, AdminTrait};
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use super::{WorldConfig, AdminTrait, SetContracts, BoxContracts};
     use super::SYSTEM_CONFIG_ID;
 
+    #[storage]
+    struct Storage {}
+
+    #[external(v0)]
     fn execute(
+        ref self: ContractState,
         world: IWorldDispatcher,
         treasury: ContractAddress,
         briq: ContractAddress,
@@ -86,5 +127,39 @@ mod SetupWorld {
             })
         );
         return ();
+    }
+
+    #[external(v0)]
+    fn register_set_contract(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        set_contract: ContractAddress,
+        active: bool,
+    ) {
+        world.only_admins(@get_caller_address());
+        set!(
+            world,
+            SetContracts {
+                contract: set_contract,
+                is_active: active,
+            }
+        );
+    }
+
+    #[external(v0)]
+    fn register_box_contract(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        box_contract: ContractAddress,
+        active: bool,
+    ) {
+        world.only_admins(@get_caller_address());
+        set!(
+            world,
+            BoxContracts {
+                contract: box_contract,
+                is_active: active,
+            }
+        );
     }
 }

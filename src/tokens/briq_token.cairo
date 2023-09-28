@@ -99,7 +99,9 @@ mod BriqToken {
     #[external(v0)]
     impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
         fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
-            self.world().only_admins(@get_caller_address());
+            if !self.world().is_admin(@get_caller_address()) {
+                assert(self.world().is_box_contract(get_caller_address()), Errors::UNAUTHORIZED);
+            }
             self._mint(owner, token_id.into(), amount.into())
         }
         fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
@@ -312,7 +314,7 @@ mod BriqToken {
         ) -> bool {
             // WARNING: briq delta
             if !(caller == from || self.is_approved_for_all(from, caller)) {
-                return get_caller_address() == get_world_config(self.world()).generic_sets;
+                return self.world().is_set_contract(get_caller_address());
             }
             false
         }

@@ -126,6 +126,7 @@ fn spawn_briq_test_world() -> DefaultWorld {
     //
 
     world.grant_writer('WorldConfig', setup_world_addr);
+    world.grant_writer('SetContracts', setup_world_addr);
 
     world.grant_writer('BriqFactoryStore', briq_factory_addr);
 
@@ -151,8 +152,12 @@ fn spawn_briq_test_world() -> DefaultWorld {
     world.grant_writer('ERC721Owner', sets_ducks_addr);
     world.grant_writer('ERC721TokenApproval', sets_ducks_addr);
     world.grant_writer('ERC721OperatorApproval', sets_ducks_addr);
+    // For some cumulative data
+    world.grant_writer('ERC1155Balance', sets_ducks_addr);
+    world.grant_writer('ERC1155OperatorApproval', sets_ducks_addr);
 
     world.grant_writer('AttributeGroup', attribute_groups_addr);
+    
 
     // Setup
     ISetupWorldDispatcher { contract_address: setup_world_addr }.execute(
@@ -161,6 +166,22 @@ fn spawn_briq_test_world() -> DefaultWorld {
         briq_token_addr,
         sets_generic_addr,
         briq_factory_addr,
+    );
+
+    ISetupWorldDispatcher { contract_address: setup_world_addr }.register_set_contract(
+        world,
+        sets_generic_addr,
+        true,
+    );
+    ISetupWorldDispatcher { contract_address: setup_world_addr }.register_set_contract(
+        world,
+        sets_ducks_addr,
+        true,
+    );
+    ISetupWorldDispatcher { contract_address: setup_world_addr }.register_box_contract(
+        world,
+        box_nft_addr,
+        true,
     );
 
     DefaultWorld {

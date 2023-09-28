@@ -2,7 +2,7 @@ use dojo_erc::token::erc1155::components::{ERC1155OperatorApproval, erc_1155_ope
 
 use starknet::ContractAddress;
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct ERC1155Balance {
     #[key]
     token: ContractAddress,

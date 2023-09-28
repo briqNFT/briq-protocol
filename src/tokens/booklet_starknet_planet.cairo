@@ -142,6 +142,21 @@ mod BookletStarknetPlanet {
         }
     }
 
+    use briq_protocol::world_config::{get_world_config, AdminTrait};
+    #[external(v0)]
+    impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
+        fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            if !self.world().is_admin(@get_caller_address()) {
+                assert(self.world().is_box_contract(get_caller_address()), Errors::UNAUTHORIZED);
+            }
+            self._mint(owner, token_id.into(), amount.into())
+        }
+        fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            self.world().only_admins(@get_caller_address());
+            self._burn(token_id.into(), amount.into())
+        }
+    }
+
     #[external(v0)]
     impl ERC1155Impl of interface::IERC1155<ContractState> {
         fn balance_of(self: @ContractState, account: ContractAddress, id: u256) -> u256 {

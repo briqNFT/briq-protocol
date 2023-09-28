@@ -17,7 +17,7 @@ use briq_protocol::felt_math::{FeltOrd, FeltDiv};
 
 use debug::PrintTrait;
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct BriqFactoryStore {
     #[key]
     store_id: u64,

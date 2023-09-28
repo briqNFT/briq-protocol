@@ -6,19 +6,18 @@ use serde::Serde;
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::erc_common::utils::{system_calldata};
-use dojo_erc::erc721::interface::IERC721DispatcherTrait;
-use dojo_erc::erc1155::interface::IERC1155DispatcherTrait;
-use briq_protocol::mint_burn::ERC1155MintBurnParams;
+use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
+use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::world_config::get_world_config;
-use briq_protocol::attributes::group_systems::booklet::RegisterShapeValidatorParams;
 use briq_protocol::types::{FTSpec, ShapeItem};
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
 };
-use briq_protocol::tests::test_set_nft::create_attribute_group_with_booklet;
 
+use briq_protocol::tests::test_set_nft::convenience_for_testing::create_contract_attribute_group;
+use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
+use briq_protocol::box_nft::unboxing::{UnboxingDispatcher, UnboxingSafeDispatcher, UnboxingDispatcherTrait, UnboxingSafeDispatcherTrait};
 use debug::PrintTrait;
 
 #[test]
@@ -26,46 +25,48 @@ use debug::PrintTrait;
 fn test_mint_and_unbox() {
     let DefaultWorld{world,
     briq_token,
-    ducks_set,
-    planets_set,
-    ducks_booklet,
-    planets_booklet,
+    booklet_ducks,
+    booklet_sp,
     box_nft,
+    attribute_groups_addr,
     .. } =
         spawn_briq_test_world();
 
-    // register attribute group 1
-    create_attribute_group_with_booklet(
-        world, 0x1, planets_set.contract_address, planets_booklet.contract_address
-    );
+    create_contract_attribute_group(world, attribute_groups_addr, 0x1, booklet_sp.contract_address, Zeroable::zero(), booklet_sp.contract_address);
+    create_contract_attribute_group(world, attribute_groups_addr, 0x2, booklet_ducks.contract_address, Zeroable::zero(), booklet_ducks.contract_address);
 
     let box_contract_address = box_nft.contract_address;
 
-    // mint a box id = 1  -->  starknet planets (BoxInfos { briq_1: 434, attribute_group_id: 1, attribute_id: 1 })
-    world
-        .execute(
-            'ERC1155MintBurn',
-            system_calldata(
-                ERC1155MintBurnParams {
-                    token: box_nft.contract_address,
-                    operator: WORLD_ADMIN().into(),
-                    from: starknet::contract_address_const::<0>(),
-                    to: DEFAULT_OWNER().into(),
-                    ids: array![0x1], //  booklet_id == attribute_id
-                    amounts: array![1],
-                }
-            )
-        );
+    assert(UnboxingSafeDispatcher { contract_address: box_nft.contract_address }.unbox(0x1).is_err(), 'expect error');
+
+    MintBurnDispatcher { contract_address: box_nft.contract_address }.mint(
+        DEFAULT_OWNER(),
+        0x1,
+        0x4,
+    );
+    MintBurnDispatcher { contract_address: box_nft.contract_address }.mint(
+        DEFAULT_OWNER(),
+        10,
+        0x1,
+    );
 
     impersonate(DEFAULT_OWNER());
 
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 0, 'bad balance');
-    assert(planets_booklet.balance_of(DEFAULT_OWNER(), 0x1) == 0, 'bad balance 1');
-    assert(box_nft.balance_of(DEFAULT_OWNER(), 1) == 1, 'bad balance 2');
+    assert(booklet_sp.balance_of(DEFAULT_OWNER(), 0x1) == 0, 'bad balance 1');
+    assert(box_nft.balance_of(DEFAULT_OWNER(), 0x1) == 4, 'bad balance 2');
 
-    world.execute('box_unboxing', (array![box_contract_address.into(), 0x1]));
+    UnboxingDispatcher { contract_address: box_nft.contract_address }.unbox(0x1);
 
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 434, 'bad balance 2.5');
-    assert(planets_booklet.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad balance 3');
-    assert(box_nft.balance_of(DEFAULT_OWNER(), 1) == 0, 'bad balance 4');
+    assert(booklet_sp.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad balance 3');
+    assert(box_nft.balance_of(DEFAULT_OWNER(), 0x1) == 3, 'bad balance 4');
+
+    UnboxingDispatcher { contract_address: box_nft.contract_address }.unbox(10);
+
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 494, 'bad balance 5');
+    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad balance 6');
+    assert(box_nft.balance_of(DEFAULT_OWNER(), 10) == 0, 'bad balance 7');
+
+    assert(UnboxingSafeDispatcher { contract_address: box_nft.contract_address }.unbox(10).is_err(), 'expect error');
 }

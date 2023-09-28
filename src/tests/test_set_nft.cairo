@@ -61,7 +61,6 @@ mod convenience_for_testing {
         ); // not handled !
     }
 
-
     fn valid_shape_1() -> Array<PackedShapeItem> {
         array![
             ShapePacking::pack(ShapeItem { color: '#ffaaff', material: 1, x: 2, y: 4, z: -2 }),
@@ -86,9 +85,13 @@ mod convenience_for_testing {
         ]
     }
 
-    //
-    // Booklet helper
-    //
+    use briq_protocol::attributes::attribute_group::{IAttributeGroupsDispatcher, IAttributeGroupsDispatcherTrait, AttributeGroupOwner};
+    fn create_contract_attribute_group(world: IWorldDispatcher, attribute_groups_addr: ContractAddress, attribute_group_id: u64, owner: ContractAddress, target_sets: ContractAddress, target_booklet: ContractAddress) {
+        IAttributeGroupsDispatcher { contract_address: attribute_groups_addr }.create_attribute_group(
+        world, attribute_group_id, AttributeGroupOwner::Contract(owner), target_sets, target_booklet
+    );
+    }
+
 
     fn mint_booklet(
         booklet_address: ContractAddress,
@@ -329,8 +332,6 @@ fn test_simple_mint_and_burn_not_enough_briqs_in_disassembly() {
     expected: (
         'unregistered attribute_group_id',
         'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED'
     )
 )]
 fn test_simple_mint_attribute_not_exist() {
@@ -360,7 +361,6 @@ fn test_simple_mint_attribute_ok_1() {
         world, 0x69, AttributeGroupOwner::Contract(booklet_ducks.contract_address), sets_ducks.contract_address, booklet_ducks.contract_address
     );
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
-
     mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x1, 1);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
@@ -459,13 +459,9 @@ fn test_simple_mint_attribute_ok_2() {
 #[available_gas(3000000000)]
 #[should_panic(
     expected: (
-        'u128_sub Overflow',
+        'u256_sub Overflow',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED'
     )
 )]
 fn test_simple_mint_attribute_dont_have_the_booklet() {
@@ -496,10 +492,6 @@ fn test_simple_mint_attribute_dont_have_the_booklet() {
 #[should_panic(
     expected: (
         'bad shape item',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED'
@@ -541,10 +533,6 @@ fn test_simple_mint_attribute_bad_shape_item() {
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED'
     )
 )]
 fn test_simple_mint_attribute_shape_fts_mismatch() {
@@ -577,7 +565,7 @@ fn test_simple_mint_attribute_shape_fts_mismatch() {
 #[available_gas(3000000000)]
 #[should_panic(
     expected: (
-        'Set still attributed', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED'
+        'Set still attributed', 'ENTRYPOINT_FAILED'
     )
 )]
 fn test_simple_mint_attribute_forgot_in_disassembly() {
@@ -625,10 +613,6 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
         'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED',
-        'ENTRYPOINT_FAILED'
     )
 )]
 fn test_simple_mint_registered_but_unhandled_shape() {

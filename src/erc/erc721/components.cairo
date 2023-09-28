@@ -2,7 +2,7 @@ use starknet::ContractAddress;
 
 use dojo_erc::token::erc721::components::{ERC721OperatorApproval, erc_721_operator_approval};
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct ERC721Owner {
     #[key]
     token: ContractAddress,
@@ -11,7 +11,7 @@ struct ERC721Owner {
     address: ContractAddress
 }
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct ERC721Balance {
     #[key]
     token: ContractAddress,
@@ -20,7 +20,7 @@ struct ERC721Balance {
     amount: u128,
 }
 
-#[derive(Component, Copy, Drop, Serde)]
+#[derive(Model, Copy, Drop, Serde)]
 struct ERC721TokenApproval {
     #[key]
     token: ContractAddress,

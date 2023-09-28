@@ -111,10 +111,22 @@ mod BoxNft {
     }
 
     #[external(v0)]
-    fn unboxing(ref self: ContractState, box_id: felt252) {
+    fn unbox(ref self: ContractState, box_id: felt252) {
         briq_protocol::box_nft::unboxing::unbox(ref self, self.world(), get_contract_address(), get_caller_address(), box_id);
     }
 
+    use briq_protocol::world_config::{get_world_config, AdminTrait};
+    #[external(v0)]
+    impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
+        fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            self.world().only_admins(@get_caller_address());
+            self._mint(owner, token_id.into(), amount.into())
+        }
+        fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            self.world().only_admins(@get_caller_address());
+            self._burn(token_id.into(), amount.into())
+        }
+    }
 
     #[external(v0)]
     impl ERC1155Impl of interface::IERC1155<ContractState> {
