@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod BriqToken {
+mod briq_token {
     use briq_protocol::erc::erc1155::components::{
         ERC1155OperatorApproval, ERC1155Balance,
         increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
@@ -67,12 +67,11 @@ mod BriqToken {
         const INSUFFICIENT_BALANCE: felt252 = 'ERC1155: insufficient balance';
     }
 
-    #[constructor]
-    fn constructor(
-        ref self: ContractState,
-        world: ContractAddress
+    #[external(v0)]
+    fn init_world(
+        ref self: ContractState, world: IWorldDispatcher
     ) {
-        self._world.write(world);
+        self._world.write(world.contract_address);
     }
 
     //

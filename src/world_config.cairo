@@ -92,7 +92,7 @@ trait ISetupWorld<ContractState> {
 }
 
 #[starknet::contract]
-mod SetupWorld {
+mod setup_world {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
     use array::ArrayTrait;

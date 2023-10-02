@@ -24,7 +24,7 @@ use briq_protocol::tests::test_set_nft::convenience_for_testing::{
 };
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
 use briq_protocol::set_nft::assembly::ISetNftAssemblyDispatcherTrait;
-use briq_protocol::tokens::set_nft::SetNft::Transfer as SetNftTransfer;
+use briq_protocol::tokens::set_nft::set_nft::Transfer as SetNftTransfer;
 
 use debug::PrintTrait;
 

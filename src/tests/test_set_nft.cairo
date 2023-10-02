@@ -112,7 +112,7 @@ use briq_protocol::world_config::get_world_config;
 use briq_protocol::attributes::attribute_group::{IAttributeGroupsDispatcher, IAttributeGroupsDispatcherTrait, AttributeGroupOwner};
 
 use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcherTrait, ISetNftAssemblySafeDispatcherTrait};
-use briq_protocol::tokens::set_nft::SetNft::Transfer as SetNftTransfer;
+use briq_protocol::tokens::set_nft::set_nft::Transfer as SetNftTransfer;
 
 use debug::PrintTrait;
 

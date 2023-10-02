@@ -144,7 +144,7 @@ trait IAttributeGroups<ContractState> {
 }
 
 #[system]
-mod AttributeGroups {
+mod attribute_groups {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
 

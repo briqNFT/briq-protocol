@@ -11,7 +11,7 @@ export KEYSTORE_PWD="katana"
 export STARKNET_ACCOUNT="scripts/katana_account.json"
 export ACCOUNT_ADDRESS=$(jq .deployment.address $STARKNET_ACCOUNT -r)
 
-export TREASURY_ADDRESS="0x33c627a3e5213790e246a917770ce23d7e562baa5b4d2917c23b1be6d91961c"
+export TREASURY_ADDRESS=$ACCOUNT_ADDRESS
 
 # https://github.com/dojoengine/dojo/blob/main/crates/katana/core/src/constants.rs
 # katana predeployed fee_token_address (uses transferFrom..)

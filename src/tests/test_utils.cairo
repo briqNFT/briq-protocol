@@ -123,24 +123,24 @@ fn spawn_briq_test_world() -> DefaultWorld {
     ]);
 
     // systems
-    let setup_world_addr = deploy(briq_protocol::world_config::SetupWorld::TEST_CLASS_HASH, array![]);
+    let setup_world_addr = deploy(briq_protocol::world_config::setup_world::TEST_CLASS_HASH, array![]);
 
-    let attribute_groups_addr = deploy(briq_protocol::attributes::attribute_group::AttributeGroups::TEST_CLASS_HASH, array![]);
-    let register_shape_validator_addr = deploy(briq_protocol::booklet::attribute::RegisterShapeValidator::TEST_CLASS_HASH, array![]);
+    let attribute_groups_addr = deploy(briq_protocol::attributes::attribute_group::attribute_groups::TEST_CLASS_HASH, array![]);
+    let register_shape_validator_addr = deploy(briq_protocol::booklet::attribute::register_shape_validator::TEST_CLASS_HASH, array![]);
 
-    let briq_factory_addr = deploy(briq_protocol::briq_factory::BriqFactory::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let briq_factory_addr = deploy(briq_protocol::briq_factory::briq_factory::TEST_CLASS_HASH, array![world.contract_address.into()]);
 
     // Specific tokens below
-    let briq_token_addr = deploy(briq_protocol::tokens::briq_token::BriqToken::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let briq_token_addr = deploy(briq_protocol::tokens::briq_token::briq_token::TEST_CLASS_HASH, array![world.contract_address.into()]);
 
-    let sets_generic_addr = deploy(briq_protocol::tokens::set_nft::SetNft::TEST_CLASS_HASH, array![world.contract_address.into()]);
-    let sets_ducks_addr = deploy(briq_protocol::tokens::set_nft_ducks::SetNftDucks::TEST_CLASS_HASH, array![world.contract_address.into()]);
-    let sets_1155_addr = deploy(briq_protocol::tokens::set_nft_1155::SetNft1155::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let sets_generic_addr = deploy(briq_protocol::tokens::set_nft::set_nft::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let sets_ducks_addr = deploy(briq_protocol::tokens::set_nft_ducks::set_nft_ducks::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let sets_1155_addr = deploy(briq_protocol::tokens::set_nft_1155::set_nft_1155::TEST_CLASS_HASH, array![world.contract_address.into()]);
 
-    let booklet_ducks_addr = deploy(briq_protocol::tokens::booklet_ducks::BookletDucks::TEST_CLASS_HASH, array![world.contract_address.into()]);
-    let booklet_starknet_planet_addr = deploy(briq_protocol::tokens::booklet_starknet_planet::BookletStarknetPlanet::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let booklet_ducks_addr = deploy(briq_protocol::tokens::booklet_ducks::booklet_ducks::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let booklet_starknet_planet_addr = deploy(briq_protocol::tokens::booklet_starknet_planet::booklet_starknet_planet::TEST_CLASS_HASH, array![world.contract_address.into()]);
 
-    let box_nft_addr = deploy(briq_protocol::tokens::box_nft::BoxNft::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let box_nft_addr = deploy(briq_protocol::tokens::box_nft::box_nft::TEST_CLASS_HASH, array![world.contract_address.into()]);
     
     //
     // set-up writer rights

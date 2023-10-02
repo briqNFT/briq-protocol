@@ -14,7 +14,7 @@ trait IBriqFactory<ContractState> {
 }
 
 #[starknet::contract]
-mod BriqFactory {
+mod briq_factory {
     use starknet::{get_caller_address, ContractAddress, ClassHash};
     use starknet::get_block_timestamp;
 
@@ -72,8 +72,8 @@ mod BriqFactory {
         );
     }
 
-    #[constructor]
-    fn constructor(
+    #[external(v0)]
+    fn init_world(
         ref self: ContractState, world: IWorldDispatcher
     ) {
         self.world.write(world);

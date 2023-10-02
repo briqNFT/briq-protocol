@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod SetNft {
+mod set_nft {
     use briq_protocol::erc::erc721::components::{
         ERC721OperatorApproval, ERC721Owner, ERC721Balance, ERC721TokenApproval
     };
@@ -61,12 +61,11 @@ mod SetNft {
         const SAFE_TRANSFER_FAILED: felt252 = 'ERC721: safe transfer failed';
     }
 
-    #[constructor]
-    fn constructor(
-        ref self: ContractState,
-        world: ContractAddress,
+    #[external(v0)]
+    fn init_world(
+        ref self: ContractState, world: IWorldDispatcher
     ) {
-        self._world.write(world);
+        self._world.write(world.contract_address);
     }
 
     //

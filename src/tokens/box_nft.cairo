@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod BoxNft {
+mod box_nft {
     use briq_protocol::erc::erc1155::components::{
         ERC1155OperatorApproval, ERC1155Balance
     };
@@ -65,12 +65,11 @@ mod BoxNft {
         const INSUFFICIENT_BALANCE: felt252 = 'ERC1155: insufficient balance';
     }
 
-    #[constructor]
-    fn constructor(
-        ref self: ContractState,
-        world: ContractAddress
+    #[external(v0)]
+    fn init_world(
+        ref self: ContractState, world: IWorldDispatcher
     ) {
-        self._world.write(world);
+        self._world.write(world.contract_address);
     }
 
     //

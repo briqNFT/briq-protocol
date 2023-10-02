@@ -42,11 +42,15 @@ trait IRegisterShapeValidator<ContractState> {
     );
 }
 
-#[system]
-mod RegisterShapeValidator {
+#[starknet::contract]
+mod register_shape_validator {
+    use starknet::{ClassHash, get_caller_address};
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
     use super::ShapeValidator;
-    use starknet::{ClassHash, get_caller_address};
+    
+    #[storage]
+    struct Storage {}
 
     fn execute(
         world: IWorldDispatcher,
@@ -60,7 +64,7 @@ mod RegisterShapeValidator {
 }
 
 // should panic if check fails, or no validator found
-fn assign_check(
+fn check_shape_via_validator(
     world: IWorldDispatcher,
     attribute_group_id: u64,
     attribute_id: u64,
@@ -95,10 +99,10 @@ impl BookletAttributeHolder<ContractState,
         shape: Array<PackedShapeItem>,
         fts: Array<FTSpec>,
     ) {
-        // TODO: auth
         assert(world.contract_address == self.world().contract_address, 'bad world');
+        assert(world.is_set_contract(get_caller_address()), 'Unauthorized');
 
-        assign_check(
+        check_shape_via_validator(
             world,
             attribute_group_id,
             attribute_id,
@@ -124,8 +128,8 @@ impl BookletAttributeHolder<ContractState,
         attribute_group_id: u64,
         attribute_id: u64
     ) {
-        // TODO: auth
         assert(world.contract_address == self.world().contract_address, 'bad world');
+        assert(world.is_set_contract(get_caller_address()), 'Unauthorized');
 
         // Transfer booklet with corresponding attribute_id from set_token_id to set_owner
         self._safe_transfer_from(
