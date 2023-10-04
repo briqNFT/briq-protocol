@@ -1,4 +1,4 @@
-mod components;
+mod models;
 mod constants;
 
 use starknet::ContractAddress;
@@ -28,7 +28,7 @@ mod briq_factory {
         SURGE_SLOPE, MINIMAL_SURGE, SURGE_DECAY_PER_SECOND, MIN_PURCHASE, BRIQ_MATERIAL
     };
 
-    use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
+    use briq_protocol::briq_factory::models::{BriqFactoryStore, BriqFactoryTrait};
     use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 
     #[derive(Drop, PartialEq, starknet::Event)]
@@ -53,13 +53,13 @@ mod briq_factory {
 
     #[storage]
     struct Storage {
-        world: IWorldDispatcher,
+        world_dispatcher: IWorldDispatcher,
     }
 
     #[external(v0)]
     impl Upgradable of IUpgradeable<ContractState> {
         fn upgrade(ref self: ContractState, new_class_hash: ClassHash) {
-            self.world.read().only_admins(@get_caller_address());
+            self.world_dispatcher.read().only_admins(@get_caller_address());
             UpgradeableTrait::upgrade(new_class_hash);
             self.emit(Upgraded { class_hash: new_class_hash });
         }
@@ -73,16 +73,9 @@ mod briq_factory {
     }
 
     #[external(v0)]
-    fn init_world(
-        ref self: ContractState, world: IWorldDispatcher
-    ) {
-        self.world.write(world);
-    }
-
-    #[external(v0)]
     impl BriqFactory of super::IBriqFactory<ContractState> {
         fn initialize(ref self: ContractState, t: felt252, surge_t: felt252, buy_token: ContractAddress) {
-            let world = self.world.read();
+            let world = self.world_dispatcher.read();
             world.only_admins(@get_caller_address());
 
             let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
@@ -100,7 +93,7 @@ mod briq_factory {
             material: u64,
             amount_u32: u32
         ) {
-            let world = self.world.read();
+            let world = self.world_dispatcher.read();
 
             let amount: felt252 = amount_u32.into();
             assert(amount >= MIN_PURCHASE(), 'amount too low !');
@@ -141,13 +134,13 @@ mod briq_factory {
 
     #[external(v0)]
     fn get_current_t(self: @ContractState) -> felt252 {
-        let briq_factory = BriqFactoryTrait::get_briq_factory(self.world.read());
+        let briq_factory = BriqFactoryTrait::get_briq_factory(self.world_dispatcher.read());
         briq_factory.get_current_t()
     }
 
     #[external(v0)]
     fn get_surge_t(self: @ContractState) -> felt252 {
-        let briq_factory = BriqFactoryTrait::get_briq_factory(self.world.read());
+        let briq_factory = BriqFactoryTrait::get_briq_factory(self.world_dispatcher.read());
         briq_factory.get_surge_t()
     }
 }

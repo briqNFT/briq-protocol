@@ -11,7 +11,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
 
-use briq_protocol::erc::erc1155::components::ERC1155Balance;
+use briq_protocol::erc::erc1155::models::ERC1155Balance;
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate, deploy
@@ -91,7 +91,7 @@ fn test_multiple_attributes() {
     mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x2, 1);
 
     // Deploy another system for this test.
-    let briq_counter_addr = deploy(briq_protocol::tests::briq_counter::TestBriqCounterAttributeHandler::TEST_CLASS_HASH, array![]);
+    let briq_counter_addr = deploy(world, briq_protocol::tests::briq_counter::TestBriqCounterAttributeHandler::TEST_CLASS_HASH);
     create_contract_attribute_group(world, attribute_groups_addr, 0xf00, briq_counter_addr, Zeroable::zero());
     
     // Test start

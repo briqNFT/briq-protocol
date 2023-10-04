@@ -10,11 +10,11 @@ mod erc {
     mod get_world;
     mod mint_burn;
     mod erc721 {
-        mod components;
+        mod models;
         mod internal_trait;
     }
     mod erc1155 {
-        mod components;
+        mod models;
         mod internal_trait;
     }
 }
@@ -65,6 +65,8 @@ mod tests {
 
     mod test_world_config;
     mod test_briq_factory;
+
+    mod test_check_fts_and_shape_match;
 
     // mod contract_upgrade;
     // mod test_upgradeable;

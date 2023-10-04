@@ -3,13 +3,13 @@ use starknet::{ContractAddress, get_caller_address, get_contract_address};
 use core::pedersen::pedersen;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use briq_protocol::erc::erc1155::components::{
+use briq_protocol::erc::erc1155::models::{
     ERC1155OperatorApproval, ERC1155Balance,
     increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
 };
 use dojo_erc::token::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
 
-use briq_protocol::erc::erc721::components::{
+use briq_protocol::erc::erc721::models::{
     ERC721Balance, ERC721Owner, ERC721TokenApproval, ERC721OperatorApproval, increase_balance, decrease_balance
 };
 
@@ -217,6 +217,9 @@ impl SetNftAssembly721<ContractState,
         let mut attribute_group_id = 0;
         if attrib_option.is_some() {
             attribute_group_id = attrib_option.unwrap().attribute_group_id;
+        } else {
+            // We trust the attributes validation ensures this.
+            check_fts_and_shape_match(fts.span(), shape.span());
         }
 
         let token_id = get_token_id(owner, token_id_hint, shape.len(), attribute_group_id);
@@ -289,11 +292,12 @@ impl SetNftAssembly1155<ContractState,
 
         transfer_briqs(world, owner, token_id.try_into().unwrap(), fts.span());
 
-        // no events
+        // TODO: move events here?
         increase_balance_1155(
             world, CUM_BALANCE_TOKEN(), token_id.try_into().unwrap(), CB_TOTAL_SUPPLY_1155(), 1
         );
 
+        // Since tokens are forced for 1155, we trust that validating the attributes validates check_fts_and_shape_match
         assign_attributes(world, owner, token_id, @attributes, @shape, @fts,);
 
         return token_id;
@@ -312,7 +316,7 @@ impl SetNftAssembly1155<ContractState,
 
         // Check that we are asking for the attribute group that matches this contract
         // (could be hardcoded instead?)
-        let (token, o_attribute_id) = get_target_contract_from_attributes(world, @attributes);
+        let (token, _) = get_target_contract_from_attributes(world, @attributes);
         assert(token == get_contract_address(), 'Not the correct contract');
 
         let nb_briq_tokens = get!(world, (
@@ -355,6 +359,7 @@ impl SetNftAssembly1155<ContractState,
             CUM_BALANCE_TOKEN(), token_id, CB_TOTAL_SUPPLY_1155()
         ), ERC1155Balance).amount;
 
+        // Cannot be 0 as we need an attribute for 1155 tokens.
         assert(post_attrib / (prev_attrib - post_attrib) == remaining_supply, 'Set still has attribs');
 
         loop {
@@ -368,4 +373,39 @@ impl SetNftAssembly1155<ContractState,
             assert(post_briq / (pre_briq.qty - post_briq) == remaining_supply, 'Set still has briqs');
         };
     }
+}
+
+use starknet::storage_access::{StorePacking};
+use briq_protocol::types::{ShapeItem, ShapePacking};
+
+fn check_fts_and_shape_match(mut fts: Span<FTSpec>, mut shape: Span<PackedShapeItem>) {
+    let mut balances: Felt252Dict<u128> = Default::default();
+    let mut nb_materials = 0;
+    let mut last_shape = Option::<PackedShapeItem>::None;
+    loop {
+        match shape.pop_front() {
+            Option::Some(data) => {
+                let shape_item = ShapePacking::unpack(*data);
+                let bl = balances.get(shape_item.material.into());
+                if bl == 0 {
+                    nb_materials += 1;
+                }
+                balances.insert(shape_item.material.into(), bl + 1);
+                if last_shape.is_some() {
+                    assert(last_shape.unwrap() < *data, 'Bad ordering');
+                }
+                last_shape = Option::Some(*data);
+            },
+            Option::None => { break; }
+        };
+    };
+    assert(fts.len() == nb_materials, 'Bad FTS');
+    loop {
+        match fts.pop_front() {
+            Option::Some(data) => {
+                assert(data.qty == @balances.get((*data.token_id).into()), 'Bad FTS');
+            },
+            Option::None => { break; }
+        };
+    };
 }

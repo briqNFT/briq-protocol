@@ -1,7 +1,7 @@
 use starknet::ContractAddress;
 
 use dojo::database::schema::{
-    EnumMember, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type
+    Enum, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type
 };
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
@@ -21,12 +21,12 @@ impl SerdeLenAttributeGroupOwner of SchemaIntrospection<AttributeGroupOwner> {
     #[inline(always)]
     fn ty() -> Ty {
         Ty::Enum(
-            EnumMember {
+            Enum {
                 name: 'AttributeGroupOwner',
                 attrs: array![].span(),
-                values: array![
-                    serialize_member_type(@Ty::Simple('Admin')),
-                    serialize_member_type(@Ty::Simple('Contract')),
+                children: array![
+                    ('Admin', serialize_member_type(@Ty::Primitive('felt252'))),
+                    ('Contract', serialize_member_type(@Ty::Primitive('felt252'))),
                 ]
                     .span()
             }
@@ -148,7 +148,7 @@ mod attribute_groups {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
 
-    use briq_protocol::erc::erc1155::components::ERC1155Balance;
+    use briq_protocol::erc::erc1155::models::ERC1155Balance;
 
     use briq_protocol::world_config::AdminTrait;
     use briq_protocol::types::{FTSpec, ShapeItem};

@@ -52,7 +52,9 @@ mod register_shape_validator {
     #[storage]
     struct Storage {}
 
+    #[external(v0)]
     fn execute(
+        ref self: ContractState,
         world: IWorldDispatcher,
         attribute_group_id: u64,
         attribute_id: u64,

@@ -44,7 +44,7 @@ fn test_upgrade_with_non_admin(contract_address: ContractAddress) {
 //
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_upgrade_with_admin_briq_token() {
     let DefaultWorld{world, briq_token, .. } = spawn_briq_test_world();
     test_upgrade_with_admin(briq_token.contract_address);
@@ -52,7 +52,7 @@ fn test_upgrade_with_admin_briq_token() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_upgrade_with_non_admin_briq_token() {
     let DefaultWorld{world, briq_token, .. } = spawn_briq_test_world();
@@ -61,7 +61,7 @@ fn test_upgrade_with_non_admin_briq_token() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_briq_token_upgrade_emit_event() {
     let DefaultWorld{world, briq_token, .. } = spawn_briq_test_world();
 
@@ -88,7 +88,7 @@ fn test_briq_token_upgrade_emit_event() {
 //
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_upgrade_with_admin_generic_sets() {
     let DefaultWorld{world, generic_sets, .. } = spawn_briq_test_world();
     test_upgrade_with_admin(generic_sets.contract_address);
@@ -96,7 +96,7 @@ fn test_upgrade_with_admin_generic_sets() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_upgrade_with_non_admin_generic_sets() {
     let DefaultWorld{world, generic_sets, .. } = spawn_briq_test_world();
@@ -105,7 +105,7 @@ fn test_upgrade_with_non_admin_generic_sets() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_upgrade_with_admin_ducks_set() {
     let DefaultWorld{world, ducks_set, .. } = spawn_briq_test_world();
     test_upgrade_with_admin(ducks_set.contract_address);
@@ -113,7 +113,7 @@ fn test_upgrade_with_admin_ducks_set() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_upgrade_with_non_admin_ducks_set() {
     let DefaultWorld{world, ducks_set, .. } = spawn_briq_test_world();
@@ -126,7 +126,7 @@ fn test_upgrade_with_non_admin_ducks_set() {
 //
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_upgrade_with_admin_ducks_booklet() {
     let DefaultWorld{world, ducks_booklet, .. } = spawn_briq_test_world();
     test_upgrade_with_admin(ducks_booklet.contract_address);
@@ -134,7 +134,7 @@ fn test_upgrade_with_admin_ducks_booklet() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_upgrade_with_non_admin_ducks_booklet() {
     let DefaultWorld{world, ducks_booklet, .. } = spawn_briq_test_world();
@@ -143,7 +143,7 @@ fn test_upgrade_with_non_admin_ducks_booklet() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_upgrade_with_admin_planets_booklet() {
     let DefaultWorld{world, planets_booklet, .. } = spawn_briq_test_world();
     test_upgrade_with_admin(planets_booklet.contract_address);
@@ -151,7 +151,7 @@ fn test_upgrade_with_admin_planets_booklet() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_upgrade_with_non_admin_planets_booklet() {
     let DefaultWorld{world, planets_booklet, .. } = spawn_briq_test_world();
@@ -164,7 +164,7 @@ fn test_upgrade_with_non_admin_planets_booklet() {
 //
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_upgrade_with_admin_box_nft() {
     let DefaultWorld{world, box_nft, .. } = spawn_briq_test_world();
     test_upgrade_with_admin(box_nft.contract_address);
@@ -172,7 +172,7 @@ fn test_upgrade_with_admin_box_nft() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_upgrade_with_non_admin_box_nft() {
     let DefaultWorld{world, box_nft, .. } = spawn_briq_test_world();

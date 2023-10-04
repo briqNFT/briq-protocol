@@ -43,6 +43,7 @@ starkli invoke $SETUP_WORLD_ADDR execute $WORLD_ADDRESS $TREASURY_ADDRESS $BRIQ_
 
 ## Return World config
 sozo component entity WorldConfig 1 --world $WORLD_ADDRESS
+#starkli call $WORLD_ADDRESS entity str:WorldConfig 1 1 0 4 4 251 251 251 251
 
 ## Setup briq_factory
 #sozo execute BriqFactoryInitialize --world $WORLD_ADDRESS --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD

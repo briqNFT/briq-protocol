@@ -50,17 +50,10 @@ fn impersonate(address: ContractAddress) {
     set_account_contract_address(address);
 }
 
-fn deploy(class_hash: felt252, calldata: Array<felt252>) -> ContractAddress {
-    let res = deploy_syscall(
-        class_hash.try_into().unwrap(), 0, calldata.span(), false
-    );
-    if res.is_err() {
-        res.expect_err('').print();
-        Zeroable::zero()
-    } else {
-        let (address, _) = res.unwrap();
-        address
-    }
+fn deploy(world: IWorldDispatcher, class_hash: felt252) -> ContractAddress {
+    world.deploy_contract(
+        0, class_hash.try_into().unwrap()
+    )
 }
 
 #[derive(Copy, Drop)]
@@ -94,17 +87,17 @@ fn spawn_briq_test_world() -> DefaultWorld {
         // world_config
         briq_protocol::world_config::world_config::TEST_CLASS_HASH,
 
-        dojo_erc::token::erc20_components::erc_20_balance::TEST_CLASS_HASH,
-        dojo_erc::token::erc20_components::erc_20_allowance::TEST_CLASS_HASH,
-        dojo_erc::token::erc20_components::erc_20_meta::TEST_CLASS_HASH,
+        dojo_erc::token::erc20_models::erc_20_balance::TEST_CLASS_HASH,
+        dojo_erc::token::erc20_models::erc_20_allowance::TEST_CLASS_HASH,
+        dojo_erc::token::erc20_models::erc_20_meta::TEST_CLASS_HASH,
 
-        briq_protocol::erc::erc1155::components::erc_1155_balance::TEST_CLASS_HASH,
-        briq_protocol::erc::erc1155::components::erc_1155_operator_approval::TEST_CLASS_HASH,
+        briq_protocol::erc::erc1155::models::erc_1155_balance::TEST_CLASS_HASH,
+        briq_protocol::erc::erc1155::models::erc_1155_operator_approval::TEST_CLASS_HASH,
 
-        briq_protocol::erc::erc721::components::erc_721_balance::TEST_CLASS_HASH,
-        briq_protocol::erc::erc721::components::erc_721_owner::TEST_CLASS_HASH,
-        briq_protocol::erc::erc721::components::erc_721_token_approval::TEST_CLASS_HASH,
-        briq_protocol::erc::erc721::components::erc_721_operator_approval::TEST_CLASS_HASH,
+        briq_protocol::erc::erc721::models::erc_721_balance::TEST_CLASS_HASH,
+        briq_protocol::erc::erc721::models::erc_721_owner::TEST_CLASS_HASH,
+        briq_protocol::erc::erc721::models::erc_721_token_approval::TEST_CLASS_HASH,
+        briq_protocol::erc::erc721::models::erc_721_operator_approval::TEST_CLASS_HASH,
 
         briq_protocol::attributes::attribute_group::attribute_group::TEST_CLASS_HASH,
 
@@ -114,34 +107,34 @@ fn spawn_briq_test_world() -> DefaultWorld {
     let world = spawn_test_world(components);
 
     // ERC 20 token for payment
-    let payment_addr = deploy(dojo_erc::token::erc20::ERC20::TEST_CLASS_HASH, array![
+    let (payment_addr, _) = deploy_syscall(dojo_erc::token::erc20::ERC20::TEST_CLASS_HASH.try_into().unwrap(), 0, array![
         world.contract_address.into(),
         'cash',
         'money',
         0, 100000000000000000000,
         DEFAULT_OWNER().into(),
-    ]);
+    ].span(), false).unwrap();
 
     // systems
-    let setup_world_addr = deploy(briq_protocol::world_config::setup_world::TEST_CLASS_HASH, array![]);
+    let setup_world_addr = deploy(world, briq_protocol::world_config::setup_world::TEST_CLASS_HASH);
 
-    let attribute_groups_addr = deploy(briq_protocol::attributes::attribute_group::attribute_groups::TEST_CLASS_HASH, array![]);
-    let register_shape_validator_addr = deploy(briq_protocol::booklet::attribute::register_shape_validator::TEST_CLASS_HASH, array![]);
+    let attribute_groups_addr = deploy(world, briq_protocol::attributes::attribute_group::attribute_groups::TEST_CLASS_HASH);
+    let register_shape_validator_addr = deploy(world, briq_protocol::booklet::attribute::register_shape_validator::TEST_CLASS_HASH);
 
-    let briq_factory_addr = deploy(briq_protocol::briq_factory::briq_factory::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let briq_factory_addr = deploy(world, briq_protocol::briq_factory::briq_factory::TEST_CLASS_HASH);
 
     // Specific tokens below
-    let briq_token_addr = deploy(briq_protocol::tokens::briq_token::briq_token::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let briq_token_addr = deploy(world, briq_protocol::tokens::briq_token::briq_token::TEST_CLASS_HASH);
 
-    let sets_generic_addr = deploy(briq_protocol::tokens::set_nft::set_nft::TEST_CLASS_HASH, array![world.contract_address.into()]);
-    let sets_ducks_addr = deploy(briq_protocol::tokens::set_nft_ducks::set_nft_ducks::TEST_CLASS_HASH, array![world.contract_address.into()]);
-    let sets_1155_addr = deploy(briq_protocol::tokens::set_nft_1155::set_nft_1155::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let sets_generic_addr = deploy(world, briq_protocol::tokens::set_nft::set_nft::TEST_CLASS_HASH);
+    let sets_ducks_addr = deploy(world, briq_protocol::tokens::set_nft_ducks::set_nft_ducks::TEST_CLASS_HASH);
+    let sets_1155_addr = deploy(world, briq_protocol::tokens::set_nft_1155::set_nft_1155::TEST_CLASS_HASH);
 
-    let booklet_ducks_addr = deploy(briq_protocol::tokens::booklet_ducks::booklet_ducks::TEST_CLASS_HASH, array![world.contract_address.into()]);
-    let booklet_starknet_planet_addr = deploy(briq_protocol::tokens::booklet_starknet_planet::booklet_starknet_planet::TEST_CLASS_HASH, array![world.contract_address.into()]);
+    let booklet_ducks_addr = deploy(world, briq_protocol::tokens::booklet_ducks::booklet_ducks::TEST_CLASS_HASH);
+    let booklet_starknet_planet_addr = deploy(world, briq_protocol::tokens::booklet_starknet_planet::booklet_starknet_planet::TEST_CLASS_HASH);
 
-    let box_nft_addr = deploy(briq_protocol::tokens::box_nft::box_nft::TEST_CLASS_HASH, array![world.contract_address.into()]);
-    
+    let box_nft_addr = deploy(world, briq_protocol::tokens::box_nft::box_nft::TEST_CLASS_HASH);
+
     //
     // set-up writer rights
     //
@@ -182,7 +175,6 @@ fn spawn_briq_test_world() -> DefaultWorld {
     world.grant_writer('ERC1155OperatorApproval', sets_ducks_addr);
 
     world.grant_writer('AttributeGroup', attribute_groups_addr);
-    
 
     // Setup
     ISetupWorldDispatcher { contract_address: setup_world_addr }.execute(
@@ -231,7 +223,7 @@ fn spawn_briq_test_world() -> DefaultWorld {
 }
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_spawn_briq_test_world() {
     let DefaultWorld{world, briq_token, generic_sets, .. } = spawn_briq_test_world();
     assert(get_world_config(world).briq == 0x8.try_into().unwrap(), 'bad setup');

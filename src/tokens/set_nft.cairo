@@ -1,6 +1,6 @@
 #[starknet::contract]
 mod set_nft {
-    use briq_protocol::erc::erc721::components::{
+    use briq_protocol::erc::erc721::models::{
         ERC721OperatorApproval, ERC721Owner, ERC721Balance, ERC721TokenApproval
     };
     use briq_protocol::world_config::get_world_config;
@@ -13,10 +13,9 @@ mod set_nft {
     use zeroable::Zeroable;
     use debug::PrintTrait;
 
-
     #[storage]
     struct Storage {
-        _world: ContractAddress,
+        world_dispatcher: IWorldDispatcher,
     }
 
     #[event]
@@ -59,13 +58,6 @@ mod set_nft {
         const WRONG_SENDER: felt252 = 'ERC721: wrong sender';
         const SAFE_MINT_FAILED: felt252 = 'ERC721: safe mint failed';
         const SAFE_TRANSFER_FAILED: felt252 = 'ERC721: safe transfer failed';
-    }
-
-    #[external(v0)]
-    fn init_world(
-        ref self: ContractState, world: IWorldDispatcher
-    ) {
-        self._world.write(world.contract_address);
     }
 
     //
@@ -264,7 +256,7 @@ mod set_nft {
 
     impl GetWorldImpl of briq_protocol::erc::get_world::GetWorldTrait<ContractState> {
         fn world(self: @ContractState) -> IWorldDispatcher {
-            IWorldDispatcher { contract_address: self._world.read() }
+            self.world_dispatcher.read()
         }
     }
 

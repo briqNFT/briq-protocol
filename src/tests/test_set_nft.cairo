@@ -103,7 +103,7 @@ use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
 };
 
-use briq_protocol::erc::erc1155::components::ERC1155Balance;
+use briq_protocol::erc::erc1155::models::ERC1155Balance;
 
 use briq_protocol::types::{FTSpec, ShapeItem, ShapePacking, PackedShapeItem, AttributeItem};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRIQ};
@@ -123,7 +123,7 @@ use convenience_for_testing::{
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_hash() {
     assert(briq_protocol::set_nft::assembly::get_token_id(
         starknet::contract_address_const::<0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2>(), 0x6111956b2a0842138b2df81a3e6e88f8, 25, 0
@@ -155,7 +155,7 @@ fn test_hash() {
 }
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_empty_mint() {
     let DefaultWorld{world, briq_token, generic_sets, .. } = spawn_briq_test_world();
@@ -269,9 +269,9 @@ fn test_simple_mint_and_burn_2() {
     as_set(generic_sets).disassemble(
         DEFAULT_OWNER(), token_id, array![FTSpec { token_id: 1, qty: 4 }], array![]
     );
+
     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad briq balance 2');
-// TODO: validate that token ID balance asserts as it's 0
 }
 
 #[test]
@@ -373,7 +373,6 @@ fn test_simple_mint_attribute_ok_1() {
         get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_BRIQ()), ERC1155Balance).amount == 1,
         'should be 1'
     );
-    // TODO validate booklet balance of owner to 0
 
     as_set(sets_ducks).disassemble(
         DEFAULT_OWNER(),
@@ -382,7 +381,15 @@ fn test_simple_mint_attribute_ok_1() {
         array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }]
     );
     assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad booklet balance 3');
-// TODO: validate that token ID balance asserts as it's 0
+
+    let tev = starknet::testing::pop_log::<SetNftTransfer>(sets_ducks.contract_address).unwrap();
+    assert(tev.from == Zeroable::zero(), 'bad from');
+    assert(tev.to == DEFAULT_OWNER(), 'bad to');
+    assert(tev.token_id == token_id.into(), 'bad token id');
+    let tev = starknet::testing::pop_log::<SetNftTransfer>(sets_ducks.contract_address).unwrap();
+    assert(tev.from == DEFAULT_OWNER(), 'bad from');
+    assert(tev.to == Zeroable::zero(), 'bad to');
+    assert(tev.token_id == token_id.into(), 'bad token id');
 }
 
 
@@ -390,7 +397,6 @@ fn test_simple_mint_attribute_ok_1() {
 #[available_gas(3000000000)]
 fn test_simple_mint_attribute_ok_2() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
-
     create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 

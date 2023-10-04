@@ -1,4 +1,4 @@
-use dojo_erc::token::erc1155::components::{ERC1155OperatorApproval, erc_1155_operator_approval};
+use dojo_erc::token::erc1155::models::{ERC1155OperatorApproval, erc_1155_operator_approval};
 
 use starknet::ContractAddress;
 

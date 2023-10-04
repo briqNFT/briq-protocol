@@ -1,6 +1,6 @@
 #[starknet::contract]
 mod briq_token {
-    use briq_protocol::erc::erc1155::components::{
+    use briq_protocol::erc::erc1155::models::{
         ERC1155OperatorApproval, ERC1155Balance,
         increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
     };
@@ -18,7 +18,7 @@ mod briq_token {
 
     #[storage]
     struct Storage {
-        _world: ContractAddress,
+        world_dispatcher: IWorldDispatcher,
     }
 
     #[event]
@@ -65,13 +65,6 @@ mod briq_token {
         const SAFE_TRANSFER_FAILED: felt252 = 'ERC1155: safe transfer failed';
         const INVALID_ARRAY_LENGTH: felt252 = 'ERC1155: invalid array length';
         const INSUFFICIENT_BALANCE: felt252 = 'ERC1155: insufficient balance';
-    }
-
-    #[external(v0)]
-    fn init_world(
-        ref self: ContractState, world: IWorldDispatcher
-    ) {
-        self._world.write(world.contract_address);
     }
 
     //
@@ -246,7 +239,7 @@ mod briq_token {
 
     impl GetWorldImpl of GetWorldTrait<ContractState> {
         fn world(self: @ContractState) -> IWorldDispatcher {
-            IWorldDispatcher { contract_address: self._world.read() }
+            self.world_dispatcher.read()
         }
     }
 

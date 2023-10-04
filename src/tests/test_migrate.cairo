@@ -12,7 +12,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_erc::erc_common::utils::{system_calldata};
 use dojo_erc::erc721::interface::IERC721DispatcherTrait;
 use dojo_erc::erc1155::interface::{IERC1155DispatcherTrait};
-use dojo_erc::erc1155::components::ERC1155BalanceTrait;
+use dojo_erc::erc1155::models::ERC1155BalanceTrait;
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate

@@ -56,7 +56,7 @@ fn update_attribute_group(
 //
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_create_attribute_groups_with_users() {
     let DefaultWorld{world, sets_ducks, booklet_ducks, attribute_groups_addr, .. } =
         spawn_briq_test_world();
@@ -80,7 +80,7 @@ fn test_create_attribute_groups_with_users() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_create_attribute_groups_with_systems() {
     let DefaultWorld{world, sets_ducks, booklet_ducks, attribute_groups_addr, .. } =
         spawn_briq_test_world();
@@ -104,7 +104,7 @@ fn test_create_attribute_groups_with_systems() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic(
     expected: (
         'attribute_group already exists',
@@ -132,7 +132,7 @@ fn test_create_attribute_group_collision() {
 }
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic(
     expected: (
         'attribute_group already exists',
@@ -166,7 +166,7 @@ fn test_create_attribute_group_collision_2() {
 //
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_update_attribute_group_ok() {
     let DefaultWorld{world, generic_sets, sets_ducks, booklet_ducks, attribute_groups_addr, .. } =
         spawn_briq_test_world();
@@ -207,7 +207,7 @@ fn test_update_attribute_group_ok() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic(
     expected: (
         'unexisting attribute_group_id',
@@ -233,7 +233,7 @@ fn test_update_attribute_group_non_existing() {
 //
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic(
     expected: ('Not authorized', 'ENTRYPOINT_FAILED')
 )]
@@ -253,7 +253,7 @@ fn test_create_attribute_group_with_non_world_admin() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic(
     expected: ('Not authorized', 'ENTRYPOINT_FAILED')
 )]

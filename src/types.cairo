@@ -36,6 +36,7 @@ struct PackedShapeItem {
 
 const TWO_POW_64: felt252 = 0x10000000000000000;
 const TWO_POW_32: felt252 = 0x100000000;
+const TWO_POW_31: felt252 = 0x80000000;
 
 const TWO_POW_MASK: felt252 = 0xFFFFFFFFFFFFFFFF;
 
@@ -43,7 +44,10 @@ impl ShapePacking of StorePacking<ShapeItem, PackedShapeItem> {
     fn pack(value: ShapeItem) -> PackedShapeItem {
         PackedShapeItem {
             color_material: value.color.into() * TWO_POW_64 + value.material.into(),
-            x_y_z: value.z + value.y * TWO_POW_32 + value.x * TWO_POW_64,
+            x_y_z: (value.z + TWO_POW_31) + (
+                (value.y + TWO_POW_31) * TWO_POW_32) + (
+                (value.x + TWO_POW_31) * TWO_POW_64
+            ),
         }
     }
 
@@ -54,9 +58,31 @@ impl ShapePacking of StorePacking<ShapeItem, PackedShapeItem> {
                 .try_into()
                 .unwrap(),
             material: (value.color_material & TWO_POW_MASK).try_into().unwrap(),
+            // TODO
             x: 0,
             y: 0,
             z: 0,
         }
+    }
+}
+
+use briq_protocol::felt_math::FeltOrd;
+
+impl PackedShapeItemOrd of PartialOrd<PackedShapeItem> {
+    #[inline(always)]
+    fn le(lhs: PackedShapeItem, rhs: PackedShapeItem) -> bool {
+        lhs.x_y_z <= rhs.x_y_z
+    }
+    #[inline(always)]
+    fn ge(lhs: PackedShapeItem, rhs: PackedShapeItem) -> bool {
+        lhs.x_y_z >= rhs.x_y_z
+    }
+    #[inline(always)]
+    fn lt(lhs: PackedShapeItem, rhs: PackedShapeItem) -> bool {
+        lhs.x_y_z < rhs.x_y_z
+    }
+    #[inline(always)]
+    fn gt(lhs: PackedShapeItem, rhs: PackedShapeItem) -> bool {
+        lhs.x_y_z > rhs.x_y_z
     }
 }

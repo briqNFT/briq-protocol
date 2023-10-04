@@ -8,7 +8,7 @@ use briq_protocol::tests::test_utils::{
 use debug::PrintTrait;
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 // The error is an unwrap failed as we use u256 parameters, but then when storing it should fail to convert back.
 #[should_panic(
     expected: ('Option::unwrap failed.', 'ENTRYPOINT_FAILED')

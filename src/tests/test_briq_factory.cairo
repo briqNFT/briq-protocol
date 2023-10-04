@@ -18,7 +18,7 @@ use briq_protocol::briq_factory::constants::{
     DECIMALS, LOWER_FLOOR, LOWER_SLOPE, INFLECTION_POINT, DECAY_PER_SECOND, MINIMAL_SURGE, SLOPE,
     RAW_FLOOR
 };
-use briq_protocol::briq_factory::components::{BriqFactoryStore, BriqFactoryTrait};
+use briq_protocol::briq_factory::models::{BriqFactoryStore, BriqFactoryTrait};
 use briq_protocol::briq_factory::{IBriqFactoryDispatcher, IBriqFactoryDispatcherTrait};
 use briq_protocol::felt_math::{FeltOrd, FeltDiv};
 use briq_protocol::world_config::get_world_config;
@@ -131,7 +131,7 @@ fn test_briq_factory_surge() {
 }
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_inflection_point() {
     let DefaultWorld{world, .. } = spawn_briq_test_world();
 
@@ -182,7 +182,7 @@ fn test_overflows_ok() {
 }
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic(expected: ('t1-t2 >= 10**10',))]
 fn test_overflows_bad_max_amnt() {
     let DefaultWorld{world, .. } = spawn_briq_test_world();
@@ -192,7 +192,7 @@ fn test_overflows_bad_max_amnt() {
 }
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic(expected: ('t2 >= 10**12',))]
 fn test_overflows_bad_max_t() {
     let DefaultWorld{world, .. } = spawn_briq_test_world();

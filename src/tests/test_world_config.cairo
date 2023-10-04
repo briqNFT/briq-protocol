@@ -6,7 +6,7 @@ use briq_protocol::tests::test_utils::{
 use briq_protocol::world_config::ISetupWorldDispatcherTrait;
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 fn test_world_admin_can_setup_world() {
     impersonate(WORLD_ADMIN());
 
@@ -22,7 +22,7 @@ fn test_world_admin_can_setup_world() {
 
 
 #[test]
-#[available_gas(30000000)]
+#[available_gas(300000000)]
 #[should_panic]
 fn test_not_world_admin_cannot_setup_world() {
     impersonate(WORLD_ADMIN());

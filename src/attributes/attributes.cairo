@@ -7,7 +7,7 @@ use zeroable::Zeroable;
 use clone::Clone;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::erc::erc1155::components::{ERC1155Balance, increase_balance, decrease_balance};
+use briq_protocol::erc::erc1155::models::{ERC1155Balance, increase_balance, decrease_balance};
 
 use briq_protocol::types::{FTSpec, PackedShapeItem, AttributeItem};
 use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};

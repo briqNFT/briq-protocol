@@ -1,6 +1,6 @@
 #[starknet::contract]
 mod box_nft {
-    use briq_protocol::erc::erc1155::components::{
+    use briq_protocol::erc::erc1155::models::{
         ERC1155OperatorApproval, ERC1155Balance
     };
     use briq_protocol::erc::get_world::GetWorldTrait;
@@ -16,7 +16,7 @@ mod box_nft {
 
     #[storage]
     struct Storage {
-        _world: ContractAddress,
+        world_dispatcher: IWorldDispatcher,
     }
 
     #[event]
@@ -63,13 +63,6 @@ mod box_nft {
         const SAFE_TRANSFER_FAILED: felt252 = 'ERC1155: safe transfer failed';
         const INVALID_ARRAY_LENGTH: felt252 = 'ERC1155: invalid array length';
         const INSUFFICIENT_BALANCE: felt252 = 'ERC1155: insufficient balance';
-    }
-
-    #[external(v0)]
-    fn init_world(
-        ref self: ContractState, world: IWorldDispatcher
-    ) {
-        self._world.write(world.contract_address);
     }
 
     //
@@ -245,7 +238,7 @@ mod box_nft {
 
     impl GetWorldImpl of GetWorldTrait<ContractState> {
         fn world(self: @ContractState) -> IWorldDispatcher {
-            IWorldDispatcher { contract_address: self._world.read() }
+            self.world_dispatcher.read()
         }
     }
 

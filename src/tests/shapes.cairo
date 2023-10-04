@@ -51,10 +51,10 @@ mod test_shapes {
         validate_shape_items_position(
             shape,
             array![
-                0x200000003fffffffe_felt252,
-                0x300000003fffffffe,
-                0x400000003fffffffe,
-                0x500000003fffffffe
+                0x80000002800000047ffffffe,
+                0x80000003800000047ffffffe,
+                0x80000004800000047ffffffe,
+                0x80000005800000047ffffffe
             ]
                 .span()
         );
@@ -68,7 +68,11 @@ mod test_shapes {
 
         validate_shape_items_position(
             shape,
-            array![0x200000003fffffffe_felt252, 0x300000003fffffffe, 0x400000003fffffffe,].span()
+            array![
+                0x80000002800000047ffffffe,
+                0x80000003800000047ffffffe,
+                0x80000004800000047ffffffe
+            ].span()
         );
     }
 
@@ -79,7 +83,7 @@ mod test_shapes {
         assert(fts.at(0).qty == @2, 'bad ft spec');
 
         validate_shape_items_position(
-            shape, array![0x200000003fffffffe_felt252, 0x300000003fffffffe,].span()
+            shape, array![0x80000002800000047ffffffe, 0x80000003800000047ffffffe,].span()
         );
     }
 }
