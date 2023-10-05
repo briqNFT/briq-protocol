@@ -102,6 +102,15 @@ mod box_nft {
         }
     }
 
+    // TODO: components.
+    use starknet::SyscallResultTrait;
+    #[external(v0)]
+    fn upgrade(ref self: ContractState, new_class_hash: starknet::ClassHash) {
+        self.world().only_admins(@get_caller_address());
+        assert(new_class_hash.is_non_zero(), 'class_hash cannot be zero');
+        starknet::replace_class_syscall(new_class_hash).unwrap_syscall();
+    }
+
     #[external(v0)]
     fn unbox(ref self: ContractState, box_id: felt252) {
         briq_protocol::box_nft::unboxing::unbox(ref self, self.world(), get_contract_address(), get_caller_address(), box_id);

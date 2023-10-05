@@ -87,6 +87,15 @@ mod briq_token {
     //     }
     // }
 
+    // TODO: components.
+    use starknet::SyscallResultTrait;
+    #[external(v0)]
+    fn upgrade(ref self: ContractState, new_class_hash: starknet::ClassHash) {
+        self.world().only_admins(@get_caller_address());
+        assert(new_class_hash.is_non_zero(), 'class_hash cannot be zero');
+        starknet::replace_class_syscall(new_class_hash).unwrap_syscall();
+    }
+
     use briq_protocol::world_config::{get_world_config, AdminTrait};
     #[external(v0)]
     impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
