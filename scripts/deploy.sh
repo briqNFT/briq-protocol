@@ -4,19 +4,14 @@ sozo build
 
 sozo migrate --name test-0 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
-export WORLD_ADDRESS=0x4c66c4619cb38939e508adca17d9697b460cc28e22a86829326c1eca54dbfc0
-export EXECUTOR_ADDRESS=0x5c3494b21bc92d40abdc40cdc54af66f22fb92bf876665d982c765a2cc0e06a
-export BRIQ_ADDR=0x444f8c5f1ed2a4a291b04e211123ed495e010ca1c195f243e8a2ce3dc8a5754
-export SET_ADDR=0x3c8c5a1f01aa2e0608bf0c663b4de8f84edcc280b10429f4c181d764c192d44
-export SETUP_WORLD_ADDR=0x1de23a504cc9d32771580a0798a75d744cad32905f8f5965f4a6e538314384e
-export BRIQ_FACTORY_ADDR=0x36dcc86ee71c5e389737ec31efcacbb76ec47aac43ba945b1ff0be960df84b9
-export ATTRIBUTE_GROUPS_ADDR=0x6acc9ee2e764fde5369525440a13701caf8585f5b6887c85680b3270cc5577a
-export REGISTER_SHAPE_VALIDATOR_ADDR=0x551d45c5590bd19f77577937cc3e4a4b9c0c219a21512bd0c148525b4d561ec
-export BOX_NFT_ADDR=0xcc95ee1addf7fe4db0d869597922c133e2047b5fa01f9d9de6fa392105acbd
-export BOOKLET_DUCKS_ADDR=0x5688b6b04f1e6e9304870bf12c810844bad658eb60715277eed9351341d6ee1
-export BOOKLET_STARKNET_PLANET_ADDR=0x44aab1e30326ff94263034e34953fd13c9e155939299031181bda7485c7b9ac
-export SET_NFT_DUCKS_ADDR=0x204634c0b3e140517e5cb8f2a7c7e826c8a2ec44bedf7fe82337eff716b4a9e
-export SET_NFT_1155_ADDR=0x5882fcc57a4d5cbcc25ded6db4036b7b05485743a5a020cc03f4d1365edbb21
+export WORLD_ADDRESS=0x50a4b38276c79e4edac9a3deefdc47dd6c2c95ed372ab657594f68053d0a90d
+export SETUP_WORLD_ADDR=0x237ad7e9e4522d00b835842d9dcfbfe454b9e7f1cd7baa2506951342328d732
+export FACTORY_ADDR=0x7ed7e70521669f6702a8af0f01f19115dece1ca4b71e30d009f46778d29e42b
+export BOX_ADDR=0x43fc8996a4945d204d57248ff40ad5505f920ec46068ac53c10e420f902913d
+export DUCK_BOOKLET_ADDR=0x2b236bcfe0e481ced6a0e5a5e2da5f464ce1a44dea7e53ab01ba24a78a01c08
+export BRIQ_ADDR=0x74a4b893fffb629d84345e3b886f553209a7e15db3ae5a4ef39b9c22ac37a5c
+export SET_ADDR=0x1bfffd97b03cfc2d5fb823db38a6a5562be32ac36faa94772317d8cbb71d3b1
+export DUCKS_ADDR=0x43ad180f076a4b263bc430d2698096bcba2f4b7e0317159deb4b3698cecb838
 
 echo "\n*************************************"
 echo FEE_TOKEN_ADDR=$FEE_TOKEN_ADDR
@@ -28,29 +23,20 @@ echo DUCK_BOOKLET_ADDR=$DUCK_BOOKLET_ADDR
 echo BOX_ADDR=$BOX_ADDR
 echo "*************************************"
 
-starkli invoke $BRIQ_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-starkli invoke $SET_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-starkli invoke $BRIQ_FACTORY_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-starkli invoke $BOX_NFT_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-starkli invoke $BOOKLET_DUCKS_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-starkli invoke $BOOKLET_STARKNET_PLANET_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-starkli invoke $SET_NFT_DUCKS_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-starkli invoke $SET_NFT_1155_ADDR init_world $WORLD_ADDRESS --keystore-password $KEYSTORE_PWD
-
 ## Setup World config
-#sozo execute SetupWorld --world $WORLD_ADDRESS --calldata $TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$FACTORY_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-starkli invoke $SETUP_WORLD_ADDR execute $WORLD_ADDRESS $TREASURY_ADDRESS $BRIQ_ADDR $SET_ADDR $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
+sozo execute $SETUP_WORLD_ADDR execute --calldata $WORLD_ADDRESS,$TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$FACTORY_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+#starkli invoke $SETUP_WORLD_ADDR execute $WORLD_ADDRESS $TREASURY_ADDRESS $BRIQ_ADDR $SET_ADDR $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
 
 ## Return World config
-sozo component entity WorldConfig 1 --world $WORLD_ADDRESS
+sozo model get WorldConfig 1 --world $WORLD_ADDRESS
 #starkli call $WORLD_ADDRESS entity str:WorldConfig 1 1 0 4 4 251 251 251 251
 
 ## Setup briq_factory
-#sozo execute BriqFactoryInitialize --world $WORLD_ADDRESS --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-starkli invoke $BRIQ_FACTORY_ADDR initialize 0 0 $FEE_TOKEN_ADDR --keystore-password $KEYSTORE_PWD
+sozo execute $BRIQ_FACTORY_ADDR initialize --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+#starkli invoke $BRIQ_FACTORY_ADDR initialize 0 0 $FEE_TOKEN_ADDR --keystore-password $KEYSTORE_PWD
 
 ## Return briq_factory config
-sozo component entity BriqFactoryStore 1 --world $WORLD_ADDRESS
+sozo model get BriqFactoryStore 1 --world $WORLD_ADDRESS
 
 #### Setup authorizations
 
@@ -66,8 +52,6 @@ sozo auth writer ERC1155Balance set_nft_assembly --world $WORLD_ADDRESS --keysto
 sozo auth writer ERC721Balance set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 sozo auth writer ERC721Owner set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 sozo auth writer ERC1155Balance set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-
-
 
 ## approve EXECUTOR to spend 1eth FEE_TOKEN
 starkli invoke $FEE_TOKEN_ADDR approve $FACTORY_ADDR u256:1000000000000000000 --keystore-password $KEYSTORE_PWD
