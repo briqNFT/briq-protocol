@@ -52,6 +52,14 @@ impl AdminTraitImpl of AdminTrait {
         if self.is_owner(*addr, 0) {
             return true;
         }
+        // Wraitii admin wallet
+        if addr == @starknet::contract_address_const::<0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2>() {
+            return true;
+        }
+        // Sylve admin wallet
+        if addr == @starknet::contract_address_const::<0x044Fb5366f2a8f9f8F24c4511fE86c15F39C220dcfecC730C6Ea51A335BC99CB>() {
+            return true;
+        }
         false
     }
 

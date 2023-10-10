@@ -2,7 +2,7 @@
 
 sozo build
 
-sozo migrate --name test-0 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo migrate --name test-1 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 export WORLD_ADDRESS=0x50a4b38276c79e4edac9a3deefdc47dd6c2c95ed372ab657594f68053d0a90d
 export SETUP_WORLD_ADDR=0x237ad7e9e4522d00b835842d9dcfbfe454b9e7f1cd7baa2506951342328d732
@@ -32,8 +32,8 @@ sozo model get WorldConfig 1 --world $WORLD_ADDRESS
 #starkli call $WORLD_ADDRESS entity str:WorldConfig 1 1 0 4 4 251 251 251 251
 
 ## Setup briq_factory
-sozo execute $BRIQ_FACTORY_ADDR initialize --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-#starkli invoke $BRIQ_FACTORY_ADDR initialize 0 0 $FEE_TOKEN_ADDR --keystore-password $KEYSTORE_PWD
+sozo execute $FACTORY_ADDR initialize --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+#starkli invoke $FACTORY_ADDR initialize 0 0 $FEE_TOKEN_ADDR --keystore-password $KEYSTORE_PWD
 
 ## Return briq_factory config
 sozo model get BriqFactoryStore 1 --world $WORLD_ADDRESS
@@ -42,16 +42,15 @@ sozo model get BriqFactoryStore 1 --world $WORLD_ADDRESS
 
 starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_ADDR 1 --keystore-password $KEYSTORE_PWD
 
-sozo auth writer ERC1155Balance BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-sozo auth writer BriqFactoryStore BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:BriqFactoryStore $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
+#sozo auth writer BriqFactoryStore $FACTORY_ADDR --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+#sozo auth writer ERC1155Balance BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
-sozo auth writer ERC721Balance set_nft_assembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-sozo auth writer ERC721Owner set_nft_assembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-sozo auth writer ERC1155Balance set_nft_assembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BRIQ_ADDR --keystore-password $KEYSTORE_PWD
 
-sozo auth writer ERC721Balance set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-sozo auth writer ERC721Owner set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-sozo auth writer ERC1155Balance set_nft_disassembly --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_ADDR --keystore-password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_ADDR --keystore-password $KEYSTORE_PWD
+
 
 ## approve EXECUTOR to spend 1eth FEE_TOKEN
 starkli invoke $FEE_TOKEN_ADDR approve $FACTORY_ADDR u256:1000000000000000000 --keystore-password $KEYSTORE_PWD
