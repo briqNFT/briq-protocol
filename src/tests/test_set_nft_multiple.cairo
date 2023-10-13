@@ -57,7 +57,7 @@ fn test_multiple_set() {
     register_shape_validator_shapes(world, register_shape_validator_addr, 0xbaba);
 
     // mint a booklet for DEFAULT_OWNER
-    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x1, 1);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0xbaba0000000000000001, 1);
 
     impersonate(DEFAULT_OWNER());
 
@@ -88,7 +88,7 @@ fn test_multiple_attributes() {
     register_shape_validator_shapes(world, register_shape_validator_addr, 0xbaba);
 
     // mint a booklet for DEFAULT_OWNER
-    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x2, 1);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0xbaba0000000000000002, 1);
 
     // Deploy another system for this test.
     let briq_counter_addr = deploy(world, briq_protocol::tests::briq_counter::TestBriqCounterAttributeHandler::TEST_CLASS_HASH);
@@ -115,7 +115,7 @@ fn test_multiple_attributes() {
 
     assert(DEFAULT_OWNER() == sets_ducks.owner_of(token_id.into()), 'bad owner');
     assert(sets_ducks.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-    assert(booklet_ducks.balance_of(token_id.try_into().unwrap(), 0x2) == 1, 'bad booklet balance 2');
+    assert(booklet_ducks.balance_of(token_id.try_into().unwrap(), 0xbaba0000000000000002) == 1, 'bad booklet balance 2');
     assert(
         get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()), ERC1155Balance).amount == 2,
         'should be 2'
@@ -134,7 +134,7 @@ fn test_multiple_attributes() {
             AttributeItem { attribute_group_id: 0xf00, attribute_id: 0x3 } // at least 3 briqs attr
         ]
     );
-    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
+    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0xbaba0000000000000002) == 1, 'bad booklet balance 3');
     assert(
         get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()), ERC1155Balance).amount == 0,
         'should be 0'

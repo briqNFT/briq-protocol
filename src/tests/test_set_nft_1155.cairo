@@ -51,7 +51,7 @@ fn test_simple_mint_and_burn_1155() {
     mint_booklet(
         booklet_ducks.contract_address,
         to: DEFAULT_OWNER(),
-        id: attribute_id.into(),
+        id: attribute_id.into() + attribute_group.into() * 0x10000000000000000,
         amount: 3
     );
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);

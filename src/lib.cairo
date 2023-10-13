@@ -40,10 +40,12 @@ mod tokens {
     mod box_nft;
     mod booklet_ducks;
     mod booklet_starknet_planet;
+    mod booklet_briqmas;
     mod briq_token;
     mod set_nft;
     mod set_nft_ducks;
     mod set_nft_1155;
+    mod set_nft_briqmas;
 }
 
 //mod migrate;

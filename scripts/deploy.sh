@@ -23,6 +23,7 @@ echo DUCK_BOOKLET_ADDR=$DUCK_BOOKLET_ADDR
 echo BOX_ADDR=$BOX_ADDR
 echo "*************************************"
 
+####################################
 ## Setup World config
 sozo execute $SETUP_WORLD_ADDR execute --calldata $WORLD_ADDRESS,$TREASURY_ADDRESS,$BRIQ_ADDR,$SET_ADDR,$FACTORY_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 #starkli invoke $SETUP_WORLD_ADDR execute $WORLD_ADDRESS $TREASURY_ADDRESS $BRIQ_ADDR $SET_ADDR $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
@@ -31,6 +32,7 @@ sozo execute $SETUP_WORLD_ADDR execute --calldata $WORLD_ADDRESS,$TREASURY_ADDRE
 sozo model get WorldConfig 1 --world $WORLD_ADDRESS
 #starkli call $WORLD_ADDRESS entity str:WorldConfig 1 1 0 4 4 251 251 251 251
 
+####################################
 ## Setup briq_factory
 sozo execute $FACTORY_ADDR initialize --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 #starkli invoke $FACTORY_ADDR initialize 0 0 $FEE_TOKEN_ADDR --keystore-password $KEYSTORE_PWD
@@ -38,19 +40,31 @@ sozo execute $FACTORY_ADDR initialize --calldata 0,0,$FEE_TOKEN_ADDR --keystore 
 ## Return briq_factory config
 sozo model get BriqFactoryStore 1 --world $WORLD_ADDRESS
 
+####################################
+####################################
 #### Setup authorizations
-
 starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_ADDR 1 --keystore-password $KEYSTORE_PWD
+starkli invoke $SETUP_WORLD_ADDR register_box_contract $WORLD_ADDRESS $BOX_ADDR 1 --keystore-password $KEYSTORE_PWD
 
 starkli invoke $WORLD_ADDRESS grant_writer str:BriqFactoryStore $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
 #sozo auth writer BriqFactoryStore $FACTORY_ADDR --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 #sozo auth writer ERC1155Balance BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BRIQ_ADDR --keystore-password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOX_ADDR --keystore-password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOOKLET_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
 
 starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_ADDR --keystore-password $KEYSTORE_PWD
 starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_ADDR --keystore-password $KEYSTORE_PWD
 
+####################################
+####################################
+# Setup collections
+starkli invoke $ATTR_GROUPS create_attribute_group $WORLD_ADDRESS 0x2 1 $BOOKLET_ADDR_BRIQMAS $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
+
+####################################
+####################################
+# Test - mint briqs
 
 ## approve EXECUTOR to spend 1eth FEE_TOKEN
 starkli invoke $FEE_TOKEN_ADDR approve $FACTORY_ADDR u256:1000000000000000000 --keystore-password $KEYSTORE_PWD
@@ -80,3 +94,5 @@ $ACCOUNT_ADDRESS,\
 
 starkli invoke $FACTORY_ADDR upgrade $FACTORY_HASH --keystore-password $KEYSTORE_PWD
 starkli invoke $SET_ADDR upgrade $SET_HASH --keystore-password $KEYSTORE_PWD
+
+starkli invoke $BOX_ADDR upgrade $(starkli class-hash target/dev/briq_protocol-box_nft.json) --keystore-password $KEYSTORE_PWD

@@ -148,6 +148,8 @@ mod attribute_groups {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
 
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+
     use briq_protocol::erc::erc1155::models::ERC1155Balance;
 
     use briq_protocol::world_config::AdminTrait;
@@ -179,7 +181,6 @@ mod attribute_groups {
 
     #[external(v0)]
     fn create_attribute_group(
-        ref self: ContractState,
         world: IWorldDispatcher,
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
@@ -215,7 +216,6 @@ mod attribute_groups {
 
     #[external(v0)]
     fn update_attribute_group(
-        ref self: ContractState,
         world: IWorldDispatcher,
         attribute_group_id: u64,
         owner: AttributeGroupOwner,

@@ -10,6 +10,9 @@ use briq_protocol::world_config::{WorldConfig, AdminTrait, get_world_config};
 use briq_protocol::types::{FTSpec, PackedShapeItem};
 use briq_protocol::attributes::attributes::IAttributeHandler;
 
+use briq_protocol::erc::get_world::GetWorldTrait;
+use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
+
 impl ClassHashPrint of PrintTrait<ClassHash> {
     fn print(self: ClassHash) {}
 }
@@ -83,8 +86,11 @@ fn check_shape_via_validator(
         .verify_shape(attribute_id, shape, fts);
 }
 
-use briq_protocol::erc::get_world::GetWorldTrait;
-use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
+const two_power_64: felt252 = 0x10000000000000000;
+
+fn calc_booklet_token_id(attribute_group_id: u64, attribute_id: u64) -> felt252 {
+    attribute_group_id.into() * two_power_64 + attribute_id.into()
+}
 
 impl BookletAttributeHolder<ContractState,
     impl w: GetWorldTrait<ContractState>,
@@ -116,7 +122,7 @@ impl BookletAttributeHolder<ContractState,
         self._safe_transfer_from(
             set_owner,
             set_token_id.try_into().unwrap(),
-            attribute_id.into(),
+            calc_booklet_token_id(attribute_group_id, attribute_id).into(),
             1,
             array![],
         );
@@ -137,7 +143,7 @@ impl BookletAttributeHolder<ContractState,
         self._safe_transfer_from(
             set_token_id.try_into().unwrap(),
             set_owner,
-            attribute_id.into(),
+            calc_booklet_token_id(attribute_group_id, attribute_id).into(),
             1,
             array![],
         );

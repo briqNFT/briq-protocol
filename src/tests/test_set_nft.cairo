@@ -344,7 +344,7 @@ fn test_simple_mint_attribute_ok_1() {
 
     create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
-    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x1, 1);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x690000000000000001, 1);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -364,7 +364,7 @@ fn test_simple_mint_attribute_ok_1() {
     );
     assert(DEFAULT_OWNER() == sets_ducks.owner_of(token_id.into()), 'bad owner');
     assert(sets_ducks.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-    assert(booklet_ducks.balance_of(token_id.try_into().unwrap(), 0x1) == 1, 'bad booklet balance 2');
+    assert(booklet_ducks.balance_of(token_id.try_into().unwrap(), 0x690000000000000001) == 1, 'bad booklet balance 2');
     assert(
         get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()), ERC1155Balance).amount == 1,
         'should be 1'
@@ -380,7 +380,7 @@ fn test_simple_mint_attribute_ok_1() {
         array![FTSpec { token_id: 1, qty: 4 }],
         array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }]
     );
-    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad booklet balance 3');
+    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x690000000000000001) == 1, 'bad booklet balance 3');
 
     let tev = starknet::testing::pop_log::<SetNftTransfer>(sets_ducks.contract_address).unwrap();
     assert(tev.from == Zeroable::zero(), 'bad from');
@@ -400,7 +400,7 @@ fn test_simple_mint_attribute_ok_2() {
     create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 
-    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x2, 1);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x690000000000000002, 1);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -421,7 +421,7 @@ fn test_simple_mint_attribute_ok_2() {
     );
     assert(DEFAULT_OWNER() == sets_ducks.owner_of(token_id.into()), 'bad owner');
     assert(sets_ducks.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
-    assert(booklet_ducks.balance_of(token_id.try_into().unwrap(), 0x2) == 1, 'bad booklet balance 2');
+    assert(booklet_ducks.balance_of(token_id.try_into().unwrap(), 0x690000000000000002) == 1, 'bad booklet balance 2');
     assert(
         get!(world, (CUM_BALANCE_TOKEN(), token_id, CB_ATTRIBUTES()), ERC1155Balance).amount == 1,
         'should be 1'
@@ -438,7 +438,7 @@ fn test_simple_mint_attribute_ok_2() {
         array![FTSpec { token_id: 1, qty: 3 }],
         array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x2 }]
     );
-    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x2) == 1, 'bad booklet balance 3');
+    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x690000000000000002) == 1, 'bad booklet balance 3');
 // TODO: validate that token ID balance asserts as it's 0
 }
 
@@ -555,7 +555,7 @@ fn test_simple_mint_attribute_forgot_in_disassembly() {
     create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
 
-    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x1, 1);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x690000000000000001, 1);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());
@@ -602,7 +602,7 @@ fn test_simple_mint_registered_but_unhandled_shape() {
     create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
     register_shape_validator_shapes(world, register_shape_validator_addr, 0x69); // register shape 1/2/3/4 (4 not handled)
 
-    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x4, 1);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x690000000000000004, 1);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
     impersonate(DEFAULT_OWNER());

@@ -1,11 +1,12 @@
-use traits::{Into, TryInto};
-use option::OptionTrait;
-use array::{ArrayTrait, SpanTrait};
 use starknet::ContractAddress;
 
 use dojo::world::IWorldDispatcher;
-use briq_protocol::world_config::{get_world_config};
-use briq_protocol::attributes::attribute_group::{AttributeGroup, AttributeGroupTrait};
+
+use briq_protocol::world_config::get_world_config;
+use briq_protocol::attributes::attribute_group::{AttributeGroup, AttributeGroupTrait, AttributeGroupOwner};
+use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
+use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
+use briq_protocol::booklet::attribute::calc_booklet_token_id;
 
 // starknet planets : attribute_group_id: 1
 // briqmas          : attribute_group_id: 2
@@ -53,9 +54,6 @@ trait Unboxing<ContractState> {
     fn unbox(ref self: ContractState, box_id: felt252);
 }
 
-use briq_protocol::attributes::attribute_group::AttributeGroupOwner;
-use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
-use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
 fn unbox<
     T, impl TR: InternalTrait1155<T>, impl TD: Drop<T>
 >(ref self: T, world: IWorldDispatcher, box_contract: ContractAddress, owner: ContractAddress, box_id: felt252) {
@@ -79,7 +77,7 @@ fn unbox<
         AttributeGroupOwner::Contract(address) => address,
     };
     MintBurnDispatcher { contract_address: address }.mint(
-        owner, box_infos.attribute_id.into(), 1
+        owner, calc_booklet_token_id(box_infos.attribute_group_id, box_infos.attribute_id), 1
     );
 
     // Mint briqs
