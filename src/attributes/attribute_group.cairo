@@ -143,7 +143,7 @@ trait IAttributeGroups<ContractState> {
     );
 }
 
-#[system]
+#[starknet::contract]
 mod attribute_groups {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
@@ -157,6 +157,11 @@ mod attribute_groups {
     use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 
     use super::{AttributeGroupTrait, AttributeGroupOwner, AttributeGroup};
+
+    #[storage]
+    struct Storage {
+        world_dispatcher: IWorldDispatcher
+    }
 
     #[derive(Drop, PartialEq, starknet::Event)]
     struct AttributeGroupCreated {
@@ -181,6 +186,7 @@ mod attribute_groups {
 
     #[external(v0)]
     fn create_attribute_group(
+        ref self: ContractState,
         world: IWorldDispatcher,
         attribute_group_id: u64,
         owner: AttributeGroupOwner,
@@ -216,6 +222,7 @@ mod attribute_groups {
 
     #[external(v0)]
     fn update_attribute_group(
+        ref self: ContractState,
         world: IWorldDispatcher,
         attribute_group_id: u64,
         owner: AttributeGroupOwner,

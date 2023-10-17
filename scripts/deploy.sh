@@ -44,6 +44,7 @@ sozo model get BriqFactoryStore 1 --world $WORLD_ADDRESS
 ####################################
 #### Setup authorizations
 starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_ADDR 1 --keystore-password $KEYSTORE_PWD
+starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_NFT_ADDR_BRIQMAS 1 --keystore-password $KEYSTORE_PWD
 starkli invoke $SETUP_WORLD_ADDR register_box_contract $WORLD_ADDRESS $BOX_ADDR 1 --keystore-password $KEYSTORE_PWD
 
 starkli invoke $WORLD_ADDRESS grant_writer str:BriqFactoryStore $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
@@ -53,14 +54,20 @@ starkli invoke $WORLD_ADDRESS grant_writer str:BriqFactoryStore $FACTORY_ADDR --
 starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BRIQ_ADDR --keystore-password $KEYSTORE_PWD
 starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOX_ADDR --keystore-password $KEYSTORE_PWD
 starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOOKLET_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
 
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_ADDR --keystore-password $KEYSTORE_PWD
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_ADDR --keystore-password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_ADDR --keystore-password $KEYSTORE_PWD --watch
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_ADDR --keystore-password $KEYSTORE_PWD --watch
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD --watch
+starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD --watch
 
 ####################################
 ####################################
 # Setup collections
 starkli invoke $ATTR_GROUPS create_attribute_group $WORLD_ADDRESS 0x2 1 $BOOKLET_ADDR_BRIQMAS $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
+
+## Register briqmas shape
+#starkli invoke $REGISTER_SHAPE_ADDR execute $WORLD_ADDRESS 0x2 0x1 0x65cb2a485b363d0d06ca965a55be5b171e3efb116ee2ceaf9ffc0250774e7c3 --keystore-password $KEYSTORE_PWD
 
 ####################################
 ####################################
@@ -96,3 +103,7 @@ starkli invoke $FACTORY_ADDR upgrade $FACTORY_HASH --keystore-password $KEYSTORE
 starkli invoke $SET_ADDR upgrade $SET_HASH --keystore-password $KEYSTORE_PWD
 
 starkli invoke $BOX_ADDR upgrade $(starkli class-hash target/dev/briq_protocol-box_nft.json) --keystore-password $KEYSTORE_PWD
+
+#######
+
+starkli invoke $BOX_ADDR mint 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2 10 1 --keystore-password $KEYSTORE_PWD
