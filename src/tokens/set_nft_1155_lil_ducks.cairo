@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod box_nft {
+mod set_nft_1155_lil_ducks {
     use briq_protocol::erc::erc1155::models::{
         ERC1155OperatorApproval, ERC1155Balance
     };
@@ -85,25 +85,9 @@ mod box_nft {
     //     }
     // }
 
-    #[external(v0)]
-    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
-        fn name(self: @ContractState) -> felt252 {
-            'briq box nft'
-        }
-
-        fn symbol(self: @ContractState) -> felt252 {
-            'briq box'
-        }
-
-        fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
-            // TODO : concat with id
-            ''
-        }
-    }
-
     // TODO: components.
     use starknet::SyscallResultTrait;
+    use briq_protocol::world_config::AdminTrait;
     #[external(v0)]
     fn upgrade(ref self: ContractState, new_class_hash: starknet::ClassHash) {
         self.world().only_admins(@get_caller_address());
@@ -111,21 +95,57 @@ mod box_nft {
         starknet::replace_class_syscall(new_class_hash).unwrap_syscall();
     }
 
+    //#[external(v0)]
+    //impl Assembly = briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState>;
+    // Until the above is feasible, the following workaround is needed:
+    mod tempfix2 {
+        use briq_protocol::set_nft::assembly::SetNftAssembly1155;
+    }
+    use briq_protocol::types::{PackedShapeItem, FTSpec, AttributeItem};
     #[external(v0)]
-    fn unbox(ref self: ContractState, box_id: felt252) {
-        briq_protocol::box_nft::unboxing::unbox(ref self, self.world(), get_contract_address(), get_caller_address(), box_id);
+    impl tempFix of briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState> {
+        fn assemble(
+            ref self: ContractState,
+            owner: ContractAddress,
+            token_id_hint: felt252,
+            name: Array<felt252>, // todo string
+            description: Array<felt252>, // todo string
+            fts: Array<FTSpec>,
+            shape: Array<PackedShapeItem>,
+            attributes: Array<AttributeItem>
+        ) -> felt252 {
+            tempfix2::SetNftAssembly1155::assemble(
+                ref self, owner, token_id_hint, name, description, fts, shape, attributes
+            )
+        }
+
+        fn disassemble(
+            ref self: ContractState,
+            owner: ContractAddress,
+            token_id: felt252,
+            fts: Array<FTSpec>,
+            attributes: Array<AttributeItem>
+        ) {
+            tempfix2::SetNftAssembly1155::disassemble(
+                ref self, owner, token_id, fts, attributes
+            )
+        }
     }
 
-    use briq_protocol::world_config::{get_world_config, AdminTrait};
     #[external(v0)]
-    impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
-        fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
-            self.world().only_admins(@get_caller_address());
-            self._mint(owner, token_id.into(), amount.into())
+    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
+        fn name(self: @ContractState) -> felt252 {
+            'briq sets 1155'
         }
-        fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
-            self.world().only_admins(@get_caller_address());
-            self._burn(token_id.into(), amount.into())
+
+        fn symbol(self: @ContractState) -> felt252 {
+            'B7'
+        }
+
+        fn uri(self: @ContractState, token_id: u256) -> felt252 {
+            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
+            // TODO : concat with id
+            ''
         }
     }
 

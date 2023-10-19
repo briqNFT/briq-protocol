@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod set_nft_1155 {
+mod booklet_lil_ducks {
     use briq_protocol::erc::erc1155::models::{
         ERC1155OperatorApproval, ERC1155Balance
     };
@@ -85,9 +85,25 @@ mod set_nft_1155 {
     //     }
     // }
 
+    #[external(v0)]
+    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
+        fn name(self: @ContractState) -> felt252 {
+            'briqmas booklets'
+        }
+
+        fn symbol(self: @ContractState) -> felt252 {
+            'b00q'
+        }
+
+        fn uri(self: @ContractState, token_id: u256) -> felt252 {
+            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
+            // TODO : concat with id
+            ''
+        }
+    }
+
     // TODO: components.
     use starknet::SyscallResultTrait;
-    use briq_protocol::world_config::AdminTrait;
     #[external(v0)]
     fn upgrade(ref self: ContractState, new_class_hash: starknet::ClassHash) {
         self.world().only_admins(@get_caller_address());
@@ -96,56 +112,51 @@ mod set_nft_1155 {
     }
 
     //#[external(v0)]
-    //impl Assembly = briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState>;
+    //impl BookletAttribute = briq_protocol::booklet::attribute::BookletAttributeHolder<ContractState>;
     // Until the above is feasible, the following workaround is needed:
     mod tempfix2 {
-        use briq_protocol::set_nft::assembly::SetNftAssembly1155;
+        use briq_protocol::booklet::attribute::BookletAttributeHolder;
     }
-    use briq_protocol::types::{PackedShapeItem, FTSpec, AttributeItem};
+    use briq_protocol::types::{PackedShapeItem, FTSpec};
     #[external(v0)]
-    impl tempFix of briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState> {
-        fn assemble(
+    impl tempFix of briq_protocol::attributes::attributes::IAttributeHandler<ContractState> {
+        fn assign(
             ref self: ContractState,
-            owner: ContractAddress,
-            token_id_hint: felt252,
-            name: Array<felt252>, // todo string
-            description: Array<felt252>, // todo string
-            fts: Array<FTSpec>,
+            world: IWorldDispatcher,
+            set_owner: ContractAddress,
+            set_token_id: felt252,
+            attribute_group_id: u64,
+            attribute_id: u64,
             shape: Array<PackedShapeItem>,
-            attributes: Array<AttributeItem>
-        ) -> felt252 {
-            tempfix2::SetNftAssembly1155::assemble(
-                ref self, owner, token_id_hint, name, description, fts, shape, attributes
-            )
+            fts: Array<FTSpec>,
+        ) {
+            tempfix2::BookletAttributeHolder::assign(ref self, world, set_owner, set_token_id, attribute_group_id, attribute_id, shape, fts)
         }
 
-        fn disassemble(
+        fn remove(
             ref self: ContractState,
-            owner: ContractAddress,
-            token_id: felt252,
-            fts: Array<FTSpec>,
-            attributes: Array<AttributeItem>
+            world: IWorldDispatcher,
+            set_owner: ContractAddress,
+            set_token_id: felt252,
+            attribute_group_id: u64,
+            attribute_id: u64
         ) {
-            tempfix2::SetNftAssembly1155::disassemble(
-                ref self, owner, token_id, fts, attributes
-            )
+            tempfix2::BookletAttributeHolder::remove(ref self, world, set_owner, set_token_id, attribute_group_id, attribute_id)
         }
     }
 
+    use briq_protocol::world_config::{get_world_config, AdminTrait};
     #[external(v0)]
-    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
-        fn name(self: @ContractState) -> felt252 {
-            'briq sets 1155'
+    impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
+        fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            if !self.world().is_admin(@get_caller_address()) {
+                assert(self.world().is_box_contract(get_caller_address()), Errors::UNAUTHORIZED);
+            }
+            self._mint(owner, token_id.into(), amount.into())
         }
-
-        fn symbol(self: @ContractState) -> felt252 {
-            'B7'
-        }
-
-        fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
-            // TODO : concat with id
-            ''
+        fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
+            self.world().only_admins(@get_caller_address());
+            self._burn(token_id.into(), amount.into())
         }
     }
 

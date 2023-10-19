@@ -37,15 +37,24 @@ mod set_nft {
 }
 
 mod tokens {
-    mod box_nft;
+    mod box_nft_sp;
+    mod box_nft_briqmas;
+
     mod booklet_ducks;
     mod booklet_starknet_planet;
     mod booklet_briqmas;
+    mod booklet_lil_ducks;
+    mod booklet_frens_ducks;
+
     mod briq_token;
+
     mod set_nft;
+
     mod set_nft_ducks;
-    mod set_nft_1155;
+    mod set_nft_sp;
     mod set_nft_briqmas;
+    mod set_nft_1155_lil_ducks;
+    mod set_nft_1155_frens_ducks;
 }
 
 //mod migrate;
