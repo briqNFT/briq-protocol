@@ -72,7 +72,6 @@ fn get_token_id(owner: ContractAddress, token_id_hint: felt252, nb_briqs: u32, a
     let hash = pedersen(0, owner.into());
     let hash = pedersen(hash, token_id_hint);
     let hash = pedersen(hash, nb_briqs.into());
-    let two_power_32 = 0x100000000;
     let mut hash_256: u256 = hash.into();
     hash_256 = (hash_256 & TOKEN_ID_MASK) + attribute_group_id.into();
     // Make sure we don't output something that can't fit inside a ContractAddress

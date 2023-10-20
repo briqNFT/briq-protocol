@@ -59,13 +59,13 @@ fn test_mint_and_unbox() {
     UnboxingDispatcher { contract_address: box_nft.contract_address }.unbox(0x1);
 
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 434, 'bad balance 2.5');
-    assert(booklet_sp.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad balance 3');
+    assert(booklet_sp.balance_of(DEFAULT_OWNER(), 0x10000000000000001) == 1, 'bad balance 3');
     assert(box_nft.balance_of(DEFAULT_OWNER(), 0x1) == 3, 'bad balance 4');
 
     UnboxingDispatcher { contract_address: box_nft.contract_address }.unbox(10);
 
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 494, 'bad balance 5');
-    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x1) == 1, 'bad balance 6');
+    assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x20000000000000001) == 1, 'bad balance 6');
     assert(box_nft.balance_of(DEFAULT_OWNER(), 10) == 0, 'bad balance 7');
 
     assert(UnboxingSafeDispatcher { contract_address: box_nft.contract_address }.unbox(10).is_err(), 'expect error');

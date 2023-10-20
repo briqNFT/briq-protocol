@@ -50,13 +50,15 @@ starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_NFT_ADDR_BRIQMAS
 ####################################
 ####################################
 # Setup collections
-starkli invoke $ATTR_GROUPS create_attribute_group $WORLD_ADDRESS 0x2 1 $BOOKLET_BRIQMAS $SET_NFT_BRIQMAS --keystore-password $KEYSTORE_PWD
 starkli invoke $ATTR_GROUPS create_attribute_group $WORLD_ADDRESS 0x1 1 $BOOKLET_STARKNET_PLANET $SET_NFT_SP --keystore-password $KEYSTORE_PWD
+starkli invoke $ATTR_GROUPS create_attribute_group $WORLD_ADDRESS 0x2 1 $BOOKLET_BRIQMAS $SET_NFT_BRIQMAS --keystore-password $KEYSTORE_PWD
+
+starkli invoke $ATTR_GROUPS create_attribute_group $WORLD_ADDRESS 0x4 1 $BOOKLET_FRENS_DUCKS $SET_NFT_1155_FRENS_DUCKS --keystore-password $KEYSTORE_PWD
 
 ## Register briqmas shape
 #starkli invoke $REGISTER_SHAPE_ADDR execute $WORLD_ADDRESS 0x2 0x1 0x65cb2a485b363d0d06ca965a55be5b171e3efb116ee2ceaf9ffc0250774e7c3 --keystore-password $KEYSTORE_PWD
 starkli invoke $REGISTER_SHAPE_ADDR execute $WORLD_ADDRESS 0x1 0x4 0x02ce658601415217394890c2a35af37065c1a83c7497112ff4c40dfd113eb175 --keystore-password $KEYSTORE_PWD
-
+starkli invoke $REGISTER_SHAPE_ADDR execute $WORLD_ADDRESS 0x4 0x1 0x8bf0f5ab7709c48d92e242737b1836b88cc06b1b604afdf816a0701607c474 --keystore-password $KEYSTORE_PWD
 
 ####################################
 ####################################
@@ -99,3 +101,5 @@ starkli invoke $BOX_NFT_BRIQMAS mint 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501E
 starkli invoke $BOX_NFT_BRIQMAS burn 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2 6 1 --keystore-password $KEYSTORE_PWD
 
 starkli invoke $BOX_NFT_SP mint 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2 6 1 --keystore-password $KEYSTORE_PWD
+
+starkli invoke $BOOKLET_FRENS_DUCKS mint 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2 0x40000000000000001 1 --keystore-password $KEYSTORE_PWD

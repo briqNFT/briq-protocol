@@ -128,12 +128,12 @@ fn spawn_briq_test_world() -> DefaultWorld {
 
     let sets_generic_addr = deploy(world, briq_protocol::tokens::set_nft::set_nft::TEST_CLASS_HASH);
     let sets_ducks_addr = deploy(world, briq_protocol::tokens::set_nft_ducks::set_nft_ducks::TEST_CLASS_HASH);
-    let sets_1155_addr = deploy(world, briq_protocol::tokens::set_nft_1155::set_nft_1155::TEST_CLASS_HASH);
+    let sets_1155_addr = deploy(world, briq_protocol::tokens::set_nft_1155_frens_ducks::set_nft_1155_frens_ducks::TEST_CLASS_HASH);
 
     let booklet_ducks_addr = deploy(world, briq_protocol::tokens::booklet_ducks::booklet_ducks::TEST_CLASS_HASH);
     let booklet_starknet_planet_addr = deploy(world, briq_protocol::tokens::booklet_starknet_planet::booklet_starknet_planet::TEST_CLASS_HASH);
 
-    let box_nft_addr = deploy(world, briq_protocol::tokens::box_nft::box_nft::TEST_CLASS_HASH);
+    let box_nft_addr = deploy(world, briq_protocol::tokens::box_nft_sp::box_nft_sp::TEST_CLASS_HASH);
 
     //
     // set-up writer rights
