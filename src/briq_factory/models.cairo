@@ -46,12 +46,12 @@ trait BriqFactoryTrait {
 
 // #[generate_trait]
 impl BriqFactoryStoreImpl of BriqFactoryTrait {
-    #[always(inline)]
+    #[inline(always)]
     fn get_briq_factory(world: IWorldDispatcher) -> BriqFactoryStore {
         get!(world, (SYSTEM_CONFIG_ID), BriqFactoryStore)
     }
 
-    #[always(inline)]
+    #[inline(always)]
     fn set_briq_factory(world: IWorldDispatcher, new_store: BriqFactoryStore) {
         set!(world, (new_store));
     }

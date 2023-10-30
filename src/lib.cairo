@@ -3,6 +3,7 @@ mod felt_math;
 mod types;
 mod upgradeable;
 mod world_config;
+mod supports_interface;
 
 mod briq_factory;
 

@@ -13,17 +13,25 @@ mod set_nft_briqmas {
     use zeroable::Zeroable;
     use debug::PrintTrait;
 
+    use briq_protocol::supports_interface::SupportsERC721;
+    component!(path: SupportsERC721, storage: SupportsERC721Storage, event: SupportsERC721Event);
+    #[abi(embed_v0)]
+    impl SupportsERC721Impl = SupportsERC721::SupportsERC721<ContractState>;
+
     #[storage]
     struct Storage {
         world_dispatcher: IWorldDispatcher,
+        #[substorage(v0)]
+        SupportsERC721Storage: SupportsERC721::Storage,
     }
 
     #[event]
-    #[derive(Copy, Drop, starknet::Event)]
+    #[derive(Drop, starknet::Event)]
     enum Event {
         Transfer: Transfer,
         Approval: Approval,
-        ApprovalForAll: ApprovalForAll
+        ApprovalForAll: ApprovalForAll,
+        SupportsERC721Event: SupportsERC721::Event,
     }
 
     #[derive(Copy, Drop, starknet::Event)]

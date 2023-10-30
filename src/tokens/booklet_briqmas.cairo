@@ -14,17 +14,25 @@ mod booklet_briqmas {
     use zeroable::Zeroable;
     use debug::PrintTrait;
 
+    use briq_protocol::supports_interface::SupportsERC1155;
+    component!(path: SupportsERC1155, storage: SupportsERC1155Storage, event: SupportsERC1155Event);
+    #[abi(embed_v0)]
+    impl SupportsERC1155Impl = SupportsERC1155::SupportsERC1155<ContractState>;
+
     #[storage]
     struct Storage {
         world_dispatcher: IWorldDispatcher,
+        #[substorage(v0)]
+        SupportsERC1155Storage: SupportsERC1155::Storage,
     }
 
     #[event]
-    #[derive(Clone, Drop, starknet::Event)]
+    #[derive(Drop, starknet::Event)]
     enum Event {
         TransferSingle: TransferSingle,
         TransferBatch: TransferBatch,
-        ApprovalForAll: ApprovalForAll
+        ApprovalForAll: ApprovalForAll,
+        SupportsERC1155Event: SupportsERC1155::Event,
     }
 
     #[derive(Clone, Drop, starknet::Event)]
