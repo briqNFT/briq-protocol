@@ -58,7 +58,7 @@ fn test_simple_mint_and_burn_1155() {
 
     impersonate(DEFAULT_OWNER());
 
-    let token_id = (0x1 + 0xcafafa * 0x10000000000000000);
+    let token_id = (0xcafafa + 0x1 * 0x100000000);
 
     as_set(sets_1155).assemble(
         DEFAULT_OWNER(),

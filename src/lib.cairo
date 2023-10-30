@@ -11,12 +11,13 @@ mod erc {
     mod get_world;
     mod mint_burn;
     mod erc721 {
-        mod models;
         mod internal_trait;
+        mod models;
     }
     mod erc1155 {
-        mod models;
+        mod interface;
         mod internal_trait;
+        mod models;
     }
 }
 

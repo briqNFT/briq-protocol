@@ -101,8 +101,11 @@ mod booklet_briqmas {
     //     }
     // }
 
+    use to_byte_array::{FormatAsByteArray, AppendFormattedToByteArray};
+    use briq_protocol::erc::erc1155::interface::ByteArraySerde;
+
     #[external(v0)]
-    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
+    impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
             'briqmas booklets'
         }
@@ -111,10 +114,9 @@ mod booklet_briqmas {
             'b00q'
         }
 
-        fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
-            // TODO : concat with id
-            ''
+        fn uri(self: @ContractState, token_id: u256) -> ByteArray {
+            // TODO: concatenate with string literals
+            token_id.format_as_byte_array(10_u256.try_into().unwrap())
         }
     }
 
