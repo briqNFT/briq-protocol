@@ -21,11 +21,18 @@ mod briq_token {
     #[abi(embed_v0)]
     impl SupportsERC1155Impl = SupportsERC1155::SupportsERC1155<ContractState>;
 
+    use briq_protocol::upgradeable::Upgradeable;
+    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
+    #[abi(embed_v0)]
+    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
+
     #[storage]
     struct Storage {
         world_dispatcher: IWorldDispatcher,
         #[substorage(v0)]
         SupportsERC1155Storage: SupportsERC1155::Storage,
+        #[substorage(v0)]
+        UpgradeableStorage: Upgradeable::Storage,
     }
 
     #[event]
@@ -35,6 +42,7 @@ mod briq_token {
         TransferBatch: TransferBatch,
         ApprovalForAll: ApprovalForAll,
         SupportsERC1155Event: SupportsERC1155::Event,
+        UpgradeableEvent: Upgradeable::Event,
     }
 
     #[derive(Clone, Drop, starknet::Event)]
@@ -94,15 +102,6 @@ mod briq_token {
     //         src5::SRC5::SRC5CamelImpl::supportsInterface(@unsafe_state, interfaceId)
     //     }
     // }
-
-    // TODO: components.
-    use starknet::SyscallResultTrait;
-    #[external(v0)]
-    fn upgrade(ref self: ContractState, new_class_hash: starknet::ClassHash) {
-        self.world().only_admins(@get_caller_address());
-        assert(new_class_hash.is_non_zero(), 'class_hash cannot be zero');
-        starknet::replace_class_syscall(new_class_hash).unwrap_syscall();
-    }
 
     use briq_protocol::world_config::{get_world_config, AdminTrait};
     #[external(v0)]

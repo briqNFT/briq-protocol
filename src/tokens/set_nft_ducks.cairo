@@ -18,11 +18,18 @@ mod set_nft_ducks {
     #[abi(embed_v0)]
     impl SupportsERC721Impl = SupportsERC721::SupportsERC721<ContractState>;
 
+    use briq_protocol::upgradeable::Upgradeable;
+    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
+    #[abi(embed_v0)]
+    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
+
     #[storage]
     struct Storage {
         world_dispatcher: IWorldDispatcher,
         #[substorage(v0)]
         SupportsERC721Storage: SupportsERC721::Storage,
+        #[substorage(v0)]
+        UpgradeableStorage: Upgradeable::Storage,
     }
 
     #[event]
@@ -32,6 +39,7 @@ mod set_nft_ducks {
         Approval: Approval,
         ApprovalForAll: ApprovalForAll,
         SupportsERC721Event: SupportsERC721::Event,
+        UpgradeableEvent: Upgradeable::Event,
     }
 
     #[derive(Copy, Drop, starknet::Event)]
@@ -87,16 +95,6 @@ mod set_nft_ducks {
     //         src5::SRC5::SRC5CamelImpl::supportsInterface(@unsafe_state, interfaceId)
     //     }
     // }
-
-    // TODO: components.
-    use starknet::SyscallResultTrait;
-    use briq_protocol::world_config::AdminTrait;
-    #[external(v0)]
-    fn upgrade(ref self: ContractState, new_class_hash: starknet::ClassHash) {
-        self.world().only_admins(@get_caller_address());
-        assert(new_class_hash.is_non_zero(), 'class_hash cannot be zero');
-        starknet::replace_class_syscall(new_class_hash).unwrap_syscall();
-    }
 
     //#[external(v0)]
     //impl Assembly = briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState>;

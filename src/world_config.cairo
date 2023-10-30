@@ -109,18 +109,29 @@ mod setup_world {
     use super::{WorldConfig, AdminTrait, SetContracts, BoxContracts};
     use super::SYSTEM_CONFIG_ID;
 
+    use briq_protocol::upgradeable::Upgradeable;
+    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
+    #[abi(embed_v0)]
+    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
+
     #[storage]
     struct Storage {
         world_dispatcher: IWorldDispatcher,
+        #[substorage(v0)]
+        UpgradeableStorage: Upgradeable::Storage,
     }
 
-    // TODO: components.
-    use starknet::SyscallResultTrait;
-    #[external(v0)]
-    fn upgrade(ref self: ContractState, new_class_hash: starknet::ClassHash) {
-        self.world_dispatcher.read().only_admins(@get_caller_address());
-        assert(new_class_hash.is_non_zero(), 'class_hash cannot be zero');
-        starknet::replace_class_syscall(new_class_hash).unwrap_syscall();
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        UpgradeableEvent: Upgradeable::Event,
+    }
+
+    use briq_protocol::erc::get_world::GetWorldTrait;
+    impl GetWorldImpl of GetWorldTrait<ContractState> {
+        fn world(self: @ContractState) -> IWorldDispatcher {
+            self.world_dispatcher.read()
+        }
     }
 
     #[external(v0)]

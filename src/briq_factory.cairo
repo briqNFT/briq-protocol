@@ -38,31 +38,23 @@ mod briq_factory {
         price: u128
     }
 
-    use briq_protocol::upgradeable::{IUpgradeable, UpgradeableTrait};
-    #[derive(Clone, Drop, Serde, PartialEq, starknet::Event)]
-    struct Upgraded {
-        class_hash: ClassHash,
-    }
+    use briq_protocol::upgradeable::Upgradeable;
+    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
+    #[abi(embed_v0)]
+    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
 
     #[event]
-    #[derive(Drop, PartialEq, starknet::Event)]
+    #[derive(Drop, starknet::Event)]
     enum Event {
         BriqsBought: BriqsBought,
-        Upgraded: Upgraded,
+        UpgradeableEvent: Upgradeable::Event,
     }
 
     #[storage]
     struct Storage {
         world_dispatcher: IWorldDispatcher,
-    }
-
-    #[external(v0)]
-    impl Upgradable of IUpgradeable<ContractState> {
-        fn upgrade(ref self: ContractState, new_class_hash: ClassHash) {
-            self.world_dispatcher.read().only_admins(@get_caller_address());
-            UpgradeableTrait::upgrade(new_class_hash);
-            self.emit(Upgraded { class_hash: new_class_hash });
-        }
+        #[substorage(v0)]
+        UpgradeableStorage: Upgradeable::Storage,
     }
 
     #[starknet::interface]
@@ -70,6 +62,13 @@ mod briq_factory {
         fn transferFrom(
             ref self: TState, spender: ContractAddress, recipient: ContractAddress, amount: u256
         );
+    }
+
+    use briq_protocol::erc::get_world::GetWorldTrait;
+    impl GetWorldImpl of GetWorldTrait<ContractState> {
+        fn world(self: @ContractState) -> IWorldDispatcher {
+            self.world_dispatcher.read()
+        }
     }
 
     #[external(v0)]
