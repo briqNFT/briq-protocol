@@ -4,6 +4,7 @@ mod types;
 mod upgradeable;
 mod world_config;
 mod supports_interface;
+mod uri;
 
 mod briq_factory;
 
@@ -11,6 +12,7 @@ mod erc {
     mod get_world;
     mod mint_burn;
     mod erc721 {
+        mod interface;
         mod internal_trait;
         mod models;
     }
@@ -80,6 +82,8 @@ mod tests {
     mod test_briq_factory;
 
     mod test_check_fts_and_shape_match;
+
+    mod test_uri;
 
     // mod contract_upgrade;
     // mod test_upgradeable;

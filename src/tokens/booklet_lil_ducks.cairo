@@ -101,20 +101,20 @@ mod booklet_lil_ducks {
     //     }
     // }
 
+    use briq_protocol::uri::get_url;
+
     #[external(v0)]
-    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
+    impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briqmas booklets'
+            'lil ducks booklets'
         }
 
         fn symbol(self: @ContractState) -> felt252 {
             'b00q'
         }
 
-        fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
-            // TODO : concat with id
-            ''
+        fn uri(self: @ContractState, token_id: u256) -> Array<felt252> {
+            get_url("booklet", token_id)
         }
     }
 

@@ -101,8 +101,10 @@ mod box_nft_briqmas {
     //     }
     // }
 
+    use briq_protocol::uri::get_url;
+
     #[external(v0)]
-    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
+    impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
             'briq box nft'
         }
@@ -111,10 +113,8 @@ mod box_nft_briqmas {
             'briq box'
         }
 
-        fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
-            // TODO : concat with id
-            ''
+        fn uri(self: @ContractState, token_id: u256) -> Array<felt252> {
+            get_url("box", token_id)
         }
     }
 

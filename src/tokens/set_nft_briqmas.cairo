@@ -140,7 +140,7 @@ mod set_nft_briqmas {
     }
 
     #[external(v0)]
-    impl ERC721MetadataImpl of interface::IERC721Metadata<ContractState> {
+    impl ERC721MetadataImpl of briq_protocol::erc::erc721::interface::IERC721Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
             'briqmas set NFTs'
         }
@@ -149,15 +149,15 @@ mod set_nft_briqmas {
             'B7'
         }
 
-        fn token_uri(self: @ContractState, token_id: u256) -> felt252 {
+        fn token_uri(self: @ContractState, token_id: u256) -> Array<felt252> {
             assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
             self.get_uri(token_id)
         }
     }
 
     #[external(v0)]
-    impl ERC721MetadataCamelOnlyImpl of interface::IERC721MetadataCamelOnly<ContractState> {
-        fn tokenURI(self: @ContractState, tokenId: u256) -> felt252 {
+    impl ERC721MetadataCamelOnlyImpl of briq_protocol::erc::erc721::interface::IERC721MetadataCamelOnly<ContractState> {
+        fn tokenURI(self: @ContractState, tokenId: u256) -> Array<felt252> {
             assert(self._exists(tokenId), Errors::INVALID_TOKEN_ID);
             self.get_uri(tokenId)
         }
@@ -276,11 +276,12 @@ mod set_nft_briqmas {
         }
     }
 
+    use briq_protocol::uri::get_url;
+
     #[generate_trait]
     impl WorldInteractionsImpl of WorldInteractionsTrait {
-        fn get_uri(self: @ContractState, token_id: u256) -> felt252 {
-            // TODO : concat with id when we have string type
-            ''
+        fn get_uri(self: @ContractState, token_id: u256) -> Array<felt252> {
+            get_url("set", token_id)
         }
 
         fn get_balance(self: @ContractState, account: ContractAddress) -> u256 {

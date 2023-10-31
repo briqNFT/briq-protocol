@@ -121,7 +121,7 @@ mod briq_token {
     }
 
     #[external(v0)]
-    impl ERC1155MetadataImpl of interface::IERC1155Metadata<ContractState> {
+    impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
             'briq token'
         }
@@ -130,10 +130,8 @@ mod briq_token {
             'BRIQ'
         }
 
-        fn uri(self: @ContractState, token_id: u256) -> felt252 {
-            //assert(self._exists(token_id), Errors::INVALID_TOKEN_ID);
-            // TODO : concat with id
-            ''
+        fn uri(self: @ContractState, token_id: u256) -> Array<felt252> {
+            array!['https://briq.construction', '/v1/uri/briqs/1.json']
         }
     }
 

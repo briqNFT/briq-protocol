@@ -2,7 +2,7 @@
 
 sozo build
 
-sozo migrate --name test-2 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo migrate --name test-3 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 ####################################
 ## Setup World config
