@@ -43,7 +43,7 @@ def generate_binary_search_function(nft_ids, check_generator):
 
         return f"""
         if attribute_id == {nft_ids[mid]} {{
-            {check_generator(mid)}
+            {check_generator(nft_ids[mid])}
         }} else if attribute_id < {nft_ids[mid]} {{
             {recursive_search(low, mid - 1)}
         }} else {{
@@ -65,7 +65,7 @@ def generate_binary_search_function(nft_ids, check_generator):
 def shape_check(index):
     return generate_shape_check([
         ShapeItem(0, 0, 0, "#ffaaff", 1),
-        ShapeItem(0, 1, 0, "#ffaaff", 1),
+        ShapeItem(0, 1, 0, "#ffaaff", 0),
     ])
 
-#  print(HEADER + generate_binary_search_function([1, 2, 3, 10, 200], shape_check) + "\n}")
+# print(HEADER + generate_binary_search_function([1, 2, 3, 10, 200], shape_check) + "\n}")
