@@ -25,6 +25,10 @@ sozo model get BriqFactoryStore 1 --world $WORLD_ADDRESS
 ####################################
 #### Setup authorizations
 starkli invoke $WORLD_ADDRESS grant_owner 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2 0 --keystore-password $KEYSTORE_PWD
+# Alternative testnet wallet
+starkli invoke $WORLD_ADDRESS grant_owner 0x009fa2C8FB501C57140E79fc720ab7160E9BBF41186d89eC45722A1d1Eb4D567 0 --keystore-password $KEYSTORE_PWD
+
+# Done via frontend
 
 starkli invoke $WORLD_ADDRESS grant_writer str:WorldConfig $SETUP_WORLD_ADDR --keystore-password $KEYSTORE_PWD
 

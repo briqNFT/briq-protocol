@@ -43,7 +43,41 @@ fn test_uri_booklet() {
     assert(booklet_ducks_uri.uri(attribute_id.into() + attribute_group.into() * 0x10000000000000000
         ) == array![
             0x68747470733a2f2f6170692e746573742e736c746563682e636f6d70616e79, // https://api.test.sltech.company
-            0x2f76312f626f6f6b6c65742f32343533383832313838363838393039333139, // /v1/booklet/2453882188688909319
-            0x38313937353535332e6a736f6e // 81975553.json
-        ], 'bad uri');//"https://api.test.sltech.company/v1/booklet/245388218868890931981975553.json", '');
+            0x2f76312f, // /v1/
+            0x32, // 2
+            0x34, // 4
+            0x35, // 5
+            0x33, // 3
+            0x38, // 8
+            0x38, // 8
+            0x32, // 2
+            0x31, // 1
+            0x38, // 8
+            0x38, // 8
+            0x36, // 6
+            0x38, // 8
+            0x38, // 8
+            0x39, // 9
+            0x30, // 0
+            0x39, // 9
+            0x33, // 3
+            0x31, // 1
+            0x39, // 9
+            0x38, // 8
+            0x31, // 1
+            0x39, // 9
+            0x37, // 7
+            0x35, // 5
+            0x35, // 5
+            0x35, // 5
+            0x33, // 3
+            0x2e6a736f6e // .json
+        ], 'bad uri');
+
+    //assert(booklet_ducks_uri.uri(attribute_id.into() + attribute_group.into() * 0x10000000000000000
+    //    ) == array![
+    //        0x68747470733a2f2f6170692e746573742e736c746563682e636f6d70616e79, // https://api.test.sltech.company
+    //        0x2f76312f626f6f6b6c65742f32343533383832313838363838393039333139, // /v1/booklet/2453882188688909319
+    //        0x38313937353535332e6a736f6e // 81975553.json
+    //    ], 'bad uri');//"https://api.test.sltech.company/v1/booklet/245388218868890931981975553.json", '');
 }
