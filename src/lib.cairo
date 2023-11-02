@@ -23,6 +23,8 @@ mod erc {
     }
 }
 
+mod migrate;
+
 mod attributes {
     mod attributes;
     mod attribute_group;
@@ -60,8 +62,6 @@ mod tokens {
     mod set_nft_1155_lil_ducks;
     mod set_nft_1155_frens_ducks;
 }
-
-//mod migrate;
 
 #[cfg(test)]
 mod tests {
