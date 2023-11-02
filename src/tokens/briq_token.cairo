@@ -321,10 +321,10 @@ mod briq_token {
             self: @ContractState, from: ContractAddress, caller: ContractAddress
         ) -> bool {
             // WARNING: briq delta
-            if !(caller == from || self.is_approved_for_all(from, caller)) {
-                return self.world().is_set_contract(get_caller_address());
+            if (caller == from || self.is_approved_for_all(from, caller)) {
+                return true;
             }
-            false
+            self.world().is_set_contract(get_caller_address())
         }
 
         fn _set_approval_for_all(
