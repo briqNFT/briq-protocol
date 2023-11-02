@@ -13,6 +13,7 @@ trait ISRC5Camel<TState> {
     fn supportsInterface(self: @TState, interfaceId: felt252) -> bool;
 }
 
+const IERC721_ETH_ID: felt252 = 0x80ac58cd;
 const IERC721_ID: felt252 = 0x33eb2f84c309543403fd69f0d0f363781ef06ef6faeb0131ff16ea3175bd943;
 const IERC721_METADATA_ID: felt252 = 0x6069a70848f907fa57668ba1875164eb4dcee693952468581406d131081bbd;
 //const IERC721_RECEIVER_ID: felt252 = 0x3a0dff5f70d80458ad14ae37bb182a728e3c8cdda0402a5daa86620bdf910bc;
@@ -34,6 +35,9 @@ mod SupportsERC721 {
             self: @ComponentState<TContractState>, interface_id: felt252
         ) -> bool {
             if interface_id == super::ISRC5_ID {
+                return true;
+            }
+            if interface_id == super::IERC721_ETH_ID {
                 return true;
             }
             if interface_id == super::IERC721_ID {

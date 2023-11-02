@@ -20,6 +20,8 @@ mod briq_token {
     component!(path: SupportsERC1155, storage: SupportsERC1155Storage, event: SupportsERC1155Event);
     #[abi(embed_v0)]
     impl SupportsERC1155Impl = SupportsERC1155::SupportsERC1155<ContractState>;
+    #[abi(embed_v0)]
+    impl SupportsERC1155CamelImpl = SupportsERC1155::SupportsERC1155Camel<ContractState>;
 
     use briq_protocol::upgradeable::Upgradeable;
     component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);

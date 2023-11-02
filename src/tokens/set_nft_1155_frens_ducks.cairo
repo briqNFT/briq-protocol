@@ -18,6 +18,8 @@ mod set_nft_1155_frens_ducks {
     component!(path: SupportsERC1155, storage: SupportsERC1155Storage, event: SupportsERC1155Event);
     #[abi(embed_v0)]
     impl SupportsERC1155Impl = SupportsERC1155::SupportsERC1155<ContractState>;
+    #[abi(embed_v0)]
+    impl SupportsERC1155CamelImpl = SupportsERC1155::SupportsERC1155Camel<ContractState>;
 
     use briq_protocol::upgradeable::Upgradeable;
     component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
@@ -151,7 +153,7 @@ mod set_nft_1155_frens_ducks {
         }
 
         fn uri(self: @ContractState, token_id: u256) -> Array<felt252> {
-            get_url("set", token_id)
+            get_url('set', token_id)
         }
     }
 
