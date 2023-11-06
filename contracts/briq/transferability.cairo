@@ -25,6 +25,7 @@ from contracts.briq.balance_enumerability import (
 )
 
 from contracts.ecosystem.to_set import _set_address, getSetAddress_, setSetAddress_
+from contracts.ecosystem.to_migration import getMigrationAddress_
 
 from contracts.library_erc1155.transferability import ERC1155_transferability
 
@@ -39,6 +40,10 @@ func _onlySetAnd{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     let (caller) = get_caller_address();
     let (setaddr) = _set_address.read();
     if (caller == setaddr) {
+        return ();
+    }
+    let (migration_address) = getMigrationAddress_();
+    if (caller == migration_address) {
         return ();
     }
     _only(address);

@@ -162,3 +162,9 @@ call $booklet_addr booklet_nft get_shape_ 0x130000000000000000000000000000000000
 
 call $auction_onchain_addr auction_onchain get_auction_data 1
 call $briq_factory_addr briq_factory get_price 100
+
+#### migration
+# on testnet
+nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
+invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
+invoke $briq_addr briq setMigrationAddress_ 0x30e53c44983f6998732095bd61fa998e9008cd479ccc08ea553dfcae86f4880

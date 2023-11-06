@@ -29,7 +29,6 @@ from contracts.ecosystem.to_box import _box_address
 
 from contracts.ecosystem.to_factory import _factory_address
 
-
 from contracts.utilities.authorization import _onlyAdminAnd
 
 
