@@ -26,6 +26,14 @@ build-external-contracts = [
 [tool.dojo]
 initializer_class_hash = "0xbeef"
 
+[tool.dojo.world]
+name = "briq"
+description = "Collect, build and play with briqs, the building blocks of the metaverse."
+icon_uri = "file://docs/squarebriq.jpg"
+cover_uri = "/Volumes/Samsung_T5/Programming/briq-protocol/docs/banner.png"
+website = "https://briq.construction/"
+socials.x = "https://twitter.com/briqNFT"
+
 [tool.dojo.env]
 # rpc_url = "http://localhost:5050/"
 # Default account for katana with seed = 0
