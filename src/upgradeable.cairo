@@ -7,7 +7,7 @@ use traits::PartialEq;
 
 #[starknet::interface]
 trait IUpgradeable<T> {
-    fn upgrade(self: @T, new_class_hash: ClassHash);
+    fn upgrade(ref self: T, new_class_hash: ClassHash);
 }
 
 #[starknet::component]
@@ -39,11 +39,13 @@ mod Upgradeable {
     impl implem<
         TContractState, +HasComponent<TContractState>, +GetWorldTrait<TContractState>
     > of super::IUpgradeable<ComponentState<TContractState>> {
-        fn upgrade(self: @ComponentState<TContractState>, new_class_hash: ClassHash) {
-            self.get_contract().world().only_admins(@get_caller_address());
+        fn upgrade(ref self: ComponentState<TContractState>, new_class_hash: ClassHash) {
+            if (get_caller_address() != self.get_contract().world().contract_address) {
+                self.get_contract().world().only_admins(@get_caller_address());
+            }
             assert(!new_class_hash.is_zero(), Errors::INVALID_CLASS);
             starknet::replace_class_syscall(new_class_hash).unwrap();
-            //self.emit(Upgraded { class_hash: new_class_hash });
+            self.emit(Upgraded { class_hash: new_class_hash });
         }
     }
 }

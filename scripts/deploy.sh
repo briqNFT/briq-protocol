@@ -4,6 +4,8 @@ sozo build
 
 sozo migrate --name test-3 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
+sozo migrate --world $WORLD_ADDRESS --name test-3 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+
 ####################################
 ## Setup World config
 sozo execute $SETUP_WORLD_ADDR execute --calldata $WORLD_ADDRESS,$TREASURY_ADDRESS,$BRIQ_TOKEN,$SET_NFT,$FACTORY_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
@@ -30,26 +32,26 @@ starkli invoke $WORLD_ADDRESS grant_owner 0x009fa2C8FB501C57140E79fc720ab7160E9B
 
 # Done via frontend
 
-starkli invoke $WORLD_ADDRESS grant_writer str:WorldConfig $SETUP_WORLD_ADDR --keystore-password $KEYSTORE_PWD
+# starkli invoke $WORLD_ADDRESS grant_writer str:WorldConfig $SETUP_WORLD_ADDR --keystore-password $KEYSTORE_PWD
 
-starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_NFT 1 --keystore-password $KEYSTORE_PWD --watch
-starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_NFT_ADDR_BRIQMAS 1 --keystore-password $KEYSTORE_PWD
-starkli invoke $SETUP_WORLD_ADDR register_box_contract $WORLD_ADDRESS $BOX_NFT_BRIQMAS 1 --keystore-password $KEYSTORE_PWD
-starkli invoke $SETUP_WORLD_ADDR register_box_contract $WORLD_ADDRESS $BOX_NFT_SP 1 --keystore-password $KEYSTORE_PWD
+# starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_NFT 1 --keystore-password $KEYSTORE_PWD --watch
+# starkli invoke $SETUP_WORLD_ADDR register_set_contract $WORLD_ADDRESS $SET_NFT_ADDR_BRIQMAS 1 --keystore-password $KEYSTORE_PWD
+# starkli invoke $SETUP_WORLD_ADDR register_box_contract $WORLD_ADDRESS $BOX_NFT_BRIQMAS 1 --keystore-password $KEYSTORE_PWD
+# starkli invoke $SETUP_WORLD_ADDR register_box_contract $WORLD_ADDRESS $BOX_NFT_SP 1 --keystore-password $KEYSTORE_PWD
 
-starkli invoke $WORLD_ADDRESS grant_writer str:BriqFactoryStore $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
-#sozo auth writer BriqFactoryStore $FACTORY_ADDR --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
-#sozo auth writer ERC1155Balance BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+# starkli invoke $WORLD_ADDRESS grant_writer str:BriqFactoryStore $FACTORY_ADDR --keystore-password $KEYSTORE_PWD
+# #sozo auth writer BriqFactoryStore $FACTORY_ADDR --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+# #sozo auth writer ERC1155Balance BriqFactoryMint --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BRIQ_TOKEN --keystore-password $KEYSTORE_PWD
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOX_ADDR --keystore-password $KEYSTORE_PWD
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOOKLET_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BRIQ_TOKEN --keystore-password $KEYSTORE_PWD
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOX_ADDR --keystore-password $KEYSTORE_PWD
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $BOOKLET_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC1155Balance $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD
 
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_NFT --keystore-password $KEYSTORE_PWD --watch
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_NFT --keystore-password $KEYSTORE_PWD --watch
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD --watch
-starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD --watch
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_NFT --keystore-password $KEYSTORE_PWD --watch
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_NFT --keystore-password $KEYSTORE_PWD --watch
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Balance $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD --watch
+# starkli invoke $WORLD_ADDRESS grant_writer str:ERC721Owner $SET_NFT_ADDR_BRIQMAS --keystore-password $KEYSTORE_PWD --watch
 
 ####################################
 ####################################
@@ -95,7 +97,49 @@ $ACCOUNT_ADDRESS,\
 ## Upgrade
 
 starkli invoke $FACTORY_ADDR upgrade $FACTORY_HASH --keystore-password $KEYSTORE_PWD
+
 starkli invoke $SET_NFT upgrade $SET_HASH --keystore-password $KEYSTORE_PWD
+
+nonce=$(starkli nonce $ACCOUNT_ADDRESS)
+starkli declare target/dev/briq_protocol-booklet_briqmas.json --nonce $nonce --max-fee 1  --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-booklet_ducks.json --nonce $nonce --max-fee 1  --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-booklet_frens_ducks.json --nonce $nonce --max-fee 1  --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-booklet_lil_ducks.json --nonce $nonce --max-fee 1  --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-booklet_starknet_planet.json --nonce $nonce --max-fee 1  --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-box_nft_briqmas.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-box_nft_sp.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-set_nft_1155_frens_ducks.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-set_nft_1155_lil_ducks.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-set_nft_briqmas.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-set_nft_ducks.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-set_nft_sp.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+((nonce=$nonce+1))
+starkli declare target/dev/briq_protocol-set_nft.json --nonce $nonce --max-fee 1 --keystore-password $KEYSTORE_PWD
+
+starkli class-hash target/dev/briq_protocol-booklet_briqmas.json
+starkli class-hash target/dev/briq_protocol-booklet_ducks.json
+starkli class-hash target/dev/briq_protocol-booklet_frens_ducks.json
+starkli class-hash target/dev/briq_protocol-booklet_lil_ducks.json
+starkli class-hash target/dev/briq_protocol-booklet_starknet_planet.json
+starkli class-hash target/dev/briq_protocol-box_nft_briqmas.json
+starkli class-hash target/dev/briq_protocol-box_nft_sp.json
+starkli class-hash target/dev/briq_protocol-set_nft_1155_frens_ducks.json
+starkli class-hash target/dev/briq_protocol-set_nft_1155_lil_ducks.json
+starkli class-hash target/dev/briq_protocol-set_nft_briqmas.json
+starkli class-hash target/dev/briq_protocol-set_nft_ducks.json
+starkli class-hash target/dev/briq_protocol-set_nft_sp.json
+starkli class-hash target/dev/briq_protocol-set_nft.json
 
 starkli invoke $BOX_ADDR upgrade $(starkli class-hash target/dev/briq_protocol-box_nft.json) --keystore-password $KEYSTORE_PWD
 

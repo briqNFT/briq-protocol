@@ -17,6 +17,7 @@ struct WorldConfig {
     briq: ContractAddress,
     generic_sets: ContractAddress,
     factory: ContractAddress,
+    dojo_migration: ContractAddress,
 }
 
 #[derive(Model, Copy, Drop, Serde)]
@@ -154,9 +155,18 @@ mod setup_world {
                 briq,
                 generic_sets,
                 factory,
+                dojo_migration: Zeroable::zero(),
             })
         );
         return ();
+    }
+
+    #[external(v0)]
+    fn set_dojo_migration_contract(ref self: ContractState, world: IWorldDispatcher, dojo_migration: ContractAddress) {
+        world.only_admins(@get_caller_address());
+        let mut wc = get!(world, (SYSTEM_CONFIG_ID), WorldConfig);
+        wc.dojo_migration = dojo_migration;
+        set!(world, (wc));
     }
 
     #[external(v0)]

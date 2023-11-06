@@ -111,7 +111,9 @@ mod briq_token {
         fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
             if !self.world().is_admin(@get_caller_address()) {
                 if get_world_config(self.world()).factory != get_caller_address() {
-                    assert(self.world().is_box_contract(get_caller_address()), Errors::UNAUTHORIZED);
+                    if get_world_config(self.world()).dojo_migration != get_caller_address() {
+                        assert(self.world().is_box_contract(get_caller_address()), Errors::UNAUTHORIZED);
+                    }
                 }
             }
             self._mint(owner, token_id.into(), amount.into())

@@ -33,8 +33,8 @@ mod migrate_assets {
         }
     }
 
-    #[abi(embed_v0)]
-    fn migrate_legacy_set_briqs(self: ContractState, set_id: felt252, mint_also: bool, qty: u128) {
+    #[external(v0)]
+    fn migrate_legacy_set_briqs(self: @ContractState, set_id: felt252, qty: u128) {
         assert(qty != 0, 'bad qty');
         let caller = get_caller_address();
         let legacy_set = IERC721CamelOnlyDispatcher { contract_address: get_legacy_set_address() };
@@ -47,8 +47,8 @@ mod migrate_assets {
         MintBurnDispatcher { contract_address: get_world_config(self.world_dispatcher.read()).briq }.mint(caller, 1, qty.into());
     }
 
-    #[abi(embed_v0)]
-    fn migrate_legacy_briqs(self: ContractState, qty: u128) {
+    #[external(v0)]
+    fn migrate_legacy_briqs(self: @ContractState, qty: u128) {
         assert(qty != 0, 'bad qty');
         let caller = get_caller_address();
         let legacy_briqs = LegacyBriqBalanceDispatcher { contract_address: get_legacy_briq_address() };
