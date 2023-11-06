@@ -85,6 +85,8 @@ mod tests {
 
     mod test_uri;
 
+    mod test_shape_packing;
+
     // mod contract_upgrade;
     // mod test_upgradeable;
 
