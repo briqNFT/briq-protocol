@@ -12,8 +12,8 @@ mod convenience_for_testing {
 
     use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 
-    use dojo_erc::token::erc721::interface::IERC721Dispatcher;
-    use dojo_erc::token::erc1155::interface::IERC1155Dispatcher;
+    use presets::erc721::erc721::interface::IERC721Dispatcher;
+    use presets::erc1155::erc1155::interface::IERC1155Dispatcher;
     use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcher, ISetNftAssemblySafeDispatcher};
 
     trait Dispatcher<T> { fn contract_address(self: T) -> ContractAddress; }
@@ -96,8 +96,8 @@ use starknet::testing::{set_caller_address, set_contract_address};
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
-use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
+use presets::erc721::erc721::interface::IERC721DispatcherTrait;
+use presets::erc1155::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate
@@ -208,6 +208,9 @@ fn test_simple_mint_and_burn_1() {
     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
     assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
     // TODO: validate that token ID balance asserts as it's 0
+
+    let (a, b) = starknet::testing::pop_log_raw(generic_sets.contract_address).unwrap();
+
     let tev = starknet::testing::pop_log::<SetNftTransfer>(generic_sets.contract_address).unwrap();
     assert(tev.from == Zeroable::zero(), 'bad from');
     assert(tev.to == DEFAULT_OWNER(), 'bad to');
@@ -381,6 +384,8 @@ fn test_simple_mint_attribute_ok_1() {
         array![AttributeItem { attribute_group_id: 0x69, attribute_id: 0x1 }]
     );
     assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x690000000000000001) == 1, 'bad booklet balance 3');
+
+    let (a, b) = starknet::testing::pop_log_raw(sets_ducks.contract_address).unwrap();
 
     let tev = starknet::testing::pop_log::<SetNftTransfer>(sets_ducks.contract_address).unwrap();
     assert(tev.from == Zeroable::zero(), 'bad from');

@@ -1,13 +1,11 @@
-#[starknet::contract]
-mod booklet_frens_ducks {
+#[dojo::contract]
+mod set_nft_1155_ducks_frens {
     use briq_protocol::erc::erc1155::models::{
         ERC1155OperatorApproval, ERC1155Balance
     };
-    use briq_protocol::erc::get_world::GetWorldTrait;
     use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
-    use dojo_erc::token::erc1155::interface;
-    use dojo_erc::token::erc1155::interface::{IERC1155, IERC1155CamelOnly};
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use presets::erc1155::erc1155::interface;
+    use presets::erc1155::erc1155::interface::{IERC1155, IERC1155CamelOnly};
     use starknet::ContractAddress;
     use starknet::{get_caller_address, get_contract_address};
     use array::ArrayTCloneImpl;
@@ -21,18 +19,10 @@ mod booklet_frens_ducks {
     #[abi(embed_v0)]
     impl SupportsERC1155CamelImpl = SupportsERC1155::SupportsERC1155Camel<ContractState>;
 
-    use briq_protocol::upgradeable::Upgradeable;
-    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
-    #[abi(embed_v0)]
-    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
-
     #[storage]
     struct Storage {
-        world_dispatcher: IWorldDispatcher,
         #[substorage(v0)]
         SupportsERC1155Storage: SupportsERC1155::Storage,
-        #[substorage(v0)]
-        UpgradeableStorage: Upgradeable::Storage,
     }
 
     #[event]
@@ -42,7 +32,6 @@ mod booklet_frens_ducks {
         TransferBatch: TransferBatch,
         ApprovalForAll: ApprovalForAll,
         SupportsERC1155Event: SupportsERC1155::Event,
-        UpgradeableEvent: Upgradeable::Event,
     }
 
     #[derive(Clone, Drop, starknet::Event)]
@@ -103,69 +92,57 @@ mod booklet_frens_ducks {
     //     }
     // }
 
+    //#[external(v0)]
+    //impl Assembly = briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState>;
+    // Until the above is feasible, the following workaround is needed:
+    mod tempfix2 {
+        use briq_protocol::set_nft::assembly::SetNftAssembly1155;
+    }
+    use briq_protocol::types::{PackedShapeItem, FTSpec, AttributeItem};
+    #[external(v0)]
+    impl tempFix of briq_protocol::set_nft::assembly::ISetNftAssembly<ContractState> {
+        fn assemble(
+            ref self: ContractState,
+            owner: ContractAddress,
+            token_id_hint: felt252,
+            name: Array<felt252>, // todo string
+            description: Array<felt252>, // todo string
+            fts: Array<FTSpec>,
+            shape: Array<PackedShapeItem>,
+            attributes: Array<AttributeItem>
+        ) -> felt252 {
+            tempfix2::SetNftAssembly1155::assemble(
+                ref self, owner, token_id_hint, name, description, fts, shape, attributes
+            )
+        }
+
+        fn disassemble(
+            ref self: ContractState,
+            owner: ContractAddress,
+            token_id: felt252,
+            fts: Array<FTSpec>,
+            attributes: Array<AttributeItem>
+        ) {
+            tempfix2::SetNftAssembly1155::disassemble(
+                ref self, owner, token_id, fts, attributes
+            )
+        }
+    }
+
     use briq_protocol::uri::get_url;
 
     #[external(v0)]
     impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'frens ducks booklets'
+            'Ducks Frens'
         }
 
         fn symbol(self: @ContractState) -> felt252 {
-            'b00q'
+            'B7'
         }
 
         fn uri(self: @ContractState, token_id: u256) -> Array<felt252> {
-            get_url('booklet', token_id)
-        }
-    }
-
-    //#[external(v0)]
-    //impl BookletAttribute = briq_protocol::booklet::attribute::BookletAttributeHolder<ContractState>;
-    // Until the above is feasible, the following workaround is needed:
-    mod tempfix2 {
-        use briq_protocol::booklet::attribute::BookletAttributeHolder;
-    }
-    use briq_protocol::types::{PackedShapeItem, FTSpec};
-    #[external(v0)]
-    impl tempFix of briq_protocol::attributes::attributes::IAttributeHandler<ContractState> {
-        fn assign(
-            ref self: ContractState,
-            world: IWorldDispatcher,
-            set_owner: ContractAddress,
-            set_token_id: felt252,
-            attribute_group_id: u64,
-            attribute_id: u64,
-            shape: Array<PackedShapeItem>,
-            fts: Array<FTSpec>,
-        ) {
-            tempfix2::BookletAttributeHolder::assign(ref self, world, set_owner, set_token_id, attribute_group_id, attribute_id, shape, fts)
-        }
-
-        fn remove(
-            ref self: ContractState,
-            world: IWorldDispatcher,
-            set_owner: ContractAddress,
-            set_token_id: felt252,
-            attribute_group_id: u64,
-            attribute_id: u64
-        ) {
-            tempfix2::BookletAttributeHolder::remove(ref self, world, set_owner, set_token_id, attribute_group_id, attribute_id)
-        }
-    }
-
-    use briq_protocol::world_config::{get_world_config, AdminTrait};
-    #[external(v0)]
-    impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
-        fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
-            if !self.world().is_admin(@get_caller_address()) {
-                assert(self.world().is_box_contract(get_caller_address()), Errors::UNAUTHORIZED);
-            }
-            self._mint(owner, token_id.into(), amount.into())
-        }
-        fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
-            self.world().only_admins(@get_caller_address());
-            self._burn(token_id.into(), amount.into())
+            get_url('set', token_id)
         }
     }
 
@@ -284,12 +261,6 @@ mod booklet_frens_ducks {
     //
     // Internal
     //
-
-    impl GetWorldImpl of GetWorldTrait<ContractState> {
-        fn world(self: @ContractState) -> IWorldDispatcher {
-            self.world_dispatcher.read()
-        }
-    }
 
     #[generate_trait]
     impl WorldInteractionsImpl of WorldInteractionsTrait {

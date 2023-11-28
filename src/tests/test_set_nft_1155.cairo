@@ -3,9 +3,9 @@ use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
-use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
-use dojo_erc::token::erc1155::interface::IERC1155Dispatcher;
+use presets::erc721::erc721::interface::IERC721DispatcherTrait;
+use presets::erc1155::erc1155::interface::IERC1155DispatcherTrait;
+use presets::erc1155::erc1155::interface::IERC1155Dispatcher;
 
 use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcherTrait, ISetNftAssemblySafeDispatcherTrait};
 
@@ -32,7 +32,7 @@ use briq_protocol::tests::test_set_nft::convenience_for_testing::{
 
 #[test]
 #[available_gas(3000000000)]
-fn test_simple_mint_and_burn_1155() {
+fn test_simple_mint_and_burn_for_1155() {
     let DefaultWorld{world, briq_token, generic_sets, sets_1155, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
 
     let attribute_group = 0xcafafa;

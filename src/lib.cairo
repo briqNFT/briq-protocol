@@ -1,7 +1,6 @@
 mod cumulative_balance;
 mod felt_math;
 mod types;
-mod upgradeable;
 mod world_config;
 mod supports_interface;
 mod uri;
@@ -9,7 +8,6 @@ mod uri;
 mod briq_factory;
 
 mod erc {
-    mod get_world;
     mod mint_burn;
     mod erc721 {
         mod interface;
@@ -49,8 +47,8 @@ mod tokens {
     mod booklet_ducks;
     mod booklet_starknet_planet;
     mod booklet_briqmas;
+    mod booklet_ducks_frens;
     mod booklet_lil_ducks;
-    mod booklet_frens_ducks;
 
     mod briq_token;
 
@@ -59,8 +57,8 @@ mod tokens {
     mod set_nft_ducks;
     mod set_nft_sp;
     mod set_nft_briqmas;
+    mod set_nft_1155_ducks_frens;
     mod set_nft_1155_lil_ducks;
-    mod set_nft_1155_frens_ducks;
 }
 
 #[cfg(test)]
@@ -87,8 +85,8 @@ mod tests {
 
     mod test_shape_packing;
 
-    // mod contract_upgrade;
-    // mod test_upgradeable;
+    mod contract_upgrade;
+    mod test_upgradeable;
 
     // mod test_migrate;
 }

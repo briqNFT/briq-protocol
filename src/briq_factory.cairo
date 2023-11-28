@@ -13,12 +13,10 @@ trait IBriqFactory<ContractState> {
     );
 }
 
-#[starknet::contract]
+#[dojo::contract]
 mod briq_factory {
     use starknet::{get_caller_address, ContractAddress, ClassHash};
     use starknet::get_block_timestamp;
-
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     
     use briq_protocol::world_config::{get_world_config, AdminTrait};
     use briq_protocol::felt_math::FeltOrd;
@@ -38,23 +36,10 @@ mod briq_factory {
         price: u128
     }
 
-    use briq_protocol::upgradeable::Upgradeable;
-    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
-    #[abi(embed_v0)]
-    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
-
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
         BriqsBought: BriqsBought,
-        UpgradeableEvent: Upgradeable::Event,
-    }
-
-    #[storage]
-    struct Storage {
-        world_dispatcher: IWorldDispatcher,
-        #[substorage(v0)]
-        UpgradeableStorage: Upgradeable::Storage,
     }
 
     #[starknet::interface]
@@ -62,13 +47,6 @@ mod briq_factory {
         fn transferFrom(
             ref self: TState, spender: ContractAddress, recipient: ContractAddress, amount: u256
         );
-    }
-
-    use briq_protocol::erc::get_world::GetWorldTrait;
-    impl GetWorldImpl of GetWorldTrait<ContractState> {
-        fn world(self: @ContractState) -> IWorldDispatcher {
-            self.world_dispatcher.read()
-        }
     }
 
     #[external(v0)]
@@ -110,11 +88,11 @@ mod briq_factory {
             IERC20Dispatcher { contract_address: briq_factory.buy_token }
                 .transferFrom(buyer, world_config.treasury, price.into());
 
-            // update store
-            briq_factory.last_purchase_time = get_block_timestamp();
-            briq_factory.last_stored_t = t + amount * DECIMALS();
-            briq_factory.surge_t = surge_t + amount * DECIMALS();
-            BriqFactoryTrait::set_briq_factory(world, briq_factory);
+            // update store (currently disabled)
+            // briq_factory.last_purchase_time = get_block_timestamp();
+            // briq_factory.last_stored_t = t + amount * DECIMALS();
+            // briq_factory.surge_t = surge_t + amount * DECIMALS();
+            // BriqFactoryTrait::set_briq_factory(world, briq_factory);
 
             //  mint briqs to buyer
             let amount_u128: u128 = amount.try_into().unwrap();

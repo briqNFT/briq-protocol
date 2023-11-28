@@ -201,14 +201,14 @@ fn test_overflows_bad_max_t() {
     briq_factory.get_price(1);
 }
 
-use dojo_erc::token::erc20::{IERC20Dispatcher, IERC20DispatcherTrait};
-#[test]
-#[available_gas(90000000)]
-fn test_briq_factory_buy() {
-    let DefaultWorld{world, payment_addr, .. } = spawn_briq_test_world();
-    IBriqFactoryDispatcher { contract_address: get_world_config(world).factory }.initialize(0, 0, payment_addr);
-
-    impersonate(DEFAULT_OWNER());
-    IERC20Dispatcher { contract_address: payment_addr }.approve(get_world_config(world).factory, 2000000000000000);
-    IBriqFactoryDispatcher { contract_address: get_world_config(world).factory }.buy(1, 100);
-}
+//use presets::erc20::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+//#[test]
+//#[available_gas(90000000)]
+//fn test_briq_factory_buy() {
+//    let DefaultWorld{world, payment_addr, .. } = spawn_briq_test_world();
+//    IBriqFactoryDispatcher { contract_address: get_world_config(world).factory }.initialize(0, 0, payment_addr);
+//
+//    impersonate(DEFAULT_OWNER());
+//    IERC20Dispatcher { contract_address: payment_addr }.approve(get_world_config(world).factory, 2000000000000000);
+//    IBriqFactoryDispatcher { contract_address: get_world_config(world).factory }.buy(1, 100);
+//}

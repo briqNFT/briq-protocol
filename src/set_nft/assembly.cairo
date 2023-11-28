@@ -1,13 +1,13 @@
 use starknet::{ContractAddress, get_caller_address, get_contract_address};
 
 use core::pedersen::pedersen;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::world::{IWorldProvider, IWorldDispatcher, IWorldDispatcherTrait};
 
 use briq_protocol::erc::erc1155::models::{
     ERC1155OperatorApproval, ERC1155Balance,
     increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
 };
-use dojo_erc::token::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
+use presets::erc1155::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
 
 use briq_protocol::erc::erc721::models::{
     ERC721Balance, ERC721Owner, ERC721TokenApproval, ERC721OperatorApproval, increase_balance, decrease_balance
@@ -184,13 +184,12 @@ trait ISetNftAssembly<ContractState> {
     );
 }
 
-use briq_protocol::erc::get_world::GetWorldTrait;
 use briq_protocol::erc::erc721::internal_trait::InternalTrait721;
 use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
 
 // Default implementation for 721-like contracts
 impl SetNftAssembly721<ContractState,
-    impl w: GetWorldTrait<ContractState>,
+    impl w: IWorldProvider<ContractState>,
     impl i: InternalTrait721<ContractState>,
     impl drop: Drop<ContractState>,
 > of ISetNftAssembly<ContractState> {
@@ -256,7 +255,7 @@ impl SetNftAssembly721<ContractState,
 
 // Default implementation for 1155-like contracts
 impl SetNftAssembly1155<ContractState,
-    impl w: GetWorldTrait<ContractState>,
+    impl w: IWorldProvider<ContractState>,
     impl i: InternalTrait1155<ContractState>,
     impl drop: Drop<ContractState>,
 > of ISetNftAssembly<ContractState> {

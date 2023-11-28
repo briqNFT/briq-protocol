@@ -12,7 +12,7 @@ mod migrate_assets {
     use briq_protocol::world_config::get_world_config;
 
     use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
-    use dojo_erc::token::erc721::interface::{IERC721CamelOnlyDispatcher, IERC721CamelOnlyDispatcherTrait};
+    use presets::erc721::erc721::interface::{IERC721CamelOnlyDispatcher, IERC721CamelOnlyDispatcherTrait};
     use super::{LegacyBriqBalanceDispatcher, LegacyBriqBalanceDispatcherTrait};
 
     fn get_legacy_set_address() -> ContractAddress {

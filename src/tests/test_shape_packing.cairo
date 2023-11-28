@@ -13,8 +13,8 @@ fn test_shape_packing_a() {
         z: 3,
     };
     let packed = ShapePacking::pack(shape);
-    packed.color_material.print();
-    packed.x_y_z.print();
+    //packed.color_material.print();
+    //packed.x_y_z.print();
     assert(packed.color_material == 0x236666616166660000000000000001, 'bad color mat packing');
     assert(packed.x_y_z == 0x800000018000000280000003, 'bad color mat packing');
     let unpacked = ShapePacking::unpack(packed);
@@ -36,8 +36,8 @@ fn test_shape_packing_b() {
         z: 0,
     };
     let packed = ShapePacking::pack(shape);
-    packed.color_material.print();
-    packed.x_y_z.print();
+    //packed.color_material.print();
+    //packed.x_y_z.print();
     assert(packed.color_material == 0x236666616166660000000000000001, 'bad color mat packing');
     assert(packed.x_y_z == 0x800000008000000080000000, 'bad color mat packing');
     let unpacked = ShapePacking::unpack(packed);

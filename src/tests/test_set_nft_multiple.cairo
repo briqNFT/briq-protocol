@@ -8,8 +8,8 @@ use starknet::testing::{set_caller_address, set_contract_address,};
 use starknet::{ContractAddress, get_contract_address};
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
-use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
+use presets::erc721::erc721::interface::IERC721DispatcherTrait;
+use presets::erc1155::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::erc::erc1155::models::ERC1155Balance;
 

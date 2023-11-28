@@ -9,34 +9,28 @@ use briq_protocol::tests::test_utils::{
     spawn_briq_test_world, impersonate, DefaultWorld, DEFAULT_OWNER, WORLD_ADMIN
 };
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use briq_protocol::briq_token::BriqToken;
-use briq_protocol::briq_token::BriqToken::{Event, Upgraded};
+use briq_protocol::tests::contract_upgrade::{IUselessContract, IUselessContractDispatcher, IUselessContractDispatcherTrait};
 use briq_protocol::tests::contract_upgrade::ContractUpgrade;
-use briq_protocol::tests::contract_upgrade::ContractUpgrade::{
-    IUselessContract, IUselessContractDispatcher, IUselessContractDispatcherTrait
-};
-use briq_protocol::upgradeable::{IUpgradeable, IUpgradeableDispatcher, IUpgradeableDispatcherTrait};
+use dojo::components::upgradeable::{IUpgradeable, IUpgradeableDispatcher, IUpgradeableDispatcherTrait};
 
 
-fn test_upgrade_with_admin(contract_address: ContractAddress) {
+fn test_upgrade_with_admin(world: IWorldDispatcher, contract_address: ContractAddress) {
     impersonate(WORLD_ADMIN());
 
     let new_class_hash: ClassHash = ContractUpgrade::TEST_CLASS_HASH.try_into().unwrap();
-    let upgradable_dispatcher = IUpgradeableDispatcher { contract_address };
-
-    upgradable_dispatcher.upgrade(new_class_hash);
+    
+    world.upgrade_contract(contract_address, new_class_hash);
 
     let upgraded = IUselessContractDispatcher { contract_address };
-    assert(upgraded.plz_more_tps() == 'daddy', 'quantum leap failed');
+    assert(upgraded.i_request_additional_tps() == 'father', 'quantum leap failed');
 }
 
-fn test_upgrade_with_non_admin(contract_address: ContractAddress) {
+fn test_upgrade_with_non_admin(world: IWorldDispatcher, contract_address: ContractAddress) {
     impersonate(DEFAULT_OWNER());
 
     let new_class_hash: ClassHash = ContractUpgrade::TEST_CLASS_HASH.try_into().unwrap();
-    let upgradable_dispatcher = IUpgradeableDispatcher { contract_address };
-
-    upgradable_dispatcher.upgrade(new_class_hash); // should panic
+    
+    world.upgrade_contract(contract_address, new_class_hash);
 }
 
 //
@@ -47,7 +41,7 @@ fn test_upgrade_with_non_admin(contract_address: ContractAddress) {
 #[available_gas(300000000)]
 fn test_upgrade_with_admin_briq_token() {
     let DefaultWorld{world, briq_token, .. } = spawn_briq_test_world();
-    test_upgrade_with_admin(briq_token.contract_address);
+    test_upgrade_with_admin(world, briq_token.contract_address);
 }
 
 
@@ -56,10 +50,10 @@ fn test_upgrade_with_admin_briq_token() {
 #[should_panic]
 fn test_upgrade_with_non_admin_briq_token() {
     let DefaultWorld{world, briq_token, .. } = spawn_briq_test_world();
-    test_upgrade_with_non_admin(briq_token.contract_address);
+    test_upgrade_with_non_admin(world, briq_token.contract_address);
 }
 
-
+use debug::PrintTrait;
 #[test]
 #[available_gas(300000000)]
 fn test_briq_token_upgrade_emit_event() {
@@ -69,16 +63,14 @@ fn test_briq_token_upgrade_emit_event() {
 
     let new_class_hash: ClassHash = ContractUpgrade::TEST_CLASS_HASH.try_into().unwrap();
 
-    let briq_token_upgradable = IUpgradeableDispatcher {
-        contract_address: briq_token.contract_address
-    };
+    world.upgrade_contract(briq_token.contract_address, new_class_hash);
 
-    briq_token_upgradable.upgrade(new_class_hash);
-
+    Into::<ClassHash, felt252>::into(starknet::testing::pop_log::<dojo::components::upgradeable::upgradeable::Upgraded>(briq_token.contract_address)
+            .unwrap().class_hash).print();
     // Upgraded
     assert(
-        @starknet::testing::pop_log(briq_token_upgradable.contract_address)
-            .unwrap() == @Event::Upgraded(Upgraded { class_hash: new_class_hash }),
+        starknet::testing::pop_log::<dojo::components::upgradeable::upgradeable::Upgraded>(briq_token.contract_address)
+            .unwrap().class_hash == new_class_hash,
         'invalid Upgraded event'
     );
 }
@@ -91,7 +83,7 @@ fn test_briq_token_upgrade_emit_event() {
 #[available_gas(300000000)]
 fn test_upgrade_with_admin_generic_sets() {
     let DefaultWorld{world, generic_sets, .. } = spawn_briq_test_world();
-    test_upgrade_with_admin(generic_sets.contract_address);
+    test_upgrade_with_admin(world, generic_sets.contract_address);
 }
 
 
@@ -100,24 +92,24 @@ fn test_upgrade_with_admin_generic_sets() {
 #[should_panic]
 fn test_upgrade_with_non_admin_generic_sets() {
     let DefaultWorld{world, generic_sets, .. } = spawn_briq_test_world();
-    test_upgrade_with_non_admin(generic_sets.contract_address);
+    test_upgrade_with_non_admin(world, generic_sets.contract_address);
 }
 
 
 #[test]
 #[available_gas(300000000)]
-fn test_upgrade_with_admin_ducks_set() {
-    let DefaultWorld{world, ducks_set, .. } = spawn_briq_test_world();
-    test_upgrade_with_admin(ducks_set.contract_address);
+fn test_upgrade_with_admin_sets_ducks() {
+    let DefaultWorld{world, sets_ducks, .. } = spawn_briq_test_world();
+    test_upgrade_with_admin(world, sets_ducks.contract_address);
 }
 
 
 #[test]
 #[available_gas(300000000)]
 #[should_panic]
-fn test_upgrade_with_non_admin_ducks_set() {
-    let DefaultWorld{world, ducks_set, .. } = spawn_briq_test_world();
-    test_upgrade_with_non_admin(ducks_set.contract_address);
+fn test_upgrade_with_non_admin_sets_ducks() {
+    let DefaultWorld{world, sets_ducks, .. } = spawn_briq_test_world();
+    test_upgrade_with_non_admin(world, sets_ducks.contract_address);
 }
 
 
@@ -127,35 +119,35 @@ fn test_upgrade_with_non_admin_ducks_set() {
 
 #[test]
 #[available_gas(300000000)]
-fn test_upgrade_with_admin_ducks_booklet() {
-    let DefaultWorld{world, ducks_booklet, .. } = spawn_briq_test_world();
-    test_upgrade_with_admin(ducks_booklet.contract_address);
+fn test_upgrade_with_admin_booklet_ducks() {
+    let DefaultWorld{world, booklet_ducks, .. } = spawn_briq_test_world();
+    test_upgrade_with_admin(world, booklet_ducks.contract_address);
 }
 
 
 #[test]
 #[available_gas(300000000)]
 #[should_panic]
-fn test_upgrade_with_non_admin_ducks_booklet() {
-    let DefaultWorld{world, ducks_booklet, .. } = spawn_briq_test_world();
-    test_upgrade_with_non_admin(ducks_booklet.contract_address);
+fn test_upgrade_with_non_admin_booklet_ducks() {
+    let DefaultWorld{world, booklet_ducks, .. } = spawn_briq_test_world();
+    test_upgrade_with_non_admin(world, booklet_ducks.contract_address);
 }
 
 
 #[test]
 #[available_gas(300000000)]
-fn test_upgrade_with_admin_planets_booklet() {
-    let DefaultWorld{world, planets_booklet, .. } = spawn_briq_test_world();
-    test_upgrade_with_admin(planets_booklet.contract_address);
+fn test_upgrade_with_admin_booklet_sp() {
+    let DefaultWorld{world, booklet_sp, .. } = spawn_briq_test_world();
+    test_upgrade_with_admin(world, booklet_sp.contract_address);
 }
 
 
 #[test]
 #[available_gas(300000000)]
 #[should_panic]
-fn test_upgrade_with_non_admin_planets_booklet() {
-    let DefaultWorld{world, planets_booklet, .. } = spawn_briq_test_world();
-    test_upgrade_with_non_admin(planets_booklet.contract_address);
+fn test_upgrade_with_non_admin_booklet_sp() {
+    let DefaultWorld{world, booklet_sp, .. } = spawn_briq_test_world();
+    test_upgrade_with_non_admin(world, booklet_sp.contract_address);
 }
 
 
@@ -167,7 +159,7 @@ fn test_upgrade_with_non_admin_planets_booklet() {
 #[available_gas(300000000)]
 fn test_upgrade_with_admin_box_nft() {
     let DefaultWorld{world, box_nft, .. } = spawn_briq_test_world();
-    test_upgrade_with_admin(box_nft.contract_address);
+    test_upgrade_with_admin(world, box_nft.contract_address);
 }
 
 
@@ -176,6 +168,6 @@ fn test_upgrade_with_admin_box_nft() {
 #[should_panic]
 fn test_upgrade_with_non_admin_box_nft() {
     let DefaultWorld{world, box_nft, .. } = spawn_briq_test_world();
-    test_upgrade_with_non_admin(box_nft.contract_address);
+    test_upgrade_with_non_admin(world, box_nft.contract_address);
 }
 

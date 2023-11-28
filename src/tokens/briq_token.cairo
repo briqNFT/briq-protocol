@@ -1,15 +1,13 @@
-#[starknet::contract]
+#[dojo::contract]
 mod briq_token {
     use briq_protocol::erc::erc1155::models::{
         ERC1155OperatorApproval, ERC1155Balance,
         increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
     };
-    use briq_protocol::erc::get_world::GetWorldTrait;
     use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
     use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ};
-    use dojo_erc::token::erc1155::interface;
-    use dojo_erc::token::erc1155::interface::{IERC1155, IERC1155CamelOnly};
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use presets::erc1155::erc1155::interface;
+    use presets::erc1155::erc1155::interface::{IERC1155, IERC1155CamelOnly};
     use starknet::ContractAddress;
     use starknet::{get_caller_address, get_contract_address};
     use array::ArrayTCloneImpl;
@@ -23,18 +21,10 @@ mod briq_token {
     #[abi(embed_v0)]
     impl SupportsERC1155CamelImpl = SupportsERC1155::SupportsERC1155Camel<ContractState>;
 
-    use briq_protocol::upgradeable::Upgradeable;
-    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
-    #[abi(embed_v0)]
-    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
-
     #[storage]
     struct Storage {
-        world_dispatcher: IWorldDispatcher,
         #[substorage(v0)]
         SupportsERC1155Storage: SupportsERC1155::Storage,
-        #[substorage(v0)]
-        UpgradeableStorage: Upgradeable::Storage,
     }
 
     #[event]
@@ -44,7 +34,6 @@ mod briq_token {
         TransferBatch: TransferBatch,
         ApprovalForAll: ApprovalForAll,
         SupportsERC1155Event: SupportsERC1155::Event,
-        UpgradeableEvent: Upgradeable::Event,
     }
 
     #[derive(Clone, Drop, starknet::Event)]
@@ -254,12 +243,6 @@ mod briq_token {
     //
     // Internal
     //
-
-    impl GetWorldImpl of GetWorldTrait<ContractState> {
-        fn world(self: @ContractState) -> IWorldDispatcher {
-            self.world_dispatcher.read()
-        }
-    }
 
     #[generate_trait]
     impl WorldInteractionsImpl of WorldInteractionsTrait {

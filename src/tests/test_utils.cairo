@@ -12,8 +12,8 @@ use starknet::syscalls::deploy_syscall;
 use dojo::test_utils::spawn_test_world;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use dojo_erc::token::erc721::interface::IERC721Dispatcher;
-use dojo_erc::token::erc1155::interface::IERC1155Dispatcher;
+use presets::erc721::erc721::interface::IERC721Dispatcher;
+use presets::erc1155::erc1155::interface::IERC1155Dispatcher;
 
 use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 
@@ -81,15 +81,14 @@ struct DefaultWorld {
 
 fn spawn_briq_test_world() -> DefaultWorld {
     impersonate(WORLD_ADMIN());
-
     // components
     let mut components = array![
         // world_config
         briq_protocol::world_config::world_config::TEST_CLASS_HASH,
 
-        dojo_erc::token::erc20_models::erc_20_balance::TEST_CLASS_HASH,
-        dojo_erc::token::erc20_models::erc_20_allowance::TEST_CLASS_HASH,
-        dojo_erc::token::erc20_models::erc_20_meta::TEST_CLASS_HASH,
+        //presets::erc20::models::erc_20_balance::TEST_CLASS_HASH,
+        //presets::erc20::models::erc_20_allowance::TEST_CLASS_HASH,
+        //presets::erc20::models::erc_20_meta::TEST_CLASS_HASH,
 
         briq_protocol::erc::erc1155::models::erc_1155_balance::TEST_CLASS_HASH,
         briq_protocol::erc::erc1155::models::erc_1155_operator_approval::TEST_CLASS_HASH,
@@ -103,17 +102,15 @@ fn spawn_briq_test_world() -> DefaultWorld {
 
         briq_protocol::booklet::attribute::shape_validator::TEST_CLASS_HASH,
     ];
-
     let world = spawn_test_world(components);
-
     // ERC 20 token for payment
-    let (payment_addr, _) = deploy_syscall(dojo_erc::token::erc20::ERC20::TEST_CLASS_HASH.try_into().unwrap(), 0, array![
-        world.contract_address.into(),
-        'cash',
-        'money',
-        0, 100000000000000000000,
-        DEFAULT_OWNER().into(),
-    ].span(), false).unwrap();
+    // let (payment_addr, _) = deploy_syscall(presets::erc20::erc20::ERC20::TEST_CLASS_HASH.try_into().unwrap(), 0, array![
+    //     world.contract_address.into(),
+    //     'cash',
+    //     'money',
+    //     0, 100000000000000000000,
+    //     DEFAULT_OWNER().into(),
+    // ].span(), false).unwrap();
 
     // systems
     let setup_world_addr = deploy(world, briq_protocol::world_config::setup_world::TEST_CLASS_HASH);
@@ -128,7 +125,7 @@ fn spawn_briq_test_world() -> DefaultWorld {
 
     let sets_generic_addr = deploy(world, briq_protocol::tokens::set_nft::set_nft::TEST_CLASS_HASH);
     let sets_ducks_addr = deploy(world, briq_protocol::tokens::set_nft_ducks::set_nft_ducks::TEST_CLASS_HASH);
-    let sets_1155_addr = deploy(world, briq_protocol::tokens::set_nft_1155_frens_ducks::set_nft_1155_frens_ducks::TEST_CLASS_HASH);
+    let sets_1155_addr = deploy(world, briq_protocol::tokens::set_nft_1155_ducks_frens::set_nft_1155_ducks_frens::TEST_CLASS_HASH);
 
     let booklet_ducks_addr = deploy(world, briq_protocol::tokens::booklet_ducks::booklet_ducks::TEST_CLASS_HASH);
     let booklet_starknet_planet_addr = deploy(world, briq_protocol::tokens::booklet_starknet_planet::booklet_starknet_planet::TEST_CLASS_HASH);
@@ -139,9 +136,9 @@ fn spawn_briq_test_world() -> DefaultWorld {
     // set-up writer rights
     //
 
-    world.grant_writer('ERC20Balance', payment_addr);
-    world.grant_writer('ERC20Allowance', payment_addr);
-    world.grant_writer('ERC20Meta', payment_addr);
+    //world.grant_writer('ERC20Balance', payment_addr);
+    //world.grant_writer('ERC20Allowance', payment_addr);
+    //world.grant_writer('ERC20Meta', payment_addr);
 
     world.grant_writer('WorldConfig', setup_world_addr);
     world.grant_writer('SetContracts', setup_world_addr);
@@ -208,7 +205,7 @@ fn spawn_briq_test_world() -> DefaultWorld {
 
     DefaultWorld {
         world,
-        payment_addr,
+        payment_addr: starknet::contract_address_const::<0x0>(),
         setup_world: ISetupWorldDispatcher { contract_address: setup_world_addr },
         attribute_groups_addr,
         register_shape_validator_addr,

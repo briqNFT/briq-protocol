@@ -2,7 +2,7 @@ use starknet::{ContractAddress, ClassHash, get_caller_address};
 use array::{ArrayTrait, SpanTrait};
 use debug::PrintTrait;
 
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::world::{IWorldProvider, IWorldDispatcher, IWorldDispatcherTrait};
 
 use briq_protocol::attributes::attribute_group::{AttributeGroupTrait};
 
@@ -10,7 +10,6 @@ use briq_protocol::world_config::{WorldConfig, AdminTrait, get_world_config};
 use briq_protocol::types::{FTSpec, PackedShapeItem};
 use briq_protocol::attributes::attributes::IAttributeHandler;
 
-use briq_protocol::erc::get_world::GetWorldTrait;
 use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
 
 impl ClassHashPrint of PrintTrait<ClassHash> {
@@ -45,15 +44,11 @@ trait IRegisterShapeValidator<ContractState> {
     );
 }
 
-#[starknet::contract]
+#[dojo::contract]
 mod register_shape_validator {
     use starknet::{ClassHash, get_caller_address};
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
     use super::ShapeValidator;
-    
-    #[storage]
-    struct Storage {}
 
     #[external(v0)]
     fn execute(
@@ -93,7 +88,7 @@ fn calc_booklet_token_id(attribute_group_id: u64, attribute_id: u64) -> felt252 
 }
 
 impl BookletAttributeHolder<ContractState,
-    impl w: GetWorldTrait<ContractState>,
+    impl w: IWorldProvider<ContractState>,
     impl i: InternalTrait1155<ContractState>,
     impl drop: Drop<ContractState>,
 > of IAttributeHandler<ContractState> {

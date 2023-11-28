@@ -6,8 +6,8 @@ use serde::Serde;
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_erc::token::erc721::interface::IERC721DispatcherTrait;
-use dojo_erc::token::erc1155::interface::IERC1155DispatcherTrait;
+use presets::erc721::erc721::interface::IERC721DispatcherTrait;
+use presets::erc1155::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::world_config::get_world_config;
 use briq_protocol::types::{FTSpec, ShapeItem};

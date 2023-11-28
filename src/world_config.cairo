@@ -50,15 +50,7 @@ trait AdminTrait {
 
 impl AdminTraitImpl of AdminTrait {
     fn is_admin(self: IWorldDispatcher, addr: @ContractAddress) -> bool {
-        if self.is_owner(*addr, 0) {
-            return true;
-        }
-        // Wraitii admin wallet
-        if addr == @starknet::contract_address_const::<0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2>() {
-            return true;
-        }
-        // Sylve admin wallet
-        if addr == @starknet::contract_address_const::<0x044Fb5366f2a8f9f8F24c4511fE86c15F39C220dcfecC730C6Ea51A335BC99CB>() {
+        if self.is_owner(*addr, 0) { // 0 == world
             return true;
         }
         false
@@ -100,40 +92,12 @@ trait ISetupWorld<ContractState> {
     );
 }
 
-#[starknet::contract]
+#[dojo::contract]
 mod setup_world {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
-    use array::ArrayTrait;
-    use traits::Into;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use super::{WorldConfig, AdminTrait, SetContracts, BoxContracts};
     use super::SYSTEM_CONFIG_ID;
-
-    use briq_protocol::upgradeable::Upgradeable;
-    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
-    #[abi(embed_v0)]
-    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
-
-    #[storage]
-    struct Storage {
-        world_dispatcher: IWorldDispatcher,
-        #[substorage(v0)]
-        UpgradeableStorage: Upgradeable::Storage,
-    }
-
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        UpgradeableEvent: Upgradeable::Event,
-    }
-
-    use briq_protocol::erc::get_world::GetWorldTrait;
-    impl GetWorldImpl of GetWorldTrait<ContractState> {
-        fn world(self: @ContractState) -> IWorldDispatcher {
-            self.world_dispatcher.read()
-        }
-    }
 
     #[external(v0)]
     fn execute(
@@ -144,7 +108,6 @@ mod setup_world {
         generic_sets: ContractAddress,
         factory: ContractAddress,
     ) {
-        // The first time this is called, it'll rely on the world owner.
         world.only_admins(@get_caller_address());
 
         set!(

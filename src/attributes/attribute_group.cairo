@@ -1,13 +1,13 @@
 use starknet::ContractAddress;
 
-use dojo::database::schema::{
-    Enum, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type
+use dojo::database::introspect::{
+    Enum, Member, Ty, Struct, Introspect, serialize_member, serialize_member_type
 };
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use debug::PrintTrait;
 
-impl SerdeLenAttributeGroupOwner of SchemaIntrospection<AttributeGroupOwner> {
+impl SerdeLenAttributeGroupOwner of Introspect<AttributeGroupOwner> {
     #[inline(always)]
     fn size() -> usize {
         2
@@ -143,12 +143,10 @@ trait IAttributeGroups<ContractState> {
     );
 }
 
-#[starknet::contract]
+#[dojo::contract]
 mod attribute_groups {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
-
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
     use briq_protocol::erc::erc1155::models::ERC1155Balance;
 
@@ -157,11 +155,6 @@ mod attribute_groups {
     use briq_protocol::felt_math::{FeltBitAnd, FeltOrd};
 
     use super::{AttributeGroupTrait, AttributeGroupOwner, AttributeGroup};
-
-    #[storage]
-    struct Storage {
-        world_dispatcher: IWorldDispatcher
-    }
 
     #[derive(Drop, PartialEq, starknet::Event)]
     struct AttributeGroupCreated {

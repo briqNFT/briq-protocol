@@ -36,12 +36,9 @@ impl FeltOrd of PartialOrd<felt252> {
 
 impl FeltDiv of Div<felt252> {
     fn div(lhs: felt252, rhs: felt252) -> felt252 {
-        felt252_div(lhs, rhs)
+        // Use u256 division as the felt_div is on the modular field
+        let lhs256: u256 = lhs.into();
+        let rhs256: u256 = rhs.into();
+        (lhs256 / rhs256).try_into().unwrap()
     }
-}
-
-fn felt252_div(lhs: felt252, rhs: felt252) -> felt252 {
-    let l: u256 = lhs.into();
-    let r: u256 = rhs.into();
-    (l / r).try_into().unwrap()
 }

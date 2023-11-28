@@ -1,12 +1,11 @@
-#[starknet::contract]
+#[dojo::contract]
 mod set_nft_briqmas {
     use briq_protocol::erc::erc721::models::{
         ERC721OperatorApproval, ERC721Owner, ERC721Balance, ERC721TokenApproval
     };
     use briq_protocol::world_config::get_world_config;
-    use dojo_erc::token::erc721::interface;
-    use dojo_erc::token::erc721::interface::{IERC721, IERC721CamelOnly};
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use presets::erc721::erc721::interface;
+    use presets::erc721::erc721::interface::{IERC721, IERC721CamelOnly};
     use integer::BoundedInt;
     use starknet::ContractAddress;
     use starknet::{get_caller_address, get_contract_address};
@@ -20,18 +19,10 @@ mod set_nft_briqmas {
     #[abi(embed_v0)]
     impl SupportsERC721CamelImpl = SupportsERC721::SupportsERC721Camel<ContractState>;
 
-    use briq_protocol::upgradeable::Upgradeable;
-    component!(path: Upgradeable, storage: UpgradeableStorage, event: UpgradeableEvent);
-    #[abi(embed_v0)]
-    impl UpgradeableImpl = Upgradeable::Upgradeable<ContractState>;
-
     #[storage]
     struct Storage {
-        world_dispatcher: IWorldDispatcher,
         #[substorage(v0)]
         SupportsERC721Storage: SupportsERC721::Storage,
-        #[substorage(v0)]
-        UpgradeableStorage: Upgradeable::Storage,
     }
 
     #[event]
@@ -41,7 +32,6 @@ mod set_nft_briqmas {
         Approval: Approval,
         ApprovalForAll: ApprovalForAll,
         SupportsERC721Event: SupportsERC721::Event,
-        UpgradeableEvent: Upgradeable::Event,
     }
 
     #[derive(Copy, Drop, starknet::Event)]
@@ -271,12 +261,6 @@ mod set_nft_briqmas {
     //
     // Internal
     //
-
-    impl GetWorldImpl of briq_protocol::erc::get_world::GetWorldTrait<ContractState> {
-        fn world(self: @ContractState) -> IWorldDispatcher {
-            self.world_dispatcher.read()
-        }
-    }
 
     use briq_protocol::uri::get_url;
 

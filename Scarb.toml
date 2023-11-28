@@ -7,24 +7,10 @@ cairo-version = "2.2.0"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo" }
-dojo_erc = { git = "https://github.com/dojoengine/dojo" }
-
-[[target.dojo]]
-build-external-contracts = [
-    'dojo_erc::erc1155::components::erc_1155_balance',
-    'dojo_erc::erc1155::components::operator_approval',
-    'dojo_erc::erc721::components::erc_721_balance',
-    'dojo_erc::erc721::components::erc_721_owner',
-    'dojo_erc::erc721::components::erc_721_token_approval',
-    'dojo_erc::erc1155::systems::ERC1155SetApprovalForAll',
-    'dojo_erc::erc721::systems::ERC721Approve',
-    'dojo_erc::erc721::systems::ERC721SetApprovalForAll',
-    'dojo_erc::erc721::systems::ERC721TransferFrom'
-]
-
-[tool.dojo]
-initializer_class_hash = "0xbeef"
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.3.13" }
+# dojo_erc = { git = "https://github.com/dojoengine/dojo" }
+#origami = { path = "../origami" }
+presets = { path = "../origami/presets/" }
 
 [tool.dojo.world]
 name = "briq"
@@ -34,7 +20,16 @@ cover_uri = "/Volumes/Samsung_T5/Programming/briq-protocol/docs/banner.png"
 website = "https://briq.construction/"
 socials.x = "https://twitter.com/briqNFT"
 
-[tool.dojo.env]
+[[target.dojo]]
+build-external-contracts = [
+    'presets::erc1155::erc1155::components::erc_1155_balance',
+    'presets::erc1155::erc1155::components::operator_approval',
+    'presets::erc721::erc721::components::erc_721_balance',
+    'presets::erc721::erc721::components::erc_721_owner',
+    'presets::erc721::erc721::components::erc_721_token_approval'
+]
+
+#[tool.dojo.env]
 # rpc_url = "http://localhost:5050/"
 # Default account for katana with seed = 0
 # account_address = "0x03ee9e18edc71a6df30ac3aca2e0b02a198fbce19b7480a63a0d71cbd76652e0"
