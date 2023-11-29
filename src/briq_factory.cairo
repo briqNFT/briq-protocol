@@ -7,7 +7,7 @@ use starknet::ContractAddress;
 trait IBriqFactory<ContractState> {
     fn initialize(ref self: ContractState, t: felt252, surge_t: felt252, buy_token: ContractAddress);
     fn buy(
-        self: @ContractState,
+        ref self: ContractState,
         material: u64,
         amount_u32: u32
     );
@@ -66,11 +66,14 @@ mod briq_factory {
         }
 
         fn buy(
-            self: @ContractState,
+            ref self: ContractState,
             material: u64,
             amount_u32: u32
         ) {
             let world = self.world_dispatcher.read();
+
+            // TEMP for migration
+            world.only_admins(@get_caller_address());
 
             let amount: felt252 = amount_u32.into();
             assert(amount >= MIN_PURCHASE(), 'amount too low !');

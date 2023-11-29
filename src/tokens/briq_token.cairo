@@ -124,7 +124,7 @@ mod briq_token {
         }
 
         fn uri(self: @ContractState, token_id: u256) -> Array<felt252> {
-            array!['https://briq.construction', '/v1/uri/briqs/1.json']
+            array!['https://briq.construction', '/v1/uri/briqs/', 'starknet-mainnet-dojo/1.json']
         }
     }
 

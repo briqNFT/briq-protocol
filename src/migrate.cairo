@@ -9,7 +9,7 @@ mod migrate_assets {
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use starknet::info::get_tx_info;
 
-    use briq_protocol::world_config::get_world_config;
+    use briq_protocol::world_config::{get_world_config, AdminTrait};
 
     use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
     use presets::erc721::erc721::interface::{IERC721CamelOnlyDispatcher, IERC721CamelOnlyDispatcherTrait};
@@ -35,10 +35,15 @@ mod migrate_assets {
 
     #[external(v0)]
     fn migrate_legacy_set_briqs(self: @ContractState, set_id: felt252, qty: u128) {
+        // TEMP for migration
+        self.world().only_admins(@get_caller_address());
+
         assert(qty != 0, 'bad qty');
         let caller = get_caller_address();
         let legacy_set = IERC721CamelOnlyDispatcher { contract_address: get_legacy_set_address() };
-        assert(legacy_set.ownerOf(set_id.into()) == caller, 'not owner');
+        // TEMP for migration
+        //assert(legacy_set.ownerOf(set_id.into()) == caller, 'not owner');
+
         // Check briqs spec matches
         assert(LegacyBriqBalanceDispatcher { contract_address: get_legacy_briq_address() }.balanceOfMaterial_(set_id, 1) == qty.into(), 'bad nb of briqs');
         // Transfer to the migrate contract, as we can't actually burn the NFTs
@@ -49,6 +54,9 @@ mod migrate_assets {
 
     #[external(v0)]
     fn migrate_legacy_briqs(self: @ContractState, qty: u128) {
+        // TEMP for migration
+        self.world().only_admins(@get_caller_address());
+
         assert(qty != 0, 'bad qty');
         let caller = get_caller_address();
         let legacy_briqs = LegacyBriqBalanceDispatcher { contract_address: get_legacy_briq_address() };

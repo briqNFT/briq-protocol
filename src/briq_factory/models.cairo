@@ -59,32 +59,36 @@ impl BriqFactoryStoreImpl of BriqFactoryTrait {
     fn get_current_t(self: @BriqFactoryStore) -> felt252 {
         let store = *self; // TODO: clean this up
 
-        let time_since_last_purchase: felt252 = (starknet::info::get_block_timestamp()
-            - store.last_purchase_time)
-            .into();
-        let decay = time_since_last_purchase * DECAY_PER_SECOND();
+        return store.last_stored_t;
+        // Temporarily deactivated
+        // let time_since_last_purchase: felt252 = (starknet::info::get_block_timestamp()
+        //     - store.last_purchase_time)
+        //     .into();
+        // let decay = time_since_last_purchase * DECAY_PER_SECOND();
 
-        if store.last_stored_t <= decay {
-            0
-        } else {
-            store.last_stored_t - decay
-        }
+        // if store.last_stored_t <= decay {
+        //     0
+        // } else {
+        //     store.last_stored_t - decay
+        // }
     }
 
     fn get_surge_t(self: @BriqFactoryStore) -> felt252 {
         let store = *self; // TODO: clean this up
 
-        let time_since_last_purchase: felt252 = (starknet::info::get_block_timestamp()
-            - store.last_purchase_time)
-            .into();
+        return store.surge_t;
+        // Temporarily deactivated
+        // let time_since_last_purchase: felt252 = (starknet::info::get_block_timestamp()
+        //     - store.last_purchase_time)
+        //     .into();
 
-        let decay = time_since_last_purchase * SURGE_DECAY_PER_SECOND();
+        // let decay = time_since_last_purchase * SURGE_DECAY_PER_SECOND();
 
-        if store.surge_t <= decay {
-            0
-        } else {
-            store.surge_t - decay
-        }
+        // if store.surge_t <= decay {
+        //     0
+        // } else {
+        //     store.surge_t - decay
+        // }
     }
 
     fn get_surge_price(self: @BriqFactoryStore, amount: felt252) -> felt252 {
