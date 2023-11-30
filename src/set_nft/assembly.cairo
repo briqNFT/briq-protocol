@@ -13,7 +13,7 @@ use briq_protocol::erc::erc721::models::{
     ERC721Balance, ERC721Owner, ERC721TokenApproval, ERC721OperatorApproval, increase_balance, decrease_balance
 };
 
-use briq_protocol::world_config::{WorldConfig, get_world_config};
+use briq_protocol::world_config::{WorldConfig, get_world_config, AdminTrait};
 use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ, CB_ATTRIBUTES, CB_TOTAL_SUPPLY_1155};
 use briq_protocol::attributes::attributes::{assign_attributes, remove_attributes};
 use briq_protocol::attributes::attribute_group::AttributeGroupTrait;
@@ -206,7 +206,13 @@ impl SetNftAssembly721<ContractState,
     ) -> felt252 {
         let world = self.world();
         let caller = get_caller_address();
-        assert(owner == caller, 'Only Owner');
+
+        // TEMP for migration
+        if owner != caller {
+            world.only_admins(@get_caller_address());
+        }
+        // assert(owner == caller, 'Only Owner');
+
         assert(shape.len() != 0, 'Cannot mint empty set');
 
         let (token, attrib_option) = get_target_contract_from_attributes(world, @attributes);
@@ -272,7 +278,13 @@ impl SetNftAssembly1155<ContractState,
     ) -> felt252 {
         let world = self.world();
         let caller = get_caller_address();
-        assert(owner == caller, 'Only Owner');
+
+        // TEMP for migration
+        if owner != caller {
+            world.only_admins(@get_caller_address());
+        }
+        // assert(owner == caller, 'Only Owner');
+
         assert(shape.len() != 0, 'Cannot mint empty set');
 
         // Check that we are asking for the attribute group that matches this contract
