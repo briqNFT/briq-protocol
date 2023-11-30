@@ -377,6 +377,11 @@ mod briq_token {
         fn _mint(ref self: ContractState, to: ContractAddress, id: u256, amount: u256) {
             assert(to.is_non_zero(), Errors::INVALID_RECEIVER);
 
+            // WARNING: briq delta
+            if self.get_balance(to, id) == 0 && amount > 0 {
+                increase_balance_1155(self.world(), CUM_BALANCE_TOKEN(), to, CB_BRIQ(), 1);
+            }
+
             self.set_balance(to, id, self.get_balance(to, id) + amount);
 
             self
@@ -396,6 +401,11 @@ mod briq_token {
             assert(self.get_balance(caller, id) >= amount, Errors::INSUFFICIENT_BALANCE);
 
             self.set_balance(caller, id, self.get_balance(caller, id) - amount);
+
+            // WARNING: briq delta
+            if self.get_balance(caller, id) == 0 && amount > 0 {
+                decrease_balance_1155(self.world(), CUM_BALANCE_TOKEN(), caller, CB_BRIQ(), 1);
+            }
 
             self
                 .emit_event(

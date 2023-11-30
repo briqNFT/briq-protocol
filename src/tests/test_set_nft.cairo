@@ -178,7 +178,7 @@ fn test_empty_mint() {
 fn test_simple_mint_and_burn_1() {
     let DefaultWorld{world, briq_token, generic_sets, .. } = spawn_briq_test_world();
 
-    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 1);
 
     impersonate(DEFAULT_OWNER());
 
@@ -200,13 +200,13 @@ fn test_simple_mint_and_burn_1() {
     assert(DEFAULT_OWNER() == generic_sets.owner_of(token_id.into()), 'bad owner');
     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 1, 'bad balance');
     assert(briq_token.balance_of(token_id.try_into().unwrap(), 1) == 1, 'bad balance');
-    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 99, 'bad balance');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 0, 'bad balance');
 
     as_set(generic_sets).disassemble(
         DEFAULT_OWNER(), token_id.into(), array![FTSpec { token_id: 1, qty: 1 }], array![]
     );
     assert(generic_sets.balance_of(DEFAULT_OWNER()) == 0, 'bad balance');
-    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 100, 'bad balance');
+    assert(briq_token.balance_of(DEFAULT_OWNER(), 1) == 1, 'bad balance');
     // TODO: validate that token ID balance asserts as it's 0
 
     let (a, b) = starknet::testing::pop_log_raw(generic_sets.contract_address).unwrap();
