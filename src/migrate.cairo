@@ -66,4 +66,20 @@ mod migrate_assets {
         // At this point mint new briqs
         MintBurnDispatcher { contract_address: get_world_config(self.world_dispatcher.read()).briq }.mint(caller, 1, qty.into());
     }
+
+    #[external(v0)]
+    fn admin_migrate_legacy_set_briqs(self: @ContractState, owner: ContractAddress, set_id: felt252, qty: u128) {
+        // TEMP for migration
+        self.world().only_admins(@get_caller_address());
+
+        assert(qty != 0, 'bad qty');
+
+        let legacy_set = IERC721CamelOnlyDispatcher { contract_address: get_legacy_set_address() };
+        // Check briqs spec matches
+        assert(LegacyBriqBalanceDispatcher { contract_address: get_legacy_briq_address() }.balanceOfMaterial_(set_id, 1) == qty.into(), 'bad nb of briqs');
+        // Transfer to the migrate contract, as we can't actually burn the NFTs
+        legacy_set.transferFrom(owner, get_contract_address(), set_id.into());
+        // At this point mint new briqs
+        MintBurnDispatcher { contract_address: get_world_config(self.world_dispatcher.read()).briq }.mint(owner, 1, qty.into());
+    }
 }
