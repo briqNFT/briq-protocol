@@ -97,7 +97,7 @@ mod booklet_ducks {
     #[external(v0)]
     impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briq ducks booklets'
+            'Ducks Everywhere Booklets'
         }
 
         fn symbol(self: @ContractState) -> felt252 {

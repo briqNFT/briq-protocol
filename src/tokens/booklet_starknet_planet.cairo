@@ -97,7 +97,7 @@ mod booklet_starknet_planet {
     #[external(v0)]
     impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'starknet planet booklets'
+            'Starknet Planet Booklets'
         }
 
         fn symbol(self: @ContractState) -> felt252 {

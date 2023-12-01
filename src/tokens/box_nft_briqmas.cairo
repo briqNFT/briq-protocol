@@ -97,11 +97,11 @@ mod box_nft_briqmas {
     #[external(v0)]
     impl ERC1155MetadataImpl of briq_protocol::erc::erc1155::interface::IERC1155Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briq box nft'
+            'briqmas Boxes'
         }
 
         fn symbol(self: @ContractState) -> felt252 {
-            'briq box'
+            'box'
         }
 
         fn uri(self: @ContractState, token_id: u256) -> Array<felt252> {
