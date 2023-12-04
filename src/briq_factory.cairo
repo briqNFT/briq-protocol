@@ -72,17 +72,14 @@ mod briq_factory {
         ) {
             let world = self.world_dispatcher.read();
 
-            // TEMP for migration
-            world.only_admins(@get_caller_address());
-
             let amount: felt252 = amount_u32.into();
             assert(amount >= MIN_PURCHASE(), 'amount too low !');
 
             let mut briq_factory = BriqFactoryTrait::get_briq_factory(world);
 
             let price = briq_factory.get_price(amount);
-            let t = briq_factory.get_current_t();
-            let surge_t = briq_factory.get_surge_t();
+            //let t = briq_factory.get_current_t();
+            //let surge_t = briq_factory.get_surge_t();
 
             // Transfer funds to receiver wallet
             // TODO: use something other than the super-admin address for this.
