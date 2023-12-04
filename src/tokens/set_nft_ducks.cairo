@@ -134,7 +134,7 @@ mod set_nft_ducks {
     #[external(v0)]
     impl ERC721MetadataImpl of briq_protocol::erc::erc721::interface::IERC721Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briq x Ducks Everywhere'
+            'Ducks Everywhere'
         }
 
         fn symbol(self: @ContractState) -> felt252 {
