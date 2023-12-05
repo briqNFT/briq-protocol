@@ -67,4 +67,5 @@ fn test_shape_packing_c() {
     assert(unpacked.material == 1, 'bad material unpacking');
     assert(unpacked.x == shape.x, 'bad x unpacking');
     assert(unpacked.y == shape.y, 'bad y unpacking');
-    assert(unpacked.z == shape.z, 'bad z unpacking');}
+    assert(unpacked.z == shape.z, 'bad z unpacking');
+}

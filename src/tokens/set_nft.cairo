@@ -134,7 +134,7 @@ mod set_nft {
     #[external(v0)]
     impl ERC721MetadataImpl of briq_protocol::erc::erc721::interface::IERC721Metadata<ContractState> {
         fn name(self: @ContractState) -> felt252 {
-            'briq set NFTs'
+            'briq set'
         }
 
         fn symbol(self: @ContractState) -> felt252 {
