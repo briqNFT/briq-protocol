@@ -2,9 +2,14 @@
 
 sozo build
 
-sozo migrate --name test-3 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo migrate --name briq_protocol --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo migrate --world $WORLD_ADDRESS --name briq_protocol --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
-sozo migrate --world $WORLD_ADDRESS --name test-3 --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+# testnet
+sozo migrate --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+
+# Alternative testnet wallet
+starkli invoke $WORLD_ADDRESS grant_owner 0x009fa2C8FB501C57140E79fc720ab7160E9BBF41186d89eC45722A1d1Eb4D567 0 --keystore-password $KEYSTORE_PWD
 
 ####################################
 ## Setup World config
@@ -15,9 +20,11 @@ sozo execute $SETUP_WORLD_ADDR execute --calldata $WORLD_ADDRESS,$TREASURY_ADDRE
 sozo model get WorldConfig 1 --world $WORLD_ADDRESS
 #starkli call $WORLD_ADDRESS entity str:WorldConfig 1 1 0 4 4 251 251 251 251
 
+sozo execute $SETUP_WORLD_ADDR set_dojo_migration_contract --calldata $WORLD_ADDRESS,$MIGRATE_ASSETS_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+
 ####################################
 ## Setup briq_factory
-sozo execute $FACTORY_ADDR initialize --calldata 0,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+sozo execute $FACTORY_ADDR initialize --calldata 2100000000000000000000000,0,$FEE_TOKEN_ADDR --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 #starkli invoke $FACTORY_ADDR initialize 0 0 $FEE_TOKEN_ADDR --keystore-password $KEYSTORE_PWD
 
 ## Return briq_factory config
@@ -27,8 +34,7 @@ sozo model get BriqFactoryStore 1 --world $WORLD_ADDRESS
 ####################################
 #### Setup authorizations
 starkli invoke $WORLD_ADDRESS grant_owner 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2 0 --keystore-password $KEYSTORE_PWD
-# Alternative testnet wallet
-starkli invoke $WORLD_ADDRESS grant_owner 0x009fa2C8FB501C57140E79fc720ab7160E9BBF41186d89eC45722A1d1Eb4D567 0 --keystore-password $KEYSTORE_PWD
+starkli invoke $WORLD_ADDRESS grant_owner 0x044Fb5366f2a8f9f8F24c4511fE86c15F39C220dcfecC730C6Ea51A335BC99CB 0 --keystore-password $KEYSTORE_PWD
 
 # Done via frontend
 
