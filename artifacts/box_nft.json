@@ -660,7 +660,7 @@
         "CONSTRUCTOR": [],
         "EXTERNAL": [
             {
-                "offset": 1505,
+                "offset": 1484,
                 "selector": "0x1b5d966c47351d79022336a404619bf402017905cdc40bd13de7df2f455645"
             },
             {
@@ -680,7 +680,7 @@
                 "selector": "0xb06355e8c165a06a8974c58013b5f4a0a5a14de7144d8df78900b466c3def3"
             },
             {
-                "offset": 1611,
+                "offset": 1594,
                 "selector": "0xc6d59be2ce3c50e3e324a46f03ec92dc36b4e7fe1c87d00f8dcceb2af5872f"
             },
             {
@@ -688,27 +688,27 @@
                 "selector": "0xcb23989aa3fbbdcb496dbd25bc15d8af5889a5ab811324ff498908cc4e961d"
             },
             {
-                "offset": 2385,
+                "offset": 2368,
                 "selector": "0x112844c6769836ade5cb7dc37b93a10fc30ddc40322ef9e7e964d0a716ba1e3"
             },
             {
-                "offset": 2624,
+                "offset": 2607,
                 "selector": "0x116d888b0a9ad3998fcf1cdb2711375c69ac1847e806a480e3585c3da18eac3"
             },
             {
-                "offset": 2299,
+                "offset": 2282,
                 "selector": "0x12975dbd1bf8f80a3be19e5a30f03a9edf464878d7bada5dae7ef00481a9384"
             },
             {
-                "offset": 2231,
+                "offset": 2214,
                 "selector": "0x13d9296e8ee23d9a89be9be7f4fee0f8462a32e986d7b71dc97deb58eff209a"
             },
             {
-                "offset": 2262,
+                "offset": 2245,
                 "selector": "0x176e2c487053e7ed6866780b059c976db79d819266074c8769e1bf22cbdbf82"
             },
             {
-                "offset": 2759,
+                "offset": 2742,
                 "selector": "0x19d59d013d4aa1a8b1ce4c8299086f070733b453c02d0dc46e735edc04d6444"
             },
             {
@@ -716,23 +716,23 @@
                 "selector": "0x1bb6c2e39d1a273be47a707e952919f26b31d536807f6faae5e0be51119a43e"
             },
             {
-                "offset": 2336,
+                "offset": 2319,
                 "selector": "0x1e6d3cbfeefef1d609db7db9516768ba077a394d54e97c2fcc92f0e18117083"
             },
             {
-                "offset": 2713,
+                "offset": 2696,
                 "selector": "0x21cdf9aedfed41bc4485ae779fda471feca12075d9127a0fc70ac6b3b3d9c30"
             },
             {
-                "offset": 2516,
+                "offset": 2499,
                 "selector": "0x29e211664c0b63c79638fbea474206ca74016b3e9a3dc4f9ac300ffd8bdf2cd"
             },
             {
-                "offset": 2183,
+                "offset": 2166,
                 "selector": "0x2ce0b14a8414c3e59d14c8807b0bddd2be0c61f600af40180344015a97bb17b"
             },
             {
-                "offset": 2676,
+                "offset": 2659,
                 "selector": "0x2d4c8ea4c8fb9f571d1f6f9b7692fff8e5ceaf73b1df98e7da8c1109b39ae9a"
             },
             {
@@ -740,19 +740,19 @@
                 "selector": "0x2d9374f162064a8547a53095c873b81dec7e5f0fd58842008b029ff7f19961f"
             },
             {
-                "offset": 2562,
+                "offset": 2545,
                 "selector": "0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a20b54c76e"
             },
             {
-                "offset": 2822,
+                "offset": 2805,
                 "selector": "0x2ee3279dd30231650e0b4a1a3516ab3dc26b6d3dfcb6ef20fb4329cfc1213e1"
             },
             {
-                "offset": 2439,
+                "offset": 2422,
                 "selector": "0x31bbc41a2f2a54c5a3f04ab6f38b7b8ed0d165b15f3c5a85165254fa7eab4f3"
             },
             {
-                "offset": 2142,
+                "offset": 2125,
                 "selector": "0x3491b93509d0195be8ea70757bf5b064b83c0bcd8ceb8e16f9a6a1baa53ce61"
             },
             {
@@ -896,16 +896,16 @@
                     "contracts.box_nft.unboxing",
                     "contracts.box_nft.unboxing.unbox_"
                 ],
-                "end_pc": 1581,
+                "end_pc": 1564,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 176,
-                        "offset": 68
+                        "group": 174,
+                        "offset": 69
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 1575,
+                "start_pc": 1558,
                 "value": "Insufficient balance"
             },
             {
@@ -913,16 +913,16 @@
                     "cairopen.math.array",
                     "cairopen.math.array.invert_arr"
                 ],
-                "end_pc": 1750,
+                "end_pc": 1733,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 186,
+                        "group": 184,
                         "offset": 1
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 1744,
+                "start_pc": 1727,
                 "value": "invert_arr: size must be greather or equal to 1"
             },
             {
@@ -930,16 +930,16 @@
                     "cairopen.string.libs.conversion",
                     "cairopen.string.libs.conversion._loop_felt_to_inverted_string"
                 ],
-                "end_pc": 1872,
+                "end_pc": 1855,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 198,
+                        "group": 196,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 1866,
+                "start_pc": 1849,
                 "value": "felt_to_string: exceeding max String length 2^15"
             }
         ],
@@ -2214,39 +2214,16 @@
             "0x1104800180018000",
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffb3",
             "0x208b7fff7fff7ffe",
-            "0x480a7ffa7fff8000",
-            "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb35",
-            "0x48287ffd80007fff",
-            "0x20680017fff7fff",
-            "0x6",
-            "0x48127ffd7fff8000",
-            "0x480a7ffb7fff8000",
-            "0x480a7ffc7fff8000",
-            "0x208b7fff7fff7ffe",
-            "0x48127ffd7fff8000",
-            "0x480a7ffb7fff8000",
-            "0x480a7ffc7fff8000",
-            "0x480a7ffd7fff8000",
-            "0x48127ffa7fff8000",
-            "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffea",
-            "0x400680017fff7fff",
-            "0x1",
-            "0x48127ffc7fff8000",
-            "0x48127ffc7fff8000",
-            "0x48127ffc7fff8000",
-            "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf8",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb0f",
             "0x40137fff7fff8000",
             "0x480680017fff8000",
             "0x182d859c0807ba9db63baf8b9d9fdbfeb885d820be6e206b9dab626d995c433",
             "0x4002800080007fff",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf2",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb09",
             "0x40137fff7fff8001",
             "0x4003800080017ff7",
             "0x4003800180017ff8",
@@ -2264,7 +2241,7 @@
             "0x4828800180007ffc",
             "0x480a80017fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb1c",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb33",
             "0x480a7ff67fff8000",
             "0x208b7fff7fff7ffe",
             "0x480a7ff67fff8000",
@@ -2272,13 +2249,13 @@
             "0x480a7ff87fff8000",
             "0x480a7ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe52",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe69",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe4c",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe63",
             "0x48127ffb7fff8000",
             "0x48127ffc7fff8000",
             "0x480a7ff97fff8000",
@@ -2294,37 +2271,42 @@
             "0x48127fdc7fff8000",
             "0x48127ffd7fff8000",
             "0x208b7fff7fff7ffe",
+            "0x480a7ff77fff8000",
+            "0x1104800180018000",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffafc",
+            "0x400680017fff7fff",
+            "0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2",
             "0x480a7ffa7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb06",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb18",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb03",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb15",
             "0x48297ffb80007ffa",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb00",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb12",
             "0x480a7ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffafd",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb0f",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffafa",
-            "0x480a7ff77fff8000",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb0c",
+            "0x48127fef7fff8000",
             "0x480a7ff87fff8000",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffed1",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffee3",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffeb9",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffecb",
             "0x48127ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffac9",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffadb",
             "0x48127ffe7fff8000",
             "0x48127ff77fff8000",
             "0x48127ff77fff8000",
@@ -2334,20 +2316,17 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffbf",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffba",
             "0x208b7fff7fff7ffe",
             "0x480a7ff57fff8000",
             "0x480a7ff67fff8000",
             "0x480a7ff77fff8000",
             "0x480a7ff87fff8000",
-            "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff83",
-            "0x480a7ff87fff8000",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffcd",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffcb",
             "0x208b7fff7fff7ffe",
             "0x1b2",
             "0x0",
@@ -2413,15 +2392,15 @@
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc0d",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc22",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe58",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe6d",
             "0x48127ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa68",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa7d",
             "0x48127ffe7fff8000",
             "0x48127ff77fff8000",
             "0x48127ff77fff8000",
@@ -2432,25 +2411,25 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff5d",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff5b",
             "0x480680017fff8000",
-            "0x5a9",
+            "0x594",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd46",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd5b",
             "0x480680017fff8000",
-            "0x5b3",
+            "0x59e",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd42",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd57",
             "0x48127ff17fff8000",
             "0x480680017fff8000",
             "0x0",
             "0x480a7ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae4",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf9",
             "0x480a7ffc7fff8000",
             "0x48307fdd80007fe4",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffab3",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffac8",
             "0x48127fc27fff8000",
             "0x48127fc27fff8000",
             "0x48127ffd7fff8000",
@@ -2479,7 +2458,7 @@
             "0x40780017fff7fff",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa09",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa1e",
             "0x40137fff7fff8000",
             "0x4003800080007ffb",
             "0x4003800180007ffc",
@@ -2493,14 +2472,14 @@
             "0x4828800080007ffc",
             "0x480a80007fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa14",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa29",
             "0x48127ffd7fff8000",
             "0x480a7ff97fff8000",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9f4",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa09",
             "0x40137fff7fff8000",
             "0x4003800080007ffb",
             "0x4003800180007ffc",
@@ -2514,23 +2493,27 @@
             "0x4828800080007ffc",
             "0x480a80007fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9ff",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa14",
             "0x48127ffd7fff8000",
             "0x480a7ff97fff8000",
             "0x208b7fff7fff7ffe",
+            "0x480680017fff8000",
+            "0x1",
+            "0x400680017fff7fff",
+            "0x0",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffdd1",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffde2",
             "0x48127ffe7fff8000",
             "0x482480017ffe8000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x48127ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa90",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaa1",
             "0x48127fe27fff8000",
             "0x48127fe27fff8000",
             "0x48127ffd7fff8000",
@@ -2539,10 +2522,10 @@
             "0x482480017fe08000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffdd1",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffde2",
             "0x48127ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9ef",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa00",
             "0x40137fff7fff7ffc",
             "0x48127ffe7fff8000",
             "0x48127ff77fff8000",
@@ -2555,7 +2538,7 @@
             "0x480680017fff8000",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffee2",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffedc",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
@@ -2570,7 +2553,7 @@
             "0x480280007ffd8000",
             "0x480280017ffd8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffce",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffca",
             "0x40780017fff7fff",
             "0x1",
             "0x48127ffc7fff8000",
@@ -2584,14 +2567,14 @@
             "0x40780017fff7fff",
             "0x2",
             "0x480680017fff8000",
-            "0x5a9",
+            "0x594",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcb0",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcc1",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc70",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc81",
             "0x484680017ffd8000",
             "0x1000000000000000000000000000000000000000000000000",
             "0x482680017ffd8000",
@@ -2605,17 +2588,17 @@
             "0x1",
             "0x480080007ffa8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff81",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff7d",
             "0x480680017fff8000",
-            "0x577",
+            "0x562",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc99",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcaa",
             "0x40137fff7fff8000",
             "0x48127ff77fff8000",
             "0x48127fd87fff8000",
             "0x48127ff67fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbe6",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbf7",
             "0x40137fff7fff8001",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
@@ -2687,7 +2670,7 @@
             "0x480a7ffc7fff8000",
             "0x480080007ffa8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff44",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff40",
             "0x48127ffe7fff8000",
             "0x480a7ff67fff8000",
             "0x48127ffd7fff8000",
@@ -2699,9 +2682,9 @@
             "0x1",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff982",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff993",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff92b",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff93c",
             "0x40137fff7fff8000",
             "0x48127ffc7fff8000",
             "0x480a7ffb7fff8000",
@@ -2792,7 +2775,7 @@
             "0x40780017fff7fff",
             "0x3",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8d0",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8e1",
             "0x40137fff7fff8000",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
@@ -2821,12 +2804,12 @@
             "0x480680017fff8000",
             "0x8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff908",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff919",
             "0x480a7ffb7fff8000",
             "0x480680017fff8000",
             "0xa",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff973",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff984",
             "0x482a7ffd7ffc8000",
             "0x48287ffa7ffe8000",
             "0x400080007ffe7fff",
@@ -2841,7 +2824,7 @@
             "0x480a7ffb7fff8000",
             "0x48127ffa7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbd8",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbe9",
             "0x20680017fff7fff",
             "0x4",
             "0x10780017fff7fff",
@@ -2874,10 +2857,10 @@
             "0x3",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb90",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffba1",
             "0x40137fff7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff87b",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff88c",
             "0x40137fff7fff8001",
             "0x4802800080008000",
             "0x4002800080017fff",
@@ -2886,7 +2869,7 @@
             "0x4802800280008000",
             "0x4002800280017fff",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff872",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff883",
             "0x40137fff7fff8002",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
@@ -2898,7 +2881,7 @@
             "0x100000000000000000000",
             "0x480a80027fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff93a",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff94b",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x48127ffd7fff8000",
@@ -3013,7 +2996,7 @@
             "0x480a80017fff8000",
             "0x480a80007fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7fc",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff80d",
             "0x480680017fff8000",
             "0x14",
             "0x4828800080007fff",
@@ -3038,12 +3021,12 @@
             "0x40780017fff7fff",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7da",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7eb",
             "0x40137fff7fff8000",
             "0x480680017fff8000",
-            "0x577",
+            "0x562",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae7",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf8",
             "0x480680017fff8000",
             "0x5",
             "0x482680017ffd8000",
@@ -3054,11 +3037,11 @@
             "0x480680017fff8000",
             "0x5",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7d3",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7e4",
             "0x480680017fff8000",
-            "0x5a9",
+            "0x594",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffad8",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae9",
             "0x482680017ffd8000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x4826800180008000",
@@ -3067,7 +3050,7 @@
             "0x480680017fff8000",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7c6",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7d7",
             "0x480a7ffa7fff8000",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
@@ -3112,13 +3095,13 @@
             "0x48127ffa7fff8000",
             "0x208b7fff7fff7ffe",
             "0x480680017fff8000",
-            "0x5a9",
+            "0x594",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaa0",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffab1",
             "0x480680017fff8000",
-            "0x5b3",
+            "0x59e",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa9c",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaad",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
@@ -3158,7 +3141,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x480680017fff8000",
-            "0x897",
+            "0x886",
             "0x1104800180018000",
             "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffee0",
             "0x208b7fff7fff7ffe",
@@ -3176,7 +3159,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff759",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff76a",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -3210,7 +3193,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbea",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbfb",
             "0x208b7fff7fff7ffe",
             "0x482680017ffd8000",
             "0x2",
@@ -3238,7 +3221,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbfa",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc0b",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -3275,7 +3258,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb27",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb38",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -3314,7 +3297,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb08",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb19",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x3",
@@ -3330,7 +3313,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff6bf",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff6d0",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -3387,7 +3370,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbe7",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbe6",
             "0x208b7fff7fff7ffe",
             "0x480280027ffb8000",
             "0x480280047ffd8000",
@@ -3491,7 +3474,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff97c",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff98d",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
@@ -3500,7 +3483,7 @@
             "0x1104800180018000",
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff1d",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff986",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff997",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -3539,7 +3522,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff96d",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff97e",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
@@ -3550,7 +3533,7 @@
             "0x1104800180018000",
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff10",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff996",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9a7",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x3",
@@ -3569,7 +3552,7 @@
             "0x484680017ffb8000",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff5d0",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff5e1",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -3689,14 +3672,14 @@
             "0x480a7ff87fff8000",
             "0x480a7ff97fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8b6",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8c7",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8af",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8c0",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
@@ -3749,7 +3732,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff87a",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff88b",
             "0x1104800180018000",
             "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffdac",
             "0x208b7fff7fff7ffe",
@@ -3767,7 +3750,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff50a",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff51b",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -4436,7 +4419,7 @@
                     }
                 }
             ],
-            "1516": [
+            "1495": [
                 {
                     "accessible_scopes": [
                         "contracts.box_nft.minting",
@@ -4447,14 +4430,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 173,
+                            "group": 171,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "1621": [
+            "1604": [
                 {
                     "accessible_scopes": [
                         "contracts.box_nft.unboxing",
@@ -4465,14 +4448,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 179,
+                            "group": 177,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2128": [
+            "2111": [
                 {
                     "accessible_scopes": [
                         "contracts.box_nft.token_uri",
@@ -4483,14 +4466,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 217,
+                            "group": 215,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2174": [
+            "2157": [
                 {
                     "accessible_scopes": [
                         "contracts.box_nft.token_uri",
@@ -4501,14 +4484,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 221,
+                            "group": 219,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2212": [
+            "2195": [
                 {
                     "accessible_scopes": [
                         "contracts.box_nft.token_uri",
@@ -4519,20 +4502,38 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 229,
+                            "group": 227,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2272": [
+            "2255": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
                         "contracts.library_erc1155.IERC1155",
                         "__wrappers__",
                         "__wrappers__.setApprovalForAll_"
+                    ],
+                    "code": "memory[ap] = segments.add()",
+                    "flow_tracking_data": {
+                        "ap_tracking": {
+                            "group": 235,
+                            "offset": 0
+                        },
+                        "reference_ids": {}
+                    }
+                }
+            ],
+            "2273": [
+                {
+                    "accessible_scopes": [
+                        "contracts.library_erc1155.IERC1155",
+                        "contracts.library_erc1155.IERC1155",
+                        "__wrappers__",
+                        "__wrappers__.isApprovedForAll__encode_return"
                     ],
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
@@ -4544,25 +4545,7 @@
                     }
                 }
             ],
-            "2290": [
-                {
-                    "accessible_scopes": [
-                        "contracts.library_erc1155.IERC1155",
-                        "contracts.library_erc1155.IERC1155",
-                        "__wrappers__",
-                        "__wrappers__.isApprovedForAll__encode_return"
-                    ],
-                    "code": "memory[ap] = segments.add()",
-                    "flow_tracking_data": {
-                        "ap_tracking": {
-                            "group": 239,
-                            "offset": 0
-                        },
-                        "reference_ids": {}
-                    }
-                }
-            ],
-            "2327": [
+            "2310": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
@@ -4573,14 +4556,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 242,
+                            "group": 240,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2366": [
+            "2349": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
@@ -4591,14 +4574,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 246,
+                            "group": 244,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2461": [
+            "2444": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
@@ -4609,20 +4592,38 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 254,
-                            "offset": 0
+                            "group": 250,
+                            "offset": 509
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2507": [
+            "2490": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
                         "contracts.library_erc1155.IERC1155",
                         "__wrappers__",
                         "__wrappers__.supportsInterface_encode_return"
+                    ],
+                    "code": "memory[ap] = segments.add()",
+                    "flow_tracking_data": {
+                        "ap_tracking": {
+                            "group": 252,
+                            "offset": 0
+                        },
+                        "reference_ids": {}
+                    }
+                }
+            ],
+            "2535": [
+                {
+                    "accessible_scopes": [
+                        "contracts.library_erc1155.IERC1155_OZ",
+                        "contracts.library_erc1155.IERC1155_OZ",
+                        "__wrappers__",
+                        "__wrappers__.balanceOf_encode_return"
                     ],
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
@@ -4634,25 +4635,7 @@
                     }
                 }
             ],
-            "2552": [
-                {
-                    "accessible_scopes": [
-                        "contracts.library_erc1155.IERC1155_OZ",
-                        "contracts.library_erc1155.IERC1155_OZ",
-                        "__wrappers__",
-                        "__wrappers__.balanceOf_encode_return"
-                    ],
-                    "code": "memory[ap] = segments.add()",
-                    "flow_tracking_data": {
-                        "ap_tracking": {
-                            "group": 260,
-                            "offset": 0
-                        },
-                        "reference_ids": {}
-                    }
-                }
-            ],
-            "2602": [
+            "2585": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4663,14 +4646,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 266,
+                            "group": 262,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2686": [
+            "2669": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4681,14 +4664,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 274,
+                            "group": 270,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2704": [
+            "2687": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4699,14 +4682,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 276,
+                            "group": 272,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2783": [
+            "2766": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4717,14 +4700,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 281,
-                            "offset": 0
+                            "group": 275,
+                            "offset": 644
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2803": [
+            "2786": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -4735,7 +4718,7 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 284,
+                            "group": 278,
                             "offset": 0
                         },
                         "reference_ids": {}
@@ -4864,7 +4847,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2793,
+                "pc": 2776,
                 "type": "function"
             },
             "__main__.uri.Args": {
@@ -4909,7 +4892,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2562,
+                "pc": 2545,
                 "type": "function"
             },
             "__wrappers__.balanceOf.Args": {
@@ -4940,7 +4923,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2624,
+                "pc": 2607,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch.Args": {
@@ -4971,7 +4954,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2385,
+                "pc": 2368,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch_.Args": {
@@ -5000,7 +4983,7 @@
             },
             "__wrappers__.balanceOfBatch__encode_return": {
                 "decorators": [],
-                "pc": 2366,
+                "pc": 2349,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch__encode_return.Args": {
@@ -5038,7 +5021,7 @@
             },
             "__wrappers__.balanceOfBatch_encode_return": {
                 "decorators": [],
-                "pc": 2602,
+                "pc": 2585,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch_encode_return.Args": {
@@ -5078,7 +5061,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2336,
+                "pc": 2319,
                 "type": "function"
             },
             "__wrappers__.balanceOf_.Args": {
@@ -5107,7 +5090,7 @@
             },
             "__wrappers__.balanceOf__encode_return": {
                 "decorators": [],
-                "pc": 2327,
+                "pc": 2310,
                 "type": "function"
             },
             "__wrappers__.balanceOf__encode_return.Args": {
@@ -5145,7 +5128,7 @@
             },
             "__wrappers__.balanceOf_encode_return": {
                 "decorators": [],
-                "pc": 2552,
+                "pc": 2535,
                 "type": "function"
             },
             "__wrappers__.balanceOf_encode_return.Args": {
@@ -5461,7 +5444,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2142,
+                "pc": 2125,
                 "type": "function"
             },
             "__wrappers__.get_box_data.Args": {
@@ -5490,7 +5473,7 @@
             },
             "__wrappers__.get_box_data_encode_return": {
                 "decorators": [],
-                "pc": 2128,
+                "pc": 2111,
                 "type": "function"
             },
             "__wrappers__.get_box_data_encode_return.Args": {
@@ -5530,7 +5513,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2183,
+                "pc": 2166,
                 "type": "function"
             },
             "__wrappers__.get_box_nb.Args": {
@@ -5559,7 +5542,7 @@
             },
             "__wrappers__.get_box_nb_encode_return": {
                 "decorators": [],
-                "pc": 2174,
+                "pc": 2157,
                 "type": "function"
             },
             "__wrappers__.get_box_nb_encode_return.Args": {
@@ -5599,7 +5582,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2713,
+                "pc": 2696,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll.Args": {
@@ -5630,7 +5613,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2299,
+                "pc": 2282,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll_.Args": {
@@ -5659,7 +5642,7 @@
             },
             "__wrappers__.isApprovedForAll__encode_return": {
                 "decorators": [],
-                "pc": 2290,
+                "pc": 2273,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll__encode_return.Args": {
@@ -5697,7 +5680,7 @@
             },
             "__wrappers__.isApprovedForAll_encode_return": {
                 "decorators": [],
-                "pc": 2704,
+                "pc": 2687,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll_encode_return.Args": {
@@ -5737,7 +5720,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 1505,
+                "pc": 1484,
                 "type": "function"
             },
             "__wrappers__.mint_.Args": {
@@ -5772,7 +5755,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2759,
+                "pc": 2742,
                 "type": "function"
             },
             "__wrappers__.safeTransferFrom.Args": {
@@ -5803,7 +5786,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2439,
+                "pc": 2422,
                 "type": "function"
             },
             "__wrappers__.safeTransferFrom_.Args": {
@@ -5842,7 +5825,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2676,
+                "pc": 2659,
                 "type": "function"
             },
             "__wrappers__.setApprovalForAll.Args": {
@@ -5873,7 +5856,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2262,
+                "pc": 2245,
                 "type": "function"
             },
             "__wrappers__.setApprovalForAll_.Args": {
@@ -6017,7 +6000,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2516,
+                "pc": 2499,
                 "type": "function"
             },
             "__wrappers__.supportsInterface.Args": {
@@ -6046,7 +6029,7 @@
             },
             "__wrappers__.supportsInterface_encode_return": {
                 "decorators": [],
-                "pc": 2507,
+                "pc": 2490,
                 "type": "function"
             },
             "__wrappers__.supportsInterface_encode_return.Args": {
@@ -6086,7 +6069,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2231,
+                "pc": 2214,
                 "type": "function"
             },
             "__wrappers__.tokenURI_.Args": {
@@ -6115,7 +6098,7 @@
             },
             "__wrappers__.tokenURI__encode_return": {
                 "decorators": [],
-                "pc": 2212,
+                "pc": 2195,
                 "type": "function"
             },
             "__wrappers__.tokenURI__encode_return.Args": {
@@ -6155,7 +6138,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 1611,
+                "pc": 1594,
                 "type": "function"
             },
             "__wrappers__.unbox_.Args": {
@@ -6225,7 +6208,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2822,
+                "pc": 2805,
                 "type": "function"
             },
             "__wrappers__.uri.Args": {
@@ -6254,7 +6237,7 @@
             },
             "__wrappers__.uri_encode_return": {
                 "decorators": [],
-                "pc": 2803,
+                "pc": 2786,
                 "type": "function"
             },
             "__wrappers__.uri_encode_return.Args": {
@@ -6296,7 +6279,7 @@
             },
             "cairopen.math.array._loop_invert_arr": {
                 "decorators": [],
-                "pc": 1773,
+                "pc": 1756,
                 "type": "function"
             },
             "cairopen.math.array._loop_invert_arr.Args": {
@@ -6347,7 +6330,7 @@
             },
             "cairopen.math.array._sub_loop_invert_arr": {
                 "decorators": [],
-                "pc": 1800,
+                "pc": 1783,
                 "type": "function"
             },
             "cairopen.math.array._sub_loop_invert_arr.Args": {
@@ -6410,7 +6393,7 @@
             },
             "cairopen.math.array.invert_arr": {
                 "decorators": [],
-                "pc": 1742,
+                "pc": 1725,
                 "type": "function"
             },
             "cairopen.math.array.invert_arr.Args": {
@@ -6453,7 +6436,7 @@
             },
             "cairopen.math.array.invert_felt_arr": {
                 "decorators": [],
-                "pc": 1765,
+                "pc": 1748,
                 "type": "function"
             },
             "cairopen.math.array.invert_felt_arr.Args": {
@@ -6528,7 +6511,7 @@
             },
             "cairopen.string.libs.conversion._loop_felt_to_inverted_string": {
                 "decorators": [],
-                "pc": 1864,
+                "pc": 1847,
                 "type": "function"
             },
             "cairopen.string.libs.conversion._loop_felt_to_inverted_string.Args": {
@@ -6595,7 +6578,7 @@
             },
             "cairopen.string.libs.conversion.conversion_felt_to_string": {
                 "decorators": [],
-                "pc": 1839,
+                "pc": 1822,
                 "type": "function"
             },
             "cairopen.string.libs.conversion.conversion_felt_to_string.Args": {
@@ -6786,19 +6769,19 @@
                 "type": "struct"
             },
             "contracts.box_nft.data.briq_data_end": {
-                "pc": 1449,
+                "pc": 1428,
                 "type": "label"
             },
             "contracts.box_nft.data.briq_data_start": {
-                "pc": 1399,
+                "pc": 1378,
                 "type": "label"
             },
             "contracts.box_nft.data.shape_data_end": {
-                "pc": 1459,
+                "pc": 1438,
                 "type": "label"
             },
             "contracts.box_nft.data.shape_data_start": {
-                "pc": 1449,
+                "pc": 1428,
                 "type": "label"
             },
             "contracts.box_nft.minting.ERC1155_balance": {
@@ -6841,7 +6824,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 1459,
+                "pc": 1438,
                 "type": "function"
             },
             "contracts.box_nft.minting.mint_.Args": {
@@ -6974,14 +6957,14 @@
                 "type": "alias"
             },
             "contracts.box_nft.token_uri.data_uri_start": {
-                "pc": 2199,
+                "pc": 2182,
                 "type": "label"
             },
             "contracts.box_nft.token_uri.get_box_data": {
                 "decorators": [
                     "view"
                 ],
-                "pc": 2085,
+                "pc": 2068,
                 "type": "function"
             },
             "contracts.box_nft.token_uri.get_box_data.Args": {
@@ -7026,7 +7009,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2161,
+                "pc": 2144,
                 "type": "function"
             },
             "contracts.box_nft.token_uri.get_box_nb.Args": {
@@ -7086,7 +7069,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2203,
+                "pc": 2186,
                 "type": "function"
             },
             "contracts.box_nft.token_uri.tokenURI_.Args": {
@@ -7184,7 +7167,7 @@
             },
             "contracts.box_nft.unboxing.IBookletContract.mint_": {
                 "decorators": [],
-                "pc": 1526,
+                "pc": 1505,
                 "type": "function"
             },
             "contracts.box_nft.unboxing.IBookletContract.mint_.Args": {
@@ -7278,7 +7261,7 @@
             },
             "contracts.box_nft.unboxing.IBriqContract.mintFT_": {
                 "decorators": [],
-                "pc": 1547,
+                "pc": 1526,
                 "type": "function"
             },
             "contracts.box_nft.unboxing.IBriqContract.mintFT_.Args": {
@@ -7341,7 +7324,7 @@
             },
             "contracts.box_nft.unboxing._maybe_mint_briq": {
                 "decorators": [],
-                "pc": 1711,
+                "pc": 1694,
                 "type": "function"
             },
             "contracts.box_nft.unboxing._maybe_mint_briq.Args": {
@@ -7404,7 +7387,7 @@
             },
             "contracts.box_nft.unboxing._unbox_mint": {
                 "decorators": [],
-                "pc": 1631,
+                "pc": 1614,
                 "type": "function"
             },
             "contracts.box_nft.unboxing._unbox_mint.Args": {
@@ -7477,7 +7460,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 1568,
+                "pc": 1547,
                 "type": "function"
             },
             "contracts.box_nft.unboxing.unbox_.Args": {
@@ -8100,7 +8083,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2356,
+                "pc": 2339,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.balanceOfBatch_.Args": {
@@ -8157,7 +8140,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2319,
+                "pc": 2302,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.balanceOf_.Args": {
@@ -8206,7 +8189,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2282,
+                "pc": 2265,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.isApprovedForAll_.Args": {
@@ -8255,7 +8238,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2427,
+                "pc": 2410,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.safeTransferFrom_.Args": {
@@ -8320,7 +8303,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2254,
+                "pc": 2237,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.setApprovalForAll_.Args": {
@@ -8369,7 +8352,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2471,
+                "pc": 2454,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.supportsInterface.Args": {
@@ -8446,7 +8429,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2535,
+                "pc": 2518,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.balanceOf.Args": {
@@ -8495,7 +8478,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2583,
+                "pc": 2566,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.balanceOfBatch.Args": {
@@ -8560,7 +8543,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2696,
+                "pc": 2679,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.isApprovedForAll.Args": {
@@ -8613,7 +8596,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2733,
+                "pc": 2716,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.safeTransferFrom.Args": {
@@ -8682,7 +8665,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2668,
+                "pc": 2651,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.setApprovalForAll.Args": {
@@ -8841,49 +8824,6 @@
                 "type": "type_definition"
             },
             "contracts.library_erc1155.approvals.ERC1155_approvals.SIZEOF_LOCALS": {
-                "type": "const",
-                "value": 0
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll": {
-                "decorators": [],
-                "pc": 1264,
-                "type": "function"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.Args": {
-                "full_name": "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.Args",
-                "members": {
-                    "on_behalf_of": {
-                        "cairo_type": "felt",
-                        "offset": 0
-                    }
-                },
-                "size": 1,
-                "type": "struct"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.ImplicitArgs": {
-                "full_name": "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.ImplicitArgs",
-                "members": {
-                    "pedersen_ptr": {
-                        "cairo_type": "starkware.cairo.common.cairo_builtins.HashBuiltin*",
-                        "offset": 1
-                    },
-                    "range_check_ptr": {
-                        "cairo_type": "felt",
-                        "offset": 2
-                    },
-                    "syscall_ptr": {
-                        "cairo_type": "felt*",
-                        "offset": 0
-                    }
-                },
-                "size": 3,
-                "type": "struct"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.Return": {
-                "cairo_type": "()",
-                "type": "type_definition"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.SIZEOF_LOCALS": {
                 "type": "const",
                 "value": 0
             },
@@ -9979,7 +9919,7 @@
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._onTransfer": {
                 "decorators": [],
-                "pc": 1317,
+                "pc": 1294,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._onTransfer.Args": {
@@ -10038,7 +9978,7 @@
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._transfer": {
                 "decorators": [],
-                "pc": 1344,
+                "pc": 1321,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._transfer.Args": {
@@ -10093,7 +10033,7 @@
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability.safeTransferFrom_": {
                 "decorators": [],
-                "pc": 1386,
+                "pc": 1368,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability.safeTransferFrom_.Args": {
@@ -10234,7 +10174,7 @@
             },
             "contracts.library_erc1155.transferability.TransferSingle.emit": {
                 "decorators": [],
-                "pc": 1287,
+                "pc": 1264,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.TransferSingle.emit.Args": {
@@ -11029,7 +10969,7 @@
             },
             "contracts.utilities.token_uri.TokenURIHelpers._getUrl": {
                 "decorators": [],
-                "pc": 1920,
+                "pc": 1903,
                 "type": "function"
             },
             "contracts.utilities.token_uri.TokenURIHelpers._getUrl.Args": {
@@ -11076,7 +11016,7 @@
             },
             "contracts.utilities.token_uri.TokenURIHelpers.add_number": {
                 "decorators": [],
-                "pc": 1993,
+                "pc": 1976,
                 "type": "function"
             },
             "contracts.utilities.token_uri.TokenURIHelpers.add_number.Args": {
@@ -11135,7 +11075,7 @@
             },
             "contracts.utilities.token_uri.TokenURIHelpers.padl": {
                 "decorators": [],
-                "pc": 1972,
+                "pc": 1955,
                 "type": "function"
             },
             "contracts.utilities.token_uri.TokenURIHelpers.padl.Args": {
@@ -11300,7 +11240,7 @@
             },
             "contracts.vendor.cairopen.string.ASCII.StringCodec.felt_to_string": {
                 "decorators": [],
-                "pc": 1910,
+                "pc": 1893,
                 "type": "function"
             },
             "contracts.vendor.cairopen.string.ASCII.StringCodec.felt_to_string.Args": {

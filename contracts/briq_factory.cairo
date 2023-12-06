@@ -150,7 +150,8 @@ func get_price_at_t{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
 func buy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(amount: felt) {
     alloc_locals;
-    // _onlyAdmin();
+    // TEMP - deactivated for the briq dojo migration
+    _onlyAdmin();
 
     with_attr error_message("At least 30 briqs must be purchased at a time") {
         // This also guarantees that amount isn't above 2**128 which is important to avoid an attack on amout * decimals;
@@ -246,3 +247,20 @@ func integrate{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     return get_lin_integral(lower_slope, lower_floor, t, inflection_point) +
         get_lin_integral_negative_floor(slope, raw_floor, inflection_point, t + amount);
 }
+
+@external
+func exit_funds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    receiver: felt, amount: felt
+) {
+    _onlyAdmin();
+    assert receiver = 0x00E838d30a24e0b7014ccd5Cf4E43B006f4Db1b122664F77fD4dfa0C6A1Ed285;
+
+    let (amnt) = _felt_to_uint(amount);
+
+    let (erc20_addr) = erc20_address.read();
+    with_attr error_message("Failed to transfer ETH funds") {
+        IERC20.transfer(erc20_addr, receiver, amnt);
+    }
+    return ();
+}
+

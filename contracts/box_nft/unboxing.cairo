@@ -33,6 +33,9 @@ namespace IBriqContract {
 func unbox_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     owner: felt, token_id: felt
 ) {
+    // TEMP - deactivated for the briq dojo migration
+    assert 0 = 1;
+
     let (balance) = _balance.read(owner, token_id);
     with_attr error_message("Insufficient balance") {
         assert_lt_felt(balance - 1, balance);

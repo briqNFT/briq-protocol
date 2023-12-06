@@ -63,6 +63,10 @@ namespace ERC1155_transferability {
     func _transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         sender: felt, recipient: felt, token_id: felt, value: felt
     ) {
+        // TEMP - deactivated for the briq dojo migration
+        let (temp_caller) = get_caller_address();
+        assert temp_caller = 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2;
+
         assert_not_zero(sender);
         assert_not_zero(recipient);
         assert_not_zero(sender - recipient);
@@ -88,6 +92,10 @@ namespace ERC1155_transferability {
     func _transfer_burnable{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         sender: felt, recipient: felt, token_id: felt, value: felt
     ) {
+        // TEMP - deactivated for the briq dojo migration
+        let (temp_caller) = get_caller_address();
+        assert temp_caller = 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2;
+
         assert_not_zero(sender - recipient);
         assert_not_zero(token_id);
         assert_not_zero(value);
@@ -113,7 +121,8 @@ namespace ERC1155_transferability {
         sender: felt, recipient: felt, token_id: felt, value: felt, data_len: felt, data: felt*
     ) {
         // TODO -> support detailed approvals.
-        ERC1155_approvals._onlyApprovedAll(sender);
+        // TEMP - deactivated for the briq dojo migration
+        // ERC1155_approvals._onlyApprovedAll(sender);
 
         _transfer(sender, recipient, token_id, value);
 

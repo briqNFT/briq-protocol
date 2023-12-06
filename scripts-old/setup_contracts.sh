@@ -168,3 +168,30 @@ call $briq_factory_addr briq_factory get_price 100
 nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
 invoke $briq_addr box_nft upgradeImplementation_ $briq_hash
 invoke $briq_addr briq setMigrationAddress_ 0x30e53c44983f6998732095bd61fa998e9008cd479ccc08ea553dfcae86f4880
+invoke $set_addr briq setMigrationAddress_ 0x30e53c44983f6998732095bd61fa998e9008cd479ccc08ea553dfcae86f4880
+
+
+#### MIGRATION
+# Update old contracts
+nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
+starknet_declare artifacts/briq.json briq_hash # TX 0xab055f74acc7c92590c5d6d3716bf644bc541473a20c54d9f6b06d649a16b8
+starknet_declare artifacts/booklet_nft.json booklet_hash # TX ??
+starknet_declare artifacts/set_nft.json set_hash # TX 0x41e278b53b87127db4deb3ce4d2dcf763ac839698539661cf3be1c7b9175609
+starknet_declare artifacts/box_nft.json box_hash # TX ??
+starknet_declare artifacts/briq_factory.json briq_factory_hash # TX ??
+
+invoke $briq_addr briq upgradeImplementation_ $briq_hash # TX 0x152e9a6bba59f6a855e181a6a560247710c77f2ab4f6663ff9844ec518e0a45
+
+invoke $set_addr briq upgradeImplementation_ $set_hash # TX 0x45e448aed1ad0d72ce6824877e86a19ee409436a419af7bb9c16543a42fa8f3
+invoke $box_addr briq upgradeImplementation_ $box_hash # TX 0x3523a58b727e2f747133bef6d63e259e40f5c512073eaee5931fa77eb8b18e1
+invoke $booklet_addr briq upgradeImplementation_ $booklet_hash # TX 0x414aa3458d0670127165e3a0571202a59c36fee1317ccdca2546abb496644d1
+invoke $briq_factory_addr briq upgradeImplementation_ $briq_factory_hash # TX 0x5fdc3146716991599f9cd8fccee8b87accf178bf62a03dbb77fe1a49434af4f
+
+# On mainnet
+nonce=$(starknet get_nonce --contract_address $WALLET_ADDRESS)
+invoke $briq_addr briq upgradeImplementation_ $briq_hash # TX 0x152e9a6bba59f6a855e181a6a560247710c77f2ab4f6663ff9844ec518e0a45
+invoke $briq_addr briq setMigrationAddress_ 0x5a378904f3a2a93e988f54173e9ed289f7612b1d39dc109c4321367fbd0f945
+invoke $set_addr set_nft upgradeImplementation_ $set_hash # TX 0x2da14901570de8e429cbed0e2ebdb0b0b38c1a2e8f56808a972a9f9c28ebb00
+invoke $set_addr set_nft setMigrationAddress_ 0x5a378904f3a2a93e988f54173e9ed289f7612b1d39dc109c4321367fbd0f945 # TX 0x673a14a839224951389e1236decdbac76c7d445b5a7f375fc3c773130a1eef0
+call $briq_addr briq getMigrationAddress_
+call $set_addr set_nft getMigrationAddress_

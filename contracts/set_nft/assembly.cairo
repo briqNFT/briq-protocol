@@ -241,6 +241,9 @@ func assemble_{
     attributes_len: felt, attributes: felt*,
 ) {
     alloc_locals;
+    // TEMP - deactivated for the briq dojo migration
+    assert 0 = 1;
+
     let (token_id) = _create_token_(owner, token_id_hint);
 
     _transferFT(owner, token_id, fts_len, fts);
@@ -269,6 +272,9 @@ func disassemble_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
     attributes_len: felt, attributes: felt*,
 ) {
     alloc_locals;
+    // TEMP - deactivated for the briq dojo migration
+    assert 0 = 1;
+
     _destroy_token(owner, token_id);
 
     _transferFT(token_id, owner, fts_len, fts);

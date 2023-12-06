@@ -5,23 +5,25 @@ compile () {
     jq '.abi' --indent 4 artifacts/$1.json > artifacts/abis/$1.json
 }
 
-nile compile --directory contracts/vendor/ \
-    contracts/set_nft.cairo \
-    contracts/briq.cairo \
-    contracts/box_nft.cairo \
-    contracts/booklet_nft.cairo \
-    contracts/attributes_registry.cairo \
-    contracts/auction.cairo \
-    contracts/auction_onchain.cairo \
-    contracts/shape_attribute.cairo \
-    contracts/shape/shape_store.cairo \
-    contracts/upgrades/proxy.cairo
+#nile compile --directory contracts/vendor/ \
+#    contracts/set_nft.cairo \
+#    contracts/briq.cairo \
+#    contracts/box_nft.cairo \
+#    contracts/booklet_nft.cairo \
+#    contracts/attributes_registry.cairo \
+#    contracts/auction.cairo \
+#    contracts/auction_onchain.cairo \
+#    contracts/shape_attribute.cairo \
+#    contracts/shape/shape_store.cairo \
+#    contracts/upgrades/proxy.cairo
 
 
-compile set_nft set_nft
 compile briq briq
+compile set_nft set_nft
 compile box_nft box_nft
 compile booklet_nft booklet_nft
+compile briq_factory briq_factory
+
 compile attributes_registry attributes_registry
 
 

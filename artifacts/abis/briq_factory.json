@@ -204,5 +204,20 @@
         "name": "buy",
         "outputs": [],
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "receiver",
+                "type": "felt"
+            },
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "exit_funds",
+        "outputs": [],
+        "type": "function"
     }
 ]

@@ -12,7 +12,8 @@ from contracts.library_erc721.enumerability import ERC721_enumerability
 func transferFrom_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     sender: felt, recipient: felt, token_id: felt
 ) {
-    ERC721_approvals._onlyApproved(sender, token_id);
+    // TEMP - deactivated for the briq dojo migration
+    // ERC721_approvals._onlyApproved(sender, token_id);
 
     ERC721_transferability._transfer(sender, recipient, token_id);
 

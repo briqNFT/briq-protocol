@@ -78,6 +78,29 @@
     },
     {
         "inputs": [],
+        "name": "getMigrationAddress_",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "setMigrationAddress_",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "getAdmin_",
         "outputs": [
             {

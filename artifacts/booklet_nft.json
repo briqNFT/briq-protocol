@@ -721,7 +721,7 @@
         "CONSTRUCTOR": [],
         "EXTERNAL": [
             {
-                "offset": 2086,
+                "offset": 2065,
                 "selector": "0x1b5d966c47351d79022336a404619bf402017905cdc40bd13de7df2f455645"
             },
             {
@@ -745,31 +745,31 @@
                 "selector": "0xa722e584f728d713e0a344410ff0772caf64a7f59ed36945866d15715c5364"
             },
             {
-                "offset": 2315,
+                "offset": 2294,
                 "selector": "0x10c403876c66c8baf909caa7fccd3cb58eddd85a32f3a10e5d5f423662d6c79"
             },
             {
-                "offset": 2467,
+                "offset": 2446,
                 "selector": "0x112844c6769836ade5cb7dc37b93a10fc30ddc40322ef9e7e964d0a716ba1e3"
             },
             {
-                "offset": 2706,
+                "offset": 2685,
                 "selector": "0x116d888b0a9ad3998fcf1cdb2711375c69ac1847e806a480e3585c3da18eac3"
             },
             {
-                "offset": 2381,
+                "offset": 2360,
                 "selector": "0x12975dbd1bf8f80a3be19e5a30f03a9edf464878d7bada5dae7ef00481a9384"
             },
             {
-                "offset": 2001,
+                "offset": 1980,
                 "selector": "0x13d9296e8ee23d9a89be9be7f4fee0f8462a32e986d7b71dc97deb58eff209a"
             },
             {
-                "offset": 2344,
+                "offset": 2323,
                 "selector": "0x176e2c487053e7ed6866780b059c976db79d819266074c8769e1bf22cbdbf82"
             },
             {
-                "offset": 2841,
+                "offset": 2820,
                 "selector": "0x19d59d013d4aa1a8b1ce4c8299086f070733b453c02d0dc46e735edc04d6444"
             },
             {
@@ -777,7 +777,7 @@
                 "selector": "0x1bb6c2e39d1a273be47a707e952919f26b31d536807f6faae5e0be51119a43e"
             },
             {
-                "offset": 2418,
+                "offset": 2397,
                 "selector": "0x1e6d3cbfeefef1d609db7db9516768ba077a394d54e97c2fcc92f0e18117083"
             },
             {
@@ -785,39 +785,39 @@
                 "selector": "0x1e7ea19aceb2249ac377cd890237f578578ca88a9820a855fb7fe8f7bc30d33"
             },
             {
-                "offset": 2795,
+                "offset": 2774,
                 "selector": "0x21cdf9aedfed41bc4485ae779fda471feca12075d9127a0fc70ac6b3b3d9c30"
             },
             {
-                "offset": 1946,
+                "offset": 1925,
                 "selector": "0x27ee4b27879250dbac06caf4252a2ebe51d794783336b11a8658c15dd248079"
             },
             {
-                "offset": 2598,
+                "offset": 2577,
                 "selector": "0x29e211664c0b63c79638fbea474206ca74016b3e9a3dc4f9ac300ffd8bdf2cd"
             },
             {
-                "offset": 2758,
+                "offset": 2737,
                 "selector": "0x2d4c8ea4c8fb9f571d1f6f9b7692fff8e5ceaf73b1df98e7da8c1109b39ae9a"
             },
             {
-                "offset": 2644,
+                "offset": 2623,
                 "selector": "0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a20b54c76e"
             },
             {
-                "offset": 2910,
+                "offset": 2889,
                 "selector": "0x2ee3279dd30231650e0b4a1a3516ab3dc26b6d3dfcb6ef20fb4329cfc1213e1"
             },
             {
-                "offset": 2521,
+                "offset": 2500,
                 "selector": "0x31bbc41a2f2a54c5a3f04ab6f38b7b8ed0d165b15f3c5a85165254fa7eab4f3"
             },
             {
-                "offset": 2247,
+                "offset": 2226,
                 "selector": "0x3651fe1f6fb2c1c8c20999a3596e0ef90bb0062bd892a2883e6dff09e4d7fda"
             },
             {
-                "offset": 1869,
+                "offset": 1848,
                 "selector": "0x3d70fa8e86a2ff8432945a3fb3f36eb71c77ce629ddf5443cfd9cc249baa0d2"
             },
             {
@@ -977,16 +977,16 @@
                     "cairopen.math.array",
                     "cairopen.math.array.invert_arr"
                 ],
-                "end_pc": 1436,
+                "end_pc": 1415,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 113,
+                        "group": 111,
                         "offset": 1
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 1430,
+                "start_pc": 1409,
                 "value": "invert_arr: size must be greather or equal to 1"
             },
             {
@@ -994,16 +994,16 @@
                     "cairopen.string.libs.conversion",
                     "cairopen.string.libs.conversion._loop_felt_to_inverted_string"
                 ],
-                "end_pc": 1558,
+                "end_pc": 1537,
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 125,
+                        "group": 123,
                         "offset": 0
                     },
                     "reference_ids": {}
                 },
                 "name": "error_message",
-                "start_pc": 1552,
+                "start_pc": 1531,
                 "value": "felt_to_string: exceeding max String length 2^15"
             }
         ],
@@ -2307,39 +2307,16 @@
             "0x1104800180018000",
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffb3",
             "0x208b7fff7fff7ffe",
-            "0x480a7ffa7fff8000",
-            "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb18",
-            "0x48287ffd80007fff",
-            "0x20680017fff7fff",
-            "0x6",
-            "0x48127ffd7fff8000",
-            "0x480a7ffb7fff8000",
-            "0x480a7ffc7fff8000",
-            "0x208b7fff7fff7ffe",
-            "0x48127ffd7fff8000",
-            "0x480a7ffb7fff8000",
-            "0x480a7ffc7fff8000",
-            "0x480a7ffd7fff8000",
-            "0x48127ffa7fff8000",
-            "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffea",
-            "0x400680017fff7fff",
-            "0x1",
-            "0x48127ffc7fff8000",
-            "0x48127ffc7fff8000",
-            "0x48127ffc7fff8000",
-            "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffadb",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf2",
             "0x40137fff7fff8000",
             "0x480680017fff8000",
             "0x182d859c0807ba9db63baf8b9d9fdbfeb885d820be6e206b9dab626d995c433",
             "0x4002800080007fff",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffad5",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaec",
             "0x40137fff7fff8001",
             "0x4003800080017ff7",
             "0x4003800180017ff8",
@@ -2357,7 +2334,7 @@
             "0x4828800180007ffc",
             "0x480a80017fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaff",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb16",
             "0x480a7ff67fff8000",
             "0x208b7fff7fff7ffe",
             "0x480a7ff67fff8000",
@@ -2365,13 +2342,13 @@
             "0x480a7ff87fff8000",
             "0x480a7ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe52",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe69",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe4c",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe63",
             "0x48127ffb7fff8000",
             "0x48127ffc7fff8000",
             "0x480a7ff97fff8000",
@@ -2387,37 +2364,42 @@
             "0x48127fdc7fff8000",
             "0x48127ffd7fff8000",
             "0x208b7fff7fff7ffe",
+            "0x480a7ff77fff8000",
+            "0x1104800180018000",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffadf",
+            "0x400680017fff7fff",
+            "0x3ef5b02bcc5d30f3f0d35d55f365e6388fe9501eca216cb1596940bf41083e2",
             "0x480a7ffa7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae9",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffafb",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae6",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf8",
             "0x48297ffb80007ffa",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae3",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf5",
             "0x480a7ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae0",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf2",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffadd",
-            "0x480a7ff77fff8000",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaef",
+            "0x48127fef7fff8000",
             "0x480a7ff87fff8000",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffed1",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffee3",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffeb9",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffecb",
             "0x48127ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaac",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffabe",
             "0x48127ffe7fff8000",
             "0x48127ff77fff8000",
             "0x48127ff77fff8000",
@@ -2427,20 +2409,17 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffbf",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffba",
             "0x208b7fff7fff7ffe",
             "0x480a7ff57fff8000",
             "0x480a7ff67fff8000",
             "0x480a7ff77fff8000",
             "0x480a7ff87fff8000",
-            "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff83",
-            "0x480a7ff87fff8000",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffcd",
+            "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffffcb",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -2449,9 +2428,9 @@
             "0x1",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffabc",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffad1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa65",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa7a",
             "0x40137fff7fff8000",
             "0x48127ffc7fff8000",
             "0x480a7ffb7fff8000",
@@ -2542,7 +2521,7 @@
             "0x40780017fff7fff",
             "0x3",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa0a",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa1f",
             "0x40137fff7fff8000",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
@@ -2571,12 +2550,12 @@
             "0x480680017fff8000",
             "0x8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa42",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa57",
             "0x480a7ffb7fff8000",
             "0x480680017fff8000",
             "0xa",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaad",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffac2",
             "0x482a7ffd7ffc8000",
             "0x48287ffa7ffe8000",
             "0x400080007ffe7fff",
@@ -2591,7 +2570,7 @@
             "0x480a7ffb7fff8000",
             "0x48127ffa7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd29",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd3e",
             "0x20680017fff7fff",
             "0x4",
             "0x10780017fff7fff",
@@ -2624,10 +2603,10 @@
             "0x3",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd21",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd36",
             "0x40137fff7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9b5",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9ca",
             "0x40137fff7fff8001",
             "0x4802800080008000",
             "0x4002800080017fff",
@@ -2636,7 +2615,7 @@
             "0x4802800280008000",
             "0x4002800280017fff",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9ac",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9c1",
             "0x40137fff7fff8002",
             "0x480a7ffb7fff8000",
             "0x480a7ffc7fff8000",
@@ -2648,7 +2627,7 @@
             "0x100000000000000000000",
             "0x480a80027fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa74",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa89",
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x48127ffd7fff8000",
@@ -2763,7 +2742,7 @@
             "0x480a80017fff8000",
             "0x480a80007fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff936",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff94b",
             "0x480680017fff8000",
             "0x14",
             "0x4828800080007fff",
@@ -2788,7 +2767,7 @@
             "0x40780017fff7fff",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff914",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff929",
             "0x40137fff7fff8000",
             "0x4003800080007ffd",
             "0x4826800180008000",
@@ -2800,7 +2779,7 @@
             "0x4828800080007ffc",
             "0x480a80007fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff921",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff936",
             "0x480080007fff8000",
             "0x400280007ffb7fff",
             "0x482480017ffe8000",
@@ -2831,11 +2810,11 @@
             "0x5d2b00d991f844f219d999a03fe89265412f8b6ecc0a6bffbf3498ce8f4579",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8ec",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff901",
             "0x480a7ffc7fff8000",
             "0x48127ffe7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9d2",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9e7",
             "0x48127fe17fff8000",
             "0x48127ffd7fff8000",
             "0x48127ffd7fff8000",
@@ -2848,7 +2827,7 @@
             "0x480a7ffa7fff8000",
             "0x48127ffe7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff904",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff919",
             "0x48127ffe7fff8000",
             "0x48127ff57fff8000",
             "0x48127ff57fff8000",
@@ -2863,7 +2842,7 @@
             "0x48127ffe7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8fd",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff912",
             "0x48127ff67fff8000",
             "0x48127ff67fff8000",
             "0x208b7fff7fff7ffe",
@@ -2942,7 +2921,7 @@
             "0x484680017ff98000",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff883",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff898",
             "0x4003800080027ffb",
             "0x4003800080017ffb",
             "0x4027800180018003",
@@ -2955,7 +2934,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff876",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff88b",
             "0x480a80037fff8000",
             "0x4829800080008004",
             "0x480a80007fff8000",
@@ -2992,7 +2971,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x480680017fff8000",
-            "0x7b1",
+            "0x79c",
             "0x1104800180018000",
             "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffe8c",
             "0x208b7fff7fff7ffe",
@@ -3010,7 +2989,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff83f",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff854",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -3048,14 +3027,14 @@
             "0x480680017fff8000",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc3f",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc54",
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff3c",
             "0x48127ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff82e",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff843",
             "0x40137fff7fff8000",
             "0x4826800180008000",
             "0x5106cda5e82c11dfdc9602fb6b8b43cf40149f0a6335eb6255f5f48433d8709",
@@ -3069,7 +3048,7 @@
             "0x480680017fff8000",
             "0x2710",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8b5",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff8ca",
             "0x48127fe27fff8000",
             "0x48127fdb7fff8000",
             "0x48127ffd7fff8000",
@@ -3081,15 +3060,15 @@
             "0x480680017fff8000",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd31",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd2f",
             "0x208b7fff7fff7ffe",
             "0x48127ffd7fff8000",
             "0x48127ff67fff8000",
             "0x48127ff67fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffac4",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffad9",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9c5",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9da",
             "0x480a80007fff8000",
             "0x480680017fff8000",
             "0x0",
@@ -3098,7 +3077,7 @@
             "0x480680017fff8000",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd20",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd1e",
             "0x208b7fff7fff7ffe",
             "0x482680017ffd8000",
             "0x3",
@@ -3124,7 +3103,7 @@
             "0x40780017fff7fff",
             "0x7",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7c4",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7d9",
             "0x40137fff7fff8000",
             "0x4003800080007ff7",
             "0x4003800180007ff8",
@@ -3142,7 +3121,7 @@
             "0x484680017ff88000",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7bb",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7d0",
             "0x4003800080027ffa",
             "0x4003800080017ffa",
             "0x4027800180018003",
@@ -3158,7 +3137,7 @@
             "0x484680017ffa8000",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7ab",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7c0",
             "0x4003800080047ffc",
             "0x4003800080037ffc",
             "0x4027800180038005",
@@ -3171,7 +3150,7 @@
             "0x480a7ffd7fff8000",
             "0x480a7ffc7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff79e",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7b3",
             "0x480a7ff47fff8000",
             "0x480a7ff67fff8000",
             "0x480680017fff8000",
@@ -3179,7 +3158,7 @@
             "0x4829800080008006",
             "0x480a80007fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7a6",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff7bb",
             "0x48127ffd7fff8000",
             "0x480a80057fff8000",
             "0x208b7fff7fff7ffe",
@@ -3201,7 +3180,7 @@
             "0x480680017fff8000",
             "0x8000000000000000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffacc",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae1",
             "0x482480017fff8000",
             "0x800000000000011000000000000000000000000000000000000000000000000",
             "0x20680017fff7fff",
@@ -3243,7 +3222,7 @@
             "0x480a7ff37fff8000",
             "0x480a7ff47fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa16",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffa2b",
             "0x480a7ff77fff8000",
             "0x480a7ff87fff8000",
             "0x480a7ff97fff8000",
@@ -3259,7 +3238,7 @@
             "0x480680017fff8000",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc9a",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc98",
             "0x208b7fff7fff7ffe",
             "0x480280027ffb8000",
             "0x480280037ffd8000",
@@ -3320,14 +3299,14 @@
             "0x480a7ff97fff8000",
             "0x480a7ffa7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9c9",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff9de",
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x480a7ffd7fff8000",
             "0x480680017fff8000",
             "0x1",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc56",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc54",
             "0x208b7fff7fff7ffe",
             "0x482680017ffd8000",
             "0x3",
@@ -3356,7 +3335,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbb5",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbca",
             "0x208b7fff7fff7ffe",
             "0x482680017ffd8000",
             "0x2",
@@ -3384,7 +3363,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbc5",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbda",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -3421,7 +3400,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffaf2",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffb07",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -3460,7 +3439,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffad3",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffae8",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x3",
@@ -3476,7 +3455,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff66d",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff682",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -3533,7 +3512,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbb2",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffbb5",
             "0x208b7fff7fff7ffe",
             "0x480280027ffb8000",
             "0x480280047ffd8000",
@@ -3637,7 +3616,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff947",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff95c",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
@@ -3646,7 +3625,7 @@
             "0x1104800180018000",
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff1d",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff951",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff966",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x1",
@@ -3685,7 +3664,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff938",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff94d",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
             "0x48127ffb7fff8000",
@@ -3696,7 +3675,7 @@
             "0x1104800180018000",
             "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff10",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff961",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff976",
             "0x208b7fff7fff7ffe",
             "0x40780017fff7fff",
             "0x3",
@@ -3715,7 +3694,7 @@
             "0x484680017ffb8000",
             "0x2",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff57e",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff593",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -3835,14 +3814,14 @@
             "0x480a7ff87fff8000",
             "0x480a7ff97fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff881",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff896",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x480a7ffa7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff87a",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff88f",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
             "0x48127ffc7fff8000",
@@ -3895,7 +3874,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffd7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff845",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff85a",
             "0x1104800180018000",
             "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffc74",
             "0x48127ffb7fff8000",
@@ -3919,7 +3898,7 @@
             "0x480a7ffc7fff8000",
             "0x480a7ffb7fff8000",
             "0x1104800180018000",
-            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff4b2",
+            "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffff4c7",
             "0x480a80017fff8000",
             "0x4829800080008002",
             "0x480a80007fff8000",
@@ -4590,7 +4569,7 @@
                     }
                 }
             ],
-            "1860": [
+            "1839": [
                 {
                     "accessible_scopes": [
                         "contracts.booklet_nft.token_uri",
@@ -4601,14 +4580,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 146,
+                            "group": 144,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "1911": [
+            "1890": [
                 {
                     "accessible_scopes": [
                         "contracts.booklet_nft.token_uri",
@@ -4619,14 +4598,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 149,
+                            "group": 147,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "1982": [
+            "1961": [
                 {
                     "accessible_scopes": [
                         "contracts.booklet_nft.token_uri",
@@ -4637,14 +4616,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 160,
+                            "group": 158,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2097": [
+            "2076": [
                 {
                     "accessible_scopes": [
                         "contracts.booklet_nft.minting",
@@ -4655,14 +4634,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 168,
+                            "group": 166,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2292": [
+            "2271": [
                 {
                     "accessible_scopes": [
                         "contracts.booklet_nft.attribute",
@@ -4673,14 +4652,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 180,
+                            "group": 178,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2326": [
+            "2305": [
                 {
                     "accessible_scopes": [
                         "contracts.booklet_nft.attribute",
@@ -4691,20 +4670,38 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 182,
-                            "offset": 518
+                            "group": 180,
+                            "offset": 524
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2354": [
+            "2333": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
                         "contracts.library_erc1155.IERC1155",
                         "__wrappers__",
                         "__wrappers__.setApprovalForAll_"
+                    ],
+                    "code": "memory[ap] = segments.add()",
+                    "flow_tracking_data": {
+                        "ap_tracking": {
+                            "group": 184,
+                            "offset": 0
+                        },
+                        "reference_ids": {}
+                    }
+                }
+            ],
+            "2351": [
+                {
+                    "accessible_scopes": [
+                        "contracts.library_erc1155.IERC1155",
+                        "contracts.library_erc1155.IERC1155",
+                        "__wrappers__",
+                        "__wrappers__.isApprovedForAll__encode_return"
                     ],
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
@@ -4716,25 +4713,7 @@
                     }
                 }
             ],
-            "2372": [
-                {
-                    "accessible_scopes": [
-                        "contracts.library_erc1155.IERC1155",
-                        "contracts.library_erc1155.IERC1155",
-                        "__wrappers__",
-                        "__wrappers__.isApprovedForAll__encode_return"
-                    ],
-                    "code": "memory[ap] = segments.add()",
-                    "flow_tracking_data": {
-                        "ap_tracking": {
-                            "group": 188,
-                            "offset": 0
-                        },
-                        "reference_ids": {}
-                    }
-                }
-            ],
-            "2409": [
+            "2388": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
@@ -4745,14 +4724,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 191,
+                            "group": 189,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2448": [
+            "2427": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
@@ -4763,14 +4742,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 195,
+                            "group": 193,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2543": [
+            "2522": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
@@ -4781,20 +4760,38 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 203,
-                            "offset": 0
+                            "group": 199,
+                            "offset": 509
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2589": [
+            "2568": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155",
                         "contracts.library_erc1155.IERC1155",
                         "__wrappers__",
                         "__wrappers__.supportsInterface_encode_return"
+                    ],
+                    "code": "memory[ap] = segments.add()",
+                    "flow_tracking_data": {
+                        "ap_tracking": {
+                            "group": 201,
+                            "offset": 0
+                        },
+                        "reference_ids": {}
+                    }
+                }
+            ],
+            "2613": [
+                {
+                    "accessible_scopes": [
+                        "contracts.library_erc1155.IERC1155_OZ",
+                        "contracts.library_erc1155.IERC1155_OZ",
+                        "__wrappers__",
+                        "__wrappers__.balanceOf_encode_return"
                     ],
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
@@ -4806,25 +4803,7 @@
                     }
                 }
             ],
-            "2634": [
-                {
-                    "accessible_scopes": [
-                        "contracts.library_erc1155.IERC1155_OZ",
-                        "contracts.library_erc1155.IERC1155_OZ",
-                        "__wrappers__",
-                        "__wrappers__.balanceOf_encode_return"
-                    ],
-                    "code": "memory[ap] = segments.add()",
-                    "flow_tracking_data": {
-                        "ap_tracking": {
-                            "group": 209,
-                            "offset": 0
-                        },
-                        "reference_ids": {}
-                    }
-                }
-            ],
-            "2684": [
+            "2663": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4835,14 +4814,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 215,
+                            "group": 211,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2768": [
+            "2747": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4853,14 +4832,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 223,
+                            "group": 219,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2786": [
+            "2765": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4871,14 +4850,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 225,
+                            "group": 221,
                             "offset": 0
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2865": [
+            "2844": [
                 {
                     "accessible_scopes": [
                         "contracts.library_erc1155.IERC1155_OZ",
@@ -4889,14 +4868,14 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 230,
-                            "offset": 0
+                            "group": 224,
+                            "offset": 644
                         },
                         "reference_ids": {}
                     }
                 }
             ],
-            "2891": [
+            "2870": [
                 {
                     "accessible_scopes": [
                         "__main__",
@@ -4907,7 +4886,7 @@
                     "code": "memory[ap] = segments.add()",
                     "flow_tracking_data": {
                         "ap_tracking": {
-                            "group": 233,
+                            "group": 227,
                             "offset": 0
                         },
                         "reference_ids": {}
@@ -5044,7 +5023,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2875,
+                "pc": 2854,
                 "type": "function"
             },
             "__main__.uri.Args": {
@@ -5093,7 +5072,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2247,
+                "pc": 2226,
                 "type": "function"
             },
             "__wrappers__.assign_attribute.Args": {
@@ -5128,7 +5107,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2644,
+                "pc": 2623,
                 "type": "function"
             },
             "__wrappers__.balanceOf.Args": {
@@ -5159,7 +5138,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2706,
+                "pc": 2685,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch.Args": {
@@ -5190,7 +5169,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2467,
+                "pc": 2446,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch_.Args": {
@@ -5219,7 +5198,7 @@
             },
             "__wrappers__.balanceOfBatch__encode_return": {
                 "decorators": [],
-                "pc": 2448,
+                "pc": 2427,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch__encode_return.Args": {
@@ -5257,7 +5236,7 @@
             },
             "__wrappers__.balanceOfBatch_encode_return": {
                 "decorators": [],
-                "pc": 2684,
+                "pc": 2663,
                 "type": "function"
             },
             "__wrappers__.balanceOfBatch_encode_return.Args": {
@@ -5297,7 +5276,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2418,
+                "pc": 2397,
                 "type": "function"
             },
             "__wrappers__.balanceOf_.Args": {
@@ -5326,7 +5305,7 @@
             },
             "__wrappers__.balanceOf__encode_return": {
                 "decorators": [],
-                "pc": 2409,
+                "pc": 2388,
                 "type": "function"
             },
             "__wrappers__.balanceOf__encode_return.Args": {
@@ -5364,7 +5343,7 @@
             },
             "__wrappers__.balanceOf_encode_return": {
                 "decorators": [],
-                "pc": 2634,
+                "pc": 2613,
                 "type": "function"
             },
             "__wrappers__.balanceOf_encode_return.Args": {
@@ -5680,7 +5659,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 1946,
+                "pc": 1925,
                 "type": "function"
             },
             "__wrappers__.get_shape_.Args": {
@@ -5709,7 +5688,7 @@
             },
             "__wrappers__.get_shape__encode_return": {
                 "decorators": [],
-                "pc": 1911,
+                "pc": 1890,
                 "type": "function"
             },
             "__wrappers__.get_shape__encode_return.Args": {
@@ -5749,7 +5728,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 1869,
+                "pc": 1848,
                 "type": "function"
             },
             "__wrappers__.get_shape_contract_.Args": {
@@ -5778,7 +5757,7 @@
             },
             "__wrappers__.get_shape_contract__encode_return": {
                 "decorators": [],
-                "pc": 1860,
+                "pc": 1839,
                 "type": "function"
             },
             "__wrappers__.get_shape_contract__encode_return.Args": {
@@ -5818,7 +5797,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2795,
+                "pc": 2774,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll.Args": {
@@ -5849,7 +5828,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2381,
+                "pc": 2360,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll_.Args": {
@@ -5878,7 +5857,7 @@
             },
             "__wrappers__.isApprovedForAll__encode_return": {
                 "decorators": [],
-                "pc": 2372,
+                "pc": 2351,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll__encode_return.Args": {
@@ -5916,7 +5895,7 @@
             },
             "__wrappers__.isApprovedForAll_encode_return": {
                 "decorators": [],
-                "pc": 2786,
+                "pc": 2765,
                 "type": "function"
             },
             "__wrappers__.isApprovedForAll_encode_return.Args": {
@@ -5956,7 +5935,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2086,
+                "pc": 2065,
                 "type": "function"
             },
             "__wrappers__.mint_.Args": {
@@ -5991,7 +5970,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2315,
+                "pc": 2294,
                 "type": "function"
             },
             "__wrappers__.remove_attribute.Args": {
@@ -6026,7 +6005,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2841,
+                "pc": 2820,
                 "type": "function"
             },
             "__wrappers__.safeTransferFrom.Args": {
@@ -6057,7 +6036,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2521,
+                "pc": 2500,
                 "type": "function"
             },
             "__wrappers__.safeTransferFrom_.Args": {
@@ -6096,7 +6075,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2758,
+                "pc": 2737,
                 "type": "function"
             },
             "__wrappers__.setApprovalForAll.Args": {
@@ -6127,7 +6106,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2344,
+                "pc": 2323,
                 "type": "function"
             },
             "__wrappers__.setApprovalForAll_.Args": {
@@ -6271,7 +6250,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2598,
+                "pc": 2577,
                 "type": "function"
             },
             "__wrappers__.supportsInterface.Args": {
@@ -6300,7 +6279,7 @@
             },
             "__wrappers__.supportsInterface_encode_return": {
                 "decorators": [],
-                "pc": 2589,
+                "pc": 2568,
                 "type": "function"
             },
             "__wrappers__.supportsInterface_encode_return.Args": {
@@ -6340,7 +6319,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2001,
+                "pc": 1980,
                 "type": "function"
             },
             "__wrappers__.tokenURI_.Args": {
@@ -6369,7 +6348,7 @@
             },
             "__wrappers__.tokenURI__encode_return": {
                 "decorators": [],
-                "pc": 1982,
+                "pc": 1961,
                 "type": "function"
             },
             "__wrappers__.tokenURI__encode_return.Args": {
@@ -6444,7 +6423,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2910,
+                "pc": 2889,
                 "type": "function"
             },
             "__wrappers__.uri.Args": {
@@ -6473,7 +6452,7 @@
             },
             "__wrappers__.uri_encode_return": {
                 "decorators": [],
-                "pc": 2891,
+                "pc": 2870,
                 "type": "function"
             },
             "__wrappers__.uri_encode_return.Args": {
@@ -6515,7 +6494,7 @@
             },
             "cairopen.math.array._loop_invert_arr": {
                 "decorators": [],
-                "pc": 1459,
+                "pc": 1438,
                 "type": "function"
             },
             "cairopen.math.array._loop_invert_arr.Args": {
@@ -6566,7 +6545,7 @@
             },
             "cairopen.math.array._sub_loop_invert_arr": {
                 "decorators": [],
-                "pc": 1486,
+                "pc": 1465,
                 "type": "function"
             },
             "cairopen.math.array._sub_loop_invert_arr.Args": {
@@ -6629,7 +6608,7 @@
             },
             "cairopen.math.array.invert_arr": {
                 "decorators": [],
-                "pc": 1428,
+                "pc": 1407,
                 "type": "function"
             },
             "cairopen.math.array.invert_arr.Args": {
@@ -6672,7 +6651,7 @@
             },
             "cairopen.math.array.invert_felt_arr": {
                 "decorators": [],
-                "pc": 1451,
+                "pc": 1430,
                 "type": "function"
             },
             "cairopen.math.array.invert_felt_arr.Args": {
@@ -6747,7 +6726,7 @@
             },
             "cairopen.string.libs.conversion._loop_felt_to_inverted_string": {
                 "decorators": [],
-                "pc": 1550,
+                "pc": 1529,
                 "type": "function"
             },
             "cairopen.string.libs.conversion._loop_felt_to_inverted_string.Args": {
@@ -6814,7 +6793,7 @@
             },
             "cairopen.string.libs.conversion.conversion_felt_to_string": {
                 "decorators": [],
-                "pc": 1525,
+                "pc": 1504,
                 "type": "function"
             },
             "cairopen.string.libs.conversion.conversion_felt_to_string.Args": {
@@ -7073,7 +7052,7 @@
             },
             "contracts.booklet_nft.attribute.IShapeContract.library_call_check_shape_numbers_": {
                 "decorators": [],
-                "pc": 2107,
+                "pc": 2086,
                 "type": "function"
             },
             "contracts.booklet_nft.attribute.IShapeContract.library_call_check_shape_numbers_.Args": {
@@ -7152,7 +7131,7 @@
             },
             "contracts.booklet_nft.attribute._check_shape": {
                 "decorators": [],
-                "pc": 2169,
+                "pc": 2148,
                 "type": "function"
             },
             "contracts.booklet_nft.attribute._check_shape.Args": {
@@ -7233,7 +7212,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2225,
+                "pc": 2204,
                 "type": "function"
             },
             "contracts.booklet_nft.attribute.assign_attribute.Args": {
@@ -7326,7 +7305,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2302,
+                "pc": 2281,
                 "type": "function"
             },
             "contracts.booklet_nft.attribute.remove_attribute.Args": {
@@ -7423,7 +7402,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2024,
+                "pc": 2003,
                 "type": "function"
             },
             "contracts.booklet_nft.minting.mint_.Args": {
@@ -7525,7 +7504,7 @@
             },
             "contracts.booklet_nft.token_uri.IShapeContract.library_call_shape_": {
                 "decorators": [],
-                "pc": 1771,
+                "pc": 1750,
                 "type": "function"
             },
             "contracts.booklet_nft.token_uri.IShapeContract.library_call_shape_.Args": {
@@ -7611,7 +7590,7 @@
             },
             "contracts.booklet_nft.token_uri._shape_contract.addr": {
                 "decorators": [],
-                "pc": 1812,
+                "pc": 1791,
                 "type": "function"
             },
             "contracts.booklet_nft.token_uri._shape_contract.addr.Args": {
@@ -7658,7 +7637,7 @@
             },
             "contracts.booklet_nft.token_uri._shape_contract.read": {
                 "decorators": [],
-                "pc": 1826,
+                "pc": 1805,
                 "type": "function"
             },
             "contracts.booklet_nft.token_uri._shape_contract.read.Args": {
@@ -7709,7 +7688,7 @@
             },
             "contracts.booklet_nft.token_uri._shape_contract.write": {
                 "decorators": [],
-                "pc": 1840,
+                "pc": 1819,
                 "type": "function"
             },
             "contracts.booklet_nft.token_uri._shape_contract.write.Args": {
@@ -7755,14 +7734,14 @@
                 "value": 0
             },
             "contracts.booklet_nft.token_uri.data_uri_start": {
-                "pc": 1969,
+                "pc": 1948,
                 "type": "label"
             },
             "contracts.booklet_nft.token_uri.get_shape_": {
                 "decorators": [
                     "view"
                 ],
-                "pc": 1888,
+                "pc": 1867,
                 "type": "function"
             },
             "contracts.booklet_nft.token_uri.get_shape_.Args": {
@@ -7807,7 +7786,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 1853,
+                "pc": 1832,
                 "type": "function"
             },
             "contracts.booklet_nft.token_uri.get_shape_contract_.Args": {
@@ -7852,7 +7831,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 1973,
+                "pc": 1952,
                 "type": "function"
             },
             "contracts.booklet_nft.token_uri.tokenURI_.Args": {
@@ -8513,7 +8492,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2438,
+                "pc": 2417,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.balanceOfBatch_.Args": {
@@ -8570,7 +8549,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2401,
+                "pc": 2380,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.balanceOf_.Args": {
@@ -8619,7 +8598,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2364,
+                "pc": 2343,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.isApprovedForAll_.Args": {
@@ -8668,7 +8647,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2509,
+                "pc": 2488,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.safeTransferFrom_.Args": {
@@ -8733,7 +8712,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2336,
+                "pc": 2315,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.setApprovalForAll_.Args": {
@@ -8782,7 +8761,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2553,
+                "pc": 2532,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155.supportsInterface.Args": {
@@ -8859,7 +8838,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2617,
+                "pc": 2596,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.balanceOf.Args": {
@@ -8908,7 +8887,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2665,
+                "pc": 2644,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.balanceOfBatch.Args": {
@@ -8973,7 +8952,7 @@
                 "decorators": [
                     "view"
                 ],
-                "pc": 2778,
+                "pc": 2757,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.isApprovedForAll.Args": {
@@ -9026,7 +9005,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2815,
+                "pc": 2794,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.safeTransferFrom.Args": {
@@ -9095,7 +9074,7 @@
                 "decorators": [
                     "external"
                 ],
-                "pc": 2750,
+                "pc": 2729,
                 "type": "function"
             },
             "contracts.library_erc1155.IERC1155_OZ.setApprovalForAll.Args": {
@@ -9254,49 +9233,6 @@
                 "type": "type_definition"
             },
             "contracts.library_erc1155.approvals.ERC1155_approvals.SIZEOF_LOCALS": {
-                "type": "const",
-                "value": 0
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll": {
-                "decorators": [],
-                "pc": 1293,
-                "type": "function"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.Args": {
-                "full_name": "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.Args",
-                "members": {
-                    "on_behalf_of": {
-                        "cairo_type": "felt",
-                        "offset": 0
-                    }
-                },
-                "size": 1,
-                "type": "struct"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.ImplicitArgs": {
-                "full_name": "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.ImplicitArgs",
-                "members": {
-                    "pedersen_ptr": {
-                        "cairo_type": "starkware.cairo.common.cairo_builtins.HashBuiltin*",
-                        "offset": 1
-                    },
-                    "range_check_ptr": {
-                        "cairo_type": "felt",
-                        "offset": 2
-                    },
-                    "syscall_ptr": {
-                        "cairo_type": "felt*",
-                        "offset": 0
-                    }
-                },
-                "size": 3,
-                "type": "struct"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.Return": {
-                "cairo_type": "()",
-                "type": "type_definition"
-            },
-            "contracts.library_erc1155.approvals.ERC1155_approvals._onlyApprovedAll.SIZEOF_LOCALS": {
                 "type": "const",
                 "value": 0
             },
@@ -10392,7 +10328,7 @@
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._onTransfer": {
                 "decorators": [],
-                "pc": 1346,
+                "pc": 1323,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._onTransfer.Args": {
@@ -10451,7 +10387,7 @@
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._transfer": {
                 "decorators": [],
-                "pc": 1373,
+                "pc": 1350,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability._transfer.Args": {
@@ -10506,7 +10442,7 @@
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability.safeTransferFrom_": {
                 "decorators": [],
-                "pc": 1415,
+                "pc": 1397,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.ERC1155_transferability.safeTransferFrom_.Args": {
@@ -10647,7 +10583,7 @@
             },
             "contracts.library_erc1155.transferability.TransferSingle.emit": {
                 "decorators": [],
-                "pc": 1316,
+                "pc": 1293,
                 "type": "function"
             },
             "contracts.library_erc1155.transferability.TransferSingle.emit.Args": {
@@ -11545,7 +11481,7 @@
             },
             "contracts.utilities.token_uri.TokenURIHelpers._getUrl": {
                 "decorators": [],
-                "pc": 1606,
+                "pc": 1585,
                 "type": "function"
             },
             "contracts.utilities.token_uri.TokenURIHelpers._getUrl.Args": {
@@ -11592,7 +11528,7 @@
             },
             "contracts.utilities.token_uri.TokenURIHelpers.add_number": {
                 "decorators": [],
-                "pc": 1679,
+                "pc": 1658,
                 "type": "function"
             },
             "contracts.utilities.token_uri.TokenURIHelpers.add_number.Args": {
@@ -11651,7 +11587,7 @@
             },
             "contracts.utilities.token_uri.TokenURIHelpers.padl": {
                 "decorators": [],
-                "pc": 1658,
+                "pc": 1637,
                 "type": "function"
             },
             "contracts.utilities.token_uri.TokenURIHelpers.padl.Args": {
@@ -11816,7 +11752,7 @@
             },
             "contracts.vendor.cairopen.string.ASCII.StringCodec.felt_to_string": {
                 "decorators": [],
-                "pc": 1596,
+                "pc": 1575,
                 "type": "function"
             },
             "contracts.vendor.cairopen.string.ASCII.StringCodec.felt_to_string.Args": {

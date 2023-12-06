@@ -7,6 +7,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin,
 from contracts.types import FTSpec
 from starkware.cairo.common.uint256 import Uint256
 from contracts.utilities.Uint256_felt_conv import _uint_to_felt, _felt_to_uint
+from contracts.ecosystem.to_migration import (getMigrationAddress_, setMigrationAddress_)
 
 
 from contracts.upgrades.upgradable_mixin import (

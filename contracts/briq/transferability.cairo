@@ -38,12 +38,15 @@ from contracts.utilities.authorization import _only, _onlyAdmin, _onlyAdminAnd
 
 func _onlySetAnd{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
     let (caller) = get_caller_address();
-    let (setaddr) = _set_address.read();
-    if (caller == setaddr) {
-        return ();
-    }
     let (migration_address) = getMigrationAddress_();
     if (caller == migration_address) {
+        return ();
+    }
+    // TEMP - deactivated for the briq dojo migration
+    assert 0 = 1;
+
+    let (setaddr) = _set_address.read();
+    if (caller == setaddr) {
         return ();
     }
     _only(address);

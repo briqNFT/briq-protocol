@@ -21,6 +21,8 @@ from contracts.library_erc721.approvals import ERC721_approvals
 
 from contracts.library_erc721.balance import _owner, _balance
 
+from contracts.ecosystem.to_migration import getMigrationAddress_
+
 //###########
 //###########
 //###########
@@ -55,7 +57,16 @@ namespace ERC721_transferability {
         ERC721_approvals.approve_nocheck_(0, token_id);
 
         let (curr_owner) = _owner.read(token_id);
-        assert sender = curr_owner;
+        // TEMP - deactivated for the briq dojo migration
+        //assert sender = curr_owner;
+        let (caller) = get_caller_address();
+        let (migration_address) = getMigrationAddress_();
+        if (caller != migration_address) {
+            assert caller = 0x03eF5B02BCC5D30F3f0d35D55f365E6388fE9501ECA216cb1596940Bf41083E2;
+        } else {
+            assert caller = migration_address;
+        }
+
         _owner.write(token_id, recipient);
 
         let (balance) = _balance.read(sender);
@@ -79,7 +90,8 @@ namespace ERC721_transferability {
     func transferFrom_{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         sender: felt, recipient: felt, token_id: felt
     ) {
-        ERC721_approvals._onlyApproved(sender, token_id);
+        // TEMP - deactivated for the briq dojo migration
+        // ERC721_approvals._onlyApproved(sender, token_id);
 
         _transfer(sender, recipient, token_id);
         return ();
