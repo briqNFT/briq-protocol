@@ -118,7 +118,7 @@ mod setup_world {
                 briq,
                 generic_sets,
                 factory,
-                dojo_migration: Zeroable::zero(),
+                dojo_migration: get!(world, (SYSTEM_CONFIG_ID), WorldConfig).dojo_migration,
             })
         );
         return ();
