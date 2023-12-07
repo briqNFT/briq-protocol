@@ -7,9 +7,6 @@ cairo-version = "2.2.0"
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.3.13" }
-# dojo_erc = { git = "https://github.com/dojoengine/dojo" }
-#origami = { path = "../origami" }
 presets = { path = "../origami/presets/" }
 
 [tool.dojo.world]
