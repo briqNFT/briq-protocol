@@ -1,4 +1,4 @@
-use presets::erc1155::erc1155::models::{ERC1155OperatorApproval, erc_1155_operator_approval};
+use token::erc1155::models::{ERC1155OperatorApproval, erc_1155_operator_approval};
 
 use starknet::ContractAddress;
 

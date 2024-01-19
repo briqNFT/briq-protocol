@@ -1,13 +1,13 @@
 [package]
 name = "briq_protocol"
-version = "2.0.0"
-cairo-version = "2.2.0"
+version = "2.1.0"
+cairo-version = "2.3.0"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
-presets = { path = "../origami/presets/" }
+token = { git = "https://github.com/dojoengine/origami.git" }
 
 [tool.dojo.world]
 name = "briq"
@@ -17,14 +17,14 @@ cover_uri = "/Volumes/Samsung_T5/Programming/briq-protocol/docs/banner.png"
 website = "https://briq.construction/"
 socials.x = "https://twitter.com/briqNFT"
 
-[[target.dojo]]
-build-external-contracts = [
-    'presets::erc1155::erc1155::components::erc_1155_balance',
-    'presets::erc1155::erc1155::components::operator_approval',
-    'presets::erc721::erc721::components::erc_721_balance',
-    'presets::erc721::erc721::components::erc_721_owner',
-    'presets::erc721::erc721::components::erc_721_token_approval'
-]
+# [[target.dojo]]
+# build-external-contracts = [
+#     'presets::erc1155::erc1155::components::erc_1155_balance',
+#     'presets::erc1155::erc1155::components::operator_approval',
+#     'presets::erc721::erc721::components::erc_721_balance',
+#     'presets::erc721::erc721::components::erc_721_owner',
+#     'presets::erc721::erc721::components::erc_721_token_approval'
+# ]
 
 #[tool.dojo.env]
 # rpc_url = "http://localhost:5050/"

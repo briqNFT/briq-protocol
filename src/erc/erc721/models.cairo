@@ -1,6 +1,6 @@
 use starknet::ContractAddress;
 
-use presets::erc721::models::{ERC721OperatorApproval, erc_721_operator_approval};
+use token::erc721::models::{ERC721OperatorApproval, erc_721_operator_approval};
 
 #[derive(Model, Copy, Drop, Serde)]
 struct ERC721Owner {

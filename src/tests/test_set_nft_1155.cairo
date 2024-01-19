@@ -3,9 +3,9 @@ use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use presets::erc721::erc721::interface::IERC721DispatcherTrait;
-use presets::erc1155::erc1155::interface::IERC1155DispatcherTrait;
-use presets::erc1155::erc1155::interface::IERC1155Dispatcher;
+use token::erc721::interface::IERC721DispatcherTrait;
+use token::erc1155::interface::IERC1155DispatcherTrait;
+use token::erc1155::interface::IERC1155Dispatcher;
 
 use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcherTrait, ISetNftAssemblySafeDispatcherTrait};
 

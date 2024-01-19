@@ -9,10 +9,10 @@ use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use presets::presets::erc_common::utils::{system_calldata};
-use presets::presets::erc721::erc721::interface::IERC721DispatcherTrait;
-use presets::presets::erc1155::erc1155::interface::{IERC1155DispatcherTrait};
-use presets::presets::erc1155::erc1155::models::ERC1155BalanceTrait;
+use token::token::erc_common::utils::{system_calldata};
+use token::token::erc721::interface::IERC721DispatcherTrait;
+use token::token::erc1155::interface::{IERC1155DispatcherTrait};
+use token::token::erc1155::models::ERC1155BalanceTrait;
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, ZERO, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate

@@ -4,8 +4,8 @@ mod set_nft_sp {
         ERC721OperatorApproval, ERC721Owner, ERC721Balance, ERC721TokenApproval
     };
     use briq_protocol::world_config::get_world_config;
-    use presets::erc721::erc721::interface;
-    use presets::erc721::erc721::interface::{IERC721, IERC721CamelOnly};
+    use token::erc721::interface;
+    use token::erc721::interface::{IERC721, IERC721CamelOnly};
     use integer::BoundedInt;
     use starknet::ContractAddress;
     use starknet::{get_caller_address, get_contract_address};

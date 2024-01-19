@@ -12,8 +12,8 @@ mod convenience_for_testing {
 
     use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 
-    use presets::erc721::erc721::interface::IERC721Dispatcher;
-    use presets::erc1155::erc1155::interface::IERC1155Dispatcher;
+    use token::erc721::interface::IERC721Dispatcher;
+    use token::erc1155::interface::IERC1155Dispatcher;
     use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcher, ISetNftAssemblySafeDispatcher};
 
     trait Dispatcher<T> { fn contract_address(self: T) -> ContractAddress; }
@@ -96,8 +96,8 @@ use starknet::testing::{set_caller_address, set_contract_address};
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use presets::erc721::erc721::interface::IERC721DispatcherTrait;
-use presets::erc1155::erc1155::interface::IERC1155DispatcherTrait;
+use token::erc721::interface::IERC721DispatcherTrait;
+use token::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate

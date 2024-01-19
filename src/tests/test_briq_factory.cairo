@@ -203,7 +203,7 @@ fn test_overflows_bad_max_t() {
     briq_factory.get_price(1);
 }
 
-//use presets::erc20::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+//use token::erc20::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 //#[test]
 //#[available_gas(90000000)]
 //fn test_briq_factory_buy() {

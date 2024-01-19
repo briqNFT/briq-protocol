@@ -12,8 +12,8 @@ use starknet::syscalls::deploy_syscall;
 use dojo::test_utils::spawn_test_world;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use presets::erc721::erc721::interface::IERC721Dispatcher;
-use presets::erc1155::erc1155::interface::IERC1155Dispatcher;
+use token::erc721::interface::IERC721Dispatcher;
+use token::erc1155::interface::IERC1155Dispatcher;
 
 use briq_protocol::erc::mint_burn::{MintBurnDispatcher, MintBurnDispatcherTrait};
 
@@ -86,9 +86,9 @@ fn spawn_briq_test_world() -> DefaultWorld {
         // world_config
         briq_protocol::world_config::world_config::TEST_CLASS_HASH,
 
-        //presets::erc20::models::erc_20_balance::TEST_CLASS_HASH,
-        //presets::erc20::models::erc_20_allowance::TEST_CLASS_HASH,
-        //presets::erc20::models::erc_20_meta::TEST_CLASS_HASH,
+        //token::erc20::models::erc_20_balance::TEST_CLASS_HASH,
+        //token::erc20::models::erc_20_allowance::TEST_CLASS_HASH,
+        //token::erc20::models::erc_20_meta::TEST_CLASS_HASH,
 
         briq_protocol::erc::erc1155::models::erc_1155_balance::TEST_CLASS_HASH,
         briq_protocol::erc::erc1155::models::erc_1155_operator_approval::TEST_CLASS_HASH,
@@ -105,7 +105,7 @@ fn spawn_briq_test_world() -> DefaultWorld {
     ];
     let world = spawn_test_world(components);
     // ERC 20 token for payment
-    // let (payment_addr, _) = deploy_syscall(presets::erc20::erc20::ERC20::TEST_CLASS_HASH.try_into().unwrap(), 0, array![
+    // let (payment_addr, _) = deploy_syscall(token::erc20::erc20::ERC20::TEST_CLASS_HASH.try_into().unwrap(), 0, array![
     //     world.contract_address.into(),
     //     'cash',
     //     'money',

@@ -7,7 +7,7 @@ use briq_protocol::erc::erc1155::models::{
     ERC1155OperatorApproval, ERC1155Balance,
     increase_balance as increase_balance_1155, decrease_balance as decrease_balance_1155
 };
-use presets::erc1155::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
+use token::erc1155::interface::{IERC1155DispatcherTrait, IERC1155Dispatcher};
 
 use briq_protocol::erc::erc721::models::{
     ERC721Balance, ERC721Owner, ERC721TokenApproval, ERC721OperatorApproval, increase_balance, decrease_balance

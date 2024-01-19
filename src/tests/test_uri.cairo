@@ -1,5 +1,5 @@
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use presets::erc1155::erc1155::interface::IERC1155DispatcherTrait;
+use token::erc1155::interface::IERC1155DispatcherTrait;
 
 use briq_protocol::tests::test_utils::{
     WORLD_ADMIN, DEFAULT_OWNER, DefaultWorld, spawn_briq_test_world, mint_briqs, impersonate

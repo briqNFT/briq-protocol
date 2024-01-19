@@ -6,7 +6,7 @@ use serde::Serde;
 use starknet::ContractAddress;
 
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use presets::erc721::erc721::interface::IERC721DispatcherTrait;
+use token::erc721::interface::IERC721DispatcherTrait;
 
 use briq_protocol::tests::test_utils::{
     DefaultWorld, DEFAULT_OWNER, USER1, ZERO, spawn_briq_test_world, impersonate

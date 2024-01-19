@@ -6,8 +6,8 @@ mod briq_token {
     };
     use briq_protocol::erc::erc1155::internal_trait::InternalTrait1155;
     use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_BRIQ};
-    use presets::erc1155::erc1155::interface;
-    use presets::erc1155::erc1155::interface::{IERC1155, IERC1155CamelOnly};
+    use token::erc1155::interface;
+    use token::erc1155::interface::{IERC1155, IERC1155CamelOnly};
     use starknet::ContractAddress;
     use starknet::{get_caller_address, get_contract_address};
     use array::ArrayTCloneImpl;
