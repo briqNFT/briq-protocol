@@ -4,6 +4,7 @@ sozo build
 
 sozo migrate --name briq_protocol --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 sozo migrate --world $WORLD_ADDRESS --name briq_protocol --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
+#sozo migrate --plan --world $WORLD_ADDRESS --name briq_protocol --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
 
 # testnet
 sozo migrate --world $WORLD_ADDRESS --keystore $STARKNET_KEYSTORE --password $KEYSTORE_PWD
