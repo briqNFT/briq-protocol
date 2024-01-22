@@ -101,6 +101,7 @@ fn spawn_briq_test_world() -> DefaultWorld {
         briq_protocol::attributes::attribute_group::attribute_group::TEST_CLASS_HASH,
 
         briq_protocol::booklet::attribute::shape_validator::TEST_CLASS_HASH,
+        briq_protocol::booklet::attribute::shape_validator_admin::TEST_CLASS_HASH,
     ];
     let world = spawn_test_world(components);
     // ERC 20 token for payment
@@ -172,6 +173,8 @@ fn spawn_briq_test_world() -> DefaultWorld {
     world.grant_writer('ERC1155OperatorApproval', sets_ducks_addr);
 
     world.grant_writer('AttributeGroup', attribute_groups_addr);
+    world.grant_writer('ShapeValidatorAdmin', register_shape_validator_addr);
+    world.grant_writer('ShapeValidator', register_shape_validator_addr);
 
     // Setup
     ISetupWorldDispatcher { contract_address: setup_world_addr }.execute(

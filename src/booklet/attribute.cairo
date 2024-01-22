@@ -25,6 +25,17 @@ struct ShapeValidator {
     class_hash: ClassHash,
 }
 
+#[derive(Model, Copy, Drop, Serde)]
+// People registered as shape validator admins have the right to register shape validators
+struct ShapeValidatorAdmin {
+    #[key]
+    attribute_group_id: u64,
+    #[key]
+    owner: ContractAddress,
+
+    is_admin: bool,
+}
+
 // Must be implemented by the class hash pointed to by ShapeValidator
 #[starknet::interface]
 trait IShapeChecker<ContractState> {
@@ -42,13 +53,42 @@ trait IRegisterShapeValidator<ContractState> {
         attribute_id: u64,
         class_hash: ClassHash,
     );
+
+    fn set_admin(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        owner: ContractAddress,
+        is_admin: bool,
+    );
+}
+
+use briq_protocol::felt_math::FeltDiv;
+
+// Returns wether a user is allowed to mint a booklet with a given token_id
+fn is_allowed_to_mint(
+    world: IWorldDispatcher,
+    caller: ContractAddress,
+    token_id: felt252,
+) -> bool {
+    // Admins are always allowed
+    if world.is_admin(@caller) {
+        return true;
+    }
+    // Box contracts are always allowed (for simplicity)
+    if world.is_box_contract(caller) {
+        return true;
+    }
+    // Shape admins of the correct collection are allowed.
+    let attribute_group_id = token_id / two_power_64;
+    get!(world, (attribute_group_id, caller), ShapeValidatorAdmin).is_admin
 }
 
 #[dojo::contract]
 mod register_shape_validator {
-    use starknet::{ClassHash, get_caller_address};
+    use starknet::{ClassHash, get_caller_address, ContractAddress};
     use briq_protocol::world_config::{WorldConfig, AdminTrait};
-    use super::ShapeValidator;
+    use super::{ShapeValidator, ShapeValidatorAdmin};
 
     #[external(v0)]
     fn execute(
@@ -58,8 +98,33 @@ mod register_shape_validator {
         attribute_id: u64,
         class_hash: ClassHash,
     ) {
-        world.only_admins(@get_caller_address());
+        if !world.is_admin(@get_caller_address()) {
+            let is_admin = get!(world, (attribute_group_id, get_caller_address()), ShapeValidatorAdmin).is_admin;
+            assert(is_admin, 'Not auth to reg shapes');
+        }
         set!(world, ShapeValidator { attribute_group_id, attribute_id, class_hash });
+    }
+
+    #[external(v0)]
+    fn get_shape_validator(
+        self: @ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        attribute_id: u64,
+    ) -> ClassHash {
+        get!(world, (attribute_group_id, attribute_id), ShapeValidator).class_hash
+    }
+
+    #[external(v0)]
+    fn set_admin(
+        ref self: ContractState,
+        world: IWorldDispatcher,
+        attribute_group_id: u64,
+        owner: ContractAddress,
+        is_admin: bool,
+    ) {
+        world.only_admins(@get_caller_address());
+        set!(world, ShapeValidatorAdmin { attribute_group_id, owner, is_admin });
     }
 }
 

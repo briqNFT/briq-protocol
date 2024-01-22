@@ -144,12 +144,11 @@ mod booklet_lil_ducks {
     }
 
     use briq_protocol::world_config::{get_world_config, AdminTrait};
+    use briq_protocol::booklet::attribute::is_allowed_to_mint;
     #[external(v0)]
     impl MintBurnBriqs of briq_protocol::erc::mint_burn::MintBurn<ContractState> {
         fn mint(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {
-            if !self.world().is_admin(@get_caller_address()) {
-                assert(self.world().is_box_contract(get_caller_address()), Errors::UNAUTHORIZED);
-            }
+            assert(is_allowed_to_mint(self.world(), get_caller_address(), token_id), Errors::UNAUTHORIZED);
             self._mint(owner, token_id.into(), amount.into())
         }
         fn burn(ref self: ContractState, owner: ContractAddress, token_id: felt252, amount: u128) {

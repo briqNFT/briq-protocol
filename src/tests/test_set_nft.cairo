@@ -110,6 +110,7 @@ use briq_protocol::cumulative_balance::{CUM_BALANCE_TOKEN, CB_ATTRIBUTES, CB_BRI
 use briq_protocol::world_config::get_world_config;
 
 use briq_protocol::attributes::attribute_group::{IAttributeGroupsDispatcher, IAttributeGroupsDispatcherTrait, AttributeGroupOwner};
+use briq_protocol::booklet::attribute::{IRegisterShapeValidatorDispatcher, IRegisterShapeValidatorDispatcherTrait};
 
 use briq_protocol::set_nft::assembly::{ISetNftAssemblyDispatcherTrait, ISetNftAssemblySafeDispatcherTrait};
 use briq_protocol::tokens::set_nft::set_nft::Transfer as SetNftTransfer;
@@ -402,13 +403,17 @@ fn test_simple_mint_attribute_ok_1() {
 #[available_gas(3000000000)]
 fn test_simple_mint_attribute_ok_2() {
     let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
+    
     create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
-    register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
-
-    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x690000000000000002, 1);
     mint_briqs(world, DEFAULT_OWNER(), 1, 100);
 
+    // make DEFAULT_OWNER admin of the collection
+    IRegisterShapeValidatorDispatcher { contract_address: register_shape_validator_addr }.set_admin(world, 0x69, DEFAULT_OWNER(), true);
+
     impersonate(DEFAULT_OWNER());
+
+    register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x690000000000000002, 1);
 
     let token_id = as_set(sets_ducks).assemble(
         DEFAULT_OWNER(),
@@ -445,6 +450,42 @@ fn test_simple_mint_attribute_ok_2() {
     );
     assert(booklet_ducks.balance_of(DEFAULT_OWNER(), 0x690000000000000002) == 1, 'bad booklet balance 3');
 // TODO: validate that token ID balance asserts as it's 0
+}
+
+#[test]
+#[should_panic(expected: ('Not auth to reg shapes', 'ENTRYPOINT_FAILED',))]
+#[available_gas(3000000000)]
+fn test_simple_mint_attribute_bad_not_coll_admin_1() {
+    let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
+    
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
+
+    // make DEFAULT_OWNER admin of another collection
+    IRegisterShapeValidatorDispatcher { contract_address: register_shape_validator_addr }.set_admin(world, 0xfada, DEFAULT_OWNER(), true);
+
+    impersonate(DEFAULT_OWNER());
+
+    // Should panic
+    register_shape_validator_shapes(world, register_shape_validator_addr, 0x69);
+}
+
+#[test]
+#[should_panic(expected: ('ERC1155: unauthorized caller', 'ENTRYPOINT_FAILED',))]
+#[available_gas(3000000000)]
+fn test_simple_mint_attribute_bad_not_coll_admin_2() {
+    let DefaultWorld{world, briq_token, sets_ducks, booklet_ducks, attribute_groups_addr, register_shape_validator_addr, .. } = spawn_briq_test_world();
+    
+    create_contract_attribute_group(world, attribute_groups_addr, 0x69, booklet_ducks.contract_address, sets_ducks.contract_address);
+    mint_briqs(world, DEFAULT_OWNER(), 1, 100);
+
+    // make DEFAULT_OWNER admin of another collection
+    IRegisterShapeValidatorDispatcher { contract_address: register_shape_validator_addr }.set_admin(world, 0xfada, DEFAULT_OWNER(), true);
+
+    impersonate(DEFAULT_OWNER());
+
+    // Should panic
+    mint_booklet(booklet_ducks.contract_address, DEFAULT_OWNER(), 0x690000000000000002, 1);
 }
 
 #[test]
