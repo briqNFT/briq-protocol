@@ -147,6 +147,23 @@
                 "type": "felt"
             }
         ],
+        "name": "get_local_index_",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "global_index",
+                "type": "felt"
+            }
+        ],
         "name": "shape_",
         "outputs": [
             {
