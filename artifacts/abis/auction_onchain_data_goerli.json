@@ -1,0 +1,77 @@
+[
+    {
+        "members": [
+            {
+                "name": "token_id",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "minimum_bid",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "bid_growth_factor",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "auction_start_date",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "auction_duration",
+                "offset": 4,
+                "type": "felt"
+            }
+        ],
+        "name": "AuctionData",
+        "size": 5,
+        "type": "struct"
+    },
+    {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "previousAdmin",
+                "type": "felt"
+            },
+            {
+                "name": "newAdmin",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "AdminChanged",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "auction_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_auction_data",
+        "outputs": [
+            {
+                "name": "data",
+                "type": "AuctionData"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
